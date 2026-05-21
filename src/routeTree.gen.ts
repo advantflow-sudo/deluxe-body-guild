@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
 import { Route as WellbeingRouteImport } from './routes/wellbeing'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as FitnessRouteImport } from './routes/fitness'
@@ -30,6 +31,11 @@ const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
 const WellbeingRoute = WellbeingRouteImport.update({
   id: '/wellbeing',
   path: '/wellbeing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/fitness': typeof FitnessRoute
   '/gallery': typeof GalleryRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/fitness': typeof FitnessRoute
   '/gallery': typeof GalleryRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/fitness': typeof FitnessRoute
   '/gallery': typeof GalleryRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/fitness'
     | '/gallery'
     | '/login'
+    | '/pricing'
     | '/wellbeing'
     | '/what-we-offer'
     | '/dashboard'
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/fitness'
     | '/gallery'
     | '/login'
+    | '/pricing'
     | '/wellbeing'
     | '/what-we-offer'
     | '/dashboard'
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/fitness'
     | '/gallery'
     | '/login'
+    | '/pricing'
     | '/wellbeing'
     | '/what-we-offer'
     | '/_authenticated/dashboard'
@@ -175,6 +187,7 @@ export interface RootRouteChildren {
   FitnessRoute: typeof FitnessRoute
   GalleryRoute: typeof GalleryRoute
   LoginRoute: typeof LoginRoute
+  PricingRoute: typeof PricingRoute
   WellbeingRoute: typeof WellbeingRoute
   WhatWeOfferRoute: typeof WhatWeOfferRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/wellbeing'
       fullPath: '/wellbeing'
       preLoaderRoute: typeof WellbeingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -290,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   FitnessRoute: FitnessRoute,
   GalleryRoute: GalleryRoute,
   LoginRoute: LoginRoute,
+  PricingRoute: PricingRoute,
   WellbeingRoute: WellbeingRoute,
   WhatWeOfferRoute: WhatWeOfferRoute,
   ApiChatRoute: ApiChatRoute,
@@ -297,3 +318,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
