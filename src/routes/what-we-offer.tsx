@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Dumbbell,
   Brain,
@@ -92,10 +92,14 @@ function Page() {
           ))}
         </div>
         <div className="mx-auto mt-16 flex max-w-3xl flex-col items-center justify-center gap-3 px-6 text-center sm:flex-row">
-          <GoldButton>
-            <Sparkles className="h-4 w-4" /> Start Your Journey
-          </GoldButton>
-          <OutlineButton>See Pricing</OutlineButton>
+          <Link to="/login">
+            <GoldButton>
+              <Sparkles className="h-4 w-4" /> Start Your Journey
+            </GoldButton>
+          </Link>
+          <Link to="/pricing">
+            <OutlineButton>See Pricing</OutlineButton>
+          </Link>
         </div>
       </section>
     </PageShell>

@@ -119,7 +119,9 @@ function Dashboard() {
                       </div>
                     </div>
                   </div>
-                  <OutlineButton className="!px-4 !py-2 !text-[10px]">Start</OutlineButton>
+                  <Link to="/fitness">
+                    <OutlineButton className="!px-4 !py-2 !text-[10px]">Start</OutlineButton>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -131,29 +133,31 @@ function Dashboard() {
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               "You're on a 12-day streak. Sleep was below average last night — prioritize mobility today and dial intensity to 80%."
             </p>
-            <GoldButton className="mt-6 w-full">Ask coach</GoldButton>
+            <Link to="/coach">
+              <GoldButton className="mt-6 w-full">Ask coach</GoldButton>
+            </Link>
           </aside>
         </div>
 
         <div className="mt-12 grid gap-8 lg:grid-cols-3">
-          <Card icon={TrendingUp} title="Progress" body="Track your body composition, lifts, and weekly volume." cta="View progress" />
-          <Card icon={Users} title="Community" body="Join challenges and connect with athletes who push you." cta="Open community" />
-          <Card icon={Award} title="Rewards" body="Convert your streak into perks, gear, and exclusive content." cta="Redeem points" />
+          <Card to="/fitness" icon={TrendingUp} title="Progress" body="Track your body composition, lifts, and weekly volume." cta="View progress" />
+          <Card to="/coach" icon={Users} title="Community" body="Join challenges and connect with athletes who push you." cta="Open community" />
+          <Card to="/pricing" icon={Award} title="Rewards" body="Convert your streak into perks, gear, and exclusive content." cta="Redeem points" />
         </div>
       </div>
     </main>
   );
 }
 
-function Card({ icon: Icon, title, body, cta }: { icon: typeof TrendingUp; title: string; body: string; cta: string }) {
+function Card({ to, icon: Icon, title, body, cta }: { to: string; icon: typeof TrendingUp; title: string; body: string; cta: string }) {
   return (
     <div className="border border-gold/15 bg-deluxe-forest/20 p-8">
       <Icon className="h-5 w-5 text-gold" />
       <h3 className="mt-4 font-display text-xl text-foreground">{title}</h3>
       <p className="mt-2 text-sm text-muted-foreground">{body}</p>
-      <button className="mt-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold hover:text-gold-light">
+      <Link to={to} className="mt-5 inline-block text-[11px] font-semibold uppercase tracking-[0.22em] text-gold transition hover:text-gold-light">
         {cta} →
-      </button>
+      </Link>
     </div>
   );
 }
