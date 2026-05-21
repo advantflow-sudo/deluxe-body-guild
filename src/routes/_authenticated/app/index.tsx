@@ -85,6 +85,23 @@ function HomeTab() {
         </div>
         <ChevronRight className="h-5 w-5 text-gold" />
       </Link>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 pb-4">
+        <Link to="/app/community" className="group flex items-center gap-3 border border-gold/20 bg-deluxe-forest/20 p-4 hover:border-gold/50">
+          <Users className="h-5 w-5 text-gold" />
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Community</div>
+            <div className="text-sm text-foreground">Open the feed</div>
+          </div>
+        </Link>
+        <Link to="/app/nutrition" className="group relative flex items-center gap-3 border border-gold/20 bg-deluxe-forest/20 p-4 hover:border-gold/50">
+          <Apple className="h-5 w-5 text-gold" />
+          <div>
+            <div className="flex items-center gap-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Nutrition <Crown className="h-3 w-3 text-gold" /></div>
+            <div className="text-sm text-foreground">AI meal plans</div>
+          </div>
+        </Link>
+      </div>
     </div>
   );
 }
