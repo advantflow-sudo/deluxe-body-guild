@@ -137,6 +137,20 @@ function CoachPage() {
           </p>
         </div>
 
+        {locked && (
+          <div className="mt-6 flex flex-col items-center gap-3 border border-gold/30 bg-gold-gradient/10 p-5 text-center sm:flex-row sm:text-left">
+            <Crown className="h-6 w-6 shrink-0 text-gold" />
+            <div className="flex-1">
+              <div className="font-display text-lg text-foreground">Coach is a Premium feature</div>
+              <p className="text-xs text-muted-foreground">Upgrade to unlock unlimited AI coaching, nutrition plans, and more.</p>
+            </div>
+            <Link to="/pricing" className="inline-flex items-center gap-2 bg-gold-gradient px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-deluxe-black">
+              <Lock className="h-3 w-3" /> Upgrade
+            </Link>
+          </div>
+        )}
+
+
         <div
           ref={scrollRef}
           className="mt-8 flex-1 space-y-5 overflow-y-auto border border-gold/15 bg-deluxe-forest/20 p-5 md:p-8"
