@@ -1,12 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Send, Sparkles, User } from "lucide-react";
+import { Send, Sparkles, User, Crown, Lock } from "lucide-react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { useAuth } from "@/hooks/useAuth";
+import { usePremium } from "@/hooks/usePremium";
 
 export const Route = createFileRoute("/coach")({
   head: () => ({
@@ -32,6 +34,9 @@ const SUGGESTIONS = [
 ];
 
 function CoachPage() {
+  const { session } = useAuth();
+  const { isPremium, loading: premLoading } = usePremium();
+  const locked = !!session && !premLoading && !isPremium;
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,6 +48,10 @@ function CoachPage() {
 
   async function send(text: string) {
     if (!text.trim() || loading) return;
+    if (locked) {
+      toast.error("Upgrade to Premium to chat with the Coach.");
+      return;
+    }
     const userMsg: Msg = { role: "user", content: text.trim() };
     const next = [...messages, userMsg];
     setMessages(next);
