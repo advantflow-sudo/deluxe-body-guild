@@ -23,7 +23,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-gold/20 bg-deluxe-black/85 backdrop-blur-xl supports-[backdrop-filter]:bg-deluxe-black/70">
       <div className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:gap-6 sm:px-6 sm:py-4">
         <Link to="/" className="shrink-0">
           <Logo />
         </Link>
