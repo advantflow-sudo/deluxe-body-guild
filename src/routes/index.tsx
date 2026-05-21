@@ -389,13 +389,13 @@ function TaglineCascade() {
   return (
     <section className="bg-deluxe-black py-32">
       <div className="mx-auto max-w-5xl px-6 text-center">
-        <p className="font-display text-2xl tracking-[0.2em] text-foreground/25 sm:text-3xl md:text-4xl">
+        <p className="font-display text-lg tracking-[0.15em] text-foreground/25 sm:text-3xl sm:tracking-[0.2em] md:text-4xl">
           DISCIPLINE TODAY. DELUXE FOREVER.
         </p>
-        <p className="mt-6 font-display text-3xl tracking-[0.2em] text-foreground/55 sm:text-4xl md:text-5xl">
+        <p className="mt-6 font-display text-xl tracking-[0.15em] text-foreground/55 sm:text-4xl sm:tracking-[0.2em] md:text-5xl">
           BUILT IN THE GYM. ELEVATED IN LIFE.
         </p>
-        <p className="mt-6 font-display text-4xl tracking-[0.2em] text-gold sm:text-5xl md:text-7xl">
+        <p className="mt-6 font-display text-2xl tracking-[0.15em] text-gold sm:text-5xl sm:tracking-[0.2em] md:text-7xl">
           MORE THAN FITNESS.
           <br /> IT'S A LIFESTYLE.
         </p>
