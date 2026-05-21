@@ -37,19 +37,43 @@ function NutritionTab() {
     setLoading(true);
     setPlan("");
     try {
-      const messages = [
-        {
-          role: "user" as const,
-          content: `Build a 1-day premium meal plan for a ${ext.age ?? 30}yo, ${ext.weight_kg ?? 75}kg, ${ext.height_cm ?? 175}cm ${ext.training_level ?? "intermediate"} athlete focused on "${ext.fitness_goal ?? "lean muscle"}". Targets: ${targets?.kcal} kcal, P${targets?.protein}g / C${targets?.carbs}g / F${targets?.fat}g. Return 4 meals with macro breakdown and a short shopping list. Markdown.`,
-        },
-      ];
+      const messages = [{
+        role: "user" as const,
+        content: `Build a 1-day premium meal plan for a ${ext.age ?? 30}yo, ${ext.weight_kg ?? 75}kg, ${ext.height_cm ?? 175}cm ${ext.training_level ?? "intermediate"} athlete focused on "${ext.fitness_goal ?? "lean muscle"}". Targets: ${targets?.kcal} kcal, P${targets?.protein}g / C${targets?.carbs}g / F${targets?.fat}g. Return 4 meals with macro breakdown and a short shopping list. Use markdown.`,
+      }];
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages }),
       });
-      const json = await res.json();
-      setPlan(json.content ?? json.message ?? "No response");
+      if (!res.ok || !res.body) {
+        toast.error("Could not generate plan");
+        setLoading(false);
+        return;
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let acc = "";
+      let done = false;
+      while (!done) {
+        const { done: d, value } = await reader.read();
+        if (d) break;
+        buffer += decoder.decode(value, { stream: true });
+        let nl: number;
+        while ((nl = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, nl);
+          buffer = buffer.slice(nl + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (!line.startsWith("data: ")) continue;
+          const json = line.slice(6).trim();
+          if (json === "[DONE]") { done = true; break; }
+          try {
+            const c = JSON.parse(json).choices?.[0]?.delta?.content as string | undefined;
+            if (c) { acc += c; setPlan(acc); }
+          } catch { buffer = line + "\n" + buffer; break; }
+        }
+      }
     } catch (e: any) {
       toast.error(e.message ?? "Failed to generate");
     } finally {
