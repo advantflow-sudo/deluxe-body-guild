@@ -52,6 +52,14 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  to="/app"
+                  className="text-sm font-medium text-gold transition hover:text-gold/80"
+                >
+                  Dashboard →
+                </Link>
+              </li>
             </ul>
           </div>
 
