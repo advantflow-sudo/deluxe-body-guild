@@ -184,8 +184,8 @@ function Mission() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 inline-block border border-gold/40 px-10 py-6">
-          <p className="font-display text-2xl tracking-[0.25em] text-gold sm:text-3xl">
+        <div className="mx-auto mt-14 inline-block max-w-full border border-gold/40 px-5 py-5 sm:px-10 sm:py-6">
+          <p className="font-display text-base tracking-[0.18em] text-gold sm:text-2xl sm:tracking-[0.25em] md:text-3xl">
             DISCIPLINE. TRANSFORM. BECOME DELUXE.
           </p>
         </div>
