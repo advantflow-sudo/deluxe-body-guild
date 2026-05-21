@@ -30,6 +30,7 @@ import workout1 from "@/assets/workout-1.jpg";
 import workout2 from "@/assets/workout-2.jpg";
 import workout3 from "@/assets/workout-3.jpg";
 import communityImg from "@/assets/community.jpg";
+import { Reveal } from "@/components/deluxe/Reveal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -80,54 +81,62 @@ function Hero() {
         height={1280}
         className="absolute inset-0 h-full w-full object-cover opacity-40"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-deluxe-black/70 via-deluxe-black/60 to-deluxe-black" />
+      <div className="absolute inset-0 bg-gradient-to-b from-deluxe-black/75 via-deluxe-black/60 to-deluxe-black" />
       <div className="gold-glow absolute inset-x-0 bottom-0 h-[60%]" />
+      <span className="gold-orb left-[-10%] top-[10%] h-[420px] w-[420px]" />
+      <span className="gold-orb gold-orb-slow right-[-8%] top-[30%] h-[520px] w-[520px]" />
 
       <div className="relative mx-auto flex min-h-[92vh] max-w-7xl flex-col items-center justify-center px-6 py-24 text-center">
-        <SectionLabel>Welcome to the future of fitness</SectionLabel>
-        <h1 className="mt-6 font-display text-6xl leading-[0.95] tracking-tight sm:text-7xl md:text-8xl lg:text-9xl">
-          TRANSFORM
-          <br />
-          YOUR BODY.
-          <br />
-          <span className="text-gold">ELEVATE YOUR LIFE.</span>
-        </h1>
-        <div className="mt-8">
-          <GoldDivider />
-        </div>
-        <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-          More than fitness. More than motivation. This is a lifestyle built on
-          discipline, elevation, and transformation — for people who demand more
-          from themselves.
-        </p>
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <GoldButton>
-            Start Your Journey <ArrowRight className="h-4 w-4" />
-          </GoldButton>
-          <OutlineButton>
-            <Play className="h-3.5 w-3.5" /> Watch the Story
-          </OutlineButton>
-        </div>
+        <Reveal>
+          <SectionLabel>Welcome to the future of fitness</SectionLabel>
+        </Reveal>
+        <Reveal delay={120}>
+          <h1 className="mt-6 font-display text-6xl leading-[0.95] tracking-tight sm:text-7xl md:text-8xl lg:text-9xl">
+            TRANSFORM
+            <br />
+            YOUR BODY.
+            <br />
+            <span className="text-gold-shimmer">ELEVATE YOUR LIFE.</span>
+          </h1>
+        </Reveal>
+        <Reveal delay={240}>
+          <div className="mt-8 flex justify-center">
+            <GoldDivider />
+          </div>
+          <p className="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+            More than fitness. More than motivation. This is a lifestyle built on
+            discipline, elevation, and transformation — for people who demand more
+            from themselves.
+          </p>
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <GoldButton>
+              Start Your Journey <ArrowRight className="h-4 w-4" />
+            </GoldButton>
+            <OutlineButton>
+              <Play className="h-3.5 w-3.5" /> Watch the Story
+            </OutlineButton>
+          </div>
+        </Reveal>
 
-        <div className="mt-16 flex items-center gap-8 text-center sm:gap-14">
-          {[
-            ["50K+", "Members"],
-            ["500+", "Workouts"],
-            ["4.9★", "App Rating"],
-          ].map(([v, l], i) => (
-            <div key={l} className="flex items-center gap-8 sm:gap-14">
-              <div>
-                <div className="font-display text-3xl text-gold sm:text-4xl">
-                  {v}
+        <Reveal delay={360}>
+          <div className="mt-16 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14">
+            {[
+              ["50K+", "Members"],
+              ["500+", "Workouts"],
+              ["4.9★", "App Rating"],
+            ].map(([v, l], i, arr) => (
+              <div key={l} className="flex items-center gap-x-10 sm:gap-x-14">
+                <div className="text-center">
+                  <div className="font-display text-3xl text-gold sm:text-4xl">{v}</div>
+                  <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                    {l}
+                  </div>
                 </div>
-                <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                  {l}
-                </div>
+                {i < arr.length - 1 && <span className="hidden h-10 w-px bg-gold/30 sm:block" />}
               </div>
-              {i < 2 && <span className="h-10 w-px bg-gold/30" />}
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </Reveal>
       </div>
     </section>
   );
