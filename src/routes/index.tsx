@@ -16,6 +16,10 @@ import {
   Star,
   Quote,
   Apple as AppleIcon,
+  Trophy,
+  Medal,
+  Crown,
+  Zap,
 } from "lucide-react";
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
@@ -62,7 +66,9 @@ function HomePage() {
       <WhyDeluxe />
       <AppPreview />
       <Community />
+      <Rewards />
       <Reviews />
+      <TransformationGallery />
       <TaglineCascade />
       <FinalCta />
       <Footer />
@@ -393,6 +399,130 @@ function TaglineCascade() {
           MORE THAN FITNESS.
           <br /> IT'S A LIFESTYLE.
         </p>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- Rewards ---------------- */
+function Rewards() {
+  const tiers = [
+    {
+      Icon: Medal,
+      name: "Bronze",
+      threshold: "10 workouts",
+      perk: "Members-only workout drops & badge.",
+    },
+    {
+      Icon: Trophy,
+      name: "Gold",
+      threshold: "50 workouts",
+      perk: "AI Coach priority, gear discounts, leaderboard placement.",
+      featured: true,
+    },
+    {
+      Icon: Crown,
+      name: "Deluxe",
+      threshold: "200 workouts",
+      perk: "1:1 quarterly review, exclusive retreats, lifetime status.",
+    },
+  ];
+  return (
+    <section className="border-y border-gold/15 bg-deluxe-black py-28">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="text-center">
+          <SectionLabel>Rewards System</SectionLabel>
+          <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+            DISCIPLINE <span className="text-gold">PAYS.</span>
+          </h2>
+          <div className="mt-6 flex justify-center">
+            <GoldDivider />
+          </div>
+          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
+            Every session, streak and milestone unlocks tangible benefits. The
+            more you show up, the more Deluxe gives back.
+          </p>
+        </div>
+
+        <div className="mt-16 grid gap-6 md:grid-cols-3">
+          {tiers.map(({ Icon, name, threshold, perk, featured }) => (
+            <div
+              key={name}
+              className={`luxury-card relative p-8 transition ${
+                featured
+                  ? "border-gold/60 shadow-[0_30px_60px_-30px_rgba(212,175,55,0.45)]"
+                  : "hover:border-gold/40"
+              }`}
+            >
+              {featured && (
+                <span className="absolute right-6 top-6 border border-gold/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
+                  Most Earned
+                </span>
+              )}
+              <Icon className="h-9 w-9 text-gold" strokeWidth={1.5} />
+              <h3 className="mt-6 font-display text-3xl tracking-[0.15em] text-foreground">
+                {name.toUpperCase()}
+              </h3>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                {threshold}
+              </p>
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+                {perk}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- Transformation Gallery ---------------- */
+function TransformationGallery() {
+  const stories = [
+    { img: workout1, name: "Marcus T.", stat: "-18kg · 6 months" },
+    { img: workout2, name: "Sofia L.", stat: "+8kg lean · 9 months" },
+    { img: workout3, name: "Daniel K.", stat: "-22kg · 1 year" },
+    { img: communityImg, name: "Priya A.", stat: "First marathon · 8 months" },
+  ];
+  return (
+    <section className="bg-deluxe-dark py-28">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="text-center">
+          <SectionLabel>Transformation Gallery</SectionLabel>
+          <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+            REAL MEMBERS. <span className="text-gold">REAL RESULTS.</span>
+          </h2>
+          <div className="mt-6 flex justify-center">
+            <GoldDivider />
+          </div>
+        </div>
+
+        <div className="mt-16 grid grid-cols-2 gap-5 md:grid-cols-4">
+          {stories.map(({ img, name, stat }) => (
+            <figure key={name} className="group relative overflow-hidden border border-gold/15">
+              <div className="aspect-[3/4] overflow-hidden bg-deluxe-card">
+                <img
+                  src={img}
+                  alt={`${name} transformation`}
+                  loading="lazy"
+                  className="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                />
+              </div>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deluxe-black via-deluxe-black/70 to-transparent p-4">
+                <div className="flex items-center gap-2 text-gold">
+                  <Zap className="h-3.5 w-3.5" />
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.25em]">
+                    {stat}
+                  </span>
+                </div>
+                <figcaption className="mt-1 font-display text-lg tracking-wide text-foreground">
+                  {name.toUpperCase()}
+                </figcaption>
+              </div>
+            </figure>
+          ))}
+        </div>
       </div>
     </section>
   );
