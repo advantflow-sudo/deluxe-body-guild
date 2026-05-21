@@ -21,7 +21,14 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
+import { Route as AuthenticatedAppWorkoutsRouteImport } from './routes/_authenticated/app/workouts'
+import { Route as AuthenticatedAppRewardsRouteImport } from './routes/_authenticated/app/rewards'
+import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/app/progress'
+import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authenticated/app/profile'
 
 const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
   id: '/what-we-offer',
@@ -82,10 +89,47 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppWorkoutsRoute =
+  AuthenticatedAppWorkoutsRouteImport.update({
+    id: '/workouts',
+    path: '/workouts',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppRewardsRoute = AuthenticatedAppRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppProgressRoute =
+  AuthenticatedAppProgressRouteImport.update({
+    id: '/progress',
+    path: '/progress',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppProfileRoute = AuthenticatedAppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedAppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -99,8 +143,15 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
+  '/app': typeof AuthenticatedAppRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
+  '/app/profile': typeof AuthenticatedAppProfileRoute
+  '/app/progress': typeof AuthenticatedAppProgressRoute
+  '/app/rewards': typeof AuthenticatedAppRewardsRoute
+  '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
+  '/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -114,7 +165,13 @@ export interface FileRoutesByTo {
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
+  '/app/profile': typeof AuthenticatedAppProfileRoute
+  '/app/progress': typeof AuthenticatedAppProgressRoute
+  '/app/rewards': typeof AuthenticatedAppRewardsRoute
+  '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
+  '/app': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -129,8 +186,15 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
+  '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
+  '/_authenticated/app/profile': typeof AuthenticatedAppProfileRoute
+  '/_authenticated/app/progress': typeof AuthenticatedAppProgressRoute
+  '/_authenticated/app/rewards': typeof AuthenticatedAppRewardsRoute
+  '/_authenticated/app/workouts': typeof AuthenticatedAppWorkoutsRoute
+  '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -145,8 +209,15 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/wellbeing'
     | '/what-we-offer'
+    | '/app'
     | '/dashboard'
+    | '/onboarding'
     | '/api/chat'
+    | '/app/profile'
+    | '/app/progress'
+    | '/app/rewards'
+    | '/app/workouts'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -160,7 +231,13 @@ export interface FileRouteTypes {
     | '/wellbeing'
     | '/what-we-offer'
     | '/dashboard'
+    | '/onboarding'
     | '/api/chat'
+    | '/app/profile'
+    | '/app/progress'
+    | '/app/rewards'
+    | '/app/workouts'
+    | '/app'
   id:
     | '__root__'
     | '/'
@@ -174,8 +251,15 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/wellbeing'
     | '/what-we-offer'
+    | '/_authenticated/app'
     | '/_authenticated/dashboard'
+    | '/_authenticated/onboarding'
     | '/api/chat'
+    | '/_authenticated/app/profile'
+    | '/_authenticated/app/progress'
+    | '/_authenticated/app/rewards'
+    | '/_authenticated/app/workouts'
+    | '/_authenticated/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -279,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -286,15 +377,80 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/app': {
+      id: '/_authenticated/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthenticatedAppRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/': {
+      id: '/_authenticated/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/workouts': {
+      id: '/_authenticated/app/workouts'
+      path: '/workouts'
+      fullPath: '/app/workouts'
+      preLoaderRoute: typeof AuthenticatedAppWorkoutsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/rewards': {
+      id: '/_authenticated/app/rewards'
+      path: '/rewards'
+      fullPath: '/app/rewards'
+      preLoaderRoute: typeof AuthenticatedAppRewardsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/progress': {
+      id: '/_authenticated/app/progress'
+      path: '/progress'
+      fullPath: '/app/progress'
+      preLoaderRoute: typeof AuthenticatedAppProgressRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/profile': {
+      id: '/_authenticated/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AuthenticatedAppProfileRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
   }
 }
 
+interface AuthenticatedAppRouteChildren {
+  AuthenticatedAppProfileRoute: typeof AuthenticatedAppProfileRoute
+  AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
+  AuthenticatedAppRewardsRoute: typeof AuthenticatedAppRewardsRoute
+  AuthenticatedAppWorkoutsRoute: typeof AuthenticatedAppWorkoutsRoute
+  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+}
+
+const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
+  AuthenticatedAppProfileRoute: AuthenticatedAppProfileRoute,
+  AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
+  AuthenticatedAppRewardsRoute: AuthenticatedAppRewardsRoute,
+  AuthenticatedAppWorkoutsRoute: AuthenticatedAppWorkoutsRoute,
+  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+}
+
+const AuthenticatedAppRouteWithChildren =
+  AuthenticatedAppRoute._addFileChildren(AuthenticatedAppRouteChildren)
+
 interface AuthenticatedRouteChildren {
+  AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
