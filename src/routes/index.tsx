@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Dumbbell,
   UtensilsCrossed,
@@ -109,12 +109,16 @@ function Hero() {
             from themselves.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <GoldButton>
-              Start Your Journey <ArrowRight className="h-4 w-4" />
-            </GoldButton>
-            <OutlineButton>
-              <Play className="h-3.5 w-3.5" /> Watch the Story
-            </OutlineButton>
+            <Link to="/login">
+              <GoldButton>
+                Start Your Journey <ArrowRight className="h-4 w-4" />
+              </GoldButton>
+            </Link>
+            <Link to="/about">
+              <OutlineButton>
+                <Play className="h-3.5 w-3.5" /> Watch the Story
+              </OutlineButton>
+            </Link>
           </div>
         </Reveal>
 
@@ -412,12 +416,16 @@ function FinalCta() {
           Join 50,000+ members already on their journey.
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <GoldButton>
-            <AppleIcon className="h-4 w-4" /> Download on iOS
-          </GoldButton>
-          <GoldButton>
-            <Play className="h-4 w-4" /> Get it on Android
-          </GoldButton>
+          <Link to="/login">
+            <GoldButton>
+              <AppleIcon className="h-4 w-4" /> Download on iOS
+            </GoldButton>
+          </Link>
+          <Link to="/login">
+            <GoldButton>
+              <Play className="h-4 w-4" /> Get it on Android
+            </GoldButton>
+          </Link>
         </div>
         <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
           Free to download · Premium plans available

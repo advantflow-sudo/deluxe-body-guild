@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Brain, Dumbbell, Activity, Timer, Flame, Target } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton } from "@/components/deluxe/ui";
@@ -83,9 +83,11 @@ function Page() {
               ))}
             </ul>
             <div className="mt-10">
-              <GoldButton>
-                <Brain className="h-4 w-4" /> Try the AI Coach
-              </GoldButton>
+              <Link to="/coach">
+                <GoldButton>
+                  <Brain className="h-4 w-4" /> Try the AI Coach
+                </GoldButton>
+              </Link>
             </div>
           </div>
           <div className="luxury-card aspect-[4/5] overflow-hidden">
