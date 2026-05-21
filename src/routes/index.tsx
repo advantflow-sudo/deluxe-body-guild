@@ -10,13 +10,15 @@ import {
   Award,
   Activity,
   Heart,
-  Instagram,
-  Apple as AppleIcon,
   Play,
   ArrowRight,
   Flame,
+  Star,
+  Quote,
+  Apple as AppleIcon,
 } from "lucide-react";
-import { Logo } from "@/components/deluxe/Logo";
+import { Header } from "@/components/deluxe/Header";
+import { Footer } from "@/components/deluxe/Footer";
 import {
   GoldButton,
   OutlineButton,
@@ -52,40 +54,18 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <div className="min-h-screen bg-deluxe-black text-foreground">
-      <Nav />
+      <Header />
       <Hero />
       <Mission />
       <FeatureIcons />
       <WhyDeluxe />
       <AppPreview />
       <Community />
+      <Reviews />
       <TaglineCascade />
       <FinalCta />
       <Footer />
     </div>
-  );
-}
-
-/* ---------------- Nav ---------------- */
-function Nav() {
-  return (
-    <header className="sticky top-0 z-50 border-b border-gold/15 bg-deluxe-black/85 backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Logo />
-        <nav className="hidden items-center gap-10 md:flex">
-          {["Home", "Workouts", "Community", "Pricing"].map((l) => (
-            <a
-              key={l}
-              href="#"
-              className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground transition hover:text-gold"
-            >
-              {l}
-            </a>
-          ))}
-        </nav>
-        <GoldButton className="hidden md:inline-flex">Download App</GoldButton>
-      </div>
-    </header>
   );
 }
 
@@ -438,27 +418,61 @@ function FinalCta() {
   );
 }
 
-/* ---------------- Footer ---------------- */
-function Footer() {
+/* ---------------- Reviews ---------------- */
+function Reviews() {
+  const reviews = [
+    {
+      name: "Alexandra J.",
+      role: "Member · 14 months",
+      body: "I've tried every fitness app out there. Nothing has made me show up like Deluxe. The community alone is worth it.",
+    },
+    {
+      name: "James O.",
+      role: "Member · 8 months",
+      body: "Down 12kg, up two suit sizes in the shoulders. The AI coach actually feels like a real PT.",
+    },
+    {
+      name: "Maya R.",
+      role: "Member · 2 years",
+      body: "It stopped feeling like an app and started feeling like a lifestyle. Genuinely changed how I move through my day.",
+    },
+  ];
   return (
-    <footer className="bg-deluxe-black py-12">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
-        <Logo showTag={false} />
-        <p className="text-xs tracking-wider text-muted-foreground">
-          © 2026 Deluxe Fitness. All rights reserved.
-        </p>
-        <div className="flex items-center gap-5 text-gold">
-          <a href="#" aria-label="Instagram" className="hover:text-gold-light">
-            <Instagram className="h-4 w-4" />
-          </a>
-          <a href="#" aria-label="TikTok" className="hover:text-gold-light">
-            <Play className="h-4 w-4" />
-          </a>
-          <a href="#" aria-label="X" className="hover:text-gold-light">
-            <Sparkles className="h-4 w-4" />
-          </a>
+    <section className="bg-deluxe-black py-28">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="text-center">
+          <SectionLabel>Reviews &amp; Referrals</SectionLabel>
+          <h2 className="mt-6 font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+            STORIES FROM <span className="text-gold">THE FLOOR.</span>
+          </h2>
+          <div className="mt-6 flex justify-center">
+            <GoldDivider />
+          </div>
+        </div>
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
+          {reviews.map((r) => (
+            <figure key={r.name} className="luxury-card p-8">
+              <Quote className="h-6 w-6 text-gold" strokeWidth={1.5} />
+              <blockquote className="mt-5 text-base leading-relaxed text-foreground/90">
+                "{r.body}"
+              </blockquote>
+              <div className="mt-6 flex items-center justify-between border-t border-gold/10 pt-5">
+                <figcaption>
+                  <div className="font-display text-lg tracking-wide text-foreground">
+                    {r.name.toUpperCase()}
+                  </div>
+                  <div className="text-xs text-muted-foreground">{r.role}</div>
+                </figcaption>
+                <div className="flex gap-0.5 text-gold">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-gold" />
+                  ))}
+                </div>
+              </div>
+            </figure>
+          ))}
         </div>
       </div>
-    </footer>
+    </section>
   );
 }
