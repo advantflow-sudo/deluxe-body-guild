@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
@@ -36,7 +36,7 @@ function Page() {
   const [status, setStatus] = useState<null | "ok" | "err">(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const parsed = schema.safeParse(Object.fromEntries(fd));
