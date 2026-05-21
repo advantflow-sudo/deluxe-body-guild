@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Send, Sparkles, User } from "lucide-react";
 import { toast } from "sonner";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
 import { SectionLabel } from "@/components/deluxe/ui";
@@ -154,13 +156,27 @@ function CoachPage() {
                 </div>
               )}
               <div
-                className={`max-w-[80%] whitespace-pre-wrap px-4 py-3 text-sm leading-relaxed ${
+                className={`max-w-[85%] px-4 py-3 text-sm leading-relaxed ${
                   m.role === "user"
-                    ? "bg-gold-gradient text-deluxe-black"
+                    ? "bg-gold-gradient font-medium text-deluxe-black"
                     : "border border-gold/15 bg-deluxe-black/60 text-foreground"
                 }`}
               >
-                {m.content || (loading ? <span className="opacity-60">…</span> : null)}
+                {m.role === "assistant" ? (
+                  m.content ? (
+                    <div className="prose-deluxe">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <span className="inline-flex gap-1">
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gold [animation-delay:-0.3s]" />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gold [animation-delay:-0.15s]" />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-gold" />
+                    </span>
+                  )
+                ) : (
+                  <span className="whitespace-pre-wrap">{m.content}</span>
+                )}
               </div>
               {m.role === "user" && (
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center border border-gold/40 bg-deluxe-black">
