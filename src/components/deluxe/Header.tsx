@@ -11,6 +11,7 @@ export const NAV_LINKS = [
   { to: "/fitness", label: "Fitness & Workouts" },
   { to: "/wellbeing", label: "Wellbeing" },
   { to: "/coach", label: "AI Coach" },
+  { to: "/pricing", label: "Pricing" },
   { to: "/about", label: "About Us" },
   { to: "/gallery", label: "Gallery" },
   { to: "/contact", label: "Contact" },
