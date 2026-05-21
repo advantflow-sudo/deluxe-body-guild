@@ -2,7 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Logo } from "./Logo";
-import { GoldButton } from "./ui";
+import { GoldButton, OutlineButton } from "./ui";
+import { useAuth } from "@/hooks/useAuth";
 
 export const NAV_LINKS = [
   { to: "/", label: "Home" },
@@ -16,6 +17,7 @@ export const NAV_LINKS = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const { session } = useAuth();
   return (
     <header className="sticky top-0 z-50 border-b border-gold/15 bg-deluxe-black/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -35,8 +37,15 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="hidden lg:block">
-          <GoldButton>Book Now</GoldButton>
+        <div className="hidden items-center gap-3 lg:flex">
+          {session ? (
+            <Link to="/dashboard"><GoldButton>Dashboard</GoldButton></Link>
+          ) : (
+            <>
+              <Link to="/login"><OutlineButton>Sign In</OutlineButton></Link>
+              <Link to="/login"><GoldButton>Join</GoldButton></Link>
+            </>
+          )}
         </div>
         <button
           aria-label="Toggle menu"
@@ -60,8 +69,21 @@ export function Header() {
                 {l.label}
               </Link>
             ))}
-            <div className="pt-4">
-              <GoldButton className="w-full">Book Now</GoldButton>
+            <div className="space-y-3 pt-4">
+              {session ? (
+                <Link to="/dashboard" onClick={() => setOpen(false)}>
+                  <GoldButton className="w-full">Dashboard</GoldButton>
+                </Link>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setOpen(false)}>
+                    <OutlineButton className="w-full">Sign In</OutlineButton>
+                  </Link>
+                  <Link to="/login" onClick={() => setOpen(false)}>
+                    <GoldButton className="w-full">Join</GoldButton>
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </div>

@@ -1,0 +1,177 @@
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
+import { useAuth } from "@/hooks/useAuth";
+import { Logo } from "@/components/deluxe/Logo";
+import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
+
+export const Route = createFileRoute("/login")({
+  head: () => ({
+    meta: [
+      { title: "Sign In — Deluxe Fitness" },
+      { name: "description", content: "Sign in to your Deluxe Fitness member account." },
+    ],
+  }),
+  component: LoginPage,
+});
+
+function LoginPage() {
+  const navigate = useNavigate();
+  const { session } = useAuth();
+  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (session) navigate({ to: "/dashboard" });
+  }, [session, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { display_name: displayName || email.split("@")[0] },
+          },
+        });
+        if (error) throw error;
+        toast.success("Welcome to Deluxe Fitness.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast.success("Welcome back.");
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Authentication failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setBusy(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast.error(result.error.message ?? "Google sign-in failed");
+        setBusy(false);
+      }
+      // If redirected or session set, navigation happens via auth listener
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Google sign-in failed");
+      setBusy(false);
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-deluxe-black px-4 py-12">
+      <div className="mx-auto flex max-w-md flex-col items-center">
+        <Link to="/" className="mb-10">
+          <Logo />
+        </Link>
+        <div className="w-full border border-gold/20 bg-deluxe-forest/30 p-8 backdrop-blur-sm">
+          <SectionLabel>{mode === "login" ? "Member Sign In" : "Join Deluxe"}</SectionLabel>
+          <h1 className="mt-3 font-display text-3xl text-foreground">
+            {mode === "login" ? "Welcome back." : "Begin your transformation."}
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {mode === "login"
+              ? "Sign in to access your dashboard, programs, and community."
+              : "Create your account and unlock the Deluxe Fitness lifestyle."}
+          </p>
+
+          <button
+            type="button"
+            onClick={handleGoogle}
+            disabled={busy}
+            className="mt-6 flex w-full items-center justify-center gap-3 border border-gold/40 bg-transparent px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-gold/10 disabled:opacity-50"
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden>
+              <path fill="#fff" d="M21.35 11.1H12v3.2h5.35c-.23 1.4-1.65 4.1-5.35 4.1-3.2 0-5.85-2.7-5.85-6s2.65-6 5.85-6c1.85 0 3.05.8 3.75 1.45l2.55-2.45C16.95 3.85 14.7 3 12 3 6.85 3 2.7 7.15 2.7 12.3S6.85 21.6 12 21.6c6.95 0 9.3-4.85 9.3-7.4 0-.5-.05-.85-.1-1.1z"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div className="my-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            <span className="h-px flex-1 bg-gold/15" /> or <span className="h-px flex-1 bg-gold/15" />
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {mode === "signup" && (
+              <div>
+                <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                  Display Name
+                </label>
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="mt-2 w-full border border-gold/20 bg-deluxe-black px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none"
+                  placeholder="Your name"
+                />
+              </div>
+            )}
+            <div>
+              <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Email
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-2 w-full border border-gold/20 bg-deluxe-black px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                Password
+              </label>
+              <input
+                type="password"
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-2 w-full border border-gold/20 bg-deluxe-black px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none"
+                placeholder="••••••••"
+              />
+            </div>
+            <GoldButton type="submit" disabled={busy} className="w-full">
+              {busy ? "Please wait…" : mode === "login" ? "Sign In" : "Create Account"}
+            </GoldButton>
+          </form>
+
+          <button
+            type="button"
+            onClick={() => setMode(mode === "login" ? "signup" : "login")}
+            className="mt-6 w-full text-center text-xs text-muted-foreground hover:text-gold"
+          >
+            {mode === "login"
+              ? "New here? Create an account →"
+              : "Already a member? Sign in →"}
+          </button>
+        </div>
+
+        <Link
+          to="/"
+          className="mt-6 text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground hover:text-gold"
+        >
+          ← Back to home
+        </Link>
+      </div>
+    </main>
+  );
+}
