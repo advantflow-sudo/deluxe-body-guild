@@ -45,7 +45,7 @@ export function Header() {
         </nav>
         <div className="hidden items-center gap-3 xl:flex">
           {session ? (
-            <Link to="/dashboard"><GoldButton>Dashboard</GoldButton></Link>
+            <Link to="/app"><GoldButton>Dashboard</GoldButton></Link>
           ) : (
             <>
               <Link
@@ -82,7 +82,7 @@ export function Header() {
             ))}
             <div className="space-y-3 pt-4">
               {session ? (
-                <Link to="/dashboard" onClick={() => setOpen(false)}>
+                <Link to="/app" onClick={() => setOpen(false)}>
                   <GoldButton className="w-full">Dashboard</GoldButton>
                 </Link>
               ) : (

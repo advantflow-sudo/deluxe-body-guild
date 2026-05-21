@@ -27,7 +27,7 @@ function LoginPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (session) navigate({ to: "/dashboard" });
+    if (session) navigate({ to: "/app" });
   }, [session, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,7 +82,7 @@ function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: window.location.origin + "/dashboard" },
+        options: { emailRedirectTo: window.location.origin + "/app" },
       });
       if (error) throw error;
       toast.success("Magic link sent. Check your inbox.");
