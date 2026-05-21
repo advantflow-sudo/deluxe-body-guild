@@ -16,6 +16,10 @@ import {
   Star,
   Quote,
   Apple as AppleIcon,
+  Trophy,
+  Medal,
+  Crown,
+  Zap,
 } from "lucide-react";
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
@@ -62,7 +66,9 @@ function HomePage() {
       <WhyDeluxe />
       <AppPreview />
       <Community />
+      <Rewards />
       <Reviews />
+      <TransformationGallery />
       <TaglineCascade />
       <FinalCta />
       <Footer />
