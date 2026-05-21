@@ -32,6 +32,7 @@ import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authenticated/app/profile'
 import { Route as AuthenticatedAppNutritionRouteImport } from './routes/_authenticated/app/nutrition'
 import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authenticated/app/community'
+import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/app/coach'
 import { Route as AuthenticatedAppUUserIdRouteImport } from './routes/_authenticated/app/u.$userId'
 
 const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
@@ -152,6 +153,11 @@ const AuthenticatedAppCommunityRoute =
     path: '/community',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppCoachRoute = AuthenticatedAppCoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppUUserIdRoute = AuthenticatedAppUUserIdRouteImport.update({
   id: '/u/$userId',
   path: '/u/$userId',
@@ -174,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
+  '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
   '/app/nutrition': typeof AuthenticatedAppNutritionRoute
   '/app/profile': typeof AuthenticatedAppProfileRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
+  '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
   '/app/nutrition': typeof AuthenticatedAppNutritionRoute
   '/app/profile': typeof AuthenticatedAppProfileRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
+  '/_authenticated/app/coach': typeof AuthenticatedAppCoachRoute
   '/_authenticated/app/community': typeof AuthenticatedAppCommunityRoute
   '/_authenticated/app/nutrition': typeof AuthenticatedAppNutritionRoute
   '/_authenticated/app/profile': typeof AuthenticatedAppProfileRoute
@@ -252,6 +261,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/onboarding'
     | '/api/chat'
+    | '/app/coach'
     | '/app/community'
     | '/app/nutrition'
     | '/app/profile'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/onboarding'
     | '/api/chat'
+    | '/app/coach'
     | '/app/community'
     | '/app/nutrition'
     | '/app/profile'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/api/chat'
+    | '/_authenticated/app/coach'
     | '/_authenticated/app/community'
     | '/_authenticated/app/nutrition'
     | '/_authenticated/app/profile'
@@ -490,6 +502,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppCommunityRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/coach': {
+      id: '/_authenticated/app/coach'
+      path: '/coach'
+      fullPath: '/app/coach'
+      preLoaderRoute: typeof AuthenticatedAppCoachRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/u/$userId': {
       id: '/_authenticated/app/u/$userId'
       path: '/u/$userId'
@@ -501,6 +520,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAppRouteChildren {
+  AuthenticatedAppCoachRoute: typeof AuthenticatedAppCoachRoute
   AuthenticatedAppCommunityRoute: typeof AuthenticatedAppCommunityRoute
   AuthenticatedAppNutritionRoute: typeof AuthenticatedAppNutritionRoute
   AuthenticatedAppProfileRoute: typeof AuthenticatedAppProfileRoute
@@ -512,6 +532,7 @@ interface AuthenticatedAppRouteChildren {
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
+  AuthenticatedAppCoachRoute: AuthenticatedAppCoachRoute,
   AuthenticatedAppCommunityRoute: AuthenticatedAppCommunityRoute,
   AuthenticatedAppNutritionRoute: AuthenticatedAppNutritionRoute,
   AuthenticatedAppProfileRoute: AuthenticatedAppProfileRoute,
@@ -560,3 +581,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
