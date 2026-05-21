@@ -57,19 +57,38 @@ function LoginPage() {
     }
   };
 
-  const handleGoogle = async () => {
+  const handleOAuth = async (provider: "google" | "apple") => {
     setBusy(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
+      const result = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: window.location.origin,
       });
       if (result.error) {
-        toast.error(result.error.message ?? "Google sign-in failed");
+        toast.error(result.error.message ?? `${provider} sign-in failed`);
         setBusy(false);
       }
-      // If redirected or session set, navigation happens via auth listener
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Google sign-in failed");
+      toast.error(err instanceof Error ? err.message : `${provider} sign-in failed`);
+      setBusy(false);
+    }
+  };
+
+  const handleMagicLink = async () => {
+    if (!email) {
+      toast.error("Enter your email to receive a magic link.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.origin + "/dashboard" },
+      });
+      if (error) throw error;
+      toast.success("Magic link sent. Check your inbox.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send magic link");
+    } finally {
       setBusy(false);
     }
   };
@@ -91,20 +110,45 @@ function LoginPage() {
               : "Create your account and unlock the Deluxe Fitness lifestyle."}
           </p>
 
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => handleOAuth("google")}
+              disabled={busy}
+              className="group flex items-center justify-center gap-2 border border-gold/30 bg-transparent px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition hover:border-gold hover:bg-gold/10 disabled:opacity-50"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden>
+                <path fill="#fff" d="M21.35 11.1H12v3.2h5.35c-.23 1.4-1.65 4.1-5.35 4.1-3.2 0-5.85-2.7-5.85-6s2.65-6 5.85-6c1.85 0 3.05.8 3.75 1.45l2.55-2.45C16.95 3.85 14.7 3 12 3 6.85 3 2.7 7.15 2.7 12.3S6.85 21.6 12 21.6c6.95 0 9.3-4.85 9.3-7.4 0-.5-.05-.85-.1-1.1z"/>
+              </svg>
+              Google
+            </button>
+            <button
+              type="button"
+              onClick={() => handleOAuth("apple")}
+              disabled={busy}
+              className="group flex items-center justify-center gap-2 border border-gold/30 bg-transparent px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition hover:border-gold hover:bg-gold/10 disabled:opacity-50"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden fill="currentColor">
+                <path d="M16.365 1.43c0 1.14-.42 2.23-1.18 3.06-.78.86-2.06 1.53-3.12 1.45-.13-1.1.42-2.27 1.13-3.04.79-.86 2.13-1.49 3.17-1.47zM20.5 17.5c-.55 1.26-.81 1.82-1.52 2.93-.99 1.55-2.38 3.48-4.1 3.49-1.53.02-1.92-1-3.99-.99-2.07.01-2.5 1.01-4.03.99-1.72-.02-3.04-1.76-4.03-3.31C.04 16.97-.27 11.86 1.7 9.15c1.4-1.92 3.6-3.05 5.68-3.05 2.11 0 3.44 1.16 5.19 1.16 1.69 0 2.72-1.16 5.16-1.16 1.84 0 3.8.99 5.19 2.71-4.57 2.5-3.82 9.04-2.42 8.69z"/>
+              </svg>
+              Apple
+            </button>
+          </div>
+
           <button
             type="button"
-            onClick={handleGoogle}
+            onClick={handleMagicLink}
             disabled={busy}
-            className="mt-6 flex w-full items-center justify-center gap-3 border border-gold/40 bg-transparent px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-gold/10 disabled:opacity-50"
+            className="mt-3 flex w-full items-center justify-center gap-2 border border-gold/30 bg-gold/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-gold transition hover:bg-gold/15 disabled:opacity-50"
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden>
-              <path fill="#fff" d="M21.35 11.1H12v3.2h5.35c-.23 1.4-1.65 4.1-5.35 4.1-3.2 0-5.85-2.7-5.85-6s2.65-6 5.85-6c1.85 0 3.05.8 3.75 1.45l2.55-2.45C16.95 3.85 14.7 3 12 3 6.85 3 2.7 7.15 2.7 12.3S6.85 21.6 12 21.6c6.95 0 9.3-4.85 9.3-7.4 0-.5-.05-.85-.1-1.1z"/>
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2 19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2 11 5"/>
             </svg>
-            Continue with Google
+            Email me a magic link
           </button>
 
           <div className="my-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-            <span className="h-px flex-1 bg-gold/15" /> or <span className="h-px flex-1 bg-gold/15" />
+            <span className="h-px flex-1 bg-gold/15" /> or password <span className="h-px flex-1 bg-gold/15" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
