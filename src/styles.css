@@ -56,37 +56,37 @@
 :root {
   --radius: 4px;
 
-  /* Brand */
-  --gold: #d4af37;
-  --gold-light: #f5e07b;
-  --gold-dark: #a8892a;
-  --deluxe-black: #0d0d0d;
-  --deluxe-dark: #111111;
-  --deluxe-surface: #141414;
-  --deluxe-card: #1a1a1a;
-  --deluxe-border: rgba(212, 175, 55, 0.18);
+  /* Brand — Dark Matte Emerald (token name kept as `gold` for code stability) */
+  --gold: #1f6f4a;
+  --gold-light: #2e8b5c;
+  --gold-dark: #103a2a;
+  --deluxe-black: #07100c;
+  --deluxe-dark: #0b1612;
+  --deluxe-surface: #0e1a16;
+  --deluxe-card: #11201a;
+  --deluxe-border: rgba(46, 139, 92, 0.18);
   --deluxe-forest: #0e3b2e;
 
   /* Map to shadcn semantic tokens — dark by default */
-  --background: #0d0d0d;
-  --foreground: #f5f5e5;
-  --card: #1a1a1a;
-  --card-foreground: #f5f5e5;
-  --popover: #1a1a1a;
-  --popover-foreground: #f5f5e5;
-  --primary: #d4af37;
-  --primary-foreground: #0d0d0d;
-  --secondary: #1e1e1e;
-  --secondary-foreground: #f5f5e5;
-  --muted: #141414;
-  --muted-foreground: rgba(245, 245, 229, 0.55);
-  --accent: #1e1e1e;
-  --accent-foreground: #d4af37;
+  --background: #07100c;
+  --foreground: #f0efe6;
+  --card: #11201a;
+  --card-foreground: #f0efe6;
+  --popover: #11201a;
+  --popover-foreground: #f0efe6;
+  --primary: #1f6f4a;
+  --primary-foreground: #f0efe6;
+  --secondary: #142621;
+  --secondary-foreground: #f0efe6;
+  --muted: #0e1a16;
+  --muted-foreground: rgba(240, 239, 230, 0.55);
+  --accent: #142621;
+  --accent-foreground: #2e8b5c;
   --destructive: #b3261e;
-  --destructive-foreground: #f5f5e5;
-  --border: rgba(212, 175, 55, 0.15);
-  --input: rgba(212, 175, 55, 0.2);
-  --ring: #d4af37;
+  --destructive-foreground: #f0efe6;
+  --border: rgba(46, 139, 92, 0.15);
+  --input: rgba(46, 139, 92, 0.2);
+  --ring: #2e8b5c;
 }
 
 .dark {
@@ -140,8 +140,8 @@
   .gold-glow {
     background: radial-gradient(
       ellipse at center,
-      rgba(212, 175, 55, 0.18) 0%,
-      rgba(212, 175, 55, 0.05) 35%,
+      rgba(46, 139, 92, 0.22) 0%,
+      rgba(46, 139, 92, 0.06) 35%,
       transparent 70%
     );
   }

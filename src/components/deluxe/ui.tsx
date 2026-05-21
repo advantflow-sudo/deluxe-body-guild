@@ -8,7 +8,7 @@ export function GoldButton({
   return (
     <button
       {...rest}
-      className={`inline-flex items-center justify-center gap-2 bg-gold px-7 py-3.5 font-body text-xs font-bold uppercase tracking-[0.22em] text-deluxe-black transition-all hover:bg-gold-light hover:shadow-[0_0_30px_-5px_rgba(212,175,55,0.6)] active:translate-y-px ${className}`}
+      className={`inline-flex items-center justify-center gap-2 bg-gold px-7 py-3.5 font-body text-xs font-bold uppercase tracking-[0.22em] text-foreground transition-all hover:bg-gold-light hover:shadow-[0_0_30px_-5px_rgba(46,139,92,0.55)] active:translate-y-px ${className}`}
     >
       {children}
     </button>
