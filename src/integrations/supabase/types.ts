@@ -14,6 +14,152 @@ export type Database = {
   }
   public: {
     Tables: {
+      body_measurements: {
+        Row: {
+          arms_cm: number | null
+          body_fat_pct: number | null
+          chest_cm: number | null
+          created_at: string
+          hips_cm: number | null
+          id: string
+          measured_on: string
+          thighs_cm: number | null
+          user_id: string
+          waist_cm: number | null
+          weight_kg: number | null
+        }
+        Insert: {
+          arms_cm?: number | null
+          body_fat_pct?: number | null
+          chest_cm?: number | null
+          created_at?: string
+          hips_cm?: number | null
+          id?: string
+          measured_on?: string
+          thighs_cm?: number | null
+          user_id: string
+          waist_cm?: number | null
+          weight_kg?: number | null
+        }
+        Update: {
+          arms_cm?: number | null
+          body_fat_pct?: number | null
+          chest_cm?: number | null
+          created_at?: string
+          hips_cm?: number | null
+          id?: string
+          measured_on?: string
+          thighs_cm?: number | null
+          user_id?: string
+          waist_cm?: number | null
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      challenge_participants: {
+        Row: {
+          challenge_id: string
+          completed_at: string | null
+          id: string
+          joined_at: string
+          progress: number
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed_at?: string | null
+          id?: string
+          joined_at?: string
+          progress?: number
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed_at?: string | null
+          id?: string
+          joined_at?: string
+          progress?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_participants_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenges: {
+        Row: {
+          created_at: string
+          description: string | null
+          ends_on: string | null
+          goal_metric: string
+          goal_target: number
+          id: string
+          is_premium: boolean
+          points_reward: number
+          starts_on: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          ends_on?: string | null
+          goal_metric: string
+          goal_target: number
+          id?: string
+          is_premium?: boolean
+          points_reward?: number
+          starts_on?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          ends_on?: string | null
+          goal_metric?: string
+          goal_target?: number
+          id?: string
+          is_premium?: boolean
+          points_reward?: number
+          starts_on?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      daily_stats: {
+        Row: {
+          calories: number
+          id: string
+          stat_date: string
+          steps: number
+          streak: number
+          user_id: string
+          water_ml: number
+        }
+        Insert: {
+          calories?: number
+          id?: string
+          stat_date?: string
+          steps?: number
+          streak?: number
+          user_id: string
+          water_ml?: number
+        }
+        Update: {
+          calories?: number
+          id?: string
+          stat_date?: string
+          steps?: number
+          streak?: number
+          user_id?: string
+          water_ml?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -44,6 +190,173 @@ export type Database = {
         }
         Relationships: []
       }
+      progress_photos: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          storage_path: string
+          taken_on: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          storage_path: string
+          taken_on?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          storage_path?: string
+          taken_on?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reward_claims: {
+        Row: {
+          claimed_at: string
+          id: string
+          reward_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          claimed_at?: string
+          id?: string
+          reward_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          claimed_at?: string
+          id?: string
+          reward_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_claims_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "rewards_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reward_points: {
+        Row: {
+          balance_after: number
+          created_at: string
+          delta: number
+          id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          balance_after: number
+          created_at?: string
+          delta: number
+          id?: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          balance_after?: number
+          created_at?: string
+          delta?: number
+          id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      rewards_catalog: {
+        Row: {
+          active: boolean
+          cost_points: number
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          active?: boolean
+          cost_points: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          title: string
+          type: string
+        }
+        Update: {
+          active?: boolean
+          cost_points?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      user_profiles_ext: {
+        Row: {
+          age: number | null
+          created_at: string
+          fitness_goal: string | null
+          height_cm: number | null
+          notifications_enabled: boolean
+          onboarded_at: string | null
+          preferred_type: string | null
+          subscription_tier: string
+          training_level: string | null
+          units: string
+          updated_at: string
+          user_id: string
+          weight_kg: number | null
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string
+          fitness_goal?: string | null
+          height_cm?: number | null
+          notifications_enabled?: boolean
+          onboarded_at?: string | null
+          preferred_type?: string | null
+          subscription_tier?: string
+          training_level?: string | null
+          units?: string
+          updated_at?: string
+          user_id: string
+          weight_kg?: number | null
+        }
+        Update: {
+          age?: number | null
+          created_at?: string
+          fitness_goal?: string | null
+          height_cm?: number | null
+          notifications_enabled?: boolean
+          onboarded_at?: string | null
+          preferred_type?: string | null
+          subscription_tier?: string
+          training_level?: string | null
+          units?: string
+          updated_at?: string
+          user_id?: string
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -62,6 +375,89 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      workout_sessions: {
+        Row: {
+          calories: number | null
+          completed_at: string
+          duration_min: number
+          id: string
+          notes: string | null
+          user_id: string
+          workout_id: string | null
+        }
+        Insert: {
+          calories?: number | null
+          completed_at?: string
+          duration_min: number
+          id?: string
+          notes?: string | null
+          user_id: string
+          workout_id?: string | null
+        }
+        Update: {
+          calories?: number | null
+          completed_at?: string
+          duration_min?: number
+          id?: string
+          notes?: string | null
+          user_id?: string
+          workout_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_sessions_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workouts: {
+        Row: {
+          calories: number | null
+          category: string
+          created_at: string
+          description: string | null
+          duration_min: number
+          id: string
+          image_url: string | null
+          is_premium: boolean
+          level: string
+          title: string
+          type: string
+          video_url: string | null
+        }
+        Insert: {
+          calories?: number | null
+          category: string
+          created_at?: string
+          description?: string | null
+          duration_min: number
+          id?: string
+          image_url?: string | null
+          is_premium?: boolean
+          level: string
+          title: string
+          type: string
+          video_url?: string | null
+        }
+        Update: {
+          calories?: number | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_min?: number
+          id?: string
+          image_url?: string | null
+          is_premium?: boolean
+          level?: string
+          title?: string
+          type?: string
+          video_url?: string | null
         }
         Relationships: []
       }
