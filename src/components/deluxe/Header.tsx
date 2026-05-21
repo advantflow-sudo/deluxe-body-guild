@@ -10,6 +10,7 @@ export const NAV_LINKS = [
   { to: "/what-we-offer", label: "What We Offer" },
   { to: "/fitness", label: "Fitness & Workouts" },
   { to: "/wellbeing", label: "Wellbeing" },
+  { to: "/coach", label: "AI Coach" },
   { to: "/about", label: "About Us" },
   { to: "/gallery", label: "Gallery" },
   { to: "/contact", label: "Contact" },

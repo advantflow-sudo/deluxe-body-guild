@@ -15,9 +15,11 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as FitnessRouteImport } from './routes/fitness'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
 const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
@@ -50,6 +52,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CoachRoute = CoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -64,6 +71,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -73,6 +85,7 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/coach': typeof CoachRoute
   '/contact': typeof ContactRoute
   '/fitness': typeof FitnessRoute
   '/gallery': typeof GalleryRoute
@@ -80,10 +93,12 @@ export interface FileRoutesByFullPath {
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/coach': typeof CoachRoute
   '/contact': typeof ContactRoute
   '/fitness': typeof FitnessRoute
   '/gallery': typeof GalleryRoute
@@ -91,12 +106,14 @@ export interface FileRoutesByTo {
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/coach': typeof CoachRoute
   '/contact': typeof ContactRoute
   '/fitness': typeof FitnessRoute
   '/gallery': typeof GalleryRoute
@@ -104,12 +121,14 @@ export interface FileRoutesById {
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/coach'
     | '/contact'
     | '/fitness'
     | '/gallery'
@@ -117,10 +136,12 @@ export interface FileRouteTypes {
     | '/wellbeing'
     | '/what-we-offer'
     | '/dashboard'
+    | '/api/chat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/coach'
     | '/contact'
     | '/fitness'
     | '/gallery'
@@ -128,11 +149,13 @@ export interface FileRouteTypes {
     | '/wellbeing'
     | '/what-we-offer'
     | '/dashboard'
+    | '/api/chat'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/coach'
     | '/contact'
     | '/fitness'
     | '/gallery'
@@ -140,18 +163,21 @@ export interface FileRouteTypes {
     | '/wellbeing'
     | '/what-we-offer'
     | '/_authenticated/dashboard'
+    | '/api/chat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  CoachRoute: typeof CoachRoute
   ContactRoute: typeof ContactRoute
   FitnessRoute: typeof FitnessRoute
   GalleryRoute: typeof GalleryRoute
   LoginRoute: typeof LoginRoute
   WellbeingRoute: typeof WellbeingRoute
   WhatWeOfferRoute: typeof WhatWeOfferRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -198,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/coach': {
+      id: '/coach'
+      path: '/coach'
+      fullPath: '/coach'
+      preLoaderRoute: typeof CoachRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -217,6 +250,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -245,13 +285,25 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
+  CoachRoute: CoachRoute,
   ContactRoute: ContactRoute,
   FitnessRoute: FitnessRoute,
   GalleryRoute: GalleryRoute,
   LoginRoute: LoginRoute,
   WellbeingRoute: WellbeingRoute,
   WhatWeOfferRoute: WhatWeOfferRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
