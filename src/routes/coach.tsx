@@ -1,12 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Send, Sparkles, User } from "lucide-react";
+import { Send, Sparkles, User, Crown, Lock } from "lucide-react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { useAuth } from "@/hooks/useAuth";
+import { usePremium } from "@/hooks/usePremium";
 
 export const Route = createFileRoute("/coach")({
   head: () => ({
@@ -32,6 +34,9 @@ const SUGGESTIONS = [
 ];
 
 function CoachPage() {
+  const { session } = useAuth();
+  const { isPremium, loading: premLoading } = usePremium();
+  const locked = !!session && !premLoading && !isPremium;
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,6 +48,10 @@ function CoachPage() {
 
   async function send(text: string) {
     if (!text.trim() || loading) return;
+    if (locked) {
+      toast.error("Upgrade to Premium to chat with the Coach.");
+      return;
+    }
     const userMsg: Msg = { role: "user", content: text.trim() };
     const next = [...messages, userMsg];
     setMessages(next);
@@ -127,6 +136,20 @@ function CoachPage() {
             Training, nutrition, recovery, mindset — disciplined answers, on demand.
           </p>
         </div>
+
+        {locked && (
+          <div className="mt-6 flex flex-col items-center gap-3 border border-gold/30 bg-gold-gradient/10 p-5 text-center sm:flex-row sm:text-left">
+            <Crown className="h-6 w-6 shrink-0 text-gold" />
+            <div className="flex-1">
+              <div className="font-display text-lg text-foreground">Coach is a Premium feature</div>
+              <p className="text-xs text-muted-foreground">Upgrade to unlock unlimited AI coaching, nutrition plans, and more.</p>
+            </div>
+            <Link to="/pricing" className="inline-flex items-center gap-2 bg-gold-gradient px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-deluxe-black">
+              <Lock className="h-3 w-3" /> Upgrade
+            </Link>
+          </div>
+        )}
+
 
         <div
           ref={scrollRef}
