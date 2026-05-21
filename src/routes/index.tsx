@@ -97,7 +97,7 @@ function Hero() {
           <SectionLabel>Welcome to the future of fitness</SectionLabel>
         </Reveal>
         <Reveal delay={120}>
-          <h1 className="mt-6 font-display text-6xl leading-[0.95] tracking-tight sm:text-7xl md:text-8xl lg:text-9xl">
+          <h1 className="mt-6 font-display text-5xl leading-[0.95] tracking-tight sm:text-6xl md:text-8xl lg:text-9xl">
             TRANSFORM
             <br />
             YOUR BODY.
