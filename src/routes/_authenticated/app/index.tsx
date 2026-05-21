@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Flame, Footprints, Droplet, Activity, Sparkles, ChevronRight } from "lucide-react";
+import { Flame, Footprints, Droplet, Activity, Sparkles, ChevronRight, Users, Apple, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
