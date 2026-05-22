@@ -110,28 +110,17 @@ function LoginPage() {
               : "Create your account and unlock the Deluxe Fitness lifestyle."}
           </p>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
+          <div className="mt-6">
             <button
               type="button"
               onClick={() => handleOAuth("google")}
               disabled={busy}
-              className="group flex items-center justify-center gap-2 border border-gold/30 bg-transparent px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition hover:border-gold hover:bg-gold/10 disabled:opacity-50"
+              className="group flex w-full items-center justify-center gap-2 border border-gold/30 bg-transparent px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition hover:border-gold hover:bg-gold/10 disabled:opacity-50"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden>
                 <path fill="#fff" d="M21.35 11.1H12v3.2h5.35c-.23 1.4-1.65 4.1-5.35 4.1-3.2 0-5.85-2.7-5.85-6s2.65-6 5.85-6c1.85 0 3.05.8 3.75 1.45l2.55-2.45C16.95 3.85 14.7 3 12 3 6.85 3 2.7 7.15 2.7 12.3S6.85 21.6 12 21.6c6.95 0 9.3-4.85 9.3-7.4 0-.5-.05-.85-.1-1.1z"/>
               </svg>
-              Google
-            </button>
-            <button
-              type="button"
-              onClick={() => handleOAuth("apple")}
-              disabled={busy}
-              className="group flex items-center justify-center gap-2 border border-gold/30 bg-transparent px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition hover:border-gold hover:bg-gold/10 disabled:opacity-50"
-            >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden fill="currentColor">
-                <path d="M16.365 1.43c0 1.14-.42 2.23-1.18 3.06-.78.86-2.06 1.53-3.12 1.45-.13-1.1.42-2.27 1.13-3.04.79-.86 2.13-1.49 3.17-1.47zM20.5 17.5c-.55 1.26-.81 1.82-1.52 2.93-.99 1.55-2.38 3.48-4.1 3.49-1.53.02-1.92-1-3.99-.99-2.07.01-2.5 1.01-4.03.99-1.72-.02-3.04-1.76-4.03-3.31C.04 16.97-.27 11.86 1.7 9.15c1.4-1.92 3.6-3.05 5.68-3.05 2.11 0 3.44 1.16 5.19 1.16 1.69 0 2.72-1.16 5.16-1.16 1.84 0 3.8.99 5.19 2.71-4.57 2.5-3.82 9.04-2.42 8.69z"/>
-              </svg>
-              Apple
+              Continue with Google
             </button>
           </div>
 
