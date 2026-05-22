@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { Home, Dumbbell, Sparkles, TrendingUp, Award, User } from "lucide-react";
+import { Home, Dumbbell, Sparkles, TrendingUp, Wand2, User } from "lucide-react";
 
 const items = [
   { to: "/app", label: "Home", icon: Home, exact: true },
   { to: "/app/workouts", label: "Train", icon: Dumbbell, exact: false },
   { to: "/app/coach", label: "Coach", icon: Sparkles, exact: false },
+  { to: "/app/ai", label: "AI", icon: Wand2, exact: false },
   { to: "/app/progress", label: "Stats", icon: TrendingUp, exact: false },
-  { to: "/app/rewards", label: "Rewards", icon: Award, exact: false },
   { to: "/app/profile", label: "Me", icon: User, exact: false },
 ] as const;
 
