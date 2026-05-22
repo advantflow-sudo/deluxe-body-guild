@@ -98,8 +98,23 @@ export function ConnectedDevices() {
 
   const [syncing, setSyncing] = useState<string | null>(null);
 
+  // Surface the Google Fit OAuth result the user is redirected back with.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const result = params.get("google_fit");
+    if (!result) return;
+    if (result === "ok") toast.success("Google Fit connected", { description: "Tap Sync to pull today's data." });
+    else toast.error("Google Fit connection failed", { description: params.get("reason") ?? undefined });
+    params.delete("google_fit");
+    params.delete("reason");
+    const qs = params.toString();
+    window.history.replaceState({}, "", window.location.pathname + (qs ? `?${qs}` : ""));
+  }, []);
+
   const connect = async (provider: Provider, name: string) => {
     if (!user) return;
+
     // Apple Health on native iOS: trigger real HealthKit sync.
     if (provider === "apple_health" && isIosNative()) {
       setSyncing(provider);
@@ -115,6 +130,36 @@ export function ConnectedDevices() {
       });
       return;
     }
+
+    // Google Fit: real OAuth + sync flow.
+    if (provider === "google_fit") {
+      const linked = byProvider["google_fit"];
+      if (linked?.status === "connected") {
+        setSyncing(provider);
+        try {
+          const res = await runGoogleFitSync();
+          if (res.ok) toast.success("Google Fit synced", { description: `${res.written} metric(s) updated` });
+          else toast.error("Sync failed", { description: res.reason });
+        } catch (e) {
+          toast.error("Sync failed", { description: e instanceof Error ? e.message : "unknown error" });
+        } finally {
+          setSyncing(null);
+        }
+        return;
+      }
+      setSyncing(provider);
+      try {
+        const { url } = await startGoogleFit();
+        window.location.href = url;
+      } catch (e) {
+        setSyncing(null);
+        toast.error("Could not start Google Fit auth", {
+          description: e instanceof Error ? e.message : "Server not configured",
+        });
+      }
+      return;
+    }
+
     const { error } = await supabase
       .from("connected_devices")
       .upsert(
