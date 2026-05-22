@@ -274,7 +274,7 @@ export function ConnectedDevices() {
                   className="shrink-0 inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:opacity-80 disabled:opacity-50"
                 >
                   {syncing === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
-                  {(p.id === "apple_health" && isIosNative()) || p.id === "google_fit" ? "Sync" : "Linked"}
+                  {(p.id === "apple_health" && isIosNative()) || ["google_fit", "fitbit", "strava", "oura"].includes(p.id) ? "Sync" : "Linked"}
                 </button>
               ) : (
                 <button
