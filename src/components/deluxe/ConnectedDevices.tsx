@@ -7,9 +7,12 @@ import { SectionLabel } from "@/components/deluxe/ui";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { isIosNative, syncAppleHealthNow } from "@/lib/healthkit-sync";
+import { isAndroidNative, syncHealthConnectNow } from "@/lib/health-connect";
 import { connectGoogleFit, syncGoogleFit } from "@/lib/google-fit.functions";
+import { connectOAuthProvider, syncOAuthProvider } from "@/lib/oauth-connect.functions";
 
 type Provider = "apple_health" | "fitbit" | "garmin" | "strava" | "oura" | "google_fit";
+type OAuthProvider = "fitbit" | "strava" | "oura";
 
 interface ProviderMeta {
   id: Provider;
