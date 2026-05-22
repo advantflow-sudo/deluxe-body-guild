@@ -173,47 +173,38 @@ export type Database = {
       }
       connected_devices: {
         Row: {
-          access_token: string | null
           created_at: string
           display_name: string | null
           external_user_id: string | null
           id: string
           last_synced_at: string | null
           provider: string
-          refresh_token: string | null
           scopes: string[] | null
           status: string
-          token_expires_at: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
-          access_token?: string | null
           created_at?: string
           display_name?: string | null
           external_user_id?: string | null
           id?: string
           last_synced_at?: string | null
           provider: string
-          refresh_token?: string | null
           scopes?: string[] | null
           status?: string
-          token_expires_at?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
-          access_token?: string | null
           created_at?: string
           display_name?: string | null
           external_user_id?: string | null
           id?: string
           last_synced_at?: string | null
           provider?: string
-          refresh_token?: string | null
           scopes?: string[] | null
           status?: string
-          token_expires_at?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -292,33 +283,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      oauth_states: {
-        Row: {
-          created_at: string
-          expires_at: string
-          id: string
-          provider: string
-          state: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          expires_at?: string
-          id?: string
-          provider: string
-          state: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string
-          id?: string
-          provider?: string
-          state?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       post_comments: {
         Row: {
