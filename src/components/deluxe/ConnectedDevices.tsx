@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Smartphone, Watch, Activity, CheckCircle2, Plug, RefreshCw } from "lucide-react";
+import { Smartphone, Watch, Activity, CheckCircle2, Plug, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
+import { isIosNative, syncAppleHealthNow } from "@/lib/healthkit-sync";
 
 type Provider = "apple_health" | "fitbit" | "garmin" | "strava" | "oura" | "google_fit";
 
