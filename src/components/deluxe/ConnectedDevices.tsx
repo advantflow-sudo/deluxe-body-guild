@@ -103,18 +103,30 @@ export function ConnectedDevices() {
 
   const [syncing, setSyncing] = useState<string | null>(null);
 
-  // Surface the Google Fit OAuth result the user is redirected back with.
+  // Surface OAuth callback results (Google Fit + Fitbit + Strava + Oura).
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    const result = params.get("google_fit");
-    if (!result) return;
-    if (result === "ok") toast.success("Google Fit connected", { description: "Tap Sync to pull today's data." });
-    else toast.error("Google Fit connection failed", { description: params.get("reason") ?? undefined });
-    params.delete("google_fit");
-    params.delete("reason");
-    const qs = params.toString();
-    window.history.replaceState({}, "", window.location.pathname + (qs ? `?${qs}` : ""));
+    const keys: Array<{ key: string; label: string }> = [
+      { key: "google_fit", label: "Google Fit" },
+      { key: "fitbit", label: "Fitbit" },
+      { key: "strava", label: "Strava" },
+      { key: "oura", label: "Oura Ring" },
+    ];
+    let changed = false;
+    for (const { key, label } of keys) {
+      const result = params.get(key);
+      if (!result) continue;
+      changed = true;
+      if (result === "ok") toast.success(`${label} connected`, { description: "Tap Sync to pull today's data." });
+      else toast.error(`${label} connection failed`, { description: params.get("reason") ?? undefined });
+      params.delete(key);
+    }
+    if (changed) {
+      params.delete("reason");
+      const qs = params.toString();
+      window.history.replaceState({}, "", window.location.pathname + (qs ? `?${qs}` : ""));
+    }
   }, []);
 
   const connect = async (provider: Provider, name: string) => {
@@ -136,8 +148,18 @@ export function ConnectedDevices() {
       return;
     }
 
-    // Google Fit: real OAuth + sync flow.
+    // Google Fit: dedicated OAuth flow.
     if (provider === "google_fit") {
+      // If the user opted into Health Connect AND we're inside the Android
+      // shell, use the native pipeline instead of the Google Fit REST API.
+      if (healthConnectMode && isAndroidNative()) {
+        setSyncing(provider);
+        const res = await syncHealthConnectNow();
+        setSyncing(null);
+        if (res.ok) toast.success("Health Connect synced", { description: `${res.written} metric(s) updated` });
+        else toast.error("Sync failed", { description: res.reason });
+        return;
+      }
       const linked = byProvider["google_fit"];
       if (linked?.status === "connected") {
         setSyncing(provider);
@@ -165,16 +187,43 @@ export function ConnectedDevices() {
       return;
     }
 
-    const { error } = await supabase
-      .from("connected_devices")
-      .upsert(
-        { user_id: user.id, provider, display_name: name, status: "pending" },
-        { onConflict: "user_id,provider" }
-      );
-    if (error) return toast.error(error.message);
-    toast.success(`${name} link requested`, {
-      description: "OAuth flow for this provider is not wired yet. Coming next.",
-    });
+    // Generic OAuth 2.0 providers (Fitbit, Strava, Oura).
+    if (provider === "fitbit" || provider === "strava" || provider === "oura") {
+      const p = provider as OAuthProvider;
+      const linked = byProvider[p];
+      if (linked?.status === "connected") {
+        setSyncing(provider);
+        try {
+          const res = await runOAuthSync({ data: { provider: p } });
+          if (res.ok) toast.success(`${name} synced`, { description: `${res.written} metric(s) updated` });
+          else toast.error("Sync failed", { description: res.reason });
+        } catch (e) {
+          toast.error("Sync failed", { description: e instanceof Error ? e.message : "unknown error" });
+        } finally {
+          setSyncing(null);
+        }
+        return;
+      }
+      setSyncing(provider);
+      try {
+        const { url } = await startOAuth({ data: { provider: p } });
+        window.location.href = url;
+      } catch (e) {
+        setSyncing(null);
+        toast.error(`Could not start ${name} auth`, {
+          description: e instanceof Error ? e.message : "Server not configured",
+        });
+      }
+      return;
+    }
+
+    // Garmin uses OAuth 1.0a and isn't wired up yet.
+    if (provider === "garmin") {
+      toast.info("Garmin coming soon", {
+        description: "Garmin requires OAuth 1.0a — wiring next pass.",
+      });
+      return;
+    }
   };
 
   const byProvider = Object.fromEntries(devices.map((d) => [d.provider, d]));
