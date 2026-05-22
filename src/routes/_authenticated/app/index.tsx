@@ -110,6 +110,8 @@ function HomeTab() {
         </Link>
       )}
 
+      <DailyBriefingCard />
+
       {/* Today's stats */}
       <div className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3">
         <StatCard icon={Footprints} label="Steps" value={stats.steps.toLocaleString()} />
