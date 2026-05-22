@@ -129,9 +129,7 @@ function HomeTab() {
           <div className="text-right text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
             <div><span className="text-foreground">{weekTotals.minutes}</span> min</div>
             <div className="mt-0.5"><span className="text-foreground">{weekTotals.calories.toLocaleString()}</span> kcal</div>
-      </div>
-
-      <ConnectedDevices />
+          </div>
         </div>
 
         <div className="mt-4 h-40 w-full">
