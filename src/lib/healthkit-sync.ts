@@ -41,7 +41,9 @@ async function loadPlugin(): Promise<HealthKitPlugin | null> {
   if (!isIosNative()) return null;
   try {
     // Dynamic import so the web bundle doesn't require the package.
-    const mod = (await import(/* @vite-ignore */ "@perfood/capacitor-healthkit")) as {
+    // The package is only installed in the native iOS shell.
+    const pkg = "@perfood/capacitor-healthkit";
+    const mod = (await import(/* @vite-ignore */ pkg)) as {
       CapacitorHealthkit: HealthKitPlugin;
     };
     return mod.CapacitorHealthkit;
