@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Smartphone, Watch, Activity, CheckCircle2, Plug, RefreshCw } from "lucide-react";
+import { Smartphone, Watch, Activity, CheckCircle2, Plug, RefreshCw, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
+import { isIosNative, syncAppleHealthNow } from "@/lib/healthkit-sync";
 
 type Provider = "apple_health" | "fitbit" | "garmin" | "strava" | "oura" | "google_fit";
 
@@ -90,8 +91,25 @@ export function ConnectedDevices() {
     };
   }, [user]);
 
+  const [syncing, setSyncing] = useState<string | null>(null);
+
   const connect = async (provider: Provider, name: string) => {
     if (!user) return;
+    // Apple Health on native iOS: trigger real HealthKit sync.
+    if (provider === "apple_health" && isIosNative()) {
+      setSyncing(provider);
+      const res = await syncAppleHealthNow();
+      setSyncing(null);
+      if (res.ok) toast.success(`Apple Health synced`, { description: `${res.written} metric(s) updated` });
+      else toast.error("Sync failed", { description: res.reason });
+      return;
+    }
+    if (provider === "apple_health") {
+      toast.info("Apple Health requires the iOS app", {
+        description: "Available once installed from the App Store on iPhone.",
+      });
+      return;
+    }
     const { error } = await supabase
       .from("connected_devices")
       .upsert(
@@ -146,15 +164,22 @@ export function ConnectedDevices() {
                 </div>
               </div>
               {connected ? (
-                <span className="inline-flex shrink-0 items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-gold">
-                  <CheckCircle2 className="h-3 w-3" /> Linked
-                </span>
+                <button
+                  onClick={() => connect(p.id, p.name)}
+                  disabled={syncing === p.id}
+                  className="shrink-0 inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:opacity-80 disabled:opacity-50"
+                >
+                  {syncing === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+                  {p.id === "apple_health" && isIosNative() ? "Sync" : "Linked"}
+                </button>
               ) : (
                 <button
                   onClick={() => connect(p.id, p.name)}
-                  className="shrink-0 inline-flex items-center gap-1 border border-gold/40 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:bg-gold/10"
+                  disabled={syncing === p.id}
+                  className="shrink-0 inline-flex items-center gap-1 border border-gold/40 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:bg-gold/10 disabled:opacity-50"
                 >
-                  <Plug className="h-3 w-3" /> Connect
+                  {syncing === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plug className="h-3 w-3" />}
+                  {p.id === "apple_health" && isIosNative() ? "Sync now" : "Connect"}
                 </button>
               )}
             </div>
