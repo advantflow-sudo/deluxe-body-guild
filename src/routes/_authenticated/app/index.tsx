@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
+import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
