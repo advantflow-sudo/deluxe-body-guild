@@ -166,6 +166,10 @@ function HomeTab() {
         </div>
       </div>
 
+      <ConnectedDevices />
+
+
+
       {/* Recent activity */}
       <div className="mt-5">
         <div className="flex items-center justify-between">
