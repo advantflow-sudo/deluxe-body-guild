@@ -220,7 +220,7 @@ export function ConnectedDevices() {
                   className="shrink-0 inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:opacity-80 disabled:opacity-50"
                 >
                   {syncing === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
-                  {p.id === "apple_health" && isIosNative() ? "Sync" : "Linked"}
+                  {(p.id === "apple_health" && isIosNative()) || p.id === "google_fit" ? "Sync" : "Linked"}
                 </button>
               ) : (
                 <button
@@ -237,8 +237,37 @@ export function ConnectedDevices() {
         })}
       </div>
 
+      {/* Health Connect migration toggle (Google Fit REST → Health Connect, 2026) */}
+      <div className="mt-3 flex items-start justify-between gap-3 border border-gold/15 bg-deluxe-black/40 p-3">
+        <div className="min-w-0">
+          <div className="text-sm text-foreground">Use Health Connect (Android native)</div>
+          <div className="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            Migration path · Google Fit REST shuts down 2026
+          </div>
+          <div className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+            {healthConnectMode
+              ? "When the Android app build ships, your phone will read steps and heart rate directly via Health Connect — same dashboard, no Google sign-in needed."
+              : "Stay on the Google Fit OAuth flow for now. Toggle on to opt into the native Android pipeline once the app ships."}
+          </div>
+        </div>
+        <button
+          role="switch"
+          aria-checked={healthConnectMode}
+          onClick={() => setHealthConnectMode((v) => !v)}
+          className={`relative mt-1 h-5 w-9 shrink-0 border transition ${
+            healthConnectMode ? "border-gold bg-gold-gradient" : "border-gold/40 bg-deluxe-black"
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 h-3.5 w-3.5 bg-deluxe-black transition-transform ${
+              healthConnectMode ? "translate-x-[18px] bg-deluxe-black" : "translate-x-0.5"
+            }`}
+          />
+        </button>
+      </div>
+
       <p className="mt-2 text-[10px] italic text-muted-foreground">
-        Apple Health needs the iOS app build. Web-based providers (Fitbit, Strava, Garmin, Oura, Google Fit) can be wired via OAuth next.
+        Google Fit syncs live via OAuth. Apple Health requires the iOS app build. Fitbit, Strava, Garmin & Oura wire in next.
       </p>
     </div>
   );
