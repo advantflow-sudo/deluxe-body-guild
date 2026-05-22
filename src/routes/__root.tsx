@@ -12,6 +12,7 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { CommandPalette } from "@/components/deluxe/CommandPalette";
+import { DownloadAppPopup } from "@/components/deluxe/DownloadAppPopup";
 
 import appCss from "../styles.css?url";
 
@@ -134,6 +135,7 @@ function RootComponent() {
       <AuthProvider>
         <Outlet />
         <CommandPalette />
+        <DownloadAppPopup />
         <Toaster theme="dark" position="top-right" />
       </AuthProvider>
     </QueryClientProvider>
