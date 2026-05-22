@@ -171,6 +171,45 @@ export type Database = {
           },
         ]
       }
+      connected_devices: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          external_user_id: string | null
+          id: string
+          last_synced_at: string | null
+          provider: string
+          scopes: string[] | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          external_user_id?: string | null
+          id?: string
+          last_synced_at?: string | null
+          provider: string
+          scopes?: string[] | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          external_user_id?: string | null
+          id?: string
+          last_synced_at?: string | null
+          provider?: string
+          scopes?: string[] | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_stats: {
         Row: {
           calories: number
@@ -200,6 +239,50 @@ export type Database = {
           water_ml?: number
         }
         Relationships: []
+      }
+      device_metrics: {
+        Row: {
+          created_at: string
+          device_id: string | null
+          id: string
+          metric_type: string
+          provider: string
+          recorded_at: string
+          unit: string | null
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          metric_type: string
+          provider: string
+          recorded_at?: string
+          unit?: string | null
+          user_id: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          device_id?: string | null
+          id?: string
+          metric_type?: string
+          provider?: string
+          recorded_at?: string
+          unit?: string | null
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_metrics_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "connected_devices"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       post_comments: {
         Row: {

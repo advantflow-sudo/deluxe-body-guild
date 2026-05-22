@@ -11,6 +11,7 @@ import { format, subDays, startOfDay } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
@@ -128,7 +129,9 @@ function HomeTab() {
           <div className="text-right text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
             <div><span className="text-foreground">{weekTotals.minutes}</span> min</div>
             <div className="mt-0.5"><span className="text-foreground">{weekTotals.calories.toLocaleString()}</span> kcal</div>
-          </div>
+      </div>
+
+      <ConnectedDevices />
         </div>
 
         <div className="mt-4 h-40 w-full">
