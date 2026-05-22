@@ -164,15 +164,22 @@ export function ConnectedDevices() {
                 </div>
               </div>
               {connected ? (
-                <span className="inline-flex shrink-0 items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-gold">
-                  <CheckCircle2 className="h-3 w-3" /> Linked
-                </span>
+                <button
+                  onClick={() => connect(p.id, p.name)}
+                  disabled={syncing === p.id}
+                  className="shrink-0 inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:opacity-80 disabled:opacity-50"
+                >
+                  {syncing === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+                  {p.id === "apple_health" && isIosNative() ? "Sync" : "Linked"}
+                </button>
               ) : (
                 <button
                   onClick={() => connect(p.id, p.name)}
-                  className="shrink-0 inline-flex items-center gap-1 border border-gold/40 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:bg-gold/10"
+                  disabled={syncing === p.id}
+                  className="shrink-0 inline-flex items-center gap-1 border border-gold/40 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:bg-gold/10 disabled:opacity-50"
                 >
-                  <Plug className="h-3 w-3" /> Connect
+                  {syncing === p.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plug className="h-3 w-3" />}
+                  {p.id === "apple_health" && isIosNative() ? "Sync now" : "Connect"}
                 </button>
               )}
             </div>
