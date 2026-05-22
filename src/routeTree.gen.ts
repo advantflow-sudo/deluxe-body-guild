@@ -33,9 +33,11 @@ import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAppNutritionRouteImport } from './routes/_authenticated/app/nutrition'
 import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authenticated/app/community'
 import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/app/coach'
+import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
 import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
 import { Route as AuthenticatedAppUUserIdRouteImport } from './routes/_authenticated/app/u.$userId'
+import { Route as ApiPublicOauthProviderCallbackRouteImport } from './routes/api/public/oauth/$provider.callback'
 
 const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
   id: '/what-we-offer',
@@ -160,6 +162,12 @@ const AuthenticatedAppCoachRoute = AuthenticatedAppCoachRouteImport.update({
   path: '/coach',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const ApiPublicHooksSyncOauthDevicesRoute =
+  ApiPublicHooksSyncOauthDevicesRouteImport.update({
+    id: '/api/public/hooks/sync-oauth-devices',
+    path: '/api/public/hooks/sync-oauth-devices',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSyncGoogleFitRoute =
   ApiPublicHooksSyncGoogleFitRouteImport.update({
     id: '/api/public/hooks/sync-google-fit',
@@ -177,6 +185,12 @@ const AuthenticatedAppUUserIdRoute = AuthenticatedAppUUserIdRouteImport.update({
   path: '/u/$userId',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const ApiPublicOauthProviderCallbackRoute =
+  ApiPublicOauthProviderCallbackRouteImport.update({
+    id: '/api/public/oauth/$provider/callback',
+    path: '/api/public/oauth/$provider/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -205,6 +219,8 @@ export interface FileRoutesByFullPath {
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
+  '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
+  '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -232,6 +248,8 @@ export interface FileRoutesByTo {
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
+  '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
+  '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -262,6 +280,8 @@ export interface FileRoutesById {
   '/_authenticated/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
+  '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
+  '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -292,6 +312,8 @@ export interface FileRouteTypes {
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/sync-google-fit'
+    | '/api/public/hooks/sync-oauth-devices'
+    | '/api/public/oauth/$provider/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -319,6 +341,8 @@ export interface FileRouteTypes {
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/sync-google-fit'
+    | '/api/public/hooks/sync-oauth-devices'
+    | '/api/public/oauth/$provider/callback'
   id:
     | '__root__'
     | '/'
@@ -348,6 +372,8 @@ export interface FileRouteTypes {
     | '/_authenticated/app/u/$userId'
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/sync-google-fit'
+    | '/api/public/hooks/sync-oauth-devices'
+    | '/api/public/oauth/$provider/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -365,6 +391,8 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiPublicGoogleFitCallbackRoute: typeof ApiPublicGoogleFitCallbackRoute
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
+  ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
+  ApiPublicOauthProviderCallbackRoute: typeof ApiPublicOauthProviderCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -537,6 +565,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppCoachRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/api/public/hooks/sync-oauth-devices': {
+      id: '/api/public/hooks/sync-oauth-devices'
+      path: '/api/public/hooks/sync-oauth-devices'
+      fullPath: '/api/public/hooks/sync-oauth-devices'
+      preLoaderRoute: typeof ApiPublicHooksSyncOauthDevicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sync-google-fit': {
       id: '/api/public/hooks/sync-google-fit'
       path: '/api/public/hooks/sync-google-fit'
@@ -557,6 +592,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/u/$userId'
       preLoaderRoute: typeof AuthenticatedAppUUserIdRouteImport
       parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/api/public/oauth/$provider/callback': {
+      id: '/api/public/oauth/$provider/callback'
+      path: '/api/public/oauth/$provider/callback'
+      fullPath: '/api/public/oauth/$provider/callback'
+      preLoaderRoute: typeof ApiPublicOauthProviderCallbackRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -621,17 +663,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   ApiPublicGoogleFitCallbackRoute: ApiPublicGoogleFitCallbackRoute,
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
+  ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
+  ApiPublicOauthProviderCallbackRoute: ApiPublicOauthProviderCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
