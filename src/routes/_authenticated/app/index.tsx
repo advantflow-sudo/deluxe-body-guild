@@ -11,6 +11,7 @@ import { format, subDays, startOfDay } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
