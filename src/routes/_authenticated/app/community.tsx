@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
 import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
+import { SuggestedMembers } from "@/components/deluxe/SuggestedMembers";
 
 export const Route = createFileRoute("/_authenticated/app/community")({
   component: CommunityTab,
@@ -165,6 +166,10 @@ function CommunityTab() {
       <SectionLabel>Community</SectionLabel>
       <h1 className="mt-2 font-display text-3xl text-foreground">The Feed</h1>
       <p className="mt-1 text-xs text-muted-foreground">Share milestones, photos, and inspiration.</p>
+
+      <SuggestedMembers />
+
+
 
       {/* Composer */}
       <form onSubmit={submit} className="mt-6 border border-gold/20 bg-deluxe-forest/20 p-4">
