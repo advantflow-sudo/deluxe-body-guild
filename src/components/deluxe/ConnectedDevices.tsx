@@ -45,8 +45,11 @@ interface LiveMetric {
 
 export function ConnectedDevices() {
   const { user } = useAuth();
+  const startGoogleFit = useServerFn(connectGoogleFit);
+  const runGoogleFitSync = useServerFn(syncGoogleFit);
   const [devices, setDevices] = useState<Device[]>([]);
   const [latest, setLatest] = useState<Record<string, LiveMetric>>({});
+  const [healthConnectMode, setHealthConnectMode] = useState(false);
 
   useEffect(() => {
     if (!user) return;
