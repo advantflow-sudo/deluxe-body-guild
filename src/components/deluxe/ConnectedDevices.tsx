@@ -91,8 +91,25 @@ export function ConnectedDevices() {
     };
   }, [user]);
 
+  const [syncing, setSyncing] = useState<string | null>(null);
+
   const connect = async (provider: Provider, name: string) => {
     if (!user) return;
+    // Apple Health on native iOS: trigger real HealthKit sync.
+    if (provider === "apple_health" && isIosNative()) {
+      setSyncing(provider);
+      const res = await syncAppleHealthNow();
+      setSyncing(null);
+      if (res.ok) toast.success(`Apple Health synced`, { description: `${res.written} metric(s) updated` });
+      else toast.error("Sync failed", { description: res.reason });
+      return;
+    }
+    if (provider === "apple_health") {
+      toast.info("Apple Health requires the iOS app", {
+        description: "Available once installed from the App Store on iPhone.",
+      });
+      return;
+    }
     const { error } = await supabase
       .from("connected_devices")
       .upsert(
