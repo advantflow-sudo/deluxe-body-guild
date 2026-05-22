@@ -120,7 +120,7 @@ export const analyzeMeal = createServerFn({ method: "POST" })
         },
       },
     });
-    return result as Record<string, unknown>;
+    return result as any;
   });
 
 /* ============================================================
@@ -161,7 +161,7 @@ export const analyzeForm = createServerFn({ method: "POST" })
         },
       },
     });
-    return result as Record<string, unknown>;
+    return result as any;
   });
 
 /* ============================================================
@@ -208,7 +208,7 @@ export const adaptProgram = createServerFn({ method: "POST" })
         },
       },
     });
-    return result as Record<string, unknown>;
+    return result as any;
   });
 
 /* ============================================================
@@ -249,7 +249,7 @@ export const comparePhotos = createServerFn({ method: "POST" })
         },
       },
     });
-    return result as Record<string, unknown>;
+    return result as any;
   });
 
 /* ============================================================
@@ -284,7 +284,7 @@ export const detectPlateau = createServerFn({ method: "POST" })
         },
       },
     });
-    return result as Record<string, unknown>;
+    return result as any;
   });
 
 /* ============================================================
@@ -342,7 +342,7 @@ export const injuryTriage = createServerFn({ method: "POST" })
         },
       },
     });
-    return result as Record<string, unknown>;
+    return result as any;
   });
 
 /* ============================================================
