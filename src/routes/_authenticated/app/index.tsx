@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
+import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
@@ -108,6 +109,8 @@ function HomeTab() {
           </div>
         </Link>
       )}
+
+      <DailyBriefingCard />
 
       {/* Today's stats */}
       <div className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3">
