@@ -64,6 +64,7 @@ function HomePage() {
       <Mission />
       <FeatureIcons />
       <WhyDeluxe />
+      <WhyDifferent />
       <AppPreview />
       <Community />
       <Rewards />
@@ -480,10 +481,42 @@ function Rewards() {
 /* ---------------- Transformation Gallery ---------------- */
 function TransformationGallery() {
   const stories = [
-    { img: workout1, name: "Marcus T.", stat: "-18kg · 6 months" },
-    { img: workout2, name: "Sofia L.", stat: "+8kg lean · 9 months" },
-    { img: workout3, name: "Daniel K.", stat: "-22kg · 1 year" },
-    { img: communityImg, name: "Priya A.", stat: "First marathon · 8 months" },
+    {
+      img: workout1,
+      name: "Marcus T.",
+      start: "118 kg",
+      now: "99 kg",
+      time: "6 months",
+      streak: "82 days",
+      quote: "Lost the weight. Kept the discipline.",
+    },
+    {
+      img: workout2,
+      name: "Sofia L.",
+      start: "54 kg",
+      now: "62 kg lean",
+      time: "9 months",
+      streak: "147 days",
+      quote: "Built the body I thought wasn't possible.",
+    },
+    {
+      img: workout3,
+      name: "Daniel K.",
+      start: "104 kg",
+      now: "82 kg",
+      time: "12 months",
+      streak: "210 days",
+      quote: "Down 22kg. Up two suit sizes in the shoulders.",
+    },
+    {
+      img: communityImg,
+      name: "Priya A.",
+      start: "Never ran 1km",
+      now: "First marathon",
+      time: "8 months",
+      streak: "96 days",
+      quote: "Deluxe gave me the discipline I always lacked.",
+    },
   ];
   return (
     <section className="bg-deluxe-dark py-28">
@@ -491,37 +524,121 @@ function TransformationGallery() {
         <div className="text-center">
           <SectionLabel>Transformation Gallery</SectionLabel>
           <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
-            REAL MEMBERS. <span className="text-gold">REAL RESULTS.</span>
+            REAL MEMBERS. <span className="text-gold">REAL NUMBERS.</span>
           </h2>
           <div className="mt-6 flex justify-center">
             <GoldDivider />
           </div>
         </div>
 
-        <div className="mt-16 grid grid-cols-2 gap-5 md:grid-cols-4">
-          {stories.map(({ img, name, stat }) => (
-            <figure key={name} className="group relative overflow-hidden border border-gold/15">
-              <div className="aspect-[3/4] overflow-hidden bg-deluxe-card">
+        <div className="mt-16 grid gap-6 md:grid-cols-2">
+          {stories.map((s) => (
+            <figure key={s.name} className="group grid grid-cols-[1fr_1.2fr] overflow-hidden border border-gold/20 bg-deluxe-card">
+              <div className="aspect-[3/4] overflow-hidden bg-deluxe-black">
                 <img
-                  src={img}
-                  alt={`${name} transformation`}
+                  src={s.img}
+                  alt={`${s.name} transformation`}
                   loading="lazy"
                   className="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
                 />
               </div>
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deluxe-black via-deluxe-black/70 to-transparent p-4">
-                <div className="flex items-center gap-2 text-gold">
-                  <Zap className="h-3.5 w-3.5" />
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.25em]">
-                    {stat}
-                  </span>
+              <div className="flex flex-col justify-between p-6">
+                <div>
+                  <Zap className="h-4 w-4 text-gold" />
+                  <figcaption className="mt-2 font-display text-2xl tracking-wide text-foreground">
+                    {s.name.toUpperCase()}
+                  </figcaption>
+                  <p className="mt-2 font-serif text-sm italic text-muted-foreground">"{s.quote}"</p>
                 </div>
-                <figcaption className="mt-1 font-display text-lg tracking-wide text-foreground">
-                  {name.toUpperCase()}
-                </figcaption>
+                <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-gold/15 pt-4 text-[11px]">
+                  <Stat label="Starting" value={s.start} />
+                  <Stat label="Current" value={s.now} />
+                  <Stat label="Time" value={s.time} />
+                  <Stat label="Streak" value={s.streak} />
+                </dl>
               </div>
             </figure>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-[9px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">{label}</dt>
+      <dd className="mt-0.5 font-display text-base text-gold">{value}</dd>
+    </div>
+  );
+}
+
+/* ---------------- Why We're Different ---------------- */
+function WhyDifferent() {
+  const rows = [
+    { feature: "Personalized AI coach with memory", deluxe: true, mfp: false, nike: false, fitbod: false, yt: false },
+    { feature: "Discipline-led tier progression", deluxe: true, mfp: false, nike: false, fitbod: false, yt: false },
+    { feature: "Tangible rewards (gear, coaching, events)", deluxe: true, mfp: false, nike: false, fitbod: false, yt: false },
+    { feature: "Workouts + nutrition + community", deluxe: true, mfp: "partial", nike: false, fitbod: false, yt: false },
+    { feature: "Members-only transformation community", deluxe: true, mfp: false, nike: "partial", fitbod: false, yt: false },
+    { feature: "Built around identity, not just exercise", deluxe: true, mfp: false, nike: false, fitbod: false, yt: false },
+    { feature: "Strength programming for all levels", deluxe: true, mfp: false, nike: true, fitbod: true, yt: "partial" },
+    { feature: "Calorie & macro tracking", deluxe: true, mfp: true, nike: false, fitbod: false, yt: false },
+  ] as const;
+
+  const cell = (v: boolean | "partial") =>
+    v === true ? (
+      <span className="text-gold">●</span>
+    ) : v === "partial" ? (
+      <span className="text-gold/40">◐</span>
+    ) : (
+      <span className="text-muted-foreground/40">—</span>
+    );
+
+  return (
+    <section className="border-y border-gold/15 bg-deluxe-black py-28">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="text-center">
+          <SectionLabel>Why We're Different</SectionLabel>
+          <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+            DELUXE VS <span className="text-gold">EVERYTHING ELSE.</span>
+          </h2>
+          <div className="mt-6 flex justify-center">
+            <GoldDivider />
+          </div>
+          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
+            MyFitnessPal tracks. Nike trains. Fitbod programs. YouTube entertains.
+            <br className="hidden sm:block" />
+            Deluxe makes you become someone new.
+          </p>
+        </div>
+
+        <div className="mt-14 overflow-x-auto">
+          <table className="w-full min-w-[640px] border-collapse">
+            <thead>
+              <tr className="border-b border-gold/30 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                <th className="py-4 text-left">Feature</th>
+                <th className="py-4 text-center text-gold">Deluxe</th>
+                <th className="py-4 text-center">MyFitnessPal</th>
+                <th className="py-4 text-center">Nike Training</th>
+                <th className="py-4 text-center">Fitbod</th>
+                <th className="py-4 text-center">YouTube</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.feature} className="border-b border-gold/10 text-sm">
+                  <td className="py-4 pr-4 text-foreground">{r.feature}</td>
+                  <td className="py-4 text-center text-lg">{cell(r.deluxe)}</td>
+                  <td className="py-4 text-center text-lg">{cell(r.mfp)}</td>
+                  <td className="py-4 text-center text-lg">{cell(r.nike)}</td>
+                  <td className="py-4 text-center text-lg">{cell(r.fitbod)}</td>
+                  <td className="py-4 text-center text-lg">{cell(r.yt)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
