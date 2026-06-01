@@ -48,24 +48,18 @@ export function DailyMissionCard() {
     const ms = m as Mission;
     setMission(ms);
 
-    const tasks: Promise<unknown>[] = [];
-    if (ms.habit_ids?.length) {
-      tasks.push(
-        supabase.from("habits").select("id,name,icon,target_value,unit").in("id", ms.habit_ids)
-          .then(({ data }) => setHabits((data ?? []) as Habit[])),
-      );
-    } else setHabits([]);
-    if (ms.workout_id) {
-      tasks.push(
-        supabase.from("workouts").select("id,title,duration_min,category").eq("id", ms.workout_id).maybeSingle()
-          .then(({ data }) => setWorkout(data as Workout | null)),
-      );
-    } else setWorkout(null);
-    tasks.push(
-      supabase.from("habit_logs").select("habit_id").eq("log_date", today())
-        .then(({ data }) => setLoggedHabits(new Set((data ?? []).map((r: any) => r.habit_id)))),
-    );
-    await Promise.all(tasks);
+    const [habitsRes, workoutRes, logsRes] = await Promise.all([
+      ms.habit_ids?.length
+        ? supabase.from("habits").select("id,name,icon,target_value,unit").in("id", ms.habit_ids)
+        : Promise.resolve({ data: [] as Habit[] }),
+      ms.workout_id
+        ? supabase.from("workouts").select("id,title,duration_min,category").eq("id", ms.workout_id).maybeSingle()
+        : Promise.resolve({ data: null }),
+      supabase.from("habit_logs").select("habit_id").eq("log_date", today()),
+    ]);
+    setHabits(((habitsRes.data ?? []) as Habit[]));
+    setWorkout((workoutRes.data as Workout | null) ?? null);
+    setLoggedHabits(new Set(((logsRes.data ?? []) as { habit_id: string }[]).map((r) => r.habit_id)));
     await recompute();
     setLoading(false);
   }, [user, recompute]);
