@@ -50,9 +50,11 @@ function RewardsTab() {
     const { error: cErr } = await supabase.from("reward_claims").insert({ user_id: user.id, reward_id: r.id });
     if (cErr) return toast.error(cErr.message);
     const newBal = balance - r.cost_points;
-    await supabase.from("reward_points").insert({
-      user_id: user.id, delta: -r.cost_points, balance_after: newBal, reason: `Claimed: ${r.title}`,
+    const { error: pErr } = await supabase.rpc("award_points", {
+      _reason: `Claimed: ${r.title}`,
+      _delta: -r.cost_points,
     });
+    if (pErr) return toast.error(pErr.message);
     toast.success(`Claimed ${r.title}`);
     setBalance(newBal);
   };
