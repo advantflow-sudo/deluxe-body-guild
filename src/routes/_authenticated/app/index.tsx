@@ -215,7 +215,28 @@ function HomeTab() {
         <ChevronRight className="h-5 w-5 text-gold" />
       </Link>
 
-      <div className="mt-3 grid grid-cols-2 gap-2.5 pb-6 sm:gap-3">
+      <div className="mt-3 grid grid-cols-2 gap-2.5 sm:gap-3">
+        <Link to="/app/partner" className="group flex items-center gap-3 border border-gold/20 bg-deluxe-forest/20 p-3 hover:border-gold/50 sm:p-4">
+          <Users className="h-5 w-5 shrink-0 text-gold" />
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Partner</div>
+            <div className="text-sm text-foreground">Accountability</div>
+          </div>
+        </Link>
+        <Link to="/app/leaderboard" className="group flex items-center gap-3 border border-gold/20 bg-deluxe-forest/20 p-3 hover:border-gold/50 sm:p-4">
+          <Trophy className="h-5 w-5 shrink-0 text-gold" />
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Leaderboard</div>
+            <div className="text-sm text-foreground">This week</div>
+          </div>
+        </Link>
+        <Link to="/app/challenges" className="group flex items-center gap-3 border border-gold/20 bg-deluxe-forest/20 p-3 hover:border-gold/50 sm:p-4">
+          <Sparkles className="h-5 w-5 shrink-0 text-gold" />
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Challenges</div>
+            <div className="text-sm text-foreground">Team weekly</div>
+          </div>
+        </Link>
         <Link to="/app/community" className="group flex items-center gap-3 border border-gold/20 bg-deluxe-forest/20 p-3 hover:border-gold/50 sm:p-4">
           <Users className="h-5 w-5 shrink-0 text-gold" />
           <div className="min-w-0">
@@ -223,7 +244,7 @@ function HomeTab() {
             <div className="text-sm text-foreground">Open feed</div>
           </div>
         </Link>
-        <Link to="/app/nutrition" className="group relative flex items-center gap-3 border border-gold/20 bg-deluxe-forest/20 p-3 hover:border-gold/50 sm:p-4">
+        <Link to="/app/nutrition" className="group relative flex items-center gap-3 border border-gold/20 bg-deluxe-forest/20 p-3 hover:border-gold/50 sm:p-4 col-span-2">
           <Apple className="h-5 w-5 shrink-0 text-gold" />
           <div className="min-w-0">
             <div className="flex items-center gap-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -233,6 +254,7 @@ function HomeTab() {
           </div>
         </Link>
       </div>
+      <div className="pb-6" />
     </div>
   );
 }
