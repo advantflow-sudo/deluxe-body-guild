@@ -6,16 +6,16 @@ import { fetchFitnessAggregate, refreshAccessToken } from "@/lib/google-fit.serv
 /**
  * Cron endpoint — called every 15 minutes by pg_cron.
  *
- * Auth: caller must pass the project's anon/publishable key in the `apikey`
- * header. Lovable's edge bypass for `/api/public/*` paths handles the rest.
+ * Auth: caller must pass a long random secret in the `x-cron-secret` header
+ * matching the server-only CRON_SECRET env var. Never expose this in client code.
  */
 export const Route = createFileRoute("/api/public/hooks/sync-google-fit")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apikey = request.headers.get("apikey");
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!expected || apikey !== expected) {
+        const provided = request.headers.get("x-cron-secret");
+        const expected = process.env.CRON_SECRET;
+        if (!expected || provided !== expected) {
           return new Response("Unauthorized", { status: 401 });
         }
 
