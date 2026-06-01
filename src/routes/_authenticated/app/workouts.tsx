@@ -98,12 +98,10 @@ function WorkoutPlayer({ workout, userId, onClose }: { workout: Workout; userId:
       calories: workout.calories ? Math.round((workout.calories * durationMin) / workout.duration_min) : null,
     });
     if (sErr) return toast.error(sErr.message);
-    // Award points
-    const { data: latest } = await supabase.from("reward_points")
-      .select("balance_after").eq("user_id", userId).order("created_at", { ascending: false }).limit(1).maybeSingle();
-    const newBalance = (latest?.balance_after ?? 0) + points;
-    await supabase.from("reward_points").insert({
-      user_id: userId, delta: points, balance_after: newBalance, reason: `Completed ${workout.title}`,
+    // Award points server-side (validated by award_points RPC)
+    await supabase.rpc("award_points", {
+      _reason: `Completed ${workout.title}`,
+      _delta: points,
     });
     // Update daily stats
     const today = new Date().toISOString().slice(0, 10);
