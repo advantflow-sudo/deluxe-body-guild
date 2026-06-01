@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
+import { TransformationLevel } from "@/components/deluxe/TransformationLevel";
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
   component: ProfileTab,
@@ -21,16 +22,19 @@ function ProfileTab() {
   const [name, setName] = useState("");
   const [ext, setExt] = useState<Ext | null>(null);
   const [saving, setSaving] = useState(false);
+  const [points, setPoints] = useState(0);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [{ data: p }, { data: e }] = await Promise.all([
+      const [{ data: p }, { data: e }, { data: bal }] = await Promise.all([
         supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle(),
         supabase.from("user_profiles_ext").select("*").eq("user_id", user.id).maybeSingle(),
+        supabase.from("reward_points").select("balance_after").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
       ]);
       setName(p?.display_name ?? "");
       if (e) setExt(e as Ext);
+      setPoints(bal?.balance_after ?? 0);
     })();
   }, [user]);
 
@@ -57,7 +61,11 @@ function ProfileTab() {
       <h1 className="mt-2 font-display text-3xl text-foreground">{name || "Your account"}</h1>
       <p className="mt-1 text-xs text-muted-foreground">{user?.email}</p>
 
-      <div className="mt-6 flex items-center justify-between border border-gold/30 bg-gold-gradient/10 p-5">
+      <div className="mt-6">
+        <TransformationLevel points={points} />
+      </div>
+
+      <div className="mt-4 flex items-center justify-between border border-gold/30 bg-gold-gradient/10 p-5">
         <div className="flex items-center gap-3">
           <Crown className="h-6 w-6 text-gold" />
           <div>

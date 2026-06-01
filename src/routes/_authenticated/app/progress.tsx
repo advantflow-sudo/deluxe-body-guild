@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
+import { BodyTimeline } from "@/components/deluxe/BodyTimeline";
 
 export const Route = createFileRoute("/_authenticated/app/progress")({
   component: ProgressTab,
@@ -72,7 +73,13 @@ function ProgressTab() {
       <SectionLabel>Progress</SectionLabel>
       <h1 className="mt-2 font-display text-3xl text-foreground">Your transformation</h1>
 
-      <div className="mt-6 border border-gold/15 bg-deluxe-forest/20 p-5">
+      {user && (
+        <div className="mt-6">
+          <BodyTimeline userId={user.id} />
+        </div>
+      )}
+
+      <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5">
         <SectionLabel>Weight Trend</SectionLabel>
         <div className="mt-3 h-48">
           {chartData.length > 1 ? (
