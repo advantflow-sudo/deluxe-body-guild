@@ -99,9 +99,6 @@ function ProfileTab() {
         </div>
       )}
 
-      <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5">
-        <SectionLabel>Settings</SectionLabel>
-        <div className="mt-3 space-y-1">
       <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5 space-y-3">
         <SectionLabel>Re-engagement</SectionLabel>
         <PushPrompt />
