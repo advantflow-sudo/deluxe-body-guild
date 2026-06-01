@@ -135,14 +135,15 @@ function CommunityTab() {
     setPosting(true);
     let image_url: string | null = null;
     if (imageFile) {
-      const path = `${user.id}/${Date.now()}-${imageFile.name.replace(/\s+/g, "_")}`;
-      const { error: upErr } = await supabase.storage.from("avatars").upload(path, imageFile);
+      const path = `${user.id}/posts/${Date.now()}-${imageFile.name.replace(/\s+/g, "_")}`;
+      // Use private progress-photos bucket; store path only, sign at read time
+      const { error: upErr } = await supabase.storage.from("progress-photos").upload(path, imageFile);
       if (upErr) {
         toast.error(upErr.message);
         setPosting(false);
         return;
       }
-      image_url = supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl;
+      image_url = path;
     }
     const { error } = await supabase.from("community_posts").insert({
       user_id: user.id,
