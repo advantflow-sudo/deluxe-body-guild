@@ -41,6 +41,7 @@ import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
+import { Route as ApiPublicHooksDailyMissionsGenerateRouteImport } from './routes/api/public/hooks/daily-missions-generate'
 import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
 import { Route as AuthenticatedAppUUserIdRouteImport } from './routes/_authenticated/app/u.$userId'
 import { Route as ApiPublicOauthProviderCallbackRouteImport } from './routes/api/public/oauth/$provider.callback'
@@ -213,6 +214,12 @@ const ApiPublicHooksSyncGoogleFitRoute =
     path: '/api/public/hooks/sync-google-fit',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksDailyMissionsGenerateRoute =
+  ApiPublicHooksDailyMissionsGenerateRouteImport.update({
+    id: '/api/public/hooks/daily-missions-generate',
+    path: '/api/public/hooks/daily-missions-generate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicGoogleFitCallbackRoute =
   ApiPublicGoogleFitCallbackRouteImport.update({
     id: '/api/public/google-fit/callback',
@@ -263,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
+  '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -298,6 +306,7 @@ export interface FileRoutesByTo {
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
+  '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -336,6 +345,7 @@ export interface FileRoutesById {
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
+  '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -374,6 +384,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
+    | '/api/public/hooks/daily-missions-generate'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/oauth/$provider/callback'
@@ -409,6 +420,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
+    | '/api/public/hooks/daily-missions-generate'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/oauth/$provider/callback'
@@ -446,6 +458,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/'
     | '/_authenticated/app/u/$userId'
     | '/api/public/google-fit/callback'
+    | '/api/public/hooks/daily-missions-generate'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/oauth/$provider/callback'
@@ -465,6 +478,7 @@ export interface RootRouteChildren {
   WhatWeOfferRoute: typeof WhatWeOfferRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiPublicGoogleFitCallbackRoute: typeof ApiPublicGoogleFitCallbackRoute
+  ApiPublicHooksDailyMissionsGenerateRoute: typeof ApiPublicHooksDailyMissionsGenerateRoute
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
   ApiPublicOauthProviderCallbackRoute: typeof ApiPublicOauthProviderCallbackRoute
@@ -696,6 +710,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncGoogleFitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/daily-missions-generate': {
+      id: '/api/public/hooks/daily-missions-generate'
+      path: '/api/public/hooks/daily-missions-generate'
+      fullPath: '/api/public/hooks/daily-missions-generate'
+      preLoaderRoute: typeof ApiPublicHooksDailyMissionsGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/google-fit/callback': {
       id: '/api/public/google-fit/callback'
       path: '/api/public/google-fit/callback'
@@ -791,6 +812,8 @@ const rootRouteChildren: RootRouteChildren = {
   WhatWeOfferRoute: WhatWeOfferRoute,
   ApiChatRoute: ApiChatRoute,
   ApiPublicGoogleFitCallbackRoute: ApiPublicGoogleFitCallbackRoute,
+  ApiPublicHooksDailyMissionsGenerateRoute:
+    ApiPublicHooksDailyMissionsGenerateRoute,
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
   ApiPublicOauthProviderCallbackRoute: ApiPublicOauthProviderCallbackRoute,
