@@ -14,6 +14,7 @@ import { SectionLabel } from "@/components/deluxe/ui";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
 import { TodayMissionCard } from "@/components/deluxe/TodayMissionCard";
+import { DeluxeScoreCard } from "@/components/deluxe/DeluxeScoreCard";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
@@ -105,7 +106,18 @@ function HomeTab() {
         weekSessions={weekTotals.sessions}
       />
 
+      <DeluxeScoreCard
+        workoutCompletedToday={recent.some(
+          (s) => s.completed_at.slice(0, 10) === new Date().toISOString().slice(0, 10),
+        )}
+        steps={stats.steps}
+        waterMl={stats.water_ml}
+        caloriesBurned={stats.calories}
+        streak={stats.streak}
+      />
+
       <DailyBriefingCard />
+
 
 
       {/* This week summary + chart */}
