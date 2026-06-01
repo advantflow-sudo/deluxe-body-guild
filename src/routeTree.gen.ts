@@ -41,6 +41,7 @@ import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
+import { Route as ApiPublicHooksStreakAtRiskAlertRouteImport } from './routes/api/public/hooks/streak-at-risk-alert'
 import { Route as ApiPublicHooksScoreRecomputeRouteImport } from './routes/api/public/hooks/score-recompute'
 import { Route as ApiPublicHooksDailyMissionsGenerateRouteImport } from './routes/api/public/hooks/daily-missions-generate'
 import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
@@ -215,6 +216,12 @@ const ApiPublicHooksSyncGoogleFitRoute =
     path: '/api/public/hooks/sync-google-fit',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksStreakAtRiskAlertRoute =
+  ApiPublicHooksStreakAtRiskAlertRouteImport.update({
+    id: '/api/public/hooks/streak-at-risk-alert',
+    path: '/api/public/hooks/streak-at-risk-alert',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksScoreRecomputeRoute =
   ApiPublicHooksScoreRecomputeRouteImport.update({
     id: '/api/public/hooks/score-recompute',
@@ -279,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
+  '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -316,6 +324,7 @@ export interface FileRoutesByTo {
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
+  '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -356,6 +365,7 @@ export interface FileRoutesById {
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
+  '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -396,6 +406,7 @@ export interface FileRouteTypes {
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/daily-missions-generate'
     | '/api/public/hooks/score-recompute'
+    | '/api/public/hooks/streak-at-risk-alert'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/oauth/$provider/callback'
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/daily-missions-generate'
     | '/api/public/hooks/score-recompute'
+    | '/api/public/hooks/streak-at-risk-alert'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/oauth/$provider/callback'
@@ -472,6 +484,7 @@ export interface FileRouteTypes {
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/daily-missions-generate'
     | '/api/public/hooks/score-recompute'
+    | '/api/public/hooks/streak-at-risk-alert'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/oauth/$provider/callback'
@@ -493,6 +506,7 @@ export interface RootRouteChildren {
   ApiPublicGoogleFitCallbackRoute: typeof ApiPublicGoogleFitCallbackRoute
   ApiPublicHooksDailyMissionsGenerateRoute: typeof ApiPublicHooksDailyMissionsGenerateRoute
   ApiPublicHooksScoreRecomputeRoute: typeof ApiPublicHooksScoreRecomputeRoute
+  ApiPublicHooksStreakAtRiskAlertRoute: typeof ApiPublicHooksStreakAtRiskAlertRoute
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
   ApiPublicOauthProviderCallbackRoute: typeof ApiPublicOauthProviderCallbackRoute
@@ -724,6 +738,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncGoogleFitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/streak-at-risk-alert': {
+      id: '/api/public/hooks/streak-at-risk-alert'
+      path: '/api/public/hooks/streak-at-risk-alert'
+      fullPath: '/api/public/hooks/streak-at-risk-alert'
+      preLoaderRoute: typeof ApiPublicHooksStreakAtRiskAlertRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/score-recompute': {
       id: '/api/public/hooks/score-recompute'
       path: '/api/public/hooks/score-recompute'
@@ -836,6 +857,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksDailyMissionsGenerateRoute:
     ApiPublicHooksDailyMissionsGenerateRoute,
   ApiPublicHooksScoreRecomputeRoute: ApiPublicHooksScoreRecomputeRoute,
+  ApiPublicHooksStreakAtRiskAlertRoute: ApiPublicHooksStreakAtRiskAlertRoute,
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
   ApiPublicOauthProviderCallbackRoute: ApiPublicOauthProviderCallbackRoute,
