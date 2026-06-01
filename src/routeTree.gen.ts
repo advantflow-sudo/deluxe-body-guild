@@ -41,6 +41,7 @@ import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
+import { Route as ApiPublicHooksScoreRecomputeRouteImport } from './routes/api/public/hooks/score-recompute'
 import { Route as ApiPublicHooksDailyMissionsGenerateRouteImport } from './routes/api/public/hooks/daily-missions-generate'
 import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
 import { Route as AuthenticatedAppUUserIdRouteImport } from './routes/_authenticated/app/u.$userId'
@@ -214,6 +215,12 @@ const ApiPublicHooksSyncGoogleFitRoute =
     path: '/api/public/hooks/sync-google-fit',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksScoreRecomputeRoute =
+  ApiPublicHooksScoreRecomputeRouteImport.update({
+    id: '/api/public/hooks/score-recompute',
+    path: '/api/public/hooks/score-recompute',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksDailyMissionsGenerateRoute =
   ApiPublicHooksDailyMissionsGenerateRouteImport.update({
     id: '/api/public/hooks/daily-missions-generate',
@@ -271,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
+  '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -307,6 +315,7 @@ export interface FileRoutesByTo {
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
+  '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -346,6 +355,7 @@ export interface FileRoutesById {
   '/_authenticated/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
+  '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -385,6 +395,7 @@ export interface FileRouteTypes {
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/daily-missions-generate'
+    | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/oauth/$provider/callback'
@@ -421,6 +432,7 @@ export interface FileRouteTypes {
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/daily-missions-generate'
+    | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/oauth/$provider/callback'
@@ -459,6 +471,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/u/$userId'
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/daily-missions-generate'
+    | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/oauth/$provider/callback'
@@ -479,6 +492,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiPublicGoogleFitCallbackRoute: typeof ApiPublicGoogleFitCallbackRoute
   ApiPublicHooksDailyMissionsGenerateRoute: typeof ApiPublicHooksDailyMissionsGenerateRoute
+  ApiPublicHooksScoreRecomputeRoute: typeof ApiPublicHooksScoreRecomputeRoute
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
   ApiPublicOauthProviderCallbackRoute: typeof ApiPublicOauthProviderCallbackRoute
@@ -710,6 +724,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncGoogleFitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/score-recompute': {
+      id: '/api/public/hooks/score-recompute'
+      path: '/api/public/hooks/score-recompute'
+      fullPath: '/api/public/hooks/score-recompute'
+      preLoaderRoute: typeof ApiPublicHooksScoreRecomputeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/daily-missions-generate': {
       id: '/api/public/hooks/daily-missions-generate'
       path: '/api/public/hooks/daily-missions-generate'
@@ -814,6 +835,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicGoogleFitCallbackRoute: ApiPublicGoogleFitCallbackRoute,
   ApiPublicHooksDailyMissionsGenerateRoute:
     ApiPublicHooksDailyMissionsGenerateRoute,
+  ApiPublicHooksScoreRecomputeRoute: ApiPublicHooksScoreRecomputeRoute,
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
   ApiPublicOauthProviderCallbackRoute: ApiPublicOauthProviderCallbackRoute,
