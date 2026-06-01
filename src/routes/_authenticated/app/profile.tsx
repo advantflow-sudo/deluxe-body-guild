@@ -102,9 +102,29 @@ function ProfileTab() {
       <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5">
         <SectionLabel>Settings</SectionLabel>
         <div className="mt-3 space-y-1">
+      <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5 space-y-3">
+        <SectionLabel>Re-engagement</SectionLabel>
+        <PushPrompt />
+        {ext && (
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Morning reminder (h, 0-23)" type="number" value={String(ext.reminder_morning_hour ?? 8)}
+              onChange={(v) => setExt({ ...ext, reminder_morning_hour: v ? Math.max(0, Math.min(23, parseInt(v))) : null })} />
+            <Field label="Evening reminder (h, 0-23)" type="number" value={String(ext.reminder_evening_hour ?? 20)}
+              onChange={(v) => setExt({ ...ext, reminder_evening_hour: v ? Math.max(0, Math.min(23, parseInt(v))) : null })} />
+          </div>
+        )}
+      </div>
+
+      <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5">
+        <SectionLabel>Settings</SectionLabel>
+        <div className="mt-3 space-y-1">
           <Row icon={Bell} label="Notifications" onClick={() => ext && setExt({ ...ext, notifications_enabled: !ext.notifications_enabled })}
             right={<span className={`h-5 w-9 rounded-full transition ${ext?.notifications_enabled ? "bg-gold" : "bg-gold/20"} relative`}>
               <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${ext?.notifications_enabled ? "left-4" : "left-0.5"}`} />
+            </span>} />
+          <Row icon={Bell} label="Weekly recap" onClick={() => ext && setExt({ ...ext, weekly_recap_enabled: !ext.weekly_recap_enabled })}
+            right={<span className={`h-5 w-9 rounded-full transition ${ext?.weekly_recap_enabled ? "bg-gold" : "bg-gold/20"} relative`}>
+              <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${ext?.weekly_recap_enabled ? "left-4" : "left-0.5"}`} />
             </span>} />
           <Row icon={HelpCircle} label="Help & Support" to="/contact" />
           <Row icon={FileText} label="Terms of Service" to="/about" />
