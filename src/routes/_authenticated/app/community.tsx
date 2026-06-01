@@ -77,9 +77,26 @@ function CommunityTab() {
     const cmtCount = new Map<string, number>();
     (commentsRes.data ?? []).forEach((c: any) => cmtCount.set(c.post_id, (cmtCount.get(c.post_id) ?? 0) + 1));
 
+    // Resolve signed URLs for any image_url that is a storage path (new posts)
+    const pathRows = list.filter((p) => p.image_url && !p.image_url.startsWith("http"));
+    const signedMap = new Map<string, string>();
+    if (pathRows.length) {
+      await Promise.all(
+        pathRows.map(async (p) => {
+          const { data: signed } = await supabase.storage
+            .from("progress-photos")
+            .createSignedUrl(p.image_url as string, 3600);
+          if (signed?.signedUrl) signedMap.set(p.id, signed.signedUrl);
+        }),
+      );
+    }
+
     setPosts(
       list.map((p) => ({
         ...p,
+        image_url: p.image_url && !p.image_url.startsWith("http")
+          ? signedMap.get(p.id) ?? null
+          : p.image_url,
         profile: profMap.get(p.user_id),
         workout_title: p.workout_session_id ? sessMap.get(p.workout_session_id) : null,
         likes: likeCount.get(p.id) ?? 0,
@@ -118,14 +135,15 @@ function CommunityTab() {
     setPosting(true);
     let image_url: string | null = null;
     if (imageFile) {
-      const path = `${user.id}/${Date.now()}-${imageFile.name.replace(/\s+/g, "_")}`;
-      const { error: upErr } = await supabase.storage.from("avatars").upload(path, imageFile);
+      const path = `${user.id}/posts/${Date.now()}-${imageFile.name.replace(/\s+/g, "_")}`;
+      // Use private progress-photos bucket; store path only, sign at read time
+      const { error: upErr } = await supabase.storage.from("progress-photos").upload(path, imageFile);
       if (upErr) {
         toast.error(upErr.message);
         setPosting(false);
         return;
       }
-      image_url = supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl;
+      image_url = path;
     }
     const { error } = await supabase.from("community_posts").insert({
       user_id: user.id,

@@ -112,6 +112,35 @@ export const Route = createFileRoute("/api/chat")({
     handlers: {
       POST: async ({ request }) => {
         try {
+          // Require authentication — prevents anonymous use of paid AI credits
+          const authHeader = request.headers.get("authorization");
+          if (!authHeader?.startsWith("Bearer ")) {
+            return new Response(JSON.stringify({ error: "Unauthorized" }), {
+              status: 401,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
+          const token = authHeader.slice(7);
+          const SUPABASE_URL = process.env.SUPABASE_URL;
+          const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+          if (!SUPABASE_URL || !SUPABASE_KEY) {
+            return new Response(JSON.stringify({ error: "Server misconfigured" }), {
+              status: 500,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
+          const authClient = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
+            global: { headers: { Authorization: `Bearer ${token}` } },
+            auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+          });
+          const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(token);
+          if (claimsErr || !claimsData?.claims?.sub) {
+            return new Response(JSON.stringify({ error: "Unauthorized" }), {
+              status: 401,
+              headers: { "Content-Type": "application/json" },
+            });
+          }
+
           const { messages } = (await request.json()) as { messages: Msg[] };
           const apiKey = process.env.LOVABLE_API_KEY;
           if (!apiKey) {
@@ -121,7 +150,7 @@ export const Route = createFileRoute("/api/chat")({
             );
           }
 
-          const memberProfile = await buildMemberProfile(request.headers.get("authorization"));
+          const memberProfile = await buildMemberProfile(authHeader);
           const systemPrompt = BASE_SYSTEM_PROMPT + memberProfile;
 
           const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

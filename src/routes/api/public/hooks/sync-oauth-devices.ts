@@ -11,9 +11,9 @@ export const Route = createFileRoute("/api/public/hooks/sync-oauth-devices")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const apikey = request.headers.get("apikey");
-        const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
-        if (!expected || apikey !== expected) {
+        const provided = request.headers.get("x-cron-secret");
+        const expected = process.env.CRON_SECRET;
+        if (!expected || provided !== expected) {
           return new Response("Unauthorized", { status: 401 });
         }
 
