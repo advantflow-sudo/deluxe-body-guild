@@ -691,6 +691,39 @@ export type Database = {
         }
         Relationships: []
       }
+      push_subscriptions: {
+        Row: {
+          auth_key: string
+          created_at: string
+          endpoint: string
+          id: string
+          last_used_at: string | null
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth_key: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          last_used_at?: string | null
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth_key?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          last_used_at?: string | null
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       reward_claims: {
         Row: {
           claimed_at: string
@@ -901,11 +934,15 @@ export type Database = {
           notifications_enabled: boolean
           onboarded_at: string | null
           preferred_type: string | null
+          reminder_evening_hour: number | null
+          reminder_morning_hour: number | null
           subscription_tier: string
+          timezone: string
           training_level: string | null
           units: string
           updated_at: string
           user_id: string
+          weekly_recap_enabled: boolean
           weight_kg: number | null
         }
         Insert: {
@@ -916,11 +953,15 @@ export type Database = {
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
+          reminder_evening_hour?: number | null
+          reminder_morning_hour?: number | null
           subscription_tier?: string
+          timezone?: string
           training_level?: string | null
           units?: string
           updated_at?: string
           user_id: string
+          weekly_recap_enabled?: boolean
           weight_kg?: number | null
         }
         Update: {
@@ -931,11 +972,15 @@ export type Database = {
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
+          reminder_evening_hour?: number | null
+          reminder_morning_hour?: number | null
           subscription_tier?: string
+          timezone?: string
           training_level?: string | null
           units?: string
           updated_at?: string
           user_id?: string
+          weekly_recap_enabled?: boolean
           weight_kg?: number | null
         }
         Relationships: []
@@ -1195,6 +1240,21 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      cron_auto_match_unpaired: { Args: never; Returns: number }
+      cron_generate_missions_for_active: { Args: never; Returns: number }
+      cron_streak_at_risk_users: {
+        Args: never
+        Returns: {
+          current_len: number
+          user_id: string
+        }[]
+      }
+      cron_users_for_reminder: {
+        Args: { _kind: string }
+        Returns: {
+          user_id: string
+        }[]
       }
       generate_daily_mission: {
         Args: never
