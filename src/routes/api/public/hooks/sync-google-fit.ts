@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { timingSafeEqual } from "node:crypto";
 import type { Database } from "@/integrations/supabase/types";
 import { fetchFitnessAggregate, refreshAccessToken } from "@/lib/google-fit.server";
 
@@ -15,7 +16,12 @@ export const Route = createFileRoute("/api/public/hooks/sync-google-fit")({
       POST: async ({ request }) => {
         const provided = request.headers.get("x-cron-secret");
         const expected = process.env.CRON_SECRET;
-        if (!expected || provided !== expected) {
+        if (
+          !expected ||
+          !provided ||
+          provided.length !== expected.length ||
+          !timingSafeEqual(Buffer.from(provided), Buffer.from(expected))
+        ) {
           return new Response("Unauthorized", { status: 401 });
         }
 

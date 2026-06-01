@@ -38,6 +38,9 @@ function Onboarding() {
   const finish = async () => {
     if (!user) return;
     setBusy(true);
+    // NOTE: subscription_tier is intentionally NOT sent from the client.
+    // Tier upgrades must go through a verified server-side payment flow.
+    // A DB trigger forces client-supplied tiers to "free".
     const { error } = await supabase.from("user_profiles_ext").upsert({
       user_id: user.id,
       fitness_goal: goal,
@@ -46,9 +49,9 @@ function Onboarding() {
       age: age ? parseInt(age) : null,
       training_level: level,
       preferred_type: type,
-      subscription_tier: plan,
       onboarded_at: new Date().toISOString(),
     });
+    void plan;
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome to Deluxe.");
