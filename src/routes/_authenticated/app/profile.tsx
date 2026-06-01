@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { TransformationLevel } from "@/components/deluxe/TransformationLevel";
+import { PushPrompt } from "@/components/deluxe/PushPrompt";
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
   component: ProfileTab,
@@ -15,6 +16,8 @@ interface Ext {
   fitness_goal: string | null; weight_kg: number | null; height_cm: number | null;
   age: number | null; training_level: string | null; preferred_type: string | null;
   subscription_tier: string; notifications_enabled: boolean;
+  reminder_morning_hour: number | null; reminder_evening_hour: number | null;
+  weekly_recap_enabled: boolean; timezone: string;
 }
 
 function ProfileTab() {
