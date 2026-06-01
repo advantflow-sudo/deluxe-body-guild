@@ -30,7 +30,9 @@ import { Route as AuthenticatedAppWorkoutsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppRewardsRouteImport } from './routes/_authenticated/app/rewards'
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/app/progress'
 import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authenticated/app/profile'
+import { Route as AuthenticatedAppPartnerRouteImport } from './routes/_authenticated/app/partner'
 import { Route as AuthenticatedAppNutritionRouteImport } from './routes/_authenticated/app/nutrition'
+import { Route as AuthenticatedAppLeaderboardRouteImport } from './routes/_authenticated/app/leaderboard'
 import { Route as AuthenticatedAppHabitsRouteImport } from './routes/_authenticated/app/habits'
 import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authenticated/app/community'
 import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/app/coach'
@@ -147,10 +149,21 @@ const AuthenticatedAppProfileRoute = AuthenticatedAppProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppPartnerRoute = AuthenticatedAppPartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppNutritionRoute =
   AuthenticatedAppNutritionRouteImport.update({
     id: '/nutrition',
     path: '/nutrition',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppLeaderboardRoute =
+  AuthenticatedAppLeaderboardRouteImport.update({
+    id: '/leaderboard',
+    path: '/leaderboard',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const AuthenticatedAppHabitsRoute = AuthenticatedAppHabitsRouteImport.update({
@@ -224,7 +237,9 @@ export interface FileRoutesByFullPath {
   '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
   '/app/habits': typeof AuthenticatedAppHabitsRoute
+  '/app/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/app/nutrition': typeof AuthenticatedAppNutritionRoute
+  '/app/partner': typeof AuthenticatedAppPartnerRoute
   '/app/profile': typeof AuthenticatedAppProfileRoute
   '/app/progress': typeof AuthenticatedAppProgressRoute
   '/app/rewards': typeof AuthenticatedAppRewardsRoute
@@ -255,7 +270,9 @@ export interface FileRoutesByTo {
   '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
   '/app/habits': typeof AuthenticatedAppHabitsRoute
+  '/app/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/app/nutrition': typeof AuthenticatedAppNutritionRoute
+  '/app/partner': typeof AuthenticatedAppPartnerRoute
   '/app/profile': typeof AuthenticatedAppProfileRoute
   '/app/progress': typeof AuthenticatedAppProgressRoute
   '/app/rewards': typeof AuthenticatedAppRewardsRoute
@@ -289,7 +306,9 @@ export interface FileRoutesById {
   '/_authenticated/app/coach': typeof AuthenticatedAppCoachRoute
   '/_authenticated/app/community': typeof AuthenticatedAppCommunityRoute
   '/_authenticated/app/habits': typeof AuthenticatedAppHabitsRoute
+  '/_authenticated/app/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/_authenticated/app/nutrition': typeof AuthenticatedAppNutritionRoute
+  '/_authenticated/app/partner': typeof AuthenticatedAppPartnerRoute
   '/_authenticated/app/profile': typeof AuthenticatedAppProfileRoute
   '/_authenticated/app/progress': typeof AuthenticatedAppProgressRoute
   '/_authenticated/app/rewards': typeof AuthenticatedAppRewardsRoute
@@ -323,7 +342,9 @@ export interface FileRouteTypes {
     | '/app/coach'
     | '/app/community'
     | '/app/habits'
+    | '/app/leaderboard'
     | '/app/nutrition'
+    | '/app/partner'
     | '/app/profile'
     | '/app/progress'
     | '/app/rewards'
@@ -354,7 +375,9 @@ export interface FileRouteTypes {
     | '/app/coach'
     | '/app/community'
     | '/app/habits'
+    | '/app/leaderboard'
     | '/app/nutrition'
+    | '/app/partner'
     | '/app/profile'
     | '/app/progress'
     | '/app/rewards'
@@ -387,7 +410,9 @@ export interface FileRouteTypes {
     | '/_authenticated/app/coach'
     | '/_authenticated/app/community'
     | '/_authenticated/app/habits'
+    | '/_authenticated/app/leaderboard'
     | '/_authenticated/app/nutrition'
+    | '/_authenticated/app/partner'
     | '/_authenticated/app/profile'
     | '/_authenticated/app/progress'
     | '/_authenticated/app/rewards'
@@ -568,11 +593,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppProfileRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/partner': {
+      id: '/_authenticated/app/partner'
+      path: '/partner'
+      fullPath: '/app/partner'
+      preLoaderRoute: typeof AuthenticatedAppPartnerRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/nutrition': {
       id: '/_authenticated/app/nutrition'
       path: '/nutrition'
       fullPath: '/app/nutrition'
       preLoaderRoute: typeof AuthenticatedAppNutritionRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/leaderboard': {
+      id: '/_authenticated/app/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/app/leaderboard'
+      preLoaderRoute: typeof AuthenticatedAppLeaderboardRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/habits': {
@@ -646,7 +685,9 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppCoachRoute: typeof AuthenticatedAppCoachRoute
   AuthenticatedAppCommunityRoute: typeof AuthenticatedAppCommunityRoute
   AuthenticatedAppHabitsRoute: typeof AuthenticatedAppHabitsRoute
+  AuthenticatedAppLeaderboardRoute: typeof AuthenticatedAppLeaderboardRoute
   AuthenticatedAppNutritionRoute: typeof AuthenticatedAppNutritionRoute
+  AuthenticatedAppPartnerRoute: typeof AuthenticatedAppPartnerRoute
   AuthenticatedAppProfileRoute: typeof AuthenticatedAppProfileRoute
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
   AuthenticatedAppRewardsRoute: typeof AuthenticatedAppRewardsRoute
@@ -660,7 +701,9 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppCoachRoute: AuthenticatedAppCoachRoute,
   AuthenticatedAppCommunityRoute: AuthenticatedAppCommunityRoute,
   AuthenticatedAppHabitsRoute: AuthenticatedAppHabitsRoute,
+  AuthenticatedAppLeaderboardRoute: AuthenticatedAppLeaderboardRoute,
   AuthenticatedAppNutritionRoute: AuthenticatedAppNutritionRoute,
+  AuthenticatedAppPartnerRoute: AuthenticatedAppPartnerRoute,
   AuthenticatedAppProfileRoute: AuthenticatedAppProfileRoute,
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
   AuthenticatedAppRewardsRoute: AuthenticatedAppRewardsRoute,
@@ -711,3 +754,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
