@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { usePremium } from "@/hooks/usePremium";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/app/coach")({
   component: CoachTab,
