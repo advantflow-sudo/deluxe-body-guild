@@ -39,11 +39,14 @@ import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authenticated/app/challenges'
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
+import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
 import { Route as ApiPublicHooksStreakAtRiskAlertRouteImport } from './routes/api/public/hooks/streak-at-risk-alert'
+import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
 import { Route as ApiPublicHooksScoreRecomputeRouteImport } from './routes/api/public/hooks/score-recompute'
 import { Route as ApiPublicHooksDailyMissionsGenerateRouteImport } from './routes/api/public/hooks/daily-missions-generate'
+import { Route as ApiPublicHooksAutoMatchPartnersRouteImport } from './routes/api/public/hooks/auto-match-partners'
 import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
 import { Route as AuthenticatedAppUUserIdRouteImport } from './routes/_authenticated/app/u.$userId'
 import { Route as ApiPublicOauthProviderCallbackRouteImport } from './routes/api/public/oauth/$provider.callback'
@@ -204,6 +207,12 @@ const AuthenticatedAcceptInviteCodeRoute =
     path: '/accept-invite/$code',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const ApiPublicHooksWeeklyRecapRoute =
+  ApiPublicHooksWeeklyRecapRouteImport.update({
+    id: '/api/public/hooks/weekly-recap',
+    path: '/api/public/hooks/weekly-recap',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSyncOauthDevicesRoute =
   ApiPublicHooksSyncOauthDevicesRouteImport.update({
     id: '/api/public/hooks/sync-oauth-devices',
@@ -222,6 +231,12 @@ const ApiPublicHooksStreakAtRiskAlertRoute =
     path: '/api/public/hooks/streak-at-risk-alert',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSendRemindersRoute =
+  ApiPublicHooksSendRemindersRouteImport.update({
+    id: '/api/public/hooks/send-reminders',
+    path: '/api/public/hooks/send-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksScoreRecomputeRoute =
   ApiPublicHooksScoreRecomputeRouteImport.update({
     id: '/api/public/hooks/score-recompute',
@@ -232,6 +247,12 @@ const ApiPublicHooksDailyMissionsGenerateRoute =
   ApiPublicHooksDailyMissionsGenerateRouteImport.update({
     id: '/api/public/hooks/daily-missions-generate',
     path: '/api/public/hooks/daily-missions-generate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksAutoMatchPartnersRoute =
+  ApiPublicHooksAutoMatchPartnersRouteImport.update({
+    id: '/api/public/hooks/auto-match-partners',
+    path: '/api/public/hooks/auto-match-partners',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicGoogleFitCallbackRoute =
@@ -284,11 +305,14 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
+  '/api/public/hooks/auto-match-partners': typeof ApiPublicHooksAutoMatchPartnersRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
+  '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
+  '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -322,11 +346,14 @@ export interface FileRoutesByTo {
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
+  '/api/public/hooks/auto-match-partners': typeof ApiPublicHooksAutoMatchPartnersRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
+  '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
+  '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRoutesById {
@@ -363,11 +390,14 @@ export interface FileRoutesById {
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
+  '/api/public/hooks/auto-match-partners': typeof ApiPublicHooksAutoMatchPartnersRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
+  '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
+  '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRouteTypes {
@@ -404,11 +434,14 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
+    | '/api/public/hooks/auto-match-partners'
     | '/api/public/hooks/daily-missions-generate'
     | '/api/public/hooks/score-recompute'
+    | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
+    | '/api/public/hooks/weekly-recap'
     | '/api/public/oauth/$provider/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -442,11 +475,14 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
+    | '/api/public/hooks/auto-match-partners'
     | '/api/public/hooks/daily-missions-generate'
     | '/api/public/hooks/score-recompute'
+    | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
+    | '/api/public/hooks/weekly-recap'
     | '/api/public/oauth/$provider/callback'
   id:
     | '__root__'
@@ -482,11 +518,14 @@ export interface FileRouteTypes {
     | '/_authenticated/app/'
     | '/_authenticated/app/u/$userId'
     | '/api/public/google-fit/callback'
+    | '/api/public/hooks/auto-match-partners'
     | '/api/public/hooks/daily-missions-generate'
     | '/api/public/hooks/score-recompute'
+    | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
+    | '/api/public/hooks/weekly-recap'
     | '/api/public/oauth/$provider/callback'
   fileRoutesById: FileRoutesById
 }
@@ -504,11 +543,14 @@ export interface RootRouteChildren {
   WhatWeOfferRoute: typeof WhatWeOfferRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiPublicGoogleFitCallbackRoute: typeof ApiPublicGoogleFitCallbackRoute
+  ApiPublicHooksAutoMatchPartnersRoute: typeof ApiPublicHooksAutoMatchPartnersRoute
   ApiPublicHooksDailyMissionsGenerateRoute: typeof ApiPublicHooksDailyMissionsGenerateRoute
   ApiPublicHooksScoreRecomputeRoute: typeof ApiPublicHooksScoreRecomputeRoute
+  ApiPublicHooksSendRemindersRoute: typeof ApiPublicHooksSendRemindersRoute
   ApiPublicHooksStreakAtRiskAlertRoute: typeof ApiPublicHooksStreakAtRiskAlertRoute
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
+  ApiPublicHooksWeeklyRecapRoute: typeof ApiPublicHooksWeeklyRecapRoute
   ApiPublicOauthProviderCallbackRoute: typeof ApiPublicOauthProviderCallbackRoute
 }
 
@@ -724,6 +766,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAcceptInviteCodeRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/hooks/weekly-recap': {
+      id: '/api/public/hooks/weekly-recap'
+      path: '/api/public/hooks/weekly-recap'
+      fullPath: '/api/public/hooks/weekly-recap'
+      preLoaderRoute: typeof ApiPublicHooksWeeklyRecapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sync-oauth-devices': {
       id: '/api/public/hooks/sync-oauth-devices'
       path: '/api/public/hooks/sync-oauth-devices'
@@ -745,6 +794,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksStreakAtRiskAlertRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/send-reminders': {
+      id: '/api/public/hooks/send-reminders'
+      path: '/api/public/hooks/send-reminders'
+      fullPath: '/api/public/hooks/send-reminders'
+      preLoaderRoute: typeof ApiPublicHooksSendRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/score-recompute': {
       id: '/api/public/hooks/score-recompute'
       path: '/api/public/hooks/score-recompute'
@@ -757,6 +813,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/daily-missions-generate'
       fullPath: '/api/public/hooks/daily-missions-generate'
       preLoaderRoute: typeof ApiPublicHooksDailyMissionsGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/auto-match-partners': {
+      id: '/api/public/hooks/auto-match-partners'
+      path: '/api/public/hooks/auto-match-partners'
+      fullPath: '/api/public/hooks/auto-match-partners'
+      preLoaderRoute: typeof ApiPublicHooksAutoMatchPartnersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/google-fit/callback': {
@@ -854,14 +917,27 @@ const rootRouteChildren: RootRouteChildren = {
   WhatWeOfferRoute: WhatWeOfferRoute,
   ApiChatRoute: ApiChatRoute,
   ApiPublicGoogleFitCallbackRoute: ApiPublicGoogleFitCallbackRoute,
+  ApiPublicHooksAutoMatchPartnersRoute: ApiPublicHooksAutoMatchPartnersRoute,
   ApiPublicHooksDailyMissionsGenerateRoute:
     ApiPublicHooksDailyMissionsGenerateRoute,
   ApiPublicHooksScoreRecomputeRoute: ApiPublicHooksScoreRecomputeRoute,
+  ApiPublicHooksSendRemindersRoute: ApiPublicHooksSendRemindersRoute,
   ApiPublicHooksStreakAtRiskAlertRoute: ApiPublicHooksStreakAtRiskAlertRoute,
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
+  ApiPublicHooksWeeklyRecapRoute: ApiPublicHooksWeeklyRecapRoute,
   ApiPublicOauthProviderCallbackRoute: ApiPublicOauthProviderCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
