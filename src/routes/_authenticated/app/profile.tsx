@@ -51,6 +51,10 @@ function ProfileTab() {
         weight_kg: ext.weight_kg, height_cm: ext.height_cm, age: ext.age,
         training_level: ext.training_level, preferred_type: ext.preferred_type,
         notifications_enabled: ext.notifications_enabled,
+        reminder_morning_hour: ext.reminder_morning_hour,
+        reminder_evening_hour: ext.reminder_evening_hour,
+        weekly_recap_enabled: ext.weekly_recap_enabled,
+        timezone: ext.timezone,
       }).eq("user_id", user.id),
     ]);
     setSaving(false);
