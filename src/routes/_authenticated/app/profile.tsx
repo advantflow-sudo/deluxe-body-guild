@@ -137,7 +137,14 @@ function ProfileTab() {
   );
 }
 
-function Field({ label, value, onChange, type = "text" }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
+interface FieldProps {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+}
+function Field(props: FieldProps) {
+  const { label, value, onChange, type = "text" } = props;
   return (
     <div>
       <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">{label}</label>
