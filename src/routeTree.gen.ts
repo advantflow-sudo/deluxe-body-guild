@@ -36,7 +36,9 @@ import { Route as AuthenticatedAppLeaderboardRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppHabitsRouteImport } from './routes/_authenticated/app/habits'
 import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authenticated/app/community'
 import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/app/coach'
+import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authenticated/app/challenges'
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
+import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
 import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
@@ -182,11 +184,23 @@ const AuthenticatedAppCoachRoute = AuthenticatedAppCoachRouteImport.update({
   path: '/coach',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppChallengesRoute =
+  AuthenticatedAppChallengesRouteImport.update({
+    id: '/challenges',
+    path: '/challenges',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
 const AuthenticatedAppAiRoute = AuthenticatedAppAiRouteImport.update({
   id: '/ai',
   path: '/ai',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAcceptInviteCodeRoute =
+  AuthenticatedAcceptInviteCodeRouteImport.update({
+    id: '/accept-invite/$code',
+    path: '/accept-invite/$code',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const ApiPublicHooksSyncOauthDevicesRoute =
   ApiPublicHooksSyncOauthDevicesRouteImport.update({
     id: '/api/public/hooks/sync-oauth-devices',
@@ -233,7 +247,9 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
+  '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
+  '/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
   '/app/habits': typeof AuthenticatedAppHabitsRoute
@@ -266,7 +282,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
+  '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
+  '/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
   '/app/habits': typeof AuthenticatedAppHabitsRoute
@@ -302,7 +320,9 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
+  '/_authenticated/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/_authenticated/app/ai': typeof AuthenticatedAppAiRoute
+  '/_authenticated/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/_authenticated/app/coach': typeof AuthenticatedAppCoachRoute
   '/_authenticated/app/community': typeof AuthenticatedAppCommunityRoute
   '/_authenticated/app/habits': typeof AuthenticatedAppHabitsRoute
@@ -338,7 +358,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/onboarding'
     | '/api/chat'
+    | '/accept-invite/$code'
     | '/app/ai'
+    | '/app/challenges'
     | '/app/coach'
     | '/app/community'
     | '/app/habits'
@@ -371,7 +393,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/onboarding'
     | '/api/chat'
+    | '/accept-invite/$code'
     | '/app/ai'
+    | '/app/challenges'
     | '/app/coach'
     | '/app/community'
     | '/app/habits'
@@ -406,7 +430,9 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/api/chat'
+    | '/_authenticated/accept-invite/$code'
     | '/_authenticated/app/ai'
+    | '/_authenticated/app/challenges'
     | '/_authenticated/app/coach'
     | '/_authenticated/app/community'
     | '/_authenticated/app/habits'
@@ -635,12 +661,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppCoachRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/challenges': {
+      id: '/_authenticated/app/challenges'
+      path: '/challenges'
+      fullPath: '/app/challenges'
+      preLoaderRoute: typeof AuthenticatedAppChallengesRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/ai': {
       id: '/_authenticated/app/ai'
       path: '/ai'
       fullPath: '/app/ai'
       preLoaderRoute: typeof AuthenticatedAppAiRouteImport
       parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/accept-invite/$code': {
+      id: '/_authenticated/accept-invite/$code'
+      path: '/accept-invite/$code'
+      fullPath: '/accept-invite/$code'
+      preLoaderRoute: typeof AuthenticatedAcceptInviteCodeRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/api/public/hooks/sync-oauth-devices': {
       id: '/api/public/hooks/sync-oauth-devices'
@@ -682,6 +722,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppAiRoute: typeof AuthenticatedAppAiRoute
+  AuthenticatedAppChallengesRoute: typeof AuthenticatedAppChallengesRoute
   AuthenticatedAppCoachRoute: typeof AuthenticatedAppCoachRoute
   AuthenticatedAppCommunityRoute: typeof AuthenticatedAppCommunityRoute
   AuthenticatedAppHabitsRoute: typeof AuthenticatedAppHabitsRoute
@@ -698,6 +739,7 @@ interface AuthenticatedAppRouteChildren {
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppAiRoute: AuthenticatedAppAiRoute,
+  AuthenticatedAppChallengesRoute: AuthenticatedAppChallengesRoute,
   AuthenticatedAppCoachRoute: AuthenticatedAppCoachRoute,
   AuthenticatedAppCommunityRoute: AuthenticatedAppCommunityRoute,
   AuthenticatedAppHabitsRoute: AuthenticatedAppHabitsRoute,
@@ -720,6 +762,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedAcceptInviteCodeRoute: typeof AuthenticatedAcceptInviteCodeRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -727,6 +770,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedAcceptInviteCodeRoute: AuthenticatedAcceptInviteCodeRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -754,3 +798,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
