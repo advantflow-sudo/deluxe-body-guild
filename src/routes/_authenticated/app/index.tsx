@@ -96,30 +96,17 @@ function HomeTab() {
       <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">Good day, {name}.</h1>
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
 
-      {today && (
-        <Link to="/app/workouts" className="mt-5 block border border-gold/30 bg-gold-gradient/10 p-5 transition hover:border-gold sm:p-6">
-          <SectionLabel>Today's Workout</SectionLabel>
-          <div className="mt-2 flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="font-display text-lg text-foreground sm:text-xl truncate">{today.title}</h2>
-              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground sm:text-[11px]">
-                {today.category} · {today.duration_min} min · {today.level}
-              </p>
-            </div>
-            <ChevronRight className="h-6 w-6 shrink-0 text-gold" />
-          </div>
-        </Link>
-      )}
+      <TodayMissionCard
+        workout={today}
+        steps={stats.steps}
+        caloriesBurned={stats.calories}
+        waterMl={stats.water_ml}
+        streak={stats.streak}
+        weekSessions={weekTotals.sessions}
+      />
 
       <DailyBriefingCard />
 
-      {/* Today's stats */}
-      <div className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3">
-        <StatCard icon={Footprints} label="Steps" value={stats.steps.toLocaleString()} />
-        <StatCard icon={Flame} label="Calories" value={stats.calories.toLocaleString()} />
-        <StatCard icon={Droplet} label="Water" value={`${(stats.water_ml / 1000).toFixed(1)}L`} />
-        <StatCard icon={Activity} label="Streak" value={`${stats.streak}d`} />
-      </div>
 
       {/* This week summary + chart */}
       <div className="mt-5 border border-gold/20 bg-deluxe-forest/20 p-4 sm:p-5">
