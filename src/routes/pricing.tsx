@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Check, Crown, Sparkles, Star } from "lucide-react";
+import { Check, Crown, Sparkles, Star, Flame, Clock } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton, GoldDivider, SectionLabel } from "@/components/deluxe/ui";
 
@@ -112,7 +112,27 @@ function PricingPage() {
 
       <section className="relative bg-deluxe-black py-20">
         <div className="mx-auto max-w-7xl px-6">
-          {/* Billing toggle */}
+          {/* Trial urgency banner */}
+          <div className="mb-10 overflow-hidden border border-gold/40 bg-gold-gradient/10">
+            <div className="flex flex-col items-center gap-4 px-6 py-5 text-center sm:flex-row sm:justify-between sm:text-left">
+              <div className="flex items-center gap-3">
+                <Flame className="h-6 w-6 shrink-0 text-gold" />
+                <div>
+                  <div className="font-display text-lg text-foreground">
+                    7-day free trial — no card required for the first 24 hours.
+                  </div>
+                  <div className="mt-0.5 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.22em] text-gold sm:justify-start">
+                    <Clock className="h-3 w-3" />
+                    Founding-member pricing ends this month
+                  </div>
+                </div>
+              </div>
+              <Link to="/login">
+                <GoldButton>Start free trial</GoldButton>
+              </Link>
+            </div>
+          </div>
+
           <div className="mb-14 flex justify-center">
             <div className="inline-flex items-center gap-1 rounded-full border border-gold/25 bg-deluxe-forest/40 p-1">
               {(["monthly", "yearly"] as Cycle[]).map((c) => (
