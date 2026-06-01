@@ -219,6 +219,78 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_missions: {
+        Row: {
+          completed_at: string | null
+          generated_at: string
+          habit_ids: string[]
+          id: string
+          mindset_prompt: string | null
+          mission_date: string
+          user_id: string
+          workout_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          generated_at?: string
+          habit_ids?: string[]
+          id?: string
+          mindset_prompt?: string | null
+          mission_date?: string
+          user_id: string
+          workout_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          generated_at?: string
+          habit_ids?: string[]
+          id?: string
+          mindset_prompt?: string | null
+          mission_date?: string
+          user_id?: string
+          workout_id?: string | null
+        }
+        Relationships: []
+      }
+      daily_scores: {
+        Row: {
+          habits_pts: number
+          id: string
+          mindset_pts: number
+          score_date: string
+          social_pts: number
+          streak_day: number
+          total: number
+          updated_at: string
+          user_id: string
+          workout_pts: number
+        }
+        Insert: {
+          habits_pts?: number
+          id?: string
+          mindset_pts?: number
+          score_date?: string
+          social_pts?: number
+          streak_day?: number
+          total?: number
+          updated_at?: string
+          user_id: string
+          workout_pts?: number
+        }
+        Update: {
+          habits_pts?: number
+          id?: string
+          mindset_pts?: number
+          score_date?: string
+          social_pts?: number
+          streak_day?: number
+          total?: number
+          updated_at?: string
+          user_id?: string
+          workout_pts?: number
+        }
+        Relationships: []
+      }
       daily_stats: {
         Row: {
           calories: number
@@ -292,6 +364,83 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      habit_logs: {
+        Row: {
+          created_at: string
+          habit_id: string
+          id: string
+          log_date: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          habit_id: string
+          id?: string
+          log_date?: string
+          user_id: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          habit_id?: string
+          id?: string
+          log_date?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "habit_logs_habit_id_fkey"
+            columns: ["habit_id"]
+            isOneToOne: false
+            referencedRelation: "habits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      habits: {
+        Row: {
+          active: boolean
+          created_at: string
+          habit_type: string
+          icon: string | null
+          id: string
+          name: string
+          sort_order: number
+          target_value: number
+          unit: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          habit_type?: string
+          icon?: string | null
+          id?: string
+          name: string
+          sort_order?: number
+          target_value?: number
+          unit?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          habit_type?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          sort_order?: number
+          target_value?: number
+          unit?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       oauth_states: {
         Row: {
@@ -530,6 +679,36 @@ export type Database = {
         }
         Relationships: []
       }
+      streaks: {
+        Row: {
+          current_len: number
+          freezes_remaining: number
+          freezes_reset_week: string
+          last_active_date: string | null
+          longest_len: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_len?: number
+          freezes_remaining?: number
+          freezes_reset_week?: string
+          last_active_date?: string | null
+          longest_len?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_len?: number
+          freezes_remaining?: number
+          freezes_reset_week?: string
+          last_active_date?: string | null
+          longest_len?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_followers: {
         Row: {
           created_at: string
@@ -711,6 +890,65 @@ export type Database = {
       award_points: {
         Args: { _delta: number; _reason: string }
         Returns: number
+      }
+      complete_mission: {
+        Args: never
+        Returns: {
+          completed_at: string | null
+          generated_at: string
+          habit_ids: string[]
+          id: string
+          mindset_prompt: string | null
+          mission_date: string
+          user_id: string
+          workout_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "daily_missions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      compute_daily_score: {
+        Args: { _date?: string }
+        Returns: {
+          habits_pts: number
+          id: string
+          mindset_pts: number
+          score_date: string
+          social_pts: number
+          streak_day: number
+          total: number
+          updated_at: string
+          user_id: string
+          workout_pts: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "daily_scores"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      generate_daily_mission: {
+        Args: never
+        Returns: {
+          completed_at: string | null
+          generated_at: string
+          habit_ids: string[]
+          id: string
+          mindset_prompt: string | null
+          mission_date: string
+          user_id: string
+          workout_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "daily_missions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       has_role: {
         Args: {

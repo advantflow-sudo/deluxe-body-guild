@@ -13,8 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
-import { TodayMissionCard } from "@/components/deluxe/TodayMissionCard";
-import { DeluxeScoreCard } from "@/components/deluxe/DeluxeScoreCard";
+import { DailyMissionCard } from "@/components/deluxe/DailyMissionCard";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
@@ -96,25 +95,7 @@ function HomeTab() {
       <SectionLabel>Dashboard</SectionLabel>
       <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">Good day, {name}.</h1>
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
-
-      <TodayMissionCard
-        workout={today}
-        steps={stats.steps}
-        caloriesBurned={stats.calories}
-        waterMl={stats.water_ml}
-        streak={stats.streak}
-        weekSessions={weekTotals.sessions}
-      />
-
-      <DeluxeScoreCard
-        workoutCompletedToday={recent.some(
-          (s) => s.completed_at.slice(0, 10) === new Date().toISOString().slice(0, 10),
-        )}
-        steps={stats.steps}
-        waterMl={stats.water_ml}
-        caloriesBurned={stats.calories}
-        streak={stats.streak}
-      />
+      <DailyMissionCard />
 
       <DailyBriefingCard />
 
