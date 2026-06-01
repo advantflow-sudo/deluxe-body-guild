@@ -469,6 +469,110 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_invites: {
+        Row: {
+          code: string
+          consumed_at: string | null
+          consumed_by: string | null
+          created_at: string
+          email: string | null
+          expires_at: string
+          id: string
+          inviter_id: string
+        }
+        Insert: {
+          code: string
+          consumed_at?: string | null
+          consumed_by?: string | null
+          created_at?: string
+          email?: string | null
+          expires_at?: string
+          id?: string
+          inviter_id: string
+        }
+        Update: {
+          code?: string
+          consumed_at?: string | null
+          consumed_by?: string | null
+          created_at?: string
+          email?: string | null
+          expires_at?: string
+          id?: string
+          inviter_id?: string
+        }
+        Relationships: []
+      }
+      partner_nudges: {
+        Row: {
+          created_at: string
+          from_user: string
+          id: string
+          kind: string
+          message: string | null
+          partnership_id: string
+          read_at: string | null
+          to_user: string
+        }
+        Insert: {
+          created_at?: string
+          from_user: string
+          id?: string
+          kind?: string
+          message?: string | null
+          partnership_id: string
+          read_at?: string | null
+          to_user: string
+        }
+        Update: {
+          created_at?: string
+          from_user?: string
+          id?: string
+          kind?: string
+          message?: string | null
+          partnership_id?: string
+          read_at?: string | null
+          to_user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_nudges_partnership_id_fkey"
+            columns: ["partnership_id"]
+            isOneToOne: false
+            referencedRelation: "partnerships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      partnerships: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          pairing_mode: string
+          status: string
+          user_a: string
+          user_b: string
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          pairing_mode?: string
+          status?: string
+          user_a: string
+          user_b: string
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          pairing_mode?: string
+          status?: string
+          user_a?: string
+          user_b?: string
+        }
+        Relationships: []
+      }
       post_comments: {
         Row: {
           body: string
@@ -709,6 +813,64 @@ export type Database = {
         }
         Relationships: []
       }
+      team_challenge_members: {
+        Row: {
+          id: string
+          joined_at: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_challenge_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team_challenge_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_challenge_teams: {
+        Row: {
+          challenge_id: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          challenge_id: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          challenge_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_challenge_teams_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_team_challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_followers: {
         Row: {
           created_at: string
@@ -799,6 +961,45 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_team_challenges: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          metric: string
+          target_per_member: number
+          team_size: number
+          title: string
+          week_end: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          metric?: string
+          target_per_member?: number
+          team_size?: number
+          title: string
+          week_end: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          metric?: string
+          target_per_member?: number
+          team_size?: number
+          title?: string
+          week_end?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
       workout_sessions: {
         Row: {
           calories: number | null
@@ -884,9 +1085,54 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      leaderboard_weekly: {
+        Row: {
+          active_days: number | null
+          streak_peak: number | null
+          user_id: string | null
+          week_start: string | null
+          week_total: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      accept_partner_invite: {
+        Args: { _code: string }
+        Returns: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          pairing_mode: string
+          status: string
+          user_a: string
+          user_b: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "partnerships"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      auto_match_partner: {
+        Args: never
+        Returns: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          pairing_mode: string
+          status: string
+          user_a: string
+          user_b: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "partnerships"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       award_points: {
         Args: { _delta: number; _reason: string }
         Returns: number
@@ -927,6 +1173,25 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "daily_scores"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_partner_invite: {
+        Args: never
+        Returns: {
+          code: string
+          consumed_at: string | null
+          consumed_by: string | null
+          created_at: string
+          email: string | null
+          expires_at: string
+          id: string
+          inviter_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "partner_invites"
           isOneToOne: true
           isSetofReturn: false
         }
