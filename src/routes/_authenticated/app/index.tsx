@@ -13,6 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
+import { TodayMissionCard } from "@/components/deluxe/TodayMissionCard";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
