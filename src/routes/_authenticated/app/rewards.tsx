@@ -60,7 +60,7 @@ function RewardsTab() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-5 pt-8">
+    <div className="mx-auto max-w-2xl px-5 pt-8 pb-28">
       <SectionLabel>Rewards</SectionLabel>
       <h1 className="mt-2 font-display text-3xl text-foreground">Earn. Redeem. Repeat.</h1>
 

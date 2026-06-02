@@ -92,7 +92,7 @@ function HomeTab() {
   }, [user]);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pt-6 sm:px-5 sm:pt-8">
+    <div className="mx-auto max-w-2xl px-4 pt-6 pb-28 sm:px-5 sm:pt-8">
       <SectionLabel>Dashboard</SectionLabel>
       <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">Good day, {name}.</h1>
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
