@@ -63,7 +63,7 @@ function ProfileTab() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-5 pt-8">
+    <div className="mx-auto max-w-2xl px-5 pt-8 pb-28">
       <SectionLabel>Profile</SectionLabel>
       <h1 className="mt-2 font-display text-3xl text-foreground">{name || "Your account"}</h1>
       <p className="mt-1 text-xs text-muted-foreground">{user?.email}</p>

@@ -31,7 +31,7 @@ function WorkoutsTab() {
   const filtered = category === "All" ? workouts : workouts.filter((w) => w.category === category);
 
   return (
-    <div className="mx-auto max-w-2xl px-5 pt-8">
+    <div className="mx-auto max-w-2xl px-5 pt-8 pb-28">
       <SectionLabel>Workouts</SectionLabel>
       <h1 className="mt-2 font-display text-3xl text-foreground">Choose your session</h1>
 

@@ -104,7 +104,7 @@ function ProfileView() {
     k === "trophy" ? <Trophy className="h-4 w-4 text-gold" /> : k === "flame" ? <Flame className="h-4 w-4 text-gold" /> : <Dumbbell className="h-4 w-4 text-gold" />;
 
   return (
-    <div className="mx-auto max-w-2xl px-5 pt-6">
+    <div className="mx-auto max-w-2xl px-5 pt-6 pb-28">
       <Link to="/app/community" className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-muted-foreground hover:text-gold">
         <ArrowLeft className="h-3 w-3" /> Back to feed
       </Link>

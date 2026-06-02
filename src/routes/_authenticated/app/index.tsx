@@ -11,6 +11,7 @@ import { format, subDays, startOfDay } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { formatGoal } from "@/lib/format";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
 import { DailyMissionCard } from "@/components/deluxe/DailyMissionCard";
@@ -91,7 +92,7 @@ function HomeTab() {
   }, [user]);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 pt-6 sm:px-5 sm:pt-8">
+    <div className="mx-auto max-w-2xl px-4 pt-6 pb-28 sm:px-5 sm:pt-8">
       <SectionLabel>Dashboard</SectionLabel>
       <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">Good day, {name}.</h1>
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
@@ -195,7 +196,7 @@ function HomeTab() {
                 </div>
                 <div className="mt-1.5 font-display text-base text-foreground">{c.title}</div>
                 <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                  Goal: {c.goal_target} {c.goal_metric}
+                  Goal: {formatGoal(c.goal_target, c.goal_metric)}
                 </div>
               </div>
             ))}
