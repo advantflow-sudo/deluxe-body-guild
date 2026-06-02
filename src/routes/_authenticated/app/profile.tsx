@@ -99,6 +99,17 @@ function ProfileTab() {
           </div>
           <Field label="Training Level" value={ext.training_level ?? ""} onChange={(v) => setExt({ ...ext, training_level: v })} />
           <Field label="Preferred Type" value={ext.preferred_type ?? ""} onChange={(v) => setExt({ ...ext, preferred_type: v })} />
+          <div>
+            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Country</label>
+            <select
+              value={ext.country ?? ""}
+              onChange={(e) => setExt({ ...ext, country: e.target.value || null })}
+              className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none"
+            >
+              <option value="">— Select country —</option>
+              {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
           <GoldButton onClick={save} disabled={saving} className="w-full">{saving ? "Saving…" : "Save changes"}</GoldButton>
         </div>
       )}
