@@ -180,7 +180,7 @@ function PricingPage() {
                     <Icon className="h-5 w-5 text-gold" />
                   </div>
 
-                  <h3 className="font-display text-2xl text-foreground">{tier.name}</h3>
+                  <h2 className="font-display text-2xl text-foreground">{tier.name}</h2>
                   <p className="mt-1 font-serif italic text-muted-foreground">{tier.tagline}</p>
 
                   <div className="mt-6 flex items-baseline gap-2">
