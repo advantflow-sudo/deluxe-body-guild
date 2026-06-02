@@ -151,7 +151,17 @@ function Hero() {
           </div>
         </Reveal>
 
-        <Reveal delay={360}>
+        <Reveal delay={320}>
+          <div className="mt-14 w-full max-w-4xl">
+            <VideoPlayer
+              src={HERO_VIDEO}
+              poster={workout1}
+              caption="Inside the Deluxe Fitness movement"
+            />
+          </div>
+        </Reveal>
+
+        <Reveal delay={420}>
           <div className="mt-16 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14">
             {[
               ["50K+", "Members"],
