@@ -295,7 +295,7 @@ function CommunityTab() {
 }
 
 function Avatar({ url, name }: { url?: string | null; name?: string | null }) {
-  if (url) return <img src={url} alt="" className="h-10 w-10 rounded-full border border-gold/30 object-cover" />;
+  if (url) return <img src={url} alt="" loading="lazy" decoding="async" className="h-10 w-10 rounded-full border border-gold/30 object-cover" />;
   return (
     <div className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 bg-deluxe-black text-xs font-bold text-gold">
       {(name ?? "M").charAt(0).toUpperCase()}
