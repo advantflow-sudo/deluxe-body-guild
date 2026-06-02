@@ -383,7 +383,7 @@ function BuddyPanel() {
           {r.matches?.length === 0 && <div className="text-xs text-muted-foreground">No strong matches yet — invite more friends.</div>}
           {r.matches?.map((m: any) => (
             <div key={m.user_id} className="flex items-center gap-3 border border-gold/15 bg-deluxe-black/40 p-2">
-              {m.profile?.avatar_url ? <img src={m.profile.avatar_url} className="h-9 w-9 rounded-full" /> : <div className="h-9 w-9 bg-deluxe-forest/40" />}
+              {m.profile?.avatar_url ? <img src={m.profile.avatar_url} alt="" loading="lazy" decoding="async" className="h-9 w-9 rounded-full" /> : <div className="h-9 w-9 bg-deluxe-forest/40" />}
               <div className="flex-1">
                 <div className="font-display text-sm text-foreground">{m.profile?.display_name ?? "Athlete"}</div>
                 <div className="text-[11px] text-muted-foreground">{m.goal} · {m.level}</div>

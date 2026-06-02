@@ -82,7 +82,7 @@ export function SuggestedMembers() {
             >
               <Link to="/app/u/$userId" params={{ userId: m.id }}>
                 {m.avatar_url ? (
-                  <img src={m.avatar_url} alt="" className="h-14 w-14 rounded-full border border-gold/30 object-cover" />
+                  <img src={m.avatar_url} alt="" loading="lazy" decoding="async" className="h-14 w-14 rounded-full border border-gold/30 object-cover" />
                 ) : (
                   <div className="flex h-14 w-14 items-center justify-center rounded-full border border-gold/30 bg-deluxe-black text-base font-bold text-gold">
                     {(m.display_name ?? "M").charAt(0).toUpperCase()}

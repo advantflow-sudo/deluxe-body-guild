@@ -100,7 +100,7 @@ function LeaderboardPage() {
               >
                 <div className={`w-6 text-center font-display text-lg ${medal}`}>{idx + 1}</div>
                 {r.avatar_url ? (
-                  <img src={r.avatar_url} alt="" className="h-9 w-9 rounded-full border border-gold/30 object-cover" />
+                  <img src={r.avatar_url} alt="" loading="lazy" decoding="async" className="h-9 w-9 rounded-full border border-gold/30 object-cover" />
                 ) : (
                   <div className="grid h-9 w-9 place-items-center rounded-full border border-gold/30 bg-deluxe-black text-[10px] text-gold">
                     {(r.display_name ?? "?").slice(0, 2).toUpperCase()}
