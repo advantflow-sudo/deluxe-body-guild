@@ -964,6 +964,7 @@ export type Database = {
       user_profiles_ext: {
         Row: {
           age: number | null
+          country: string | null
           created_at: string
           fitness_goal: string | null
           height_cm: number | null
@@ -983,6 +984,7 @@ export type Database = {
         }
         Insert: {
           age?: number | null
+          country?: string | null
           created_at?: string
           fitness_goal?: string | null
           height_cm?: number | null
@@ -1002,6 +1004,7 @@ export type Database = {
         }
         Update: {
           age?: number | null
+          country?: string | null
           created_at?: string
           fitness_goal?: string | null
           height_cm?: number | null
