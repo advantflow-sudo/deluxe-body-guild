@@ -13,6 +13,7 @@ import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
 import { Route as WellbeingRouteImport } from './routes/wellbeing'
 import { Route as TransformationsRouteImport } from './routes/transformations'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RewardsBenefitsRouteImport } from './routes/rewards-benefits'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
@@ -72,6 +73,11 @@ const TransformationsRoute = TransformationsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RewardsBenefitsRoute = RewardsBenefitsRouteImport.update({
+  id: '/rewards-benefits',
+  path: '/rewards-benefits',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -301,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
+  '/rewards-benefits': typeof RewardsBenefitsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
@@ -346,6 +353,7 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
+  '/rewards-benefits': typeof RewardsBenefitsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
+  '/rewards-benefits': typeof RewardsBenefitsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
@@ -439,6 +448,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/login'
     | '/pricing'
+    | '/rewards-benefits'
     | '/sitemap.xml'
     | '/transformations'
     | '/wellbeing'
@@ -484,6 +494,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/login'
     | '/pricing'
+    | '/rewards-benefits'
     | '/sitemap.xml'
     | '/transformations'
     | '/wellbeing'
@@ -529,6 +540,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/login'
     | '/pricing'
+    | '/rewards-benefits'
     | '/sitemap.xml'
     | '/transformations'
     | '/wellbeing'
@@ -576,6 +588,7 @@ export interface RootRouteChildren {
   HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
+  RewardsBenefitsRoute: typeof RewardsBenefitsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TransformationsRoute: typeof TransformationsRoute
   WellbeingRoute: typeof WellbeingRoute
@@ -621,6 +634,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rewards-benefits': {
+      id: '/rewards-benefits'
+      path: '/rewards-benefits'
+      fullPath: '/rewards-benefits'
+      preLoaderRoute: typeof RewardsBenefitsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -974,6 +994,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
+  RewardsBenefitsRoute: RewardsBenefitsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TransformationsRoute: TransformationsRoute,
   WellbeingRoute: WellbeingRoute,
