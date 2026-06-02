@@ -9,6 +9,7 @@ import { Footer } from "@/components/deluxe/Footer";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/coach")({
   head: () => ({
