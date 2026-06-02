@@ -9,6 +9,7 @@ import { Footer } from "@/components/deluxe/Footer";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/coach")({
   head: () => ({
@@ -45,6 +46,7 @@ function CoachPage() {
   const { session } = useAuth();
   const { isPremium, loading: premLoading } = usePremium();
   const locked = !!session && !premLoading && !isPremium;
+  const needsLogin = !session;
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,6 +58,10 @@ function CoachPage() {
 
   async function send(text: string) {
     if (!text.trim() || loading) return;
+    if (needsLogin) {
+      toast.error("Sign in to chat with the Coach.");
+      return;
+    }
     if (locked) {
       toast.error("Upgrade to Premium to chat with the Coach.");
       return;
@@ -67,15 +73,22 @@ function CoachPage() {
     setLoading(true);
 
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ messages: next }),
       });
       if (!res.ok || !res.body) {
-        if (res.status === 429) toast.error("Too many requests. Slow down a moment.");
+        if (res.status === 401) toast.error("Sign in to chat with the Coach.");
+        else if (res.status === 429) toast.error("Too many requests. Slow down a moment.");
         else if (res.status === 402) toast.error("AI credits exhausted.");
         else toast.error("Coach is unavailable right now.");
+        setMessages((prev) => prev.slice(0, -1));
         setLoading(false);
         return;
       }
@@ -145,6 +158,19 @@ function CoachPage() {
           </p>
         </div>
 
+        {needsLogin && (
+          <div className="mt-6 flex flex-col items-center gap-3 border border-gold/30 bg-deluxe-forest/30 p-5 text-center sm:flex-row sm:text-left">
+            <Sparkles className="h-6 w-6 shrink-0 text-gold" />
+            <div className="flex-1">
+              <div className="font-display text-lg text-foreground">Sign in to talk to the Coach</div>
+              <p className="text-xs text-muted-foreground">Personalized training, nutrition, recovery — tied to your profile.</p>
+            </div>
+            <Link to="/login" className="inline-flex items-center gap-2 bg-gold-gradient px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-deluxe-black">
+              Sign in
+            </Link>
+          </div>
+        )}
+
         {locked && (
           <div className="mt-6 flex flex-col items-center gap-3 border border-gold/30 bg-gold-gradient/10 p-5 text-center sm:flex-row sm:text-left">
             <Crown className="h-6 w-6 shrink-0 text-gold" />
@@ -159,6 +185,7 @@ function CoachPage() {
         )}
 
 
+
         <div
           ref={scrollRef}
           className="mt-8 flex-1 space-y-5 overflow-y-auto border border-gold/15 bg-deluxe-forest/20 p-5 md:p-8"
@@ -170,7 +197,8 @@ function CoachPage() {
                 <button
                   key={s}
                   onClick={() => send(s)}
-                  className="group border border-gold/20 bg-deluxe-black/40 p-4 text-left text-sm text-muted-foreground transition hover:border-gold/60 hover:text-foreground"
+                  disabled={needsLogin || locked}
+                  className="group border border-gold/20 bg-deluxe-black/40 p-4 text-left text-sm text-muted-foreground transition hover:border-gold/60 hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Sparkles className="mb-2 h-4 w-4 text-gold" />
                   {s}
@@ -228,13 +256,13 @@ function CoachPage() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask the coach anything…"
+            placeholder={needsLogin ? "Sign in to chat…" : locked ? "Upgrade to chat…" : "Ask the coach anything…"}
             className="flex-1 bg-transparent px-3 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-            disabled={loading}
+            disabled={loading || needsLogin || locked}
           />
           <button
             type="submit"
-            disabled={loading || !input.trim()}
+            disabled={loading || needsLogin || locked || !input.trim()}
             className="inline-flex items-center gap-2 bg-gold-gradient px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-deluxe-black transition disabled:opacity-50"
           >
             <Send className="h-3.5 w-3.5" /> Send
