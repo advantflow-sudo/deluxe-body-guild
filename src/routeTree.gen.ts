@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
 import { Route as WellbeingRouteImport } from './routes/wellbeing'
+import { Route as TransformationsRouteImport } from './routes/transformations'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
@@ -61,6 +62,11 @@ const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
 const WellbeingRoute = WellbeingRouteImport.update({
   id: '/wellbeing',
   path: '/wellbeing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransformationsRoute = TransformationsRouteImport.update({
+  id: '/transformations',
+  path: '/transformations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -296,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -340,6 +347,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -385,6 +393,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -431,6 +440,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/sitemap.xml'
+    | '/transformations'
     | '/wellbeing'
     | '/what-we-offer'
     | '/admin'
@@ -475,6 +485,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/sitemap.xml'
+    | '/transformations'
     | '/wellbeing'
     | '/what-we-offer'
     | '/admin'
@@ -519,6 +530,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/sitemap.xml'
+    | '/transformations'
     | '/wellbeing'
     | '/what-we-offer'
     | '/_authenticated/admin'
@@ -565,6 +577,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TransformationsRoute: typeof TransformationsRoute
   WellbeingRoute: typeof WellbeingRoute
   WhatWeOfferRoute: typeof WhatWeOfferRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -594,6 +607,13 @@ declare module '@tanstack/react-router' {
       path: '/wellbeing'
       fullPath: '/wellbeing'
       preLoaderRoute: typeof WellbeingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transformations': {
+      id: '/transformations'
+      path: '/transformations'
+      fullPath: '/transformations'
+      preLoaderRoute: typeof TransformationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -955,6 +975,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TransformationsRoute: TransformationsRoute,
   WellbeingRoute: WellbeingRoute,
   WhatWeOfferRoute: WhatWeOfferRoute,
   ApiChatRoute: ApiChatRoute,
