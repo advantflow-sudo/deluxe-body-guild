@@ -140,7 +140,7 @@ function ChallengesPage() {
                 {c.description && <p className="mt-1 text-sm text-foreground/60">{c.description}</p>}
                 <div className="mt-2 flex flex-wrap gap-3 text-[10px] uppercase tracking-[0.2em] text-foreground/50">
                   <span>Week of {c.week_start}</span>
-                  <span>Goal: {c.target_per_member} {c.metric}</span>
+                  <span>Goal: {formatGoal(c.target_per_member, c.metric)} / member</span>
                   <span>Team size: {c.team_size}</span>
                 </div>
               </div>
