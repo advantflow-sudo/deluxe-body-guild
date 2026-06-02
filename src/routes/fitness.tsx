@@ -95,7 +95,7 @@ function Page() {
               src={workout2}
               alt="AI-driven training"
               loading="lazy"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover ken-burns"
             />
           </div>
         </div>
