@@ -13,3 +13,9 @@
 - [Gallery](/gallery): Member transformations and lifestyle imagery.
 - [About](/about): Company story and philosophy.
 - [Contact](/contact): Get in touch.
+- [How It Works](/how-it-works): The 5-step Deluxe transformation journey.
+- [Transformations](/transformations): Founding member applications and member transformation stories.
+- [Rewards & Benefits](/rewards-benefits): Discipline Pays — reward points, perks, and marketplace.
+- [Founder](/founder): Founder story and philosophy behind Deluxe Fitness.
+- [Challenges](/challenges): Catalog of structured discipline challenges (7-Day Reset, 75-Day, Summer Shred, more).
+- [Roadmap](/roadmap): Product roadmap from today through Q2 2027.

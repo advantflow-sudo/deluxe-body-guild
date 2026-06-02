@@ -3,7 +3,23 @@ import type {} from "@tanstack/react-start";
 
 const BASE_URL = "https://deluxefitness.app";
 
-const PATHS = ["/", "/what-we-offer", "/fitness", "/wellbeing", "/coach", "/pricing", "/gallery", "/about", "/contact"];
+const PATHS = [
+  "/",
+  "/what-we-offer",
+  "/fitness",
+  "/wellbeing",
+  "/coach",
+  "/pricing",
+  "/gallery",
+  "/about",
+  "/contact",
+  "/how-it-works",
+  "/transformations",
+  "/rewards-benefits",
+  "/founder",
+  "/challenges",
+  "/roadmap",
+];
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
