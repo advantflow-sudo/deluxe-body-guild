@@ -74,8 +74,12 @@ function HomePage() {
     <div className="min-h-screen bg-deluxe-black text-foreground">
       <Header />
       <Hero />
+      <HowItWorks />
+      <DeluxeLifestyle />
       <Mission />
       <FeatureIcons />
+      <TodaysMissionPreview />
+      <DeluxeScore />
       <WhyDeluxe />
       <WhyDifferent />
       <AppPreview />
@@ -89,6 +93,7 @@ function HomePage() {
     </div>
   );
 }
+
 
 /* ---------------- Hero ---------------- */
 function Hero() {
