@@ -84,9 +84,11 @@ function CoachPage() {
         body: JSON.stringify({ messages: next }),
       });
       if (!res.ok || !res.body) {
-        if (res.status === 429) toast.error("Too many requests. Slow down a moment.");
+        if (res.status === 401) toast.error("Sign in to chat with the Coach.");
+        else if (res.status === 429) toast.error("Too many requests. Slow down a moment.");
         else if (res.status === 402) toast.error("AI credits exhausted.");
         else toast.error("Coach is unavailable right now.");
+        setMessages((prev) => prev.slice(0, -1));
         setLoading(false);
         return;
       }
