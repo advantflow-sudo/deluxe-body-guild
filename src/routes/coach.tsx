@@ -256,13 +256,13 @@ function CoachPage() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask the coach anything…"
+            placeholder={needsLogin ? "Sign in to chat…" : locked ? "Upgrade to chat…" : "Ask the coach anything…"}
             className="flex-1 bg-transparent px-3 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-            disabled={loading}
+            disabled={loading || needsLogin || locked}
           />
           <button
             type="submit"
-            disabled={loading || !input.trim()}
+            disabled={loading || needsLogin || locked || !input.trim()}
             className="inline-flex items-center gap-2 bg-gold-gradient px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-deluxe-black transition disabled:opacity-50"
           >
             <Send className="h-3.5 w-3.5" /> Send
