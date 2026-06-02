@@ -58,6 +58,7 @@ function ProfileTab() {
         reminder_evening_hour: ext.reminder_evening_hour,
         weekly_recap_enabled: ext.weekly_recap_enabled,
         timezone: ext.timezone,
+        country: ext.country,
       }).eq("user_id", user.id),
     ]);
     setSaving(false);
