@@ -496,45 +496,13 @@ function Rewards() {
   );
 }
 
-/* ---------------- Transformation Gallery ---------------- */
+/* ---------------- Transformation Gallery (Founding Members) ---------------- */
 function TransformationGallery() {
-  const stories = [
-    {
-      img: workout1,
-      name: "Marcus T.",
-      start: "118 kg",
-      now: "99 kg",
-      time: "6 months",
-      streak: "82 days",
-      quote: "Lost the weight. Kept the discipline.",
-    },
-    {
-      img: workout2,
-      name: "Sofia L.",
-      start: "54 kg",
-      now: "62 kg lean",
-      time: "9 months",
-      streak: "147 days",
-      quote: "Built the body I thought wasn't possible.",
-    },
-    {
-      img: workout3,
-      name: "Daniel K.",
-      start: "104 kg",
-      now: "82 kg",
-      time: "12 months",
-      streak: "210 days",
-      quote: "Down 22kg. Up two suit sizes in the shoulders.",
-    },
-    {
-      img: communityImg,
-      name: "Priya A.",
-      start: "Never ran 1km",
-      now: "First marathon",
-      time: "8 months",
-      streak: "96 days",
-      quote: "Deluxe gave me the discipline I always lacked.",
-    },
+  const slots = [
+    { focus: "Fat loss" },
+    { focus: "Muscle gain" },
+    { focus: "Confidence" },
+    { focus: "Lifestyle" },
   ];
   return (
     <section className="bg-deluxe-dark py-28">
@@ -542,41 +510,54 @@ function TransformationGallery() {
         <div className="text-center">
           <SectionLabel>Transformation Gallery</SectionLabel>
           <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
-            REAL MEMBERS. <span className="text-gold">REAL NUMBERS.</span>
+            FOUNDING MEMBERS. <span className="text-gold">YOUR FACE HERE.</span>
           </h2>
           <div className="mt-6 flex justify-center">
             <GoldDivider />
           </div>
+          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
+            We're selecting our first cohort of Founding Members. The first 100 to commit
+            and complete a 90-day transformation will be featured here — story, stats, and all.
+          </p>
         </div>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-2">
-          {stories.map((s) => (
-            <figure key={s.name} className="group grid grid-cols-[1fr_1.2fr] overflow-hidden border border-gold/20 bg-deluxe-card">
-              <div className="aspect-[3/4] overflow-hidden bg-deluxe-black">
-                <img
-                  src={s.img}
-                  alt={`${s.name} transformation`}
-                  loading="lazy"
-                  className="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
-                />
-              </div>
-              <div className="flex flex-col justify-between p-6">
-                <div>
-                  <Zap className="h-4 w-4 text-gold" />
-                  <figcaption className="mt-2 font-display text-2xl tracking-wide text-foreground">
-                    {s.name.toUpperCase()}
-                  </figcaption>
-                  <p className="mt-2 font-serif text-sm italic text-muted-foreground">"{s.quote}"</p>
+        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {slots.map((s, i) => (
+            <div
+              key={s.focus}
+              className="group relative aspect-[3/4] overflow-hidden border border-gold/25 bg-gradient-to-br from-deluxe-card to-deluxe-black p-6 transition hover:border-gold/60"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08),transparent_70%)]" />
+              <div className="relative flex h-full flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <Lock className="h-4 w-4 text-gold/60" strokeWidth={1.5} />
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-gold/80">
+                    Slot {String(i + 1).padStart(2, "0")}
+                  </span>
                 </div>
-                <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-gold/15 pt-4 text-[11px]">
-                  <Stat label="Starting" value={s.start} />
-                  <Stat label="Current" value={s.now} />
-                  <Stat label="Time" value={s.time} />
-                  <Stat label="Streak" value={s.streak} />
-                </dl>
+                <div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                    Focus
+                  </div>
+                  <div className="mt-1 font-display text-2xl text-foreground">
+                    {s.focus}
+                  </div>
+                  <div className="mt-4 h-px w-12 bg-gold/40" />
+                  <div className="mt-4 text-[10px] font-semibold uppercase tracking-[0.22em] text-gold">
+                    Reserved for a founding member
+                  </div>
+                </div>
               </div>
-            </figure>
+            </div>
           ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link to="/transformations">
+            <GoldButton>
+              Claim a founding spot <ArrowRight className="h-4 w-4" />
+            </GoldButton>
+          </Link>
         </div>
       </div>
     </section>
@@ -591,6 +572,7 @@ function Stat({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
 
 /* ---------------- Why We're Different ---------------- */
 function WhyDifferent() {
