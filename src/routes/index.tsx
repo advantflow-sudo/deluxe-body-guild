@@ -956,6 +956,14 @@ function TodaysMissionPreview() {
           <Link to="/login" className="mt-8 inline-block">
             <GoldButton>Get today's mission <ArrowRight className="h-4 w-4" /></GoldButton>
           </Link>
+
+          <div className="mt-10">
+            <VideoPlayer
+              src={MISSION_VIDEO}
+              poster={workout2}
+              caption="Watch: today's 60-second mission brief"
+            />
+          </div>
         </div>
 
         <div className="border border-gold/30 bg-gradient-to-br from-deluxe-card to-deluxe-black p-6 shadow-[0_30px_60px_-30px_rgba(212,175,55,0.35)] sm:p-8">
