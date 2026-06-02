@@ -62,16 +62,16 @@ export function ScoreRing({
         <div className="font-display text-4xl text-foreground tabular-nums">{Math.round(animated)}</div>
         <div className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground">Deluxe Score</div>
       </div>
-      <div className="mt-3 grid grid-cols-4 gap-2 text-center">
+      <div className="mt-3 grid grid-cols-4 gap-x-3 text-center">
         {[
           { label: "Train", v: workoutPts, max: 40 },
           { label: "Habits", v: habitsPts, max: 40 },
           { label: "Mind", v: mindsetPts, max: 10 },
           { label: "Social", v: socialPts, max: 10 },
         ].map((b) => (
-          <div key={b.label} className="min-w-[44px]">
-            <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">{b.label}</div>
-            <div className="mt-0.5 text-xs font-semibold text-gold tabular-nums">
+          <div key={b.label}>
+            <div className="text-[8px] uppercase tracking-[0.12em] text-muted-foreground">{b.label}</div>
+            <div className="mt-0.5 text-[11px] font-semibold text-gold tabular-nums">
               {b.v}<span className="text-muted-foreground">/{b.max}</span>
             </div>
           </div>
