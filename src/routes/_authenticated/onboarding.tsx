@@ -51,6 +51,7 @@ function Onboarding() {
       age: age ? parseInt(age) : null,
       training_level: level,
       preferred_type: type,
+      country,
       onboarded_at: new Date().toISOString(),
     });
     void plan;
