@@ -59,7 +59,7 @@ function Page() {
           src={communityImg}
           alt=""
           loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover opacity-15"
+          className="absolute inset-0 h-full w-full object-cover opacity-15 ken-burns"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-deluxe-dark via-deluxe-dark/85 to-deluxe-dark" />
         <div className="relative mx-auto max-w-5xl space-y-16 px-6">

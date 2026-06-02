@@ -9,10 +9,11 @@
  * Captions should be WebVTT (.vtt) files.
  */
 
+import heroClip from "@/assets/hero-clip.mp4.asset.json";
+
 const env = import.meta.env;
 
-const FALLBACK_HERO =
-  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+const FALLBACK_HERO = heroClip.url;
 const FALLBACK_MISSION =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
 

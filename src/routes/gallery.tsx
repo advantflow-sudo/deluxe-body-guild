@@ -54,7 +54,7 @@ function Page() {
                 src={img.src}
                 alt={img.alt}
                 loading="lazy"
-                className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                className={`h-full w-full object-cover ${i % 2 === 0 ? "ken-burns" : "ken-burns-alt"}`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-deluxe-black/70 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
             </div>

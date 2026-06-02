@@ -346,7 +346,7 @@ function AppPreview() {
                     src={img}
                     alt={`${label} screen`}
                     loading="lazy"
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    className="h-full w-full object-cover ken-burns"
                   />
                 </div>
               </div>
@@ -386,7 +386,7 @@ function Community() {
         src={communityImg}
         alt=""
         loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover opacity-15"
+        className="absolute inset-0 h-full w-full object-cover opacity-15 ken-burns-alt"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-deluxe-dark via-deluxe-dark/85 to-deluxe-dark" />
       <div className="relative mx-auto max-w-6xl px-6 text-center">
