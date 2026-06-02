@@ -103,12 +103,28 @@ function ProfileTab() {
             <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Country</label>
             <select
               value={ext.country ?? ""}
-              onChange={(e) => setExt({ ...ext, country: e.target.value || null })}
+              onChange={async (e) => {
+                if (!user) return;
+                const next = e.target.value || null;
+                const prev = ext.country;
+                setExt({ ...ext, country: next });
+                const { error } = await supabase
+                  .from("user_profiles_ext")
+                  .update({ country: next })
+                  .eq("user_id", user.id);
+                if (error) {
+                  setExt({ ...ext, country: prev });
+                  toast.error("Couldn't update country");
+                } else {
+                  toast.success(next ? `Country set to ${next}` : "Country cleared");
+                }
+              }}
               className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none"
             >
               <option value="">— Select country —</option>
               {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
+            <p className="mt-1 text-[10px] text-muted-foreground">Saved to this profile instantly.</p>
           </div>
           <GoldButton onClick={save} disabled={saving} className="w-full">{saving ? "Saving…" : "Save changes"}</GoldButton>
         </div>
