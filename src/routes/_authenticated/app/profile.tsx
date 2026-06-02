@@ -18,7 +18,10 @@ interface Ext {
   subscription_tier: string; notifications_enabled: boolean;
   reminder_morning_hour: number | null; reminder_evening_hour: number | null;
   weekly_recap_enabled: boolean; timezone: string;
+  country: string | null;
 }
+
+const COUNTRIES = ["United Kingdom","United States","Canada","Ireland","Australia","New Zealand","France","Germany","Spain","Italy","Netherlands","Belgium","Switzerland","Sweden","Norway","Denmark","Portugal","Poland","United Arab Emirates","Saudi Arabia","Qatar","Singapore","Hong Kong","Japan","South Korea","India","Brazil","Mexico","Argentina","South Africa","Nigeria","Kenya","Other"];
 
 function ProfileTab() {
   const { user, signOut } = useAuth();
