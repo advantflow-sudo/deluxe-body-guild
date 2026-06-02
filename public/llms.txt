@@ -1,0 +1,15 @@
+# Deluxe Fitness
+
+> Premium lifestyle app for transformation, community, and elevated living.
+
+## Pages
+
+- [Home](/): Overview of the Deluxe Fitness experience.
+- [What we offer](/what-we-offer): Programs, coaching, and services.
+- [Fitness](/fitness): Training methodology and outcomes.
+- [Wellbeing](/wellbeing): Mind, recovery, and lifestyle pillars.
+- [AI Coach](/coach): On-demand AI coaching features.
+- [Pricing](/pricing): Memberships and pricing FAQ.
+- [Gallery](/gallery): Member transformations and lifestyle imagery.
+- [About](/about): Company story and philosophy.
+- [Contact](/contact): Get in touch.
