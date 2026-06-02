@@ -155,19 +155,23 @@ function Page() {
             </h2>
           </div>
           <div className="mt-14 grid gap-6 md:grid-cols-3">
-            {programmes.map((p) => (
+            {programmes.map((p) => {
+              const m = MEDIA[p.key];
+              return (
               <article
                 key={p.title}
                 className="luxury-card group overflow-hidden"
               >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={p.img}
-                    alt={p.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover ken-burns-alt group-hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
+                <AnimatedMedia
+                  id={`fitness-prog-${p.key}`}
+                  image={m.image}
+                  video={m.video}
+                  alt={`${p.title} — ${m.alt}`}
+                  caption={m.caption}
+                  variant="alt"
+                  className="aspect-[4/3] overflow-hidden"
+                  mediaClassName="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
                 <div className="p-6">
                   <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
                     {p.meta}
