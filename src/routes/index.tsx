@@ -42,7 +42,7 @@ import {
   SectionLabel,
   GoldDivider,
 } from "@/components/deluxe/ui";
-import heroImg from "@/assets/hero.jpg";
+
 import workout1 from "@/assets/workout-1.jpg";
 import workout2 from "@/assets/workout-2.jpg";
 import workout3 from "@/assets/workout-3.jpg";
@@ -99,13 +99,7 @@ function HomePage() {
 function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
-      <img
-        src={heroImg}
-        alt=""
-        width={1920}
-        height={1280}
-        className="absolute inset-0 h-full w-full object-cover opacity-40"
-      />
+      <div className="absolute inset-0 bg-deluxe-black" />
       <div className="absolute inset-0 bg-gradient-to-b from-deluxe-black/75 via-deluxe-black/60 to-deluxe-black" />
       <div className="gold-glow absolute inset-x-0 bottom-0 h-[60%]" />
       <span className="gold-orb left-[-10%] top-[10%] h-[420px] w-[420px]" />

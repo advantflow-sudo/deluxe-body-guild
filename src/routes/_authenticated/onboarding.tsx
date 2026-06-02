@@ -13,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
 const GOALS = ["Lose fat", "Build muscle", "Get stronger", "Improve endurance", "General wellbeing"];
 const LEVELS = ["beginner", "intermediate", "advanced"] as const;
 const TYPES = ["Gym", "Home", "Cardio", "Strength", "Fat Loss"];
+const COUNTRIES = ["United Kingdom","United States","Canada","Ireland","Australia","New Zealand","France","Germany","Spain","Italy","Netherlands","Belgium","Switzerland","Sweden","Norway","Denmark","Portugal","Poland","United Arab Emirates","Saudi Arabia","Qatar","Singapore","Hong Kong","Japan","South Korea","India","Brazil","Mexico","Argentina","South Africa","Nigeria","Kenya","Other"];
 const PLANS = [
   { id: "free", label: "Free", price: "£0", desc: "Core workouts, basic tracking." },
   { id: "premium", label: "Premium", price: "£14/mo", desc: "All plans, AI coach, challenges." },
@@ -29,6 +30,7 @@ function Onboarding() {
   const [age, setAge] = useState("");
   const [level, setLevel] = useState<(typeof LEVELS)[number]>("beginner");
   const [type, setType] = useState(TYPES[0]);
+  const [country, setCountry] = useState(COUNTRIES[0]);
   const [plan, setPlan] = useState("free");
   const [busy, setBusy] = useState(false);
 
@@ -49,6 +51,7 @@ function Onboarding() {
       age: age ? parseInt(age) : null,
       training_level: level,
       preferred_type: type,
+      country,
       onboarded_at: new Date().toISOString(),
     });
     void plan;
@@ -89,6 +92,13 @@ function Onboarding() {
                 <Field label="Weight (kg)" value={weight} onChange={setWeight} type="number" />
                 <Field label="Height (cm)" value={height} onChange={setHeight} type="number" />
                 <Field label="Age" value={age} onChange={setAge} type="number" />
+                <div>
+                  <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Country</label>
+                  <select value={country} onChange={(e) => setCountry(e.target.value)}
+                    className="mt-2 w-full border border-gold/20 bg-deluxe-black px-4 py-3 text-sm text-foreground focus:border-gold focus:outline-none">
+                    {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
               </div>
             </div>
           )}

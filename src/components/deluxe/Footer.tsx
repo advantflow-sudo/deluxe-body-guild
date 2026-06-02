@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Play, Sparkles, Mail, MapPin } from "lucide-react";
+import { Instagram, Youtube, Facebook, Mail, MapPin } from "lucide-react";
 import { Logo } from "./Logo";
 import { NAV_LINKS } from "./Header";
 
@@ -16,25 +16,42 @@ export function Footer() {
             </p>
             <div className="mt-6 flex items-center gap-4 text-muted-foreground">
               <a
-                href="#"
+                href="https://www.instagram.com/deluxefitness"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="transition hover:text-gold"
               >
                 <Instagram className="h-4 w-4" />
               </a>
               <a
-                href="#"
+                href="https://www.tiktok.com/@deluxefitness"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="TikTok"
                 className="transition hover:text-gold"
               >
-                <Play className="h-4 w-4" />
+                <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+                  <path d="M16.6 5.82a4.28 4.28 0 0 1-3.77-4.04h-3.2v13.5a2.59 2.59 0 1 1-2.59-2.59c.28 0 .56.05.82.13v-3.27a5.8 5.8 0 0 0-.82-.06A5.86 5.86 0 1 0 12.83 15.3V8.66a7.49 7.49 0 0 0 4.36 1.4V6.87a4.31 4.31 0 0 1-.59-.05z"/>
+                </svg>
               </a>
               <a
-                href="#"
-                aria-label="X"
+                href="https://www.youtube.com/@deluxefitness"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube"
                 className="transition hover:text-gold"
               >
-                <Sparkles className="h-4 w-4" />
+                <Youtube className="h-4 w-4" />
+              </a>
+              <a
+                href="https://www.facebook.com/deluxefitness"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="transition hover:text-gold"
+              >
+                <Facebook className="h-4 w-4" />
               </a>
             </div>
           </div>
