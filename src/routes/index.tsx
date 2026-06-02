@@ -47,10 +47,8 @@ import {
   GoldDivider,
 } from "@/components/deluxe/ui";
 
-import workout1 from "@/assets/workout-1.jpg";
-import workout2 from "@/assets/workout-2.jpg";
-import workout3 from "@/assets/workout-3.jpg";
-import communityImg from "@/assets/community.jpg";
+import { AnimatedMedia } from "@/components/deluxe/AnimatedMedia";
+import { MEDIA } from "@/config/animated-media";
 import { Reveal } from "@/components/deluxe/Reveal";
 
 export const Route = createFileRoute("/")({
