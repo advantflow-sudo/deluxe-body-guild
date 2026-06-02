@@ -195,7 +195,7 @@ function HomeTab() {
                 </div>
                 <div className="mt-1.5 font-display text-base text-foreground">{c.title}</div>
                 <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                  Goal: {c.goal_target} {c.goal_metric}
+                  Goal: {formatGoal(c.goal_target, c.goal_metric)}
                 </div>
               </div>
             ))}
