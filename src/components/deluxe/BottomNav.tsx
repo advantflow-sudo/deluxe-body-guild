@@ -12,7 +12,7 @@ const items = [
 
 export function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gold/20 bg-deluxe-black/95 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
+    <nav aria-label="Primary" className="fixed bottom-0 left-0 right-0 z-40 border-t border-gold/20 bg-deluxe-black/95 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
       <div className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
       <div className="mx-auto flex max-w-2xl items-stretch justify-between px-0.5 py-1.5 sm:px-1 sm:py-2">
         {items.map((i) => (
