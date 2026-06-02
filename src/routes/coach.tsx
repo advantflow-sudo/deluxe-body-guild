@@ -46,6 +46,7 @@ function CoachPage() {
   const { session } = useAuth();
   const { isPremium, loading: premLoading } = usePremium();
   const locked = !!session && !premLoading && !isPremium;
+  const needsLogin = !session;
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,6 +58,10 @@ function CoachPage() {
 
   async function send(text: string) {
     if (!text.trim() || loading) return;
+    if (needsLogin) {
+      toast.error("Sign in to chat with the Coach.");
+      return;
+    }
     if (locked) {
       toast.error("Upgrade to Premium to chat with the Coach.");
       return;
@@ -68,9 +73,14 @@ function CoachPage() {
     setLoading(true);
 
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ messages: next }),
       });
       if (!res.ok || !res.body) {
