@@ -365,6 +365,42 @@ export type Database = {
           },
         ]
       }
+      exercises: {
+        Row: {
+          compartment: string
+          created_at: string
+          cues: string | null
+          equipment: string
+          id: string
+          is_premium: boolean
+          muscle_group: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          compartment: string
+          created_at?: string
+          cues?: string | null
+          equipment?: string
+          id?: string
+          is_premium?: boolean
+          muscle_group: string
+          name: string
+          slug: string
+        }
+        Update: {
+          compartment?: string
+          created_at?: string
+          cues?: string | null
+          equipment?: string
+          id?: string
+          is_premium?: boolean
+          muscle_group?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       habit_logs: {
         Row: {
           created_at: string
@@ -1044,6 +1080,148 @@ export type Database = {
           week_start?: string
         }
         Relationships: []
+      }
+      workout_block_exercises: {
+        Row: {
+          block_id: string
+          exercise_id: string
+          id: string
+          sort_order: number
+        }
+        Insert: {
+          block_id: string
+          exercise_id: string
+          id?: string
+          sort_order?: number
+        }
+        Update: {
+          block_id?: string
+          exercise_id?: string
+          id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_block_exercises_block_id_fkey"
+            columns: ["block_id"]
+            isOneToOne: false
+            referencedRelation: "workout_blocks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_block_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_blocks: {
+        Row: {
+          compartment: string
+          created_at: string
+          id: string
+          label: string
+          reps: string
+          rest_sec: number
+          sets: number
+          sort_order: number
+          workout_id: string
+        }
+        Insert: {
+          compartment: string
+          created_at?: string
+          id?: string
+          label: string
+          reps?: string
+          rest_sec?: number
+          sets?: number
+          sort_order?: number
+          workout_id: string
+        }
+        Update: {
+          compartment?: string
+          created_at?: string
+          id?: string
+          label?: string
+          reps?: string
+          rest_sec?: number
+          sets?: number
+          sort_order?: number
+          workout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_blocks_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_session_blocks: {
+        Row: {
+          block_id: string
+          completed: boolean
+          created_at: string
+          exercise_id: string
+          id: string
+          session_id: string
+          user_id: string
+          workout_id: string
+        }
+        Insert: {
+          block_id: string
+          completed?: boolean
+          created_at?: string
+          exercise_id: string
+          id?: string
+          session_id: string
+          user_id: string
+          workout_id: string
+        }
+        Update: {
+          block_id?: string
+          completed?: boolean
+          created_at?: string
+          exercise_id?: string
+          id?: string
+          session_id?: string
+          user_id?: string
+          workout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_session_blocks_block_id_fkey"
+            columns: ["block_id"]
+            isOneToOne: false
+            referencedRelation: "workout_blocks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_session_blocks_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_session_blocks_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_session_blocks_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       workout_sessions: {
         Row: {
