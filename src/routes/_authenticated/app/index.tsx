@@ -11,6 +11,7 @@ import { format, subDays, startOfDay } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { formatGoal } from "@/lib/format";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
 import { DailyMissionCard } from "@/components/deluxe/DailyMissionCard";
