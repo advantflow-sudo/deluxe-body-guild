@@ -385,11 +385,15 @@ function Community() {
   ];
   return (
     <section className="relative overflow-hidden bg-deluxe-dark py-28">
-      <img
-        src={communityImg}
-        alt=""
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover opacity-15 ken-burns-alt"
+      <AnimatedMedia
+        id="home-community-bg"
+        image={MEDIA.community.image}
+        video={MEDIA.community.video}
+        alt={MEDIA.community.alt}
+        caption={MEDIA.community.caption}
+        variant="alt"
+        className="absolute inset-0 h-full w-full opacity-15"
+        mediaClassName="h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-deluxe-dark via-deluxe-dark/85 to-deluxe-dark" />
       <div className="relative mx-auto max-w-6xl px-6 text-center">
@@ -965,7 +969,7 @@ function TodaysMissionPreview() {
               captionsUrl={MISSION_CLIP.captionsUrl}
               captionsLang={MISSION_CLIP.captionsLang}
               captionsLabel={MISSION_CLIP.captionsLabel}
-              poster={workout2}
+              poster={MEDIA.workout2.image}
               caption="Watch: today's 60-second mission brief"
               analyticsId="mission"
               analyticsProps={{ surface: "home_today_mission" }}
