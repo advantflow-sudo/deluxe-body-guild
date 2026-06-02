@@ -115,11 +115,23 @@ function ProfileTab() {
       <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5">
         <SectionLabel>Settings</SectionLabel>
         <div className="mt-3 space-y-1">
-          <Row icon={Bell} label="Notifications" onClick={() => ext && setExt({ ...ext, notifications_enabled: !ext.notifications_enabled })}
+          <Row icon={Bell} label="Notifications" onClick={async () => {
+            if (!ext || !user) return;
+            const next = !ext.notifications_enabled;
+            setExt({ ...ext, notifications_enabled: next });
+            const { error } = await supabase.from("user_profiles_ext").update({ notifications_enabled: next }).eq("user_id", user.id);
+            if (error) { setExt({ ...ext, notifications_enabled: !next }); toast.error("Couldn't update"); }
+          }}
             right={<span className={`h-5 w-9 rounded-full transition ${ext?.notifications_enabled ? "bg-gold" : "bg-gold/20"} relative`}>
               <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${ext?.notifications_enabled ? "left-4" : "left-0.5"}`} />
             </span>} />
-          <Row icon={Bell} label="Weekly recap" onClick={() => ext && setExt({ ...ext, weekly_recap_enabled: !ext.weekly_recap_enabled })}
+          <Row icon={Bell} label="Weekly recap" onClick={async () => {
+            if (!ext || !user) return;
+            const next = !ext.weekly_recap_enabled;
+            setExt({ ...ext, weekly_recap_enabled: next });
+            const { error } = await supabase.from("user_profiles_ext").update({ weekly_recap_enabled: next }).eq("user_id", user.id);
+            if (error) { setExt({ ...ext, weekly_recap_enabled: !next }); toast.error("Couldn't update"); }
+          }}
             right={<span className={`h-5 w-9 rounded-full transition ${ext?.weekly_recap_enabled ? "bg-gold" : "bg-gold/20"} relative`}>
               <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${ext?.weekly_recap_enabled ? "left-4" : "left-0.5"}`} />
             </span>} />
