@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, Play, Sparkles, Mail, MapPin } from "lucide-react";
+import { Instagram, Youtube, Facebook, Mail, MapPin } from "lucide-react";
 import { Logo } from "./Logo";
 import { NAV_LINKS } from "./Header";
 
