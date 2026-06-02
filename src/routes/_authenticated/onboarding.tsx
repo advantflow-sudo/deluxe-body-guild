@@ -30,6 +30,7 @@ function Onboarding() {
   const [age, setAge] = useState("");
   const [level, setLevel] = useState<(typeof LEVELS)[number]>("beginner");
   const [type, setType] = useState(TYPES[0]);
+  const [country, setCountry] = useState(COUNTRIES[0]);
   const [plan, setPlan] = useState("free");
   const [busy, setBusy] = useState(false);
 
