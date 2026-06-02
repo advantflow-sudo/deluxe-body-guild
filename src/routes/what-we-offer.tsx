@@ -82,9 +82,9 @@ function Page() {
             >
               <span className="absolute inset-x-0 top-0 h-0.5 bg-gold" />
               <Icon className="h-8 w-8 text-gold" strokeWidth={1.5} />
-              <h3 className="mt-6 font-display text-2xl tracking-wide text-foreground">
+              <h2 className="mt-6 font-display text-2xl tracking-wide text-foreground">
                 {title.toUpperCase()}
-              </h3>
+              </h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {body}
               </p>

@@ -69,9 +69,9 @@ function Page() {
           {pillars.map(({ Icon, title, body }) => (
             <div key={title} className="luxury-card p-8">
               <Icon className="h-7 w-7 text-gold" strokeWidth={1.5} />
-              <h3 className="mt-5 font-display text-2xl tracking-wide">
+              <h2 className="mt-5 font-display text-2xl tracking-wide">
                 {title.toUpperCase()}
-              </h3>
+              </h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {body}
               </p>

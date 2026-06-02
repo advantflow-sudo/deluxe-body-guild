@@ -19,7 +19,15 @@ export const Route = createFileRoute("/coach")({
         content:
           "Your private AI coach for training, nutrition, recovery, and mindset. Crafted for the Deluxe Fitness lifestyle.",
       },
+      { property: "og:title", content: "Deluxe Coach — AI Fitness & Lifestyle Assistant" },
+      {
+        property: "og:description",
+        content:
+          "Private AI coach for training, nutrition, recovery, and mindset — built for Deluxe Fitness members.",
+      },
+      { property: "og:url", content: "https://deluxefitness.app/coach" },
     ],
+    links: [{ rel: "canonical", href: "https://deluxefitness.app/coach" }],
   }),
   component: CoachPage,
 });

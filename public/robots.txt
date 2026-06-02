@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /login
+Disallow: /onboarding
+
+Sitemap: https://deluxefitness.app/sitemap.xml

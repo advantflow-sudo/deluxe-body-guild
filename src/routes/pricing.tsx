@@ -19,6 +19,23 @@ export const Route = createFileRoute("/pricing")({
         content:
           "Three tiers of transformation. Essential, Signature, and Private memberships built for serious results.",
       },
+      { property: "og:url", content: "https://deluxefitness.app/pricing" },
+    ],
+    links: [{ rel: "canonical", href: "https://deluxefitness.app/pricing" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            { "@type": "Question", name: "Can I cancel anytime?", acceptedAnswer: { "@type": "Answer", text: "Absolutely. Memberships are month-to-month or annual. Cancel from your dashboard in two clicks — no questions, no friction." } },
+            { "@type": "Question", name: "Is there a free trial?", acceptedAnswer: { "@type": "Answer", text: "Every new member gets a 7-day complimentary trial on Essential and Signature. Cancel before day seven and you won't be charged." } },
+            { "@type": "Question", name: "How is Private different?", acceptedAnswer: { "@type": "Answer", text: "Private is an invitation-only tier capped each quarter. You work directly with a senior coach with full bespoke programming and concierge support." } },
+            { "@type": "Question", name: "Do you offer corporate or team plans?", acceptedAnswer: { "@type": "Answer", text: "Yes — bespoke packages for teams of 5+ with shared dashboards and consolidated billing. Reach out via the contact page." } },
+          ],
+        }),
+      },
     ],
   }),
   component: PricingPage,
@@ -180,7 +197,7 @@ function PricingPage() {
                     <Icon className="h-5 w-5 text-gold" />
                   </div>
 
-                  <h3 className="font-display text-2xl text-foreground">{tier.name}</h3>
+                  <h2 className="font-display text-2xl text-foreground">{tier.name}</h2>
                   <p className="mt-1 font-serif italic text-muted-foreground">{tier.tagline}</p>
 
                   <div className="mt-6 flex items-baseline gap-2">
