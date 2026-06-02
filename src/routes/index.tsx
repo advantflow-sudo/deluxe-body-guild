@@ -52,6 +52,13 @@ import workout3 from "@/assets/workout-3.jpg";
 import communityImg from "@/assets/community.jpg";
 import { Reveal } from "@/components/deluxe/Reveal";
 
+// Swap these with your branded MP4s when ready.
+// Drop a file at e.g. public/hero.mp4 and set HERO_VIDEO = "/hero.mp4".
+const HERO_VIDEO =
+  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+const MISSION_VIDEO =
+  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
