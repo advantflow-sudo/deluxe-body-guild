@@ -184,7 +184,8 @@ function Page() {
                   </p>
                 </div>
               </article>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
