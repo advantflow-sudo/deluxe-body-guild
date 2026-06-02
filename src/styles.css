@@ -268,3 +268,47 @@
   .prose-deluxe th { color: var(--gold); font-weight: 600; }
   .prose-deluxe hr { border: 0; border-top: 1px solid var(--deluxe-border); margin: 1em 0; }
 }
+
+/* ===========================================================
+ * Ken Burns — animate still images with a slow cinematic drift
+ * Apply via className: "ken-burns" (default), or directional
+ * variants for variety across a page.
+ * =========================================================== */
+@keyframes kenBurns {
+  0%   { transform: scale(1)    translate3d(0, 0, 0); }
+  50%  { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+  100% { transform: scale(1)    translate3d(0, 0, 0); }
+}
+@keyframes kenBurnsAlt {
+  0%   { transform: scale(1.05) translate3d(1%, 1%, 0); }
+  50%  { transform: scale(1.15) translate3d(-1%, -1.5%, 0); }
+  100% { transform: scale(1.05) translate3d(1%, 1%, 0); }
+}
+@keyframes kenBurnsZoom {
+  0%   { transform: scale(1); }
+  100% { transform: scale(1.18); }
+}
+
+@layer utilities {
+  .ken-burns {
+    animation: kenBurns 22s ease-in-out infinite;
+    transform-origin: center;
+    will-change: transform;
+  }
+  .ken-burns-alt {
+    animation: kenBurnsAlt 26s ease-in-out infinite;
+    transform-origin: center;
+    will-change: transform;
+  }
+  .ken-burns-zoom {
+    animation: kenBurnsZoom 18s ease-in-out infinite alternate;
+    transform-origin: center;
+    will-change: transform;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns, .ken-burns-alt, .ken-burns-zoom {
+    animation: none !important;
+  }
+}
