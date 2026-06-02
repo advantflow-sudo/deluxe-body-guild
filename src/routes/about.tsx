@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Compass, Flag, Users } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
-import communityImg from "@/assets/community.jpg";
+import { AnimatedMedia } from "@/components/deluxe/AnimatedMedia";
+import { MEDIA } from "@/config/animated-media";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -55,11 +56,15 @@ function Page() {
       />
 
       <section className="relative overflow-hidden bg-deluxe-dark py-24">
-        <img
-          src={communityImg}
-          alt=""
-          loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover opacity-15 ken-burns"
+        <AnimatedMedia
+          id="about-community-bg"
+          image={MEDIA.community.image}
+          video={MEDIA.community.video}
+          alt={MEDIA.community.alt}
+          caption={MEDIA.community.caption}
+          variant="in"
+          className="absolute inset-0 h-full w-full opacity-15"
+          mediaClassName="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-deluxe-dark via-deluxe-dark/85 to-deluxe-dark" />
         <div className="relative mx-auto max-w-5xl space-y-16 px-6">
