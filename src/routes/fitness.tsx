@@ -159,7 +159,7 @@ function Page() {
                     src={p.img}
                     alt={p.title}
                     loading="lazy"
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    className="h-full w-full object-cover ken-burns-alt group-hover:scale-110 transition-transform duration-700"
                   />
                 </div>
                 <div className="p-6">
