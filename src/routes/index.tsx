@@ -593,7 +593,7 @@ function WhyDifferent() {
     ) : v === "partial" ? (
       <span className="text-gold/40">◐</span>
     ) : (
-      <span className="text-muted-foreground/40">—</span>
+      <span className="text-muted-foreground">—</span>
     );
 
   return (
