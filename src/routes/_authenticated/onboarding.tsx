@@ -13,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
 const GOALS = ["Lose fat", "Build muscle", "Get stronger", "Improve endurance", "General wellbeing"];
 const LEVELS = ["beginner", "intermediate", "advanced"] as const;
 const TYPES = ["Gym", "Home", "Cardio", "Strength", "Fat Loss"];
+const COUNTRIES = ["United Kingdom","United States","Canada","Ireland","Australia","New Zealand","France","Germany","Spain","Italy","Netherlands","Belgium","Switzerland","Sweden","Norway","Denmark","Portugal","Poland","United Arab Emirates","Saudi Arabia","Qatar","Singapore","Hong Kong","Japan","South Korea","India","Brazil","Mexico","Argentina","South Africa","Nigeria","Kenya","Other"];
 const PLANS = [
   { id: "free", label: "Free", price: "£0", desc: "Core workouts, basic tracking." },
   { id: "premium", label: "Premium", price: "£14/mo", desc: "All plans, AI coach, challenges." },
