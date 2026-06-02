@@ -92,6 +92,13 @@ function Onboarding() {
                 <Field label="Weight (kg)" value={weight} onChange={setWeight} type="number" />
                 <Field label="Height (cm)" value={height} onChange={setHeight} type="number" />
                 <Field label="Age" value={age} onChange={setAge} type="number" />
+                <div>
+                  <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Country</label>
+                  <select value={country} onChange={(e) => setCountry(e.target.value)}
+                    className="mt-2 w-full border border-gold/20 bg-deluxe-black px-4 py-3 text-sm text-foreground focus:border-gold focus:outline-none">
+                    {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
               </div>
             </div>
           )}
