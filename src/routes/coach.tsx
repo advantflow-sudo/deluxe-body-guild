@@ -158,6 +158,19 @@ function CoachPage() {
           </p>
         </div>
 
+        {needsLogin && (
+          <div className="mt-6 flex flex-col items-center gap-3 border border-gold/30 bg-deluxe-forest/30 p-5 text-center sm:flex-row sm:text-left">
+            <Sparkles className="h-6 w-6 shrink-0 text-gold" />
+            <div className="flex-1">
+              <div className="font-display text-lg text-foreground">Sign in to talk to the Coach</div>
+              <p className="text-xs text-muted-foreground">Personalized training, nutrition, recovery — tied to your profile.</p>
+            </div>
+            <Link to="/login" className="inline-flex items-center gap-2 bg-gold-gradient px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-deluxe-black">
+              Sign in
+            </Link>
+          </div>
+        )}
+
         {locked && (
           <div className="mt-6 flex flex-col items-center gap-3 border border-gold/30 bg-gold-gradient/10 p-5 text-center sm:flex-row sm:text-left">
             <Crown className="h-6 w-6 shrink-0 text-gold" />
@@ -170,6 +183,7 @@ function CoachPage() {
             </Link>
           </div>
         )}
+
 
 
         <div
