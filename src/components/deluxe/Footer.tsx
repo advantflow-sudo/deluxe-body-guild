@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Instagram, Youtube, Facebook, Mail, MapPin } from "lucide-react";
 import { Logo } from "./Logo";
 import { NAV_LINKS } from "./Header";
+import { ReduceMotionToggle } from "./ReduceMotionToggle";
 
 export function Footer() {
   return (
@@ -117,9 +118,12 @@ export function Footer() {
           <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
             © 2026 Deluxe Fitness. All rights reserved.
           </p>
-          <p className="text-[11px] uppercase tracking-[0.25em] text-gold/70">
-            Discipline. Transform. Become Deluxe.
-          </p>
+          <div className="flex flex-wrap items-center gap-4">
+            <ReduceMotionToggle />
+            <p className="text-[11px] uppercase tracking-[0.25em] text-gold/70">
+              Discipline. Transform. Become Deluxe.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
