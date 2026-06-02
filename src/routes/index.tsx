@@ -20,7 +20,20 @@ import {
   Medal,
   Crown,
   Zap,
+  Download,
+  ClipboardCheck,
+  Wand2,
+  Target,
+  Droplet,
+  Footprints,
+  BookOpen,
+  MessageCircle,
+  Moon,
+  Salad,
+  CheckCircle2,
+  Lock,
 } from "lucide-react";
+
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
 import {
