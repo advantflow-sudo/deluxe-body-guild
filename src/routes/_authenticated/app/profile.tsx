@@ -18,7 +18,10 @@ interface Ext {
   subscription_tier: string; notifications_enabled: boolean;
   reminder_morning_hour: number | null; reminder_evening_hour: number | null;
   weekly_recap_enabled: boolean; timezone: string;
+  country: string | null;
 }
+
+const COUNTRIES = ["United Kingdom","United States","Canada","Ireland","Australia","New Zealand","France","Germany","Spain","Italy","Netherlands","Belgium","Switzerland","Sweden","Norway","Denmark","Portugal","Poland","United Arab Emirates","Saudi Arabia","Qatar","Singapore","Hong Kong","Japan","South Korea","India","Brazil","Mexico","Argentina","South Africa","Nigeria","Kenya","Other"];
 
 function ProfileTab() {
   const { user, signOut } = useAuth();
@@ -55,6 +58,7 @@ function ProfileTab() {
         reminder_evening_hour: ext.reminder_evening_hour,
         weekly_recap_enabled: ext.weekly_recap_enabled,
         timezone: ext.timezone,
+        country: ext.country,
       }).eq("user_id", user.id),
     ]);
     setSaving(false);
@@ -95,6 +99,17 @@ function ProfileTab() {
           </div>
           <Field label="Training Level" value={ext.training_level ?? ""} onChange={(v) => setExt({ ...ext, training_level: v })} />
           <Field label="Preferred Type" value={ext.preferred_type ?? ""} onChange={(v) => setExt({ ...ext, preferred_type: v })} />
+          <div>
+            <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Country</label>
+            <select
+              value={ext.country ?? ""}
+              onChange={(e) => setExt({ ...ext, country: e.target.value || null })}
+              className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none"
+            >
+              <option value="">— Select country —</option>
+              {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
           <GoldButton onClick={save} disabled={saving} className="w-full">{saving ? "Saving…" : "Save changes"}</GoldButton>
         </div>
       )}

@@ -32,7 +32,10 @@ import {
   Salad,
   CheckCircle2,
   Lock,
+  ChevronDown,
 } from "lucide-react";
+import { useState } from "react";
+import { VideoPlayer } from "@/components/deluxe/VideoPlayer";
 
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
@@ -48,6 +51,13 @@ import workout2 from "@/assets/workout-2.jpg";
 import workout3 from "@/assets/workout-3.jpg";
 import communityImg from "@/assets/community.jpg";
 import { Reveal } from "@/components/deluxe/Reveal";
+
+// Swap these with your branded MP4s when ready.
+// Drop a file at e.g. public/hero.mp4 and set HERO_VIDEO = "/hero.mp4".
+const HERO_VIDEO =
+  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+const MISSION_VIDEO =
+  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -141,7 +151,17 @@ function Hero() {
           </div>
         </Reveal>
 
-        <Reveal delay={360}>
+        <Reveal delay={320}>
+          <div className="mt-14 w-full max-w-4xl">
+            <VideoPlayer
+              src={HERO_VIDEO}
+              poster={workout1}
+              caption="Inside the Deluxe Fitness movement"
+            />
+          </div>
+        </Reveal>
+
+        <Reveal delay={420}>
           <div className="mt-16 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14">
             {[
               ["50K+", "Members"],
@@ -738,34 +758,129 @@ function Reviews() {
 /* ---------------- How It Works ---------------- */
 function HowItWorks() {
   const steps = [
-    { Icon: Download, title: "Download", body: "Grab Deluxe Fitness on iOS or Android. Sign up in under a minute." },
-    { Icon: ClipboardCheck, title: "Assess", body: "Complete your fitness, lifestyle and mindset assessment." },
-    { Icon: Wand2, title: "Receive Your Plan", body: "Get an AI-powered training, nutrition and recovery plan tuned to you." },
-    { Icon: TrendingUp, title: "Track & Earn", body: "Log workouts, hit habits, build streaks. Earn points and rewards." },
-    { Icon: Users, title: "Join the Movement", body: "Connect with members, accountability partners and live challenges." },
+    {
+      Icon: Download,
+      title: "Download",
+      body: "Grab Deluxe Fitness on iOS or Android. Sign up in under a minute.",
+      details: [
+        "Free account — no card required to start.",
+        "iOS 15+ and Android 9+ supported.",
+        "Import data from Apple Health or Google Fit on day one.",
+      ],
+    },
+    {
+      Icon: ClipboardCheck,
+      title: "Assess",
+      body: "Complete your fitness, lifestyle and mindset assessment.",
+      details: [
+        "12-question deep dive into goals, history and obstacles.",
+        "Body stats, training level and equipment captured.",
+        "We use it to personalise every workout and habit prompt.",
+      ],
+    },
+    {
+      Icon: Wand2,
+      title: "Receive Your Plan",
+      body: "Get an AI-powered training, nutrition and recovery plan tuned to you.",
+      details: [
+        "Weekly training split built around your schedule.",
+        "Macro targets and meal ideas matched to your goal.",
+        "Recovery, sleep and mindset cues baked in.",
+      ],
+    },
+    {
+      Icon: TrendingUp,
+      title: "Track & Earn",
+      body: "Log workouts, hit habits, build streaks. Earn points and rewards.",
+      details: [
+        "Daily Mission keeps the streak honest.",
+        "Deluxe Score shows your weekly momentum.",
+        "Unlock tiers: Bronze → Gold → Deluxe.",
+      ],
+    },
+    {
+      Icon: Users,
+      title: "Join the Movement",
+      body: "Connect with members, accountability partners and live challenges.",
+      details: [
+        "Find a partner matched to your goal and timezone.",
+        "Join monthly challenges with leaderboard prizes.",
+        "Private members-only feed — no noise, only signal.",
+      ],
+    },
   ];
+
+  const [open, setOpen] = useState<number | null>(0);
+
   return (
     <section className="border-y border-gold/15 bg-deluxe-black py-28">
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto max-w-5xl px-6">
         <div className="text-center">
           <SectionLabel>How It Works</SectionLabel>
           <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
             FIVE STEPS. <span className="text-gold">ONE TRANSFORMATION.</span>
           </h2>
           <div className="mt-6 flex justify-center"><GoldDivider /></div>
+          <p className="mt-6 text-sm text-muted-foreground">Tap any step to expand.</p>
         </div>
-        <ol className="mt-16 grid gap-4 md:grid-cols-5">
-          {steps.map((s, i) => (
-            <li key={s.title} className="relative border border-gold/20 bg-deluxe-card p-6 transition hover:border-gold/50">
-              <span className="absolute -top-3 left-6 bg-deluxe-black px-2 font-display text-xs tracking-[0.3em] text-gold">
-                STEP {String(i + 1).padStart(2, "0")}
-              </span>
-              <s.Icon className="mt-3 h-7 w-7 text-gold" strokeWidth={1.5} />
-              <h3 className="mt-5 font-display text-xl tracking-wide text-foreground">{s.title.toUpperCase()}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
-            </li>
-          ))}
+
+        <ol className="mt-12 space-y-3">
+          {steps.map((s, i) => {
+            const isOpen = open === i;
+            return (
+              <li
+                key={s.title}
+                className={`relative border bg-deluxe-card transition-all duration-300 ${
+                  isOpen ? "border-gold/60 shadow-[0_20px_50px_-30px_rgba(212,175,55,0.4)]" : "border-gold/20 hover:border-gold/40"
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  aria-expanded={isOpen}
+                  className="flex w-full items-center gap-5 px-5 py-5 text-left sm:px-7 sm:py-6"
+                >
+                  <span className="hidden font-display text-xs tracking-[0.3em] text-gold sm:inline">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center border border-gold/30 bg-deluxe-black">
+                    <s.Icon className="h-5 w-5 text-gold" strokeWidth={1.5} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-lg tracking-wide text-foreground sm:text-xl">
+                      {s.title.toUpperCase()}
+                    </span>
+                    <span className="mt-1 block text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                      {s.body}
+                    </span>
+                  </span>
+                  <ChevronDown
+                    className={`h-5 w-5 shrink-0 text-gold transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+                <div
+                  className={`grid overflow-hidden transition-[grid-template-rows] duration-500 ease-out ${
+                    isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                  }`}
+                >
+                  <div className="min-h-0">
+                    <div className="border-t border-gold/15 px-5 pb-6 pt-5 sm:px-7">
+                      <ul className="space-y-2.5">
+                        {s.details.map((d) => (
+                          <li key={d} className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold" strokeWidth={1.5} />
+                            <span>{d}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
         </ol>
+
         <div className="mt-12 flex justify-center">
           <Link to="/how-it-works">
             <OutlineButton>See the full journey <ArrowRight className="h-4 w-4" /></OutlineButton>
@@ -841,6 +956,14 @@ function TodaysMissionPreview() {
           <Link to="/login" className="mt-8 inline-block">
             <GoldButton>Get today's mission <ArrowRight className="h-4 w-4" /></GoldButton>
           </Link>
+
+          <div className="mt-10">
+            <VideoPlayer
+              src={MISSION_VIDEO}
+              poster={workout2}
+              caption="Watch: today's 60-second mission brief"
+            />
+          </div>
         </div>
 
         <div className="border border-gold/30 bg-gradient-to-br from-deluxe-card to-deluxe-black p-6 shadow-[0_30px_60px_-30px_rgba(212,175,55,0.35)] sm:p-8">
