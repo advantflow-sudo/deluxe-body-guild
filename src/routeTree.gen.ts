@@ -13,14 +13,17 @@ import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
 import { Route as WellbeingRouteImport } from './routes/wellbeing'
 import { Route as TransformationsRouteImport } from './routes/transformations'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RoadmapRouteImport } from './routes/roadmap'
 import { Route as RewardsBenefitsRouteImport } from './routes/rewards-benefits'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as FounderRouteImport } from './routes/founder'
 import { Route as FitnessRouteImport } from './routes/fitness'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CoachRouteImport } from './routes/coach'
+import { Route as ChallengesRouteImport } from './routes/challenges'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -75,6 +78,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoadmapRoute = RoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RewardsBenefitsRoute = RewardsBenefitsRouteImport.update({
   id: '/rewards-benefits',
   path: '/rewards-benefits',
@@ -100,6 +108,11 @@ const GalleryRoute = GalleryRouteImport.update({
   path: '/gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FounderRoute = FounderRouteImport.update({
+  id: '/founder',
+  path: '/founder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FitnessRoute = FitnessRouteImport.update({
   id: '/fitness',
   path: '/fitness',
@@ -113,6 +126,11 @@ const ContactRoute = ContactRouteImport.update({
 const CoachRoute = CoachRouteImport.update({
   id: '/coach',
   path: '/coach',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChallengesRoute = ChallengesRouteImport.update({
+  id: '/challenges',
+  path: '/challenges',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -300,14 +318,17 @@ const ApiPublicOauthProviderCallbackRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/challenges': typeof ChallengesRoute
   '/coach': typeof CoachRoute
   '/contact': typeof ContactRoute
   '/fitness': typeof FitnessRoute
+  '/founder': typeof FounderRoute
   '/gallery': typeof GalleryRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/rewards-benefits': typeof RewardsBenefitsRoute
+  '/roadmap': typeof RoadmapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
@@ -346,14 +367,17 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/challenges': typeof ChallengesRoute
   '/coach': typeof CoachRoute
   '/contact': typeof ContactRoute
   '/fitness': typeof FitnessRoute
+  '/founder': typeof FounderRoute
   '/gallery': typeof GalleryRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/rewards-benefits': typeof RewardsBenefitsRoute
+  '/roadmap': typeof RoadmapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
@@ -393,14 +417,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/challenges': typeof ChallengesRoute
   '/coach': typeof CoachRoute
   '/contact': typeof ContactRoute
   '/fitness': typeof FitnessRoute
+  '/founder': typeof FounderRoute
   '/gallery': typeof GalleryRoute
   '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/rewards-benefits': typeof RewardsBenefitsRoute
+  '/roadmap': typeof RoadmapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
@@ -441,14 +468,17 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/challenges'
     | '/coach'
     | '/contact'
     | '/fitness'
+    | '/founder'
     | '/gallery'
     | '/how-it-works'
     | '/login'
     | '/pricing'
     | '/rewards-benefits'
+    | '/roadmap'
     | '/sitemap.xml'
     | '/transformations'
     | '/wellbeing'
@@ -487,14 +517,17 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/challenges'
     | '/coach'
     | '/contact'
     | '/fitness'
+    | '/founder'
     | '/gallery'
     | '/how-it-works'
     | '/login'
     | '/pricing'
     | '/rewards-benefits'
+    | '/roadmap'
     | '/sitemap.xml'
     | '/transformations'
     | '/wellbeing'
@@ -533,14 +566,17 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/challenges'
     | '/coach'
     | '/contact'
     | '/fitness'
+    | '/founder'
     | '/gallery'
     | '/how-it-works'
     | '/login'
     | '/pricing'
     | '/rewards-benefits'
+    | '/roadmap'
     | '/sitemap.xml'
     | '/transformations'
     | '/wellbeing'
@@ -581,14 +617,17 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  ChallengesRoute: typeof ChallengesRoute
   CoachRoute: typeof CoachRoute
   ContactRoute: typeof ContactRoute
   FitnessRoute: typeof FitnessRoute
+  FounderRoute: typeof FounderRoute
   GalleryRoute: typeof GalleryRoute
   HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   RewardsBenefitsRoute: typeof RewardsBenefitsRoute
+  RoadmapRoute: typeof RoadmapRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TransformationsRoute: typeof TransformationsRoute
   WellbeingRoute: typeof WellbeingRoute
@@ -636,6 +675,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/roadmap': {
+      id: '/roadmap'
+      path: '/roadmap'
+      fullPath: '/roadmap'
+      preLoaderRoute: typeof RoadmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rewards-benefits': {
       id: '/rewards-benefits'
       path: '/rewards-benefits'
@@ -671,6 +717,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/founder': {
+      id: '/founder'
+      path: '/founder'
+      fullPath: '/founder'
+      preLoaderRoute: typeof FounderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fitness': {
       id: '/fitness'
       path: '/fitness'
@@ -690,6 +743,13 @@ declare module '@tanstack/react-router' {
       path: '/coach'
       fullPath: '/coach'
       preLoaderRoute: typeof CoachRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/challenges': {
+      id: '/challenges'
+      path: '/challenges'
+      fullPath: '/challenges'
+      preLoaderRoute: typeof ChallengesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -987,14 +1047,17 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
+  ChallengesRoute: ChallengesRoute,
   CoachRoute: CoachRoute,
   ContactRoute: ContactRoute,
   FitnessRoute: FitnessRoute,
+  FounderRoute: FounderRoute,
   GalleryRoute: GalleryRoute,
   HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   RewardsBenefitsRoute: RewardsBenefitsRoute,
+  RoadmapRoute: RoadmapRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TransformationsRoute: TransformationsRoute,
   WellbeingRoute: WellbeingRoute,
@@ -1015,3 +1078,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
