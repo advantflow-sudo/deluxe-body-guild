@@ -1,9 +1,11 @@
 {
   "version": 1,
-  "asset_id": "2c90249c-4d6a-4976-b24b-e7ffe1d5e6aa",
+  "asset_id": "2eca6c24-2966-46ab-a54a-0dda9b0db42f",
   "project_id": "eba2b5b6-0e26-42b9-b5c5-a2b72735fe8e",
-  "url": "/__l5e/assets-v1/2c90249c-4d6a-4976-b24b-e7ffe1d5e6aa/community-anim.mp4",
+  "url": "/__l5e/assets-v1/2eca6c24-2966-46ab-a54a-0dda9b0db42f/community-anim.mp4",
+  "r2_key": "a/v1/eba2b5b6-0e26-42b9-b5c5-a2b72735fe8e/2eca6c24-2966-46ab-a54a-0dda9b0db42f/community-anim.mp4",
   "original_filename": "community-anim.mp4",
-  "size": 8645708,
-  "created_at": "2026-06-02T21:27:38Z"
+  "size": 497800,
+  "content_type": "video/mp4",
+  "created_at": "2026-06-02T23:52:59Z"
 }
