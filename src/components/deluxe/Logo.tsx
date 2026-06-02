@@ -1,4 +1,4 @@
-import mark from "@/assets/deluxe-mark.png";
+import mark from "@/assets/deluxe-mark.webp";
 
 type Props = { showTag?: boolean; className?: string; size?: "sm" | "md" | "lg" };
 
