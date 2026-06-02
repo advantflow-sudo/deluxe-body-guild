@@ -32,7 +32,10 @@ import {
   Salad,
   CheckCircle2,
   Lock,
+  ChevronDown,
 } from "lucide-react";
+import { useState } from "react";
+import { VideoPlayer } from "@/components/deluxe/VideoPlayer";
 
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
