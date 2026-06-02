@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
+import { formatGoal } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/challenges")({
   component: ChallengesPage,
