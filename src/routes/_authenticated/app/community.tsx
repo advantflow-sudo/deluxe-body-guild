@@ -345,7 +345,7 @@ function Comments({ postId, onChange }: { postId: string; onChange: () => void }
         <input value={text} onChange={(e) => setText(e.target.value)} maxLength={1000}
           placeholder="Add a comment…"
           className="flex-1 border border-gold/20 bg-deluxe-black px-3 py-1.5 text-xs text-foreground focus:border-gold focus:outline-none" />
-        <button type="submit" className="text-gold hover:text-gold/80"><Send className="h-4 w-4" /></button>
+        <button type="submit" aria-label="Send comment" className="text-gold hover:text-gold/80"><Send className="h-4 w-4" /></button>
       </form>
     </div>
   );
