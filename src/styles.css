@@ -312,3 +312,15 @@
     animation: none !important;
   }
 }
+
+/* User-controlled reduce-motion toggle (set on <html data-reduce-motion="true">). */
+html[data-reduce-motion="true"] .ken-burns,
+html[data-reduce-motion="true"] .ken-burns-alt,
+html[data-reduce-motion="true"] .ken-burns-zoom {
+  animation: none !important;
+  transform: none !important;
+}
+html[data-reduce-motion="true"] video[data-animated-media] {
+  /* Pause autoplay videos managed by AnimatedMedia by hiding them in favor of poster. */
+  visibility: hidden;
+}
