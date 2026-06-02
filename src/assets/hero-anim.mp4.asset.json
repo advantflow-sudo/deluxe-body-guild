@@ -1,9 +1,11 @@
 {
   "version": 1,
-  "asset_id": "a6cd351b-094c-4b93-a7bc-8cbe7ad014b4",
+  "asset_id": "b1c12f9e-c845-465f-bd50-54cfd40b42e6",
   "project_id": "eba2b5b6-0e26-42b9-b5c5-a2b72735fe8e",
-  "url": "/__l5e/assets-v1/a6cd351b-094c-4b93-a7bc-8cbe7ad014b4/hero-anim.mp4",
+  "url": "/__l5e/assets-v1/b1c12f9e-c845-465f-bd50-54cfd40b42e6/hero-anim.mp4",
+  "r2_key": "a/v1/eba2b5b6-0e26-42b9-b5c5-a2b72735fe8e/b1c12f9e-c845-465f-bd50-54cfd40b42e6/hero-anim.mp4",
   "original_filename": "hero-anim.mp4",
-  "size": 12054551,
-  "created_at": "2026-06-02T21:27:34Z"
+  "size": 511686,
+  "content_type": "video/mp4",
+  "created_at": "2026-06-02T23:52:57Z"
 }
