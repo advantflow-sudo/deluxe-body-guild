@@ -14,6 +14,7 @@ import { Route as WellbeingRouteImport } from './routes/wellbeing'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as FitnessRouteImport } from './routes/fitness'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -75,6 +76,11 @@ const PricingRoute = PricingRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryRoute = GalleryRouteImport.update({
@@ -286,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/fitness': typeof FitnessRoute
   '/gallery': typeof GalleryRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -329,6 +336,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/fitness': typeof FitnessRoute
   '/gallery': typeof GalleryRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -373,6 +381,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/fitness': typeof FitnessRoute
   '/gallery': typeof GalleryRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -418,6 +427,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/fitness'
     | '/gallery'
+    | '/how-it-works'
     | '/login'
     | '/pricing'
     | '/sitemap.xml'
@@ -461,6 +471,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/fitness'
     | '/gallery'
+    | '/how-it-works'
     | '/login'
     | '/pricing'
     | '/sitemap.xml'
@@ -504,6 +515,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/fitness'
     | '/gallery'
+    | '/how-it-works'
     | '/login'
     | '/pricing'
     | '/sitemap.xml'
@@ -549,6 +561,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FitnessRoute: typeof FitnessRoute
   GalleryRoute: typeof GalleryRoute
+  HowItWorksRoute: typeof HowItWorksRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -602,6 +615,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery': {
@@ -931,6 +951,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FitnessRoute: FitnessRoute,
   GalleryRoute: GalleryRoute,
+  HowItWorksRoute: HowItWorksRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
