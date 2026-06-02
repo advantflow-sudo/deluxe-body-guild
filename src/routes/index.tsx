@@ -20,7 +20,20 @@ import {
   Medal,
   Crown,
   Zap,
+  Download,
+  ClipboardCheck,
+  Wand2,
+  Target,
+  Droplet,
+  Footprints,
+  BookOpen,
+  MessageCircle,
+  Moon,
+  Salad,
+  CheckCircle2,
+  Lock,
 } from "lucide-react";
+
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
 import {
@@ -61,8 +74,12 @@ function HomePage() {
     <div className="min-h-screen bg-deluxe-black text-foreground">
       <Header />
       <Hero />
+      <HowItWorks />
+      <DeluxeLifestyle />
       <Mission />
       <FeatureIcons />
+      <TodaysMissionPreview />
+      <DeluxeScore />
       <WhyDeluxe />
       <WhyDifferent />
       <AppPreview />
@@ -76,6 +93,7 @@ function HomePage() {
     </div>
   );
 }
+
 
 /* ---------------- Hero ---------------- */
 function Hero() {
@@ -478,45 +496,13 @@ function Rewards() {
   );
 }
 
-/* ---------------- Transformation Gallery ---------------- */
+/* ---------------- Transformation Gallery (Founding Members) ---------------- */
 function TransformationGallery() {
-  const stories = [
-    {
-      img: workout1,
-      name: "Marcus T.",
-      start: "118 kg",
-      now: "99 kg",
-      time: "6 months",
-      streak: "82 days",
-      quote: "Lost the weight. Kept the discipline.",
-    },
-    {
-      img: workout2,
-      name: "Sofia L.",
-      start: "54 kg",
-      now: "62 kg lean",
-      time: "9 months",
-      streak: "147 days",
-      quote: "Built the body I thought wasn't possible.",
-    },
-    {
-      img: workout3,
-      name: "Daniel K.",
-      start: "104 kg",
-      now: "82 kg",
-      time: "12 months",
-      streak: "210 days",
-      quote: "Down 22kg. Up two suit sizes in the shoulders.",
-    },
-    {
-      img: communityImg,
-      name: "Priya A.",
-      start: "Never ran 1km",
-      now: "First marathon",
-      time: "8 months",
-      streak: "96 days",
-      quote: "Deluxe gave me the discipline I always lacked.",
-    },
+  const slots = [
+    { focus: "Fat loss" },
+    { focus: "Muscle gain" },
+    { focus: "Confidence" },
+    { focus: "Lifestyle" },
   ];
   return (
     <section className="bg-deluxe-dark py-28">
@@ -524,41 +510,54 @@ function TransformationGallery() {
         <div className="text-center">
           <SectionLabel>Transformation Gallery</SectionLabel>
           <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
-            REAL MEMBERS. <span className="text-gold">REAL NUMBERS.</span>
+            FOUNDING MEMBERS. <span className="text-gold">YOUR FACE HERE.</span>
           </h2>
           <div className="mt-6 flex justify-center">
             <GoldDivider />
           </div>
+          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
+            We're selecting our first cohort of Founding Members. The first 100 to commit
+            and complete a 90-day transformation will be featured here — story, stats, and all.
+          </p>
         </div>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-2">
-          {stories.map((s) => (
-            <figure key={s.name} className="group grid grid-cols-[1fr_1.2fr] overflow-hidden border border-gold/20 bg-deluxe-card">
-              <div className="aspect-[3/4] overflow-hidden bg-deluxe-black">
-                <img
-                  src={s.img}
-                  alt={`${s.name} transformation`}
-                  loading="lazy"
-                  className="h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
-                />
-              </div>
-              <div className="flex flex-col justify-between p-6">
-                <div>
-                  <Zap className="h-4 w-4 text-gold" />
-                  <figcaption className="mt-2 font-display text-2xl tracking-wide text-foreground">
-                    {s.name.toUpperCase()}
-                  </figcaption>
-                  <p className="mt-2 font-serif text-sm italic text-muted-foreground">"{s.quote}"</p>
+        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {slots.map((s, i) => (
+            <div
+              key={s.focus}
+              className="group relative aspect-[3/4] overflow-hidden border border-gold/25 bg-gradient-to-br from-deluxe-card to-deluxe-black p-6 transition hover:border-gold/60"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.08),transparent_70%)]" />
+              <div className="relative flex h-full flex-col justify-between">
+                <div className="flex items-center justify-between">
+                  <Lock className="h-4 w-4 text-gold/60" strokeWidth={1.5} />
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-gold/80">
+                    Slot {String(i + 1).padStart(2, "0")}
+                  </span>
                 </div>
-                <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-gold/15 pt-4 text-[11px]">
-                  <Stat label="Starting" value={s.start} />
-                  <Stat label="Current" value={s.now} />
-                  <Stat label="Time" value={s.time} />
-                  <Stat label="Streak" value={s.streak} />
-                </dl>
+                <div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                    Focus
+                  </div>
+                  <div className="mt-1 font-display text-2xl text-foreground">
+                    {s.focus}
+                  </div>
+                  <div className="mt-4 h-px w-12 bg-gold/40" />
+                  <div className="mt-4 text-[10px] font-semibold uppercase tracking-[0.22em] text-gold">
+                    Reserved for a founding member
+                  </div>
+                </div>
               </div>
-            </figure>
+            </div>
           ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link to="/transformations">
+            <GoldButton>
+              Claim a founding spot <ArrowRight className="h-4 w-4" />
+            </GoldButton>
+          </Link>
         </div>
       </div>
     </section>
@@ -573,6 +572,7 @@ function Stat({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
 
 /* ---------------- Why We're Different ---------------- */
 function WhyDifferent() {
@@ -740,3 +740,218 @@ function Reviews() {
     </section>
   );
 }
+
+/* ---------------- How It Works ---------------- */
+function HowItWorks() {
+  const steps = [
+    { Icon: Download, title: "Download", body: "Grab Deluxe Fitness on iOS or Android. Sign up in under a minute." },
+    { Icon: ClipboardCheck, title: "Assess", body: "Complete your fitness, lifestyle and mindset assessment." },
+    { Icon: Wand2, title: "Receive Your Plan", body: "Get an AI-powered training, nutrition and recovery plan tuned to you." },
+    { Icon: TrendingUp, title: "Track & Earn", body: "Log workouts, hit habits, build streaks. Earn points and rewards." },
+    { Icon: Users, title: "Join the Movement", body: "Connect with members, accountability partners and live challenges." },
+  ];
+  return (
+    <section className="border-y border-gold/15 bg-deluxe-black py-28">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="text-center">
+          <SectionLabel>How It Works</SectionLabel>
+          <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+            FIVE STEPS. <span className="text-gold">ONE TRANSFORMATION.</span>
+          </h2>
+          <div className="mt-6 flex justify-center"><GoldDivider /></div>
+        </div>
+        <ol className="mt-16 grid gap-4 md:grid-cols-5">
+          {steps.map((s, i) => (
+            <li key={s.title} className="relative border border-gold/20 bg-deluxe-card p-6 transition hover:border-gold/50">
+              <span className="absolute -top-3 left-6 bg-deluxe-black px-2 font-display text-xs tracking-[0.3em] text-gold">
+                STEP {String(i + 1).padStart(2, "0")}
+              </span>
+              <s.Icon className="mt-3 h-7 w-7 text-gold" strokeWidth={1.5} />
+              <h3 className="mt-5 font-display text-xl tracking-wide text-foreground">{s.title.toUpperCase()}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-12 flex justify-center">
+          <Link to="/how-it-works">
+            <OutlineButton>See the full journey <ArrowRight className="h-4 w-4" /></OutlineButton>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- Deluxe Lifestyle (reframe) ---------------- */
+function DeluxeLifestyle() {
+  const pillars = [
+    { Icon: Dumbbell, label: "Fitness" },
+    { Icon: Heart, label: "Health" },
+    { Icon: Brain, label: "Mindset" },
+    { Icon: Flame, label: "Discipline" },
+    { Icon: Users, label: "Community" },
+    { Icon: Sparkles, label: "Growth" },
+  ];
+  return (
+    <section className="relative overflow-hidden bg-deluxe-dark py-28">
+      <div className="gold-glow absolute inset-0 opacity-50" />
+      <div className="relative mx-auto max-w-6xl px-6 text-center">
+        <SectionLabel>The Deluxe Lifestyle</SectionLabel>
+        <h2 className="mx-auto mt-6 max-w-4xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+          NOT ANOTHER FITNESS APP. <br />
+          <span className="text-gold-shimmer">A LUXURY SELF-IMPROVEMENT ECOSYSTEM.</span>
+        </h2>
+        <div className="mt-6 flex justify-center"><GoldDivider /></div>
+        <p className="mx-auto mt-8 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
+          You're not downloading another workout tracker. You're joining a movement built around
+          six pillars that compound into the deluxe version of you.
+        </p>
+        <div className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+          {pillars.map(({ Icon, label }) => (
+            <div key={label} className="border border-gold/20 bg-deluxe-black/40 p-6 transition hover:border-gold/50">
+              <Icon className="mx-auto h-6 w-6 text-gold" strokeWidth={1.5} />
+              <div className="mt-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-foreground">{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- Today's Mission Preview ---------------- */
+function TodaysMissionPreview() {
+  const tasks = [
+    { Icon: Droplet, label: "Drink 3L water", progress: 66 },
+    { Icon: Footprints, label: "Walk 8,000 steps", progress: 80 },
+    { Icon: Dumbbell, label: "Complete workout", progress: 100, done: true },
+    { Icon: BookOpen, label: "Read 10 pages", progress: 40 },
+    { Icon: MessageCircle, label: "Check in with the community", progress: 0 },
+  ];
+  return (
+    <section className="bg-deluxe-black py-28">
+      <div className="mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+        <div>
+          <SectionLabel>Today's Mission</SectionLabel>
+          <h2 className="mt-6 font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+            EVERY DAY, A <span className="text-gold">MISSION.</span>
+          </h2>
+          <div className="mt-6"><GoldDivider /></div>
+          <p className="mt-8 text-base leading-relaxed text-muted-foreground md:text-lg">
+            Most fitness apps give you a workout. Deluxe gives you a mission — a curated
+            stack of physical, mental and social tasks that move the needle every single day.
+          </p>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
+            Tick them off. Build the streak. Earn the score.
+          </p>
+          <Link to="/login" className="mt-8 inline-block">
+            <GoldButton>Get today's mission <ArrowRight className="h-4 w-4" /></GoldButton>
+          </Link>
+        </div>
+
+        <div className="border border-gold/30 bg-gradient-to-br from-deluxe-card to-deluxe-black p-6 shadow-[0_30px_60px_-30px_rgba(212,175,55,0.35)] sm:p-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-gold" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">Today's Mission</span>
+            </div>
+            <span className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">3 of 5 complete</span>
+          </div>
+          <ul className="mt-6 space-y-3">
+            {tasks.map(({ Icon, label, progress, done }) => (
+              <li key={label} className="border border-gold/15 bg-deluxe-black/60 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon className={`h-4 w-4 shrink-0 ${done ? "text-gold" : "text-gold/70"}`} strokeWidth={1.5} />
+                    <span className={`text-sm ${done ? "text-foreground line-through opacity-70" : "text-foreground"}`}>{label}</span>
+                  </div>
+                  {done && <CheckCircle2 className="h-4 w-4 shrink-0 text-gold" />}
+                </div>
+                <div className="mt-3 h-1 w-full overflow-hidden bg-gold/10">
+                  <div className="h-full bg-gold-gradient transition-all" style={{ width: `${progress}%` }} />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------- Deluxe Score ---------------- */
+function DeluxeScore() {
+  const segments = [
+    { Icon: Dumbbell, label: "Training", pts: 20, color: "from-gold to-gold/60" },
+    { Icon: Droplet, label: "Water", pts: 10, color: "from-gold/90 to-gold/50" },
+    { Icon: Salad, label: "Nutrition", pts: 15, color: "from-gold/95 to-gold/55" },
+    { Icon: Moon, label: "Sleep", pts: 15, color: "from-gold/90 to-gold/50" },
+    { Icon: Target, label: "Daily Goals", pts: 40, color: "from-gold to-gold/70" },
+  ];
+  const total = 87;
+  return (
+    <section className="relative overflow-hidden border-y border-gold/15 bg-deluxe-dark py-28">
+      <div className="gold-glow absolute inset-0 opacity-40" />
+      <div className="relative mx-auto max-w-6xl px-6">
+        <div className="text-center">
+          <SectionLabel>The Deluxe Score</SectionLabel>
+          <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+            ONE NUMBER. <span className="text-gold">YOUR ENTIRE DAY.</span>
+          </h2>
+          <div className="mt-6 flex justify-center"><GoldDivider /></div>
+          <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
+            Your signature metric. Out of 100. Every category adds up — and the leaderboard sees it.
+          </p>
+        </div>
+
+        <div className="mt-16 grid gap-10 lg:grid-cols-[auto_1fr] lg:items-center lg:gap-16">
+          {/* Score ring */}
+          <div className="mx-auto">
+            <div className="relative flex h-64 w-64 items-center justify-center sm:h-72 sm:w-72">
+              <svg className="absolute inset-0 -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="44" stroke="rgba(212,175,55,0.12)" strokeWidth="6" fill="none" />
+                <circle
+                  cx="50" cy="50" r="44"
+                  stroke="url(#gradScore)" strokeWidth="6" strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 44}
+                  strokeDashoffset={(2 * Math.PI * 44) * (1 - total / 100)}
+                  fill="none"
+                />
+                <defs>
+                  <linearGradient id="gradScore" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#d4af37" />
+                    <stop offset="100%" stopColor="#f5d76e" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div className="text-center">
+                <div className="font-display text-6xl text-foreground tabular-nums sm:text-7xl">{total}</div>
+                <div className="mt-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold">Deluxe Score</div>
+                <div className="mt-1 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">out of 100</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Breakdown */}
+          <div className="space-y-3">
+            {segments.map(({ Icon, label, pts, color }) => (
+              <div key={label} className="border border-gold/20 bg-deluxe-black/60 p-4 sm:p-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-4 w-4 text-gold" strokeWidth={1.5} />
+                    <span className="text-sm font-semibold uppercase tracking-[0.18em] text-foreground">{label}</span>
+                  </div>
+                  <div className="font-display text-lg text-gold tabular-nums">{pts}<span className="text-xs text-muted-foreground">pts</span></div>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden bg-gold/10">
+                  <div className={`h-full bg-gradient-to-r ${color}`} style={{ width: `${pts}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+

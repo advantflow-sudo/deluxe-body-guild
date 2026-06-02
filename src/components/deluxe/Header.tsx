@@ -7,15 +7,22 @@ import { useAuth } from "@/hooks/useAuth";
 
 export const NAV_LINKS = [
   { to: "/", label: "Home" },
+  { to: "/how-it-works", label: "How It Works" },
   { to: "/what-we-offer", label: "What We Offer" },
-  { to: "/fitness", label: "Fitness & Workouts" },
+  { to: "/fitness", label: "Fitness" },
   { to: "/wellbeing", label: "Wellbeing" },
   { to: "/coach", label: "AI Coach" },
+  { to: "/challenges", label: "Challenges" },
+  { to: "/transformations", label: "Transformations" },
+  { to: "/rewards-benefits", label: "Rewards" },
   { to: "/pricing", label: "Pricing" },
-  { to: "/about", label: "About Us" },
+  { to: "/founder", label: "Founder" },
+  { to: "/roadmap", label: "Roadmap" },
+  { to: "/about", label: "About" },
   { to: "/gallery", label: "Gallery" },
   { to: "/contact", label: "Contact" },
 ] as const;
+
 
 export function Header() {
   const [open, setOpen] = useState(false);
