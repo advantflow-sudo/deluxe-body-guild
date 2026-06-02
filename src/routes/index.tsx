@@ -42,7 +42,7 @@ import {
   SectionLabel,
   GoldDivider,
 } from "@/components/deluxe/ui";
-import heroImg from "@/assets/hero.jpg";
+
 import workout1 from "@/assets/workout-1.jpg";
 import workout2 from "@/assets/workout-2.jpg";
 import workout3 from "@/assets/workout-3.jpg";
