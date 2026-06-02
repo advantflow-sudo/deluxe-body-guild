@@ -135,7 +135,7 @@ function Field({
   error?: string;
 }) {
   const cls =
-    "w-full border border-gold/20 bg-deluxe-black px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-gold focus:outline-none";
+    "w-full border border-gold/20 bg-deluxe-black px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none";
   return (
     <label className="block">
       <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
