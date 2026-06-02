@@ -823,7 +823,7 @@ function HowItWorks() {
       <div className="mx-auto max-w-5xl px-6">
         <div className="text-center">
           <SectionLabel>How It Works</SectionLabel>
-          <h2 className="mx-auto mt-6 max-w-3xl font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
+          <h2 className="mx-auto mt-6 max-w-3xl break-words font-display text-3xl leading-[1.05] sm:text-5xl md:text-6xl">
             FIVE STEPS. <span className="text-gold">ONE TRANSFORMATION.</span>
           </h2>
           <div className="mt-6 flex justify-center"><GoldDivider /></div>
