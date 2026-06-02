@@ -12,6 +12,7 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { CommandPalette } from "@/components/deluxe/CommandPalette";
+import { ReduceMotionProvider } from "@/hooks/useReduceMotion";
 
 import appCss from "../styles.css?url";
 
@@ -158,11 +159,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Outlet />
-        <CommandPalette />
-        <Toaster theme="dark" position="top-right" />
-      </AuthProvider>
+      <ReduceMotionProvider>
+        <AuthProvider>
+          <Outlet />
+          <CommandPalette />
+          <Toaster theme="dark" position="top-right" />
+        </AuthProvider>
+      </ReduceMotionProvider>
     </QueryClientProvider>
   );
 }

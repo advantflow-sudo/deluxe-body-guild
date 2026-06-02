@@ -47,10 +47,8 @@ import {
   GoldDivider,
 } from "@/components/deluxe/ui";
 
-import workout1 from "@/assets/workout-1.jpg";
-import workout2 from "@/assets/workout-2.jpg";
-import workout3 from "@/assets/workout-3.jpg";
-import communityImg from "@/assets/community.jpg";
+import { AnimatedMedia } from "@/components/deluxe/AnimatedMedia";
+import { MEDIA } from "@/config/animated-media";
 import { Reveal } from "@/components/deluxe/Reveal";
 
 export const Route = createFileRoute("/")({
@@ -152,7 +150,7 @@ function Hero() {
               captionsUrl={HERO_CLIP.captionsUrl}
               captionsLang={HERO_CLIP.captionsLang}
               captionsLabel={HERO_CLIP.captionsLabel}
-              poster={workout1}
+              poster={MEDIA.workout1.image}
               caption="Inside the Deluxe Fitness movement"
               analyticsId="hero"
               analyticsProps={{ surface: "home_hero" }}
@@ -321,10 +319,10 @@ function WhyDeluxe() {
 /* ---------------- App Preview ---------------- */
 function AppPreview() {
   const screens = [
-    { img: workout1, label: "Dashboard" },
-    { img: workout2, label: "Workouts" },
-    { img: workout3, label: "Progress" },
-    { img: communityImg, label: "Community" },
+    { key: "workout1" as const, label: "Dashboard" },
+    { key: "workout2" as const, label: "Workouts" },
+    { key: "workout3" as const, label: "Progress" },
+    { key: "community" as const, label: "Community" },
   ];
   return (
     <section className="bg-deluxe-black py-28">
@@ -338,23 +336,28 @@ function AppPreview() {
         </div>
 
         <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-4">
-          {screens.map(({ img, label }) => (
-            <div key={label} className="group">
-              <div className="overflow-hidden rounded-[28px] border border-gold/20 bg-deluxe-card p-2 shadow-[0_30px_60px_-30px_rgba(212,175,55,0.25)]">
-                <div className="aspect-[9/19] overflow-hidden rounded-[20px] bg-deluxe-dark">
-                  <img
-                    src={img}
-                    alt={`${label} screen`}
-                    loading="lazy"
-                    className="h-full w-full object-cover ken-burns"
+          {screens.map(({ key, label }, i) => {
+            const m = MEDIA[key];
+            return (
+              <div key={label} className="group">
+                <div className="overflow-hidden rounded-[28px] border border-gold/20 bg-deluxe-card p-2 shadow-[0_30px_60px_-30px_rgba(212,175,55,0.25)]">
+                  <AnimatedMedia
+                    id={`home-screen-${key}`}
+                    image={m.image}
+                    video={m.video}
+                    alt={`${label} screen — ${m.alt}`}
+                    caption={m.caption}
+                    variant={i % 2 === 0 ? "in" : "alt"}
+                    className="aspect-[9/19] overflow-hidden rounded-[20px] bg-deluxe-dark"
+                    mediaClassName="h-full w-full object-cover"
                   />
                 </div>
+                <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                  {label}
+                </div>
               </div>
-              <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                {label}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -382,11 +385,15 @@ function Community() {
   ];
   return (
     <section className="relative overflow-hidden bg-deluxe-dark py-28">
-      <img
-        src={communityImg}
-        alt=""
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover opacity-15 ken-burns-alt"
+      <AnimatedMedia
+        id="home-community-bg"
+        image={MEDIA.community.image}
+        video={MEDIA.community.video}
+        alt={MEDIA.community.alt}
+        caption={MEDIA.community.caption}
+        variant="alt"
+        className="absolute inset-0 h-full w-full opacity-15"
+        mediaClassName="h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-deluxe-dark via-deluxe-dark/85 to-deluxe-dark" />
       <div className="relative mx-auto max-w-6xl px-6 text-center">
@@ -962,7 +969,7 @@ function TodaysMissionPreview() {
               captionsUrl={MISSION_CLIP.captionsUrl}
               captionsLang={MISSION_CLIP.captionsLang}
               captionsLabel={MISSION_CLIP.captionsLabel}
-              poster={workout2}
+              poster={MEDIA.workout2.image}
               caption="Watch: today's 60-second mission brief"
               analyticsId="mission"
               analyticsProps={{ surface: "home_today_mission" }}

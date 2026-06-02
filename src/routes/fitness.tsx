@@ -2,9 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Brain, Dumbbell, Activity, Timer, Flame, Target } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton } from "@/components/deluxe/ui";
-import workout1 from "@/assets/workout-1.jpg";
-import workout2 from "@/assets/workout-2.jpg";
-import workout3 from "@/assets/workout-3.jpg";
+import { AnimatedMedia } from "@/components/deluxe/AnimatedMedia";
+import { MEDIA, type MediaKey } from "@/config/animated-media";
 
 export const Route = createFileRoute("/fitness")({
   head: () => ({
@@ -26,21 +25,26 @@ export const Route = createFileRoute("/fitness")({
   component: Page,
 });
 
-const programmes = [
+const programmes: Array<{
+  key: MediaKey;
+  title: string;
+  meta: string;
+  body: string;
+}> = [
   {
-    img: workout1,
+    key: "workout1",
     title: "Strength Foundations",
     meta: "12 weeks · Beginner → Intermediate",
     body: "Progressive overload with compound lifts. Build the engine that everything else stacks on.",
   },
   {
-    img: workout2,
+    key: "workout2",
     title: "HIIT & Conditioning",
     meta: "8 weeks · All levels",
     body: "Short, brutal, effective. Burn fat and build a heart that doesn't quit.",
   },
   {
-    img: workout3,
+    key: "workout3",
     title: "Hybrid Athlete",
     meta: "16 weeks · Advanced",
     body: "Strength, endurance and skill in one programme. Built for people who want it all.",
@@ -90,14 +94,16 @@ function Page() {
               </Link>
             </div>
           </div>
-          <div className="luxury-card aspect-[4/5] overflow-hidden">
-            <img
-              src={workout2}
-              alt="AI-driven training"
-              loading="lazy"
-              className="h-full w-full object-cover ken-burns"
-            />
-          </div>
+          <AnimatedMedia
+            id="fitness-coach"
+            image={MEDIA.workout2.image}
+            video={MEDIA.workout2.video}
+            alt={MEDIA.workout2.alt}
+            caption={MEDIA.workout2.caption}
+            variant="in"
+            className="luxury-card aspect-[4/5] overflow-hidden"
+            mediaClassName="h-full w-full object-cover"
+          />
         </div>
       </section>
 
@@ -149,19 +155,23 @@ function Page() {
             </h2>
           </div>
           <div className="mt-14 grid gap-6 md:grid-cols-3">
-            {programmes.map((p) => (
+            {programmes.map((p) => {
+              const m = MEDIA[p.key];
+              return (
               <article
                 key={p.title}
                 className="luxury-card group overflow-hidden"
               >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={p.img}
-                    alt={p.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover ken-burns-alt group-hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
+                <AnimatedMedia
+                  id={`fitness-prog-${p.key}`}
+                  image={m.image}
+                  video={m.video}
+                  alt={`${p.title} — ${m.alt}`}
+                  caption={m.caption}
+                  variant="alt"
+                  className="aspect-[4/3] overflow-hidden"
+                  mediaClassName="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
                 <div className="p-6">
                   <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
                     {p.meta}
@@ -174,7 +184,8 @@ function Page() {
                   </p>
                 </div>
               </article>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

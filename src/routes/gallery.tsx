@@ -1,10 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
-import hero from "@/assets/hero.jpg";
-import w1 from "@/assets/workout-1.jpg";
-import w2 from "@/assets/workout-2.jpg";
-import w3 from "@/assets/workout-3.jpg";
-import community from "@/assets/community.jpg";
+import { AnimatedMedia } from "@/components/deluxe/AnimatedMedia";
+import { MEDIA, type MediaKey } from "@/config/animated-media";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -26,12 +23,12 @@ export const Route = createFileRoute("/gallery")({
   component: Page,
 });
 
-const images = [
-  { src: hero, alt: "Athlete in the gym", span: "md:col-span-2 md:row-span-2" },
-  { src: w1, alt: "Loaded barbell", span: "" },
-  { src: w2, alt: "Battle ropes" },
-  { src: community, alt: "Community floor", span: "md:col-span-2" },
-  { src: w3, alt: "Kettlebells lined up" },
+const items: Array<{ key: MediaKey; span?: string; variant?: "in" | "alt" | "zoom" }> = [
+  { key: "hero", span: "md:col-span-2 md:row-span-2", variant: "in" },
+  { key: "workout1", variant: "alt" },
+  { key: "workout2", variant: "in" },
+  { key: "community", span: "md:col-span-2", variant: "alt" },
+  { key: "workout3", variant: "zoom" },
 ];
 
 function Page() {
@@ -45,20 +42,28 @@ function Page() {
       />
       <section className="bg-deluxe-black py-20">
         <div className="mx-auto grid max-w-7xl auto-rows-[240px] grid-cols-1 gap-3 px-6 md:grid-cols-3 lg:grid-cols-4">
-          {images.map((img, i) => (
-            <div
-              key={i}
-              className={`group relative overflow-hidden border border-gold/15 ${img.span ?? ""}`}
-            >
-              <img
-                src={img.src}
-                alt={img.alt}
-                loading="lazy"
-                className={`h-full w-full object-cover ${i % 2 === 0 ? "ken-burns" : "ken-burns-alt"}`}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-deluxe-black/70 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
-            </div>
-          ))}
+          {items.map(({ key, span, variant }, i) => {
+            const m = MEDIA[key];
+            return (
+              <div
+                key={`${key}-${i}`}
+                className={`group relative overflow-hidden border border-gold/15 ${span ?? ""}`}
+              >
+                <AnimatedMedia
+                  id={`gallery-${key}-${i}`}
+                  image={m.image}
+                  video={m.video}
+                  alt={m.alt}
+                  caption={m.caption}
+                  variant={variant}
+                  priority={i === 0}
+                  className="h-full w-full"
+                  mediaClassName="h-full w-full object-cover"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-deluxe-black/70 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
+              </div>
+            );
+          })}
         </div>
       </section>
     </PageShell>
