@@ -150,7 +150,7 @@ function Hero() {
               captionsUrl={HERO_CLIP.captionsUrl}
               captionsLang={HERO_CLIP.captionsLang}
               captionsLabel={HERO_CLIP.captionsLabel}
-              poster={workout1}
+              poster={MEDIA.workout1.image}
               caption="Inside the Deluxe Fitness movement"
               analyticsId="hero"
               analyticsProps={{ surface: "home_hero" }}
@@ -319,10 +319,10 @@ function WhyDeluxe() {
 /* ---------------- App Preview ---------------- */
 function AppPreview() {
   const screens = [
-    { img: workout1, label: "Dashboard" },
-    { img: workout2, label: "Workouts" },
-    { img: workout3, label: "Progress" },
-    { img: communityImg, label: "Community" },
+    { key: "workout1" as const, label: "Dashboard" },
+    { key: "workout2" as const, label: "Workouts" },
+    { key: "workout3" as const, label: "Progress" },
+    { key: "community" as const, label: "Community" },
   ];
   return (
     <section className="bg-deluxe-black py-28">
@@ -336,23 +336,28 @@ function AppPreview() {
         </div>
 
         <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-4">
-          {screens.map(({ img, label }) => (
-            <div key={label} className="group">
-              <div className="overflow-hidden rounded-[28px] border border-gold/20 bg-deluxe-card p-2 shadow-[0_30px_60px_-30px_rgba(212,175,55,0.25)]">
-                <div className="aspect-[9/19] overflow-hidden rounded-[20px] bg-deluxe-dark">
-                  <img
-                    src={img}
-                    alt={`${label} screen`}
-                    loading="lazy"
-                    className="h-full w-full object-cover ken-burns"
+          {screens.map(({ key, label }, i) => {
+            const m = MEDIA[key];
+            return (
+              <div key={label} className="group">
+                <div className="overflow-hidden rounded-[28px] border border-gold/20 bg-deluxe-card p-2 shadow-[0_30px_60px_-30px_rgba(212,175,55,0.25)]">
+                  <AnimatedMedia
+                    id={`home-screen-${key}`}
+                    image={m.image}
+                    video={m.video}
+                    alt={`${label} screen — ${m.alt}`}
+                    caption={m.caption}
+                    variant={i % 2 === 0 ? "in" : "alt"}
+                    className="aspect-[9/19] overflow-hidden rounded-[20px] bg-deluxe-dark"
+                    mediaClassName="h-full w-full object-cover"
                   />
                 </div>
+                <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                  {label}
+                </div>
               </div>
-              <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                {label}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
