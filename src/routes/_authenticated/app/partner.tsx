@@ -152,7 +152,7 @@ function PartnerPage() {
                 <div className="font-display text-lg text-foreground">{partnerProfile.display_name ?? "Partner"}</div>
                 <div className="text-xs uppercase tracking-[0.2em] text-foreground/50">{partnership.pairing_mode === "auto" ? "Auto-matched" : "Invited"}</div>
               </div>
-              <button onClick={endPartnership} className="text-foreground/40 hover:text-red-400"><Trash2 className="h-4 w-4" /></button>
+              <button onClick={endPartnership} aria-label="End partnership" className="text-foreground/40 hover:text-red-400"><Trash2 className="h-4 w-4" /></button>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-3">
               <div className="border border-gold/15 bg-deluxe-black/60 p-3 text-center">
