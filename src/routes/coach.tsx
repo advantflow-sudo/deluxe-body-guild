@@ -197,7 +197,8 @@ function CoachPage() {
                 <button
                   key={s}
                   onClick={() => send(s)}
-                  className="group border border-gold/20 bg-deluxe-black/40 p-4 text-left text-sm text-muted-foreground transition hover:border-gold/60 hover:text-foreground"
+                  disabled={needsLogin || locked}
+                  className="group border border-gold/20 bg-deluxe-black/40 p-4 text-left text-sm text-muted-foreground transition hover:border-gold/60 hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Sparkles className="mb-2 h-4 w-4 text-gold" />
                   {s}
