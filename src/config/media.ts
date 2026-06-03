@@ -14,8 +14,8 @@ import heroClip from "@/assets/hero-clip.mp4.asset.json";
 const env = import.meta.env;
 
 const FALLBACK_HERO = heroClip.url;
-const FALLBACK_MISSION =
-  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4";
+// Reuse hero clip until a dedicated mission clip is provided — avoids broken/3rd-party samples.
+const FALLBACK_MISSION = heroClip.url;
 
 export interface MediaClip {
   src: string;
