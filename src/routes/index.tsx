@@ -943,11 +943,8 @@ function TodaysMissionPreview() {
 
           <div className="mt-10">
             <VideoPlayer
-              src={MISSION_CLIP.src}
-              captionsUrl={MISSION_CLIP.captionsUrl}
-              captionsLang={MISSION_CLIP.captionsLang}
-              captionsLabel={MISSION_CLIP.captionsLabel}
-              poster={MEDIA.workout2.image}
+              sources={MISSION_PLAYLIST}
+              chromeless
               caption="Watch: today's 60-second mission brief"
               analyticsId="mission"
               analyticsProps={{ surface: "home_today_mission" }}
