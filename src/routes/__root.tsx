@@ -164,6 +164,7 @@ function RootComponent() {
         <AuthProvider>
           <Outlet />
           <CommandPalette />
+          <DownloadAppPopup />
           <Toaster theme="dark" position="top-right" />
         </AuthProvider>
       </ReduceMotionProvider>
