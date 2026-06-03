@@ -10,6 +10,11 @@
  */
 
 import heroClip from "@/assets/hero-clip.mp4.asset.json";
+import heroAnim from "@/assets/hero-anim.mp4.asset.json";
+import workout1 from "@/assets/workout-1-anim.mp4.asset.json";
+import workout2 from "@/assets/workout-2-anim.mp4.asset.json";
+import workout3 from "@/assets/workout-3-anim.mp4.asset.json";
+import communityAnim from "@/assets/community-anim.mp4.asset.json";
 
 const env = import.meta.env;
 
@@ -37,3 +42,23 @@ export const MISSION_CLIP: MediaClip = {
   captionsLang: env.VITE_MISSION_VIDEO_CAPTIONS_LANG || "en",
   captionsLabel: env.VITE_MISSION_VIDEO_CAPTIONS_LABEL || "English",
 };
+
+/** Playlist that auto-advances through every available brand clip. */
+export const HERO_PLAYLIST: string[] = [
+  heroClip.url,
+  heroAnim.url,
+  workout1.url,
+  workout2.url,
+  workout3.url,
+  communityAnim.url,
+];
+
+/** Mission playlist — different ordering so two players on screen don't mirror each other. */
+export const MISSION_PLAYLIST: string[] = [
+  workout1.url,
+  heroAnim.url,
+  workout3.url,
+  communityAnim.url,
+  workout2.url,
+  heroClip.url,
+];

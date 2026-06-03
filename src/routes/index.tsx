@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { VideoPlayer } from "@/components/deluxe/VideoPlayer";
-import { HERO_CLIP, MISSION_CLIP } from "@/config/media";
+import { HERO_PLAYLIST, MISSION_PLAYLIST } from "@/config/media";
 
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
@@ -146,11 +146,8 @@ function Hero() {
         <Reveal delay={320}>
           <div className="mt-14 w-full max-w-4xl">
             <VideoPlayer
-              src={HERO_CLIP.src}
-              captionsUrl={HERO_CLIP.captionsUrl}
-              captionsLang={HERO_CLIP.captionsLang}
-              captionsLabel={HERO_CLIP.captionsLabel}
-              poster={MEDIA.workout1.image}
+              sources={HERO_PLAYLIST}
+              chromeless
               caption="Inside the Deluxe Fitness movement"
               analyticsId="hero"
               analyticsProps={{ surface: "home_hero" }}
@@ -946,11 +943,8 @@ function TodaysMissionPreview() {
 
           <div className="mt-10">
             <VideoPlayer
-              src={MISSION_CLIP.src}
-              captionsUrl={MISSION_CLIP.captionsUrl}
-              captionsLang={MISSION_CLIP.captionsLang}
-              captionsLabel={MISSION_CLIP.captionsLabel}
-              poster={MEDIA.workout2.image}
+              sources={MISSION_PLAYLIST}
+              chromeless
               caption="Watch: today's 60-second mission brief"
               analyticsId="mission"
               analyticsProps={{ surface: "home_today_mission" }}
