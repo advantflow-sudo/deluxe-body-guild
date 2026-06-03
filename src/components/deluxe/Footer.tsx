@@ -116,7 +116,15 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col items-start justify-between gap-3 border-t border-gold/10 pt-6 md:flex-row md:items-center">
           <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-            © 2026 Deluxe Fitness. All rights reserved.
+            © 2026 Deluxe Fitness. All rights reserved. · Created by{" "}
+            <a
+              href="https://advantflowai.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gold transition hover:text-gold/80"
+            >
+              advantflowai.com
+            </a>
           </p>
           <div className="flex flex-wrap items-center gap-4">
             <ReduceMotionToggle />
