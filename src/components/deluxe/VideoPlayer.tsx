@@ -258,20 +258,14 @@ export function VideoPlayer({
           }`}
         />
 
-        {/* Center play / pause */}
-        <div
-          className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
-            playing && started ? "opacity-0 group-hover:opacity-100" : "opacity-100"
-          }`}
-        >
-          <div className="flex h-20 w-20 items-center justify-center rounded-full border border-gold/60 bg-deluxe-black/60 backdrop-blur-sm transition group-hover:scale-110 group-hover:border-gold sm:h-24 sm:w-24">
-            {playing ? (
-              <Pause className="h-8 w-8 text-gold" strokeWidth={1.5} />
-            ) : (
+        {/* Center play overlay only shown before first play */}
+        {!started && (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full border border-gold/60 bg-deluxe-black/60 backdrop-blur-sm transition group-hover:scale-110 group-hover:border-gold sm:h-24 sm:w-24">
               <Play className="h-8 w-8 translate-x-0.5 text-gold" strokeWidth={1.5} fill="currentColor" />
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Bottom control bar */}
         {started && (
