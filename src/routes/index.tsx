@@ -146,11 +146,8 @@ function Hero() {
         <Reveal delay={320}>
           <div className="mt-14 w-full max-w-4xl">
             <VideoPlayer
-              src={HERO_CLIP.src}
-              captionsUrl={HERO_CLIP.captionsUrl}
-              captionsLang={HERO_CLIP.captionsLang}
-              captionsLabel={HERO_CLIP.captionsLabel}
-              poster={MEDIA.workout1.image}
+              sources={HERO_PLAYLIST}
+              chromeless
               caption="Inside the Deluxe Fitness movement"
               analyticsId="hero"
               analyticsProps={{ surface: "home_hero" }}
