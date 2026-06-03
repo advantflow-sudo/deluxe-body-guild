@@ -110,31 +110,42 @@ function LoginPage() {
               : "Create your account and unlock the Deluxe Fitness lifestyle."}
           </p>
 
-          <div className="mt-6">
+          <div className="mt-6 space-y-3">
             <button
               type="button"
               onClick={() => handleOAuth("google")}
               disabled={busy}
-              className="group flex w-full items-center justify-center gap-2 border border-gold/30 bg-transparent px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition hover:border-gold hover:bg-gold/10 disabled:opacity-50"
+              className="group relative flex w-full items-center justify-center gap-3 overflow-hidden border border-gold/40 bg-gradient-to-b from-deluxe-black to-deluxe-forest/40 px-4 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition hover:border-gold hover:bg-gold/10 hover:shadow-[0_0_24px_-8px_rgba(201,168,76,0.55)] disabled:opacity-50"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden>
-                <path fill="#fff" d="M21.35 11.1H12v3.2h5.35c-.23 1.4-1.65 4.1-5.35 4.1-3.2 0-5.85-2.7-5.85-6s2.65-6 5.85-6c1.85 0 3.05.8 3.75 1.45l2.55-2.45C16.95 3.85 14.7 3 12 3 6.85 3 2.7 7.15 2.7 12.3S6.85 21.6 12 21.6c6.95 0 9.3-4.85 9.3-7.4 0-.5-.05-.85-.1-1.1z"/>
+              <svg className="h-5 w-5" viewBox="0 0 48 48" aria-hidden>
+                <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2.5 24 .5 14.8.5 6.9 5.8 3.1 13.5l7.8 6c1.8-5.4 6.9-9.5 13.1-9.5z"/>
+                <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.4-4.1 7.1-10.1 7.1-17.6z"/>
+                <path fill="#FBBC05" d="M10.9 28.5c-.5-1.4-.7-2.9-.7-4.5s.2-3.1.7-4.5l-7.8-6C1.2 16.8 0 20.3 0 24s1.2 7.2 3.1 10.5l7.8-6z"/>
+                <path fill="#34A853" d="M24 47.5c6.2 0 11.4-2 15.2-5.5l-7.6-5.9c-2.1 1.4-4.8 2.3-7.6 2.3-6.2 0-11.3-4.1-13.1-9.5l-7.8 6C6.9 42.2 14.8 47.5 24 47.5z"/>
               </svg>
-              Continue with Google
+              <span>Continue with Gmail</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleMagicLink}
+              disabled={busy}
+              className="flex w-full items-center justify-center gap-2 border border-gold/30 bg-gold/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-gold transition hover:bg-gold/15 disabled:opacity-50"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>
+              </svg>
+              Email me a sign-in link
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={handleMagicLink}
-            disabled={busy}
-            className="mt-3 flex w-full items-center justify-center gap-2 border border-gold/30 bg-gold/5 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-gold transition hover:bg-gold/15 disabled:opacity-50"
-          >
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2 19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2 11 5"/>
-            </svg>
-            Email me a magic link
-          </button>
+          <div className="mt-4 rounded-sm border border-gold/15 bg-gold/[0.03] p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">How Gmail sign-in works</p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+              You'll be redirected to Google to verify your identity, then returned to Deluxe Fitness. We only receive your name and email — never your Google password.
+            </p>
+          </div>
+
 
           <div className="my-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
             <span className="h-px flex-1 bg-gold/15" /> or password <span className="h-px flex-1 bg-gold/15" />
