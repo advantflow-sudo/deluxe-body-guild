@@ -224,8 +224,10 @@ export function VideoPlayer({
           src={src}
           poster={poster}
           playsInline
+          autoPlay
+          loop
           muted={muted}
-          preload="metadata"
+          preload="auto"
           crossOrigin={captionsUrl ? "anonymous" : undefined}
           onLoadedData={() => setLoading(false)}
           onWaiting={() => setLoading(true)}
