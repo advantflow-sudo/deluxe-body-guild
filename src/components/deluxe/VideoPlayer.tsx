@@ -285,7 +285,7 @@ export function VideoPlayer({
 
 
         {/* Bottom control bar (no play/pause button — videos autoplay) */}
-        {started && (
+        {!chromeless && started && (
           <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 px-4 pb-3 pt-8">
 
             <div
@@ -328,6 +328,7 @@ export function VideoPlayer({
             </button>
           </div>
         )}
+
       </div>
       {caption && (
         <figcaption className="mt-3 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
