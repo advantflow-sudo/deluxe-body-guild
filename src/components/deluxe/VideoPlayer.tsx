@@ -4,7 +4,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { track, type AnalyticsProps } from "@/lib/analytics";
 
 interface VideoPlayerProps {
-  src: string;
+  src?: string;
+  /** Optional playlist — plays each clip in order, then loops back to the first. */
+  sources?: string[];
   poster?: string;
   className?: string;
   aspect?: "video" | "square" | "portrait";
@@ -17,6 +19,8 @@ interface VideoPlayerProps {
   analyticsId?: string;
   /** Extra props added to every analytics event. */
   analyticsProps?: AnalyticsProps;
+  /** Hide all controls — pure video surface only. */
+  chromeless?: boolean;
 }
 
 /**
@@ -27,6 +31,7 @@ interface VideoPlayerProps {
  */
 export function VideoPlayer({
   src,
+  sources,
   poster,
   className = "",
   aspect = "video",
@@ -36,7 +41,13 @@ export function VideoPlayer({
   captionsLabel = "English",
   analyticsId,
   analyticsProps = {},
+  chromeless = false,
 }: VideoPlayerProps) {
+  const playlist = sources && sources.length > 0 ? sources : src ? [src] : [];
+  const [index, setIndex] = useState(0);
+  const currentSrc = playlist[index] ?? "";
+  const isPlaylist = playlist.length > 1;
+
   const ref = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [playing, setPlaying] = useState(false);
