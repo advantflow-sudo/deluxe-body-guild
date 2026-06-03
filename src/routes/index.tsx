@@ -158,25 +158,6 @@ function Hero() {
           </div>
         </Reveal>
 
-        <Reveal delay={420}>
-          <div className="mt-16 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14">
-            {[
-              ["50K+", "Members"],
-              ["500+", "Workouts"],
-              ["4.9★", "App Rating"],
-            ].map(([v, l], i, arr) => (
-              <div key={l} className="flex items-center gap-x-10 sm:gap-x-14">
-                <div className="text-center">
-                  <div className="font-display text-3xl text-gold sm:text-4xl">{v}</div>
-                  <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-                    {l}
-                  </div>
-                </div>
-                {i < arr.length - 1 && <span className="hidden h-10 w-px bg-gold/30 sm:block" />}
-              </div>
-            ))}
-          </div>
-        </Reveal>
       </div>
     </section>
   );
