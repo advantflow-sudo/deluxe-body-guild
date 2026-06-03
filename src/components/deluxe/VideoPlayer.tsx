@@ -210,26 +210,33 @@ export function VideoPlayer({
     }
   };
 
-  // Reset milestone flags when src changes.
+  // Reset milestone flags when the active clip changes.
   useEffect(() => {
     fired25.current = false;
     fired50.current = false;
     fired75.current = false;
     setLoading(true);
-    setStarted(false);
     setProgress(0);
-  }, [src]);
+  }, [currentSrc]);
+
+  // Auto-play the next clip when the playlist advances.
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    v.load();
+    v.play().catch(() => {});
+  }, [currentSrc]);
 
   return (
     <figure className={className}>
       <div
         ref={containerRef}
-        onClick={toggle}
-        onKeyDown={onKeyDown}
-        role="button"
-        tabIndex={0}
+        onClick={chromeless ? undefined : toggle}
+        onKeyDown={chromeless ? undefined : onKeyDown}
+        role={chromeless ? undefined : "button"}
+        tabIndex={chromeless ? undefined : 0}
         aria-label={caption ? `Video: ${caption}` : "Video player"}
-        className={`group relative ${aspectClass} cursor-pointer overflow-hidden border border-gold/30 bg-deluxe-black shadow-[0_30px_60px_-30px_rgba(212,175,55,0.45)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold`}
+        className={`group relative ${aspectClass} ${chromeless ? "" : "cursor-pointer"} overflow-hidden border border-gold/30 bg-deluxe-black shadow-[0_30px_60px_-30px_rgba(212,175,55,0.45)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold`}
       >
         {loading && (
           <Skeleton className="absolute inset-0 z-10 h-full w-full rounded-none bg-deluxe-forest/40" />
@@ -237,11 +244,11 @@ export function VideoPlayer({
 
         <video
           ref={ref}
-          src={src}
+          src={currentSrc}
           poster={poster}
           playsInline
           autoPlay
-          loop
+          loop={!isPlaylist}
           muted={muted}
           preload="auto"
           crossOrigin={captionsUrl ? "anonymous" : undefined}
@@ -256,7 +263,7 @@ export function VideoPlayer({
           onEnded={onEnded}
           className="h-full w-full object-cover"
         >
-          {captionsUrl && (
+          {captionsUrl && !isPlaylist && (
             <track
               kind="captions"
               src={captionsUrl}
@@ -268,11 +275,14 @@ export function VideoPlayer({
         </video>
 
         {/* Gradient veil */}
-        <div
-          className={`pointer-events-none absolute inset-0 bg-gradient-to-t from-deluxe-black/80 via-deluxe-black/10 to-transparent transition-opacity duration-300 ${
-            playing && started ? "opacity-0 group-hover:opacity-100" : "opacity-100"
-          }`}
-        />
+        {!chromeless && (
+          <div
+            className={`pointer-events-none absolute inset-0 bg-gradient-to-t from-deluxe-black/80 via-deluxe-black/10 to-transparent transition-opacity duration-300 ${
+              playing && started ? "opacity-0 group-hover:opacity-100" : "opacity-100"
+            }`}
+          />
+        )}
+
 
         {/* Bottom control bar (no play/pause button — videos autoplay) */}
         {started && (
