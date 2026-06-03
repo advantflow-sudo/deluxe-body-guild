@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { VideoPlayer } from "@/components/deluxe/VideoPlayer";
-import { HERO_CLIP, MISSION_CLIP } from "@/config/media";
+import { HERO_PLAYLIST, MISSION_PLAYLIST } from "@/config/media";
 
 import { Header } from "@/components/deluxe/Header";
 import { Footer } from "@/components/deluxe/Footer";
