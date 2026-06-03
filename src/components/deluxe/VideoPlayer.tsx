@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Volume2, VolumeX, Maximize2, Captions } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { track, type AnalyticsProps } from "@/lib/analytics";
@@ -24,8 +24,9 @@ interface VideoPlayerProps {
 }
 
 /**
- * Premium video player with custom gold play overlay, keyboard controls,
- * captions, loading skeleton, and analytics events.
+ * Premium video player with double-buffered playlist for seamless clip
+ * transitions. The inactive <video> preloads the next clip while the active
+ * one is playing, then we crossfade on `ended` for zero-flicker handoff.
  *
  * Keyboard: Space/K play, ←/→ seek 5s, ↑/↓ volume, M mute, F fullscreen, C captions.
  */
@@ -43,18 +44,37 @@ export function VideoPlayer({
   analyticsProps = {},
   chromeless = false,
 }: VideoPlayerProps) {
-  const playlist = sources && sources.length > 0 ? sources : src ? [src] : [];
+  // Build a healthy playlist; broken sources are removed on first error.
+  const initialPlaylist = useMemo(
+    () => (sources && sources.length > 0 ? sources : src ? [src] : []),
+    [sources, src],
+  );
+  const [playlist, setPlaylist] = useState<string[]>(initialPlaylist);
+  useEffect(() => setPlaylist(initialPlaylist), [initialPlaylist]);
+
   const [index, setIndex] = useState(0);
-  const currentSrc = playlist[index] ?? "";
+  const safeIndex = playlist.length === 0 ? 0 : index % playlist.length;
+  const currentSrc = playlist[safeIndex] ?? "";
+  const nextSrc =
+    playlist.length > 1 ? playlist[(safeIndex + 1) % playlist.length] : "";
   const isPlaylist = playlist.length > 1;
 
-  const ref = useRef<HTMLVideoElement>(null);
+  // Double-buffer: two video elements, one active (visible + playing), one
+  // preloading the next clip. `activeAB` toggles between them on each advance.
+  const [activeAB, setActiveAB] = useState<"A" | "B">("A");
+  const videoA = useRef<HTMLVideoElement>(null);
+  const videoB = useRef<HTMLVideoElement>(null);
+  const activeRef = activeAB === "A" ? videoA : videoB;
+  const inactiveRef = activeAB === "A" ? videoB : videoA;
+  const srcA = activeAB === "A" ? currentSrc : nextSrc;
+  const srcB = activeAB === "A" ? nextSrc : currentSrc;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const [started, setStarted] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [firstLoad, setFirstLoad] = useState(true);
   const [captionsOn, setCaptionsOn] = useState(false);
   const fired25 = useRef(false);
   const fired50 = useRef(false);
@@ -67,48 +87,71 @@ export function VideoPlayer({
     track(`video_${event}`, {
       video_id: analyticsId ?? "video",
       src: currentSrc,
-      clip_index: index,
+      clip_index: safeIndex,
       ...analyticsProps,
       ...extra,
     });
   };
 
   const toggle = () => {
-    const v = ref.current;
+    const v = activeRef.current;
     if (!v) return;
-    if (v.paused) {
-      v.play();
-    } else {
-      v.pause();
-    }
+    if (v.paused) v.play().catch(() => {});
+    else v.pause();
   };
 
   const onPlay = () => {
     setPlaying(true);
     setStarted(true);
-    fire("play", { current_time: ref.current?.currentTime ?? 0 });
+    setFirstLoad(false);
+    fire("play", { current_time: activeRef.current?.currentTime ?? 0 });
   };
   const onPause = () => {
     setPlaying(false);
-    // Don't fire pause on natural end (browser fires both).
-    const v = ref.current;
+    const v = activeRef.current;
     if (v && !v.ended) fire("pause", { current_time: v.currentTime, progress_pct: Math.round(progress) });
   };
-  const onEnded = () => {
-    setPlaying(false);
-    fire("complete", { duration: ref.current?.duration ?? 0 });
-    if (isPlaylist) {
-      setIndex((i) => (i + 1) % playlist.length);
+
+  const advance = () => {
+    if (!isPlaylist) return;
+    fire("complete", { duration: activeRef.current?.duration ?? 0 });
+    const next = inactiveRef.current;
+    // Start the preloaded clip immediately for a seamless handoff.
+    if (next) {
+      try {
+        next.currentTime = 0;
+      } catch {}
+      next.muted = muted;
+      next.play().catch(() => {});
     }
+    setActiveAB((p) => (p === "A" ? "B" : "A"));
+    setIndex((i) => (i + 1) % playlist.length);
+    fired25.current = false;
+    fired50.current = false;
+    fired75.current = false;
+    setProgress(0);
   };
 
+  const onEnded = () => {
+    if (isPlaylist) advance();
+  };
+
+  const onError = (badSrc: string) => {
+    // Remove broken source and recover gracefully.
+    setPlaylist((prev) => {
+      if (prev.length <= 1) return prev;
+      const filtered = prev.filter((s) => s !== badSrc);
+      return filtered.length > 0 ? filtered : prev;
+    });
+    if (isPlaylist) advance();
+  };
 
   const toggleMute = (e?: React.MouseEvent) => {
     e?.stopPropagation();
-    const v = ref.current;
-    if (!v) return;
-    v.muted = !v.muted;
-    setMuted(v.muted);
+    const next = !muted;
+    setMuted(next);
+    if (videoA.current) videoA.current.muted = next;
+    if (videoB.current) videoB.current.muted = next;
   };
 
   const goFullscreen = (e?: React.MouseEvent) => {
@@ -121,7 +164,7 @@ export function VideoPlayer({
 
   const toggleCaptions = (e?: React.MouseEvent) => {
     e?.stopPropagation();
-    const v = ref.current;
+    const v = activeRef.current;
     if (!v || !v.textTracks || v.textTracks.length === 0) return;
     const next = !captionsOn;
     for (let i = 0; i < v.textTracks.length; i++) {
@@ -132,13 +175,13 @@ export function VideoPlayer({
   };
 
   const seekBy = (delta: number) => {
-    const v = ref.current;
+    const v = activeRef.current;
     if (!v || !v.duration) return;
     v.currentTime = Math.max(0, Math.min(v.duration, v.currentTime + delta));
   };
 
   const adjustVolume = (delta: number) => {
-    const v = ref.current;
+    const v = activeRef.current;
     if (!v) return;
     v.volume = Math.max(0, Math.min(1, v.volume + delta));
     if (v.volume > 0 && v.muted) {
@@ -148,7 +191,7 @@ export function VideoPlayer({
   };
 
   const onTimeUpdate = () => {
-    const v = ref.current;
+    const v = activeRef.current;
     if (!v || !v.duration) return;
     const pct = (v.currentTime / v.duration) * 100;
     setProgress(pct);
@@ -168,7 +211,7 @@ export function VideoPlayer({
 
   const seek = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    const v = ref.current;
+    const v = activeRef.current;
     if (!v || !v.duration) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = (e.clientX - rect.left) / rect.width;
@@ -183,49 +226,25 @@ export function VideoPlayer({
     }
     switch (key) {
       case " ":
-      case "k":
-        toggle();
-        break;
-      case "arrowleft":
-        seekBy(-5);
-        break;
-      case "arrowright":
-        seekBy(5);
-        break;
-      case "arrowup":
-        adjustVolume(0.1);
-        break;
-      case "arrowdown":
-        adjustVolume(-0.1);
-        break;
-      case "m":
-        toggleMute();
-        break;
-      case "f":
-        goFullscreen();
-        break;
-      case "c":
-        toggleCaptions();
-        break;
+      case "k": toggle(); break;
+      case "arrowleft": seekBy(-5); break;
+      case "arrowright": seekBy(5); break;
+      case "arrowup": adjustVolume(0.1); break;
+      case "arrowdown": adjustVolume(-0.1); break;
+      case "m": toggleMute(); break;
+      case "f": goFullscreen(); break;
+      case "c": toggleCaptions(); break;
     }
   };
 
-  // Reset milestone flags when the active clip changes.
+  // Warm up the inactive video whenever the next source changes.
   useEffect(() => {
-    fired25.current = false;
-    fired50.current = false;
-    fired75.current = false;
-    setLoading(true);
-    setProgress(0);
-  }, [currentSrc]);
-
-  // Auto-play the next clip when the playlist advances.
-  useEffect(() => {
-    const v = ref.current;
-    if (!v) return;
-    v.load();
-    v.play().catch(() => {});
-  }, [currentSrc]);
+    const v = inactiveRef.current;
+    if (!v || !nextSrc) return;
+    try {
+      v.load();
+    } catch {}
+  }, [nextSrc, activeAB]);
 
   return (
     <figure className={className}>
@@ -238,41 +257,47 @@ export function VideoPlayer({
         aria-label={caption ? `Video: ${caption}` : "Video player"}
         className={`group relative ${aspectClass} ${chromeless ? "" : "cursor-pointer"} overflow-hidden border border-gold/30 bg-deluxe-black shadow-[0_30px_60px_-30px_rgba(212,175,55,0.45)] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold`}
       >
-        {loading && (
+        {firstLoad && (
           <Skeleton className="absolute inset-0 z-10 h-full w-full rounded-none bg-deluxe-forest/40" />
         )}
 
+        {/* Buffer A */}
         <video
-          ref={ref}
-          src={currentSrc}
+          ref={videoA}
+          src={srcA}
           poster={poster}
           playsInline
-          autoPlay
+          autoPlay={activeAB === "A"}
           loop={!isPlaylist}
           muted={muted}
           preload="auto"
           crossOrigin={captionsUrl ? "anonymous" : undefined}
-          onLoadedData={() => setLoading(false)}
-          onWaiting={() => setLoading(true)}
-          onPlaying={() => setLoading(false)}
-          onCanPlay={() => setLoading(false)}
-          onError={() => setLoading(false)}
-          onTimeUpdate={onTimeUpdate}
-          onPlay={onPlay}
-          onPause={onPause}
-          onEnded={onEnded}
-          className="h-full w-full object-cover"
-        >
-          {captionsUrl && !isPlaylist && (
-            <track
-              kind="captions"
-              src={captionsUrl}
-              srcLang={captionsLang}
-              label={captionsLabel}
-              default={false}
-            />
-          )}
-        </video>
+          onTimeUpdate={activeAB === "A" ? onTimeUpdate : undefined}
+          onPlay={activeAB === "A" ? onPlay : undefined}
+          onPause={activeAB === "A" ? onPause : undefined}
+          onEnded={activeAB === "A" ? onEnded : undefined}
+          onError={() => activeAB === "A" && onError(srcA)}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${activeAB === "A" ? "opacity-100" : "opacity-0"}`}
+        />
+
+        {/* Buffer B */}
+        <video
+          ref={videoB}
+          src={srcB}
+          poster={poster}
+          playsInline
+          autoPlay={activeAB === "B"}
+          loop={!isPlaylist}
+          muted={muted}
+          preload="auto"
+          crossOrigin={captionsUrl ? "anonymous" : undefined}
+          onTimeUpdate={activeAB === "B" ? onTimeUpdate : undefined}
+          onPlay={activeAB === "B" ? onPlay : undefined}
+          onPause={activeAB === "B" ? onPause : undefined}
+          onEnded={activeAB === "B" ? onEnded : undefined}
+          onError={() => activeAB === "B" && onError(srcB)}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${activeAB === "B" ? "opacity-100" : "opacity-0"}`}
+        />
 
         {/* Gradient veil */}
         {!chromeless && (
@@ -283,11 +308,9 @@ export function VideoPlayer({
           />
         )}
 
-
-        {/* Bottom control bar (no play/pause button — videos autoplay) */}
+        {/* Bottom control bar (no play/pause — videos autoplay) */}
         {!chromeless && started && (
           <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 px-4 pb-3 pt-8">
-
             <div
               onClick={seek}
               role="slider"
@@ -328,7 +351,6 @@ export function VideoPlayer({
             </button>
           </div>
         )}
-
       </div>
       {caption && (
         <figcaption className="mt-3 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
