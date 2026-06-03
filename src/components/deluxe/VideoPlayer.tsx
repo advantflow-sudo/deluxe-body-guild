@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, Volume2, VolumeX, Maximize2, Captions } from "lucide-react";
+import { Volume2, VolumeX, Maximize2, Captions } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { track, type AnalyticsProps } from "@/lib/analytics";
 
@@ -258,29 +258,10 @@ export function VideoPlayer({
           }`}
         />
 
-        {/* Center play overlay only shown before first play */}
-        {!started && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full border border-gold/60 bg-deluxe-black/60 backdrop-blur-sm transition group-hover:scale-110 group-hover:border-gold sm:h-24 sm:w-24">
-              <Play className="h-8 w-8 translate-x-0.5 text-gold" strokeWidth={1.5} fill="currentColor" />
-            </div>
-          </div>
-        )}
-
-        {/* Bottom control bar */}
+        {/* Bottom control bar (no play/pause button — videos autoplay) */}
         {started && (
           <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 px-4 pb-3 pt-8">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggle();
-              }}
-              aria-label={playing ? "Pause" : "Play"}
-              className="text-gold transition hover:scale-110"
-            >
-              {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" fill="currentColor" />}
-            </button>
+
             <div
               onClick={seek}
               role="slider"
