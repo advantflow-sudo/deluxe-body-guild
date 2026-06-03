@@ -324,3 +324,80 @@ html[data-reduce-motion="true"] video[data-animated-media] {
   /* Pause autoplay videos managed by AnimatedMedia by hiding them in favor of poster. */
   visibility: hidden;
 }
+
+/* ===========================================================
+ * Interactive enhancements: cursor, grid, beams
+ * =========================================================== */
+
+/* Hide the native cursor on pointer-fine devices once our custom one mounts.
+   Keep text-selection cursor on inputs/textareas. */
+@media (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor body,
+  html.has-custom-cursor a,
+  html.has-custom-cursor button,
+  html.has-custom-cursor [role="button"],
+  html.has-custom-cursor [data-magnetic] {
+    cursor: none;
+  }
+  html.has-custom-cursor input,
+  html.has-custom-cursor textarea,
+  html.has-custom-cursor select {
+    cursor: text;
+  }
+}
+
+.cursor-ring[data-hover="true"] {
+  width: 64px;
+  height: 64px;
+  border-color: var(--gold-light);
+  background: radial-gradient(circle, rgba(230,200,120,0.12), transparent 70%);
+}
+
+/* Animated gold grid */
+.animated-grid {
+  background-image:
+    linear-gradient(to right, rgba(201,162,76,0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(201,162,76,0.16) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  animation: grid-pan 30s linear infinite;
+}
+@keyframes grid-pan {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 56px 56px, 56px 56px; }
+}
+
+/* Drifting gold beams */
+.animated-beams::before,
+.animated-beams::after {
+  content: "";
+  position: absolute;
+  top: -40%;
+  width: 60vw;
+  height: 200%;
+  background: linear-gradient(115deg, transparent 40%, rgba(230,200,120,0.10) 50%, transparent 60%);
+  filter: blur(40px);
+  transform: translateX(-50%) rotate(8deg);
+  animation: beam 14s ease-in-out infinite;
+}
+.animated-beams::after {
+  left: 80%;
+  animation-delay: -7s;
+  animation-duration: 18s;
+  background: linear-gradient(115deg, transparent 40%, rgba(245,227,168,0.08) 50%, transparent 60%);
+}
+@keyframes beam {
+  0%, 100% { transform: translate3d(-30%, 0, 0) rotate(8deg); opacity: 0.8; }
+  50%      { transform: translate3d(30%, 0, 0) rotate(8deg); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animated-grid, .animated-beams::before, .animated-beams::after { animation: none !important; }
+}
+html[data-reduce-motion="true"] .animated-grid,
+html[data-reduce-motion="true"] .animated-beams::before,
+html[data-reduce-motion="true"] .animated-beams::after {
+  animation: none !important;
+}

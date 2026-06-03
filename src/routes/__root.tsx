@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { CommandPalette } from "@/components/deluxe/CommandPalette";
 import { MarketingChatBot } from "@/components/deluxe/MarketingChatBot";
 import { ReduceMotionProvider } from "@/hooks/useReduceMotion";
+import { CursorSpotlight } from "@/components/deluxe/CursorSpotlight";
+import { ScrollProgress } from "@/components/deluxe/ScrollProgress";
 
 import appCss from "../styles.css?url";
 
@@ -170,6 +172,8 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ReduceMotionProvider>
         <AuthProvider>
+          <ScrollProgress />
+          <CursorSpotlight />
           <Outlet />
           <CommandPalette />
           <MarketingChatBot />
