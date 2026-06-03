@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, Volume2, VolumeX, Maximize2, Captions } from "lucide-react";
+import { Volume2, VolumeX, Maximize2, Captions } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { track, type AnalyticsProps } from "@/lib/analytics";
 
