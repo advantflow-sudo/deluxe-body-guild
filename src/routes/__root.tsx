@@ -92,7 +92,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/92c5b0c7-80c8-4a85-8f9b-bdd3fb8bd7b2/id-preview-500a573a--eba2b5b6-0e26-42b9-b5c5-a2b72735fe8e.lovable.app-1779372939990.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/92c5b0c7-80c8-4a85-8f9b-bdd3fb8bd7b2/id-preview-500a573a--eba2b5b6-0e26-42b9-b5c5-a2b72735fe8e.lovable.app-1779372939990.png" },
     ],
+    meta: [
+      ...[
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+        { name: "apple-mobile-web-app-title", content: "Deluxe" },
+        { name: "theme-color", content: "#0a0a0a" },
+      ],
+    ].flat().concat([]) as never,
     links: [
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "icon", type: "image/png", sizes: "192x192", href: "/app-icon-192.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
