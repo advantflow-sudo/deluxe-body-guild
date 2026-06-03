@@ -50,6 +50,9 @@ import {
 import { AnimatedMedia } from "@/components/deluxe/AnimatedMedia";
 import { MEDIA } from "@/config/animated-media";
 import { Reveal } from "@/components/deluxe/Reveal";
+import { Magnetic } from "@/components/deluxe/Magnetic";
+import { TiltCard } from "@/components/deluxe/TiltCard";
+import { AnimatedGrid } from "@/components/deluxe/AnimatedGrid";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -102,6 +105,7 @@ function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
       <div className="absolute inset-0 bg-deluxe-black" />
+      <AnimatedGrid />
       <div className="absolute inset-0 bg-gradient-to-b from-deluxe-black/75 via-deluxe-black/60 to-deluxe-black" />
       <div className="gold-glow absolute inset-x-0 bottom-0 h-[60%]" />
       <span className="gold-orb left-[-10%] top-[10%] h-[420px] w-[420px]" />
@@ -130,16 +134,20 @@ function Hero() {
             from themselves.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link to="/login">
-              <GoldButton>
-                Start Your Journey <ArrowRight className="h-4 w-4" />
-              </GoldButton>
-            </Link>
-            <Link to="/about">
-              <OutlineButton>
-                <Play className="h-3.5 w-3.5" /> Watch the Story
-              </OutlineButton>
-            </Link>
+            <Magnetic>
+              <Link to="/login">
+                <GoldButton>
+                  Start Your Journey <ArrowRight className="h-4 w-4" />
+                </GoldButton>
+              </Link>
+            </Magnetic>
+            <Magnetic>
+              <Link to="/about">
+                <OutlineButton>
+                  <Play className="h-3.5 w-3.5" /> Watch the Story
+                </OutlineButton>
+              </Link>
+            </Magnetic>
           </div>
         </Reveal>
 
