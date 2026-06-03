@@ -33,6 +33,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
+import { Route as ApiPublicMarketingChatRouteImport } from './routes/api/public/marketing-chat'
 import { Route as AuthenticatedAppWorkoutsRouteImport } from './routes/_authenticated/app/workouts'
 import { Route as AuthenticatedAppRewardsRouteImport } from './routes/_authenticated/app/rewards'
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/app/progress'
@@ -176,6 +177,11 @@ const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const ApiPublicMarketingChatRoute = ApiPublicMarketingChatRouteImport.update({
+  id: '/api/public/marketing-chat',
+  path: '/api/public/marketing-chat',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppWorkoutsRoute =
   AuthenticatedAppWorkoutsRouteImport.update({
@@ -351,6 +357,7 @@ export interface FileRoutesByFullPath {
   '/app/progress': typeof AuthenticatedAppProgressRoute
   '/app/rewards': typeof AuthenticatedAppRewardsRoute
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
+  '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
@@ -399,6 +406,7 @@ export interface FileRoutesByTo {
   '/app/progress': typeof AuthenticatedAppProgressRoute
   '/app/rewards': typeof AuthenticatedAppRewardsRoute
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
+  '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
@@ -450,6 +458,7 @@ export interface FileRoutesById {
   '/_authenticated/app/progress': typeof AuthenticatedAppProgressRoute
   '/_authenticated/app/rewards': typeof AuthenticatedAppRewardsRoute
   '/_authenticated/app/workouts': typeof AuthenticatedAppWorkoutsRoute
+  '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
@@ -501,6 +510,7 @@ export interface FileRouteTypes {
     | '/app/progress'
     | '/app/rewards'
     | '/app/workouts'
+    | '/api/public/marketing-chat'
     | '/app/'
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
@@ -549,6 +559,7 @@ export interface FileRouteTypes {
     | '/app/progress'
     | '/app/rewards'
     | '/app/workouts'
+    | '/api/public/marketing-chat'
     | '/app'
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
@@ -599,6 +610,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/progress'
     | '/_authenticated/app/rewards'
     | '/_authenticated/app/workouts'
+    | '/api/public/marketing-chat'
     | '/_authenticated/app/'
     | '/_authenticated/app/u/$userId'
     | '/api/public/google-fit/callback'
@@ -633,6 +645,7 @@ export interface RootRouteChildren {
   WellbeingRoute: typeof WellbeingRoute
   WhatWeOfferRoute: typeof WhatWeOfferRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiPublicMarketingChatRoute: typeof ApiPublicMarketingChatRoute
   ApiPublicGoogleFitCallbackRoute: typeof ApiPublicGoogleFitCallbackRoute
   ApiPublicHooksAutoMatchPartnersRoute: typeof ApiPublicHooksAutoMatchPartnersRoute
   ApiPublicHooksDailyMissionsGenerateRoute: typeof ApiPublicHooksDailyMissionsGenerateRoute
@@ -814,6 +827,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/api/public/marketing-chat': {
+      id: '/api/public/marketing-chat'
+      path: '/api/public/marketing-chat'
+      fullPath: '/api/public/marketing-chat'
+      preLoaderRoute: typeof ApiPublicMarketingChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/app/workouts': {
       id: '/_authenticated/app/workouts'
@@ -1063,6 +1083,7 @@ const rootRouteChildren: RootRouteChildren = {
   WellbeingRoute: WellbeingRoute,
   WhatWeOfferRoute: WhatWeOfferRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiPublicMarketingChatRoute: ApiPublicMarketingChatRoute,
   ApiPublicGoogleFitCallbackRoute: ApiPublicGoogleFitCallbackRoute,
   ApiPublicHooksAutoMatchPartnersRoute: ApiPublicHooksAutoMatchPartnersRoute,
   ApiPublicHooksDailyMissionsGenerateRoute:
