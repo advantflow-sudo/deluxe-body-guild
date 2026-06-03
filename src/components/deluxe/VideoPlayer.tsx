@@ -66,7 +66,8 @@ export function VideoPlayer({
   const fire = (event: string, extra: AnalyticsProps = {}) => {
     track(`video_${event}`, {
       video_id: analyticsId ?? "video",
-      src,
+      src: currentSrc,
+      clip_index: index,
       ...analyticsProps,
       ...extra,
     });
@@ -96,7 +97,11 @@ export function VideoPlayer({
   const onEnded = () => {
     setPlaying(false);
     fire("complete", { duration: ref.current?.duration ?? 0 });
+    if (isPlaylist) {
+      setIndex((i) => (i + 1) % playlist.length);
+    }
   };
+
 
   const toggleMute = (e?: React.MouseEvent) => {
     e?.stopPropagation();
