@@ -282,9 +282,9 @@ function WhyDeluxe() {
 
         <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map(({ Icon, title, body }) => (
-            <div
+            <TiltCard
               key={title}
-              className="luxury-card group relative overflow-hidden p-8 transition hover:border-gold/40"
+              className="luxury-card group overflow-hidden p-8 transition hover:border-gold/40"
             >
               <span className="absolute inset-x-0 top-0 h-0.5 bg-gold" />
               <Icon className="h-8 w-8 text-gold" strokeWidth={1.5} />
@@ -294,7 +294,7 @@ function WhyDeluxe() {
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {body}
               </p>
-            </div>
+            </TiltCard>
           ))}
         </div>
       </div>
@@ -471,9 +471,9 @@ function Rewards() {
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
           {tiers.map(({ Icon, name, threshold, perk, featured }) => (
-            <div
+            <TiltCard
               key={name}
-              className={`luxury-card relative p-8 transition ${
+              className={`luxury-card p-8 transition ${
                 featured
                   ? "border-gold/60 shadow-[0_30px_60px_-30px_rgba(212,175,55,0.45)]"
                   : "hover:border-gold/40"
@@ -494,7 +494,7 @@ function Rewards() {
               <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
                 {perk}
               </p>
-            </div>
+            </TiltCard>
           ))}
         </div>
       </div>
