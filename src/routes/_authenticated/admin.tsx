@@ -76,6 +76,12 @@ function AdminPage() {
 
         <Overview />
 
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Link to="/_authenticated/admin/domain-health">
+            <OutlineButton>Domain health</OutlineButton>
+          </Link>
+        </div>
+
         <Tabs defaultValue="users" className="mt-10">
           <TabsList className="grid w-full grid-cols-2 gap-2 bg-deluxe-forest/20 sm:grid-cols-5">
             <TabsTrigger value="users"><Users className="mr-2 h-3.5 w-3.5" />Users</TabsTrigger>

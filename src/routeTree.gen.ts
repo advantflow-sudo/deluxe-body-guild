@@ -46,6 +46,7 @@ import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/app/coach'
 import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authenticated/app/challenges'
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
+import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
@@ -249,6 +250,12 @@ const AuthenticatedAppAiRoute = AuthenticatedAppAiRouteImport.update({
   path: '/ai',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAdminDomainHealthRoute =
+  AuthenticatedAdminDomainHealthRouteImport.update({
+    id: '/domain-health',
+    path: '/domain-health',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAcceptInviteCodeRoute =
   AuthenticatedAcceptInviteCodeRouteImport.update({
     id: '/accept-invite/$code',
@@ -339,12 +346,13 @@ export interface FileRoutesByFullPath {
   '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/app': typeof AuthenticatedAppRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
+  '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/app/coach': typeof AuthenticatedAppCoachRoute
@@ -389,11 +397,12 @@ export interface FileRoutesByTo {
   '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
+  '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/app/coach': typeof AuthenticatedAppCoachRoute
@@ -440,12 +449,13 @@ export interface FileRoutesById {
   '/transformations': typeof TransformationsRoute
   '/wellbeing': typeof WellbeingRoute
   '/what-we-offer': typeof WhatWeOfferRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
+  '/_authenticated/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/_authenticated/app/ai': typeof AuthenticatedAppAiRoute
   '/_authenticated/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/_authenticated/app/coach': typeof AuthenticatedAppCoachRoute
@@ -498,6 +508,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/api/chat'
     | '/accept-invite/$code'
+    | '/admin/domain-health'
     | '/app/ai'
     | '/app/challenges'
     | '/app/coach'
@@ -547,6 +558,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/api/chat'
     | '/accept-invite/$code'
+    | '/admin/domain-health'
     | '/app/ai'
     | '/app/challenges'
     | '/app/coach'
@@ -598,6 +610,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/api/chat'
     | '/_authenticated/accept-invite/$code'
+    | '/_authenticated/admin/domain-health'
     | '/_authenticated/app/ai'
     | '/_authenticated/app/challenges'
     | '/_authenticated/app/coach'
@@ -919,6 +932,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAiRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/admin/domain-health': {
+      id: '/_authenticated/admin/domain-health'
+      path: '/domain-health'
+      fullPath: '/admin/domain-health'
+      preLoaderRoute: typeof AuthenticatedAdminDomainHealthRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/accept-invite/$code': {
       id: '/_authenticated/accept-invite/$code'
       path: '/accept-invite/$code'
@@ -1006,6 +1026,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminDomainHealthRoute: typeof AuthenticatedAdminDomainHealthRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminDomainHealthRoute: AuthenticatedAdminDomainHealthRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppAiRoute: typeof AuthenticatedAppAiRoute
   AuthenticatedAppChallengesRoute: typeof AuthenticatedAppChallengesRoute
@@ -1044,7 +1075,7 @@ const AuthenticatedAppRouteWithChildren =
   AuthenticatedAppRoute._addFileChildren(AuthenticatedAppRouteChildren)
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
@@ -1052,7 +1083,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
@@ -1099,13 +1130,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
