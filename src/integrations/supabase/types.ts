@@ -894,6 +894,36 @@ export type Database = {
         }
         Relationships: []
       }
+      streak_events: {
+        Row: {
+          created_at: string
+          current_len: number
+          event_date: string
+          event_type: string
+          id: string
+          previous_len: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_len?: number
+          event_date?: string
+          event_type: string
+          id?: string
+          previous_len?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_len?: number
+          event_date?: string
+          event_type?: string
+          id?: string
+          previous_len?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       streaks: {
         Row: {
           current_len: number
@@ -1014,7 +1044,12 @@ export type Database = {
           onboarded_at: string | null
           preferred_type: string | null
           reminder_evening_hour: number | null
+          reminder_goals_enabled: boolean
+          reminder_goals_hour: number | null
           reminder_morning_hour: number | null
+          reminder_sleep_enabled: boolean
+          reminder_water_enabled: boolean
+          reminder_water_hour: number | null
           subscription_tier: string
           timezone: string
           training_level: string | null
@@ -1034,7 +1069,12 @@ export type Database = {
           onboarded_at?: string | null
           preferred_type?: string | null
           reminder_evening_hour?: number | null
+          reminder_goals_enabled?: boolean
+          reminder_goals_hour?: number | null
           reminder_morning_hour?: number | null
+          reminder_sleep_enabled?: boolean
+          reminder_water_enabled?: boolean
+          reminder_water_hour?: number | null
           subscription_tier?: string
           timezone?: string
           training_level?: string | null
@@ -1054,7 +1094,12 @@ export type Database = {
           onboarded_at?: string | null
           preferred_type?: string | null
           reminder_evening_hour?: number | null
+          reminder_goals_enabled?: boolean
+          reminder_goals_hour?: number | null
           reminder_morning_hour?: number | null
+          reminder_sleep_enabled?: boolean
+          reminder_water_enabled?: boolean
+          reminder_water_hour?: number | null
           subscription_tier?: string
           timezone?: string
           training_level?: string | null
