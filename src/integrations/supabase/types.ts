@@ -1506,6 +1506,24 @@ export type Database = {
         Returns: boolean
       }
       is_premium_member: { Args: { _user_id: string }; Returns: boolean }
+      touch_streak: {
+        Args: never
+        Returns: {
+          current_len: number
+          freezes_remaining: number
+          freezes_reset_week: string
+          last_active_date: string | null
+          longest_len: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "streaks"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       app_role: "admin" | "coach" | "member"
