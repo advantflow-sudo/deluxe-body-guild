@@ -295,6 +295,7 @@ export type Database = {
         Row: {
           calories: number
           id: string
+          sleep_hours: number
           stat_date: string
           steps: number
           streak: number
@@ -304,6 +305,7 @@ export type Database = {
         Insert: {
           calories?: number
           id?: string
+          sleep_hours?: number
           stat_date?: string
           steps?: number
           streak?: number
@@ -313,6 +315,7 @@ export type Database = {
         Update: {
           calories?: number
           id?: string
+          sleep_hours?: number
           stat_date?: string
           steps?: number
           streak?: number
@@ -474,6 +477,45 @@ export type Database = {
           target_value?: number
           unit?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      nutrition_logs: {
+        Row: {
+          calories: number
+          carbs_g: number
+          created_at: string
+          fat_g: number
+          id: string
+          log_date: string
+          logged_at: string
+          meal_label: string | null
+          protein_g: number
+          user_id: string
+        }
+        Insert: {
+          calories?: number
+          carbs_g?: number
+          created_at?: string
+          fat_g?: number
+          id?: string
+          log_date?: string
+          logged_at?: string
+          meal_label?: string | null
+          protein_g?: number
+          user_id: string
+        }
+        Update: {
+          calories?: number
+          carbs_g?: number
+          created_at?: string
+          fat_g?: number
+          id?: string
+          log_date?: string
+          logged_at?: string
+          meal_label?: string | null
+          protein_g?: number
           user_id?: string
         }
         Relationships: []
