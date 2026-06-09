@@ -15,6 +15,10 @@ import { formatGoal } from "@/lib/format";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
 import { DailyMissionCard } from "@/components/deluxe/DailyMissionCard";
+import { DeluxeScoreBreakdown } from "@/components/deluxe/DeluxeScoreBreakdown";
+import { WaterTracker } from "@/components/deluxe/WaterTracker";
+import { SleepLogger } from "@/components/deluxe/SleepLogger";
+import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
@@ -97,6 +101,10 @@ function HomeTab() {
       <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">Good day, {name}.</h1>
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
       <DailyMissionCard />
+      <DeluxeScoreBreakdown />
+      <WaterTracker />
+      <SleepLogger />
+      <NutritionQuickLog />
 
       <DailyBriefingCard />
 
