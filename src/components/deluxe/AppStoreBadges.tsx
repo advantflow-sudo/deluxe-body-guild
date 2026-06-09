@@ -4,7 +4,7 @@ import { Apple, Play } from "lucide-react";
  * App Store + Google Play badge-style buttons.
  * Open in a new tab. Replace hrefs once the apps are listed.
  */
-const APP_STORE_URL = "https://apps.apple.com/app/deluxe-fitness";
+const APP_STORE_URL = "https://apps.apple.com/app/deluxe-fitness/id000000000";
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=app.deluxefitness";
 
 export function AppStoreBadges({ className = "" }: { className?: string }) {
