@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CommandPalette } from "@/components/deluxe/CommandPalette";
 import { MarketingChatBot } from "@/components/deluxe/MarketingChatBot";
 import { CookieConsent } from "@/components/deluxe/CookieConsent";
+import { InstallPrompt } from "@/components/deluxe/InstallPrompt";
 import { ReduceMotionProvider } from "@/hooks/useReduceMotion";
 import { CursorSpotlight } from "@/components/deluxe/CursorSpotlight";
 import { ScrollProgress } from "@/components/deluxe/ScrollProgress";
@@ -179,6 +180,7 @@ function RootComponent() {
           <CommandPalette />
           <MarketingChatBot />
           <CookieConsent />
+          <InstallPrompt />
           <Toaster theme="dark" position="top-right" />
         </AuthProvider>
       </ReduceMotionProvider>
