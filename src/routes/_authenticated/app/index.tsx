@@ -19,6 +19,7 @@ import { DeluxeScoreBreakdown } from "@/components/deluxe/DeluxeScoreBreakdown";
 import { WaterTracker } from "@/components/deluxe/WaterTracker";
 import { SleepLogger } from "@/components/deluxe/SleepLogger";
 import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
+import { DailyGoalsList } from "@/components/deluxe/DailyGoalsList";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
@@ -102,6 +103,7 @@ function HomeTab() {
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
       <DailyMissionCard />
       <DeluxeScoreBreakdown />
+      <DailyGoalsList />
       <WaterTracker />
       <SleepLogger />
       <NutritionQuickLog />
