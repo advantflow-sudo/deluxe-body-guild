@@ -53,6 +53,7 @@ import { Reveal } from "@/components/deluxe/Reveal";
 import { Magnetic } from "@/components/deluxe/Magnetic";
 import { TiltCard } from "@/components/deluxe/TiltCard";
 import { AnimatedGrid } from "@/components/deluxe/AnimatedGrid";
+import { AppStoreBadges } from "@/components/deluxe/AppStoreBadges";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -668,18 +669,7 @@ function FinalCta() {
         <p className="mt-8 text-base text-muted-foreground md:text-lg">
           Join 50,000+ members already on their journey.
         </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link to="/login">
-            <GoldButton>
-              <AppleIcon className="h-4 w-4" /> Download on iOS
-            </GoldButton>
-          </Link>
-          <Link to="/login">
-            <GoldButton>
-              <Play className="h-4 w-4" /> Get it on Android
-            </GoldButton>
-          </Link>
-        </div>
+        <AppStoreBadges className="mt-10" />
         <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
           Free to download · Premium plans available
         </p>

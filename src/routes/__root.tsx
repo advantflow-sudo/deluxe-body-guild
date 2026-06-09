@@ -13,6 +13,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { CommandPalette } from "@/components/deluxe/CommandPalette";
 import { MarketingChatBot } from "@/components/deluxe/MarketingChatBot";
+import { CookieConsent } from "@/components/deluxe/CookieConsent";
 import { ReduceMotionProvider } from "@/hooks/useReduceMotion";
 import { CursorSpotlight } from "@/components/deluxe/CursorSpotlight";
 import { ScrollProgress } from "@/components/deluxe/ScrollProgress";
@@ -177,6 +178,7 @@ function RootComponent() {
           <Outlet />
           <CommandPalette />
           <MarketingChatBot />
+          <CookieConsent />
           <Toaster theme="dark" position="top-right" />
         </AuthProvider>
       </ReduceMotionProvider>
