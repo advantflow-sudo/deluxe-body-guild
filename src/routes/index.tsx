@@ -53,6 +53,7 @@ import { Reveal } from "@/components/deluxe/Reveal";
 import { Magnetic } from "@/components/deluxe/Magnetic";
 import { TiltCard } from "@/components/deluxe/TiltCard";
 import { AnimatedGrid } from "@/components/deluxe/AnimatedGrid";
+import { AppStoreBadges } from "@/components/deluxe/AppStoreBadges";
 
 export const Route = createFileRoute("/")({
   head: () => ({
