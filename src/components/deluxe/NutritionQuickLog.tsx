@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Apple, Plus } from "lucide-react";
+import { Apple, Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,17 +15,21 @@ export function NutritionQuickLog() {
   const [label, setLabel] = useState("");
   const [calories, setCalories] = useState("");
   const [meals, setMeals] = useState<MealRow[]>([]);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!user) return;
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("nutrition_logs")
       .select("id,meal_label,calories")
       .eq("user_id", user.id)
       .eq("log_date", todayIso())
       .order("logged_at", { ascending: false });
+    if (error) toast.error(error.message);
     setMeals((data as MealRow[]) ?? []);
+    setLoading(false);
   }, [user]);
 
   useEffect(() => { void load(); }, [load]);
@@ -34,17 +38,37 @@ export function NutritionQuickLog() {
     if (!user) return;
     const cal = parseInt(calories, 10);
     if (!cal || cal <= 0) return toast.error("Enter calories");
+    const tempId = `temp-${Date.now()}`;
+    const optimistic: MealRow = { id: tempId, meal_label: label.trim() || "Meal", calories: cal };
+    setMeals((m) => [optimistic, ...m]); // optimistic
     setSaving(true);
-    const { error } = await supabase.from("nutrition_logs").insert({
+    const { data, error } = await supabase.from("nutrition_logs").insert({
       user_id: user.id,
       log_date: todayIso(),
-      meal_label: label.trim() || "Meal",
+      meal_label: optimistic.meal_label,
       calories: cal,
-    });
+    }).select("id,meal_label,calories").maybeSingle();
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error || !data) {
+      setMeals((m) => m.filter((r) => r.id !== tempId));
+      toast.error(`Couldn't log meal: ${error?.message ?? "unknown error"}`);
+      return;
+    }
+    setMeals((m) => m.map((r) => (r.id === tempId ? (data as MealRow) : r)));
     setLabel(""); setCalories("");
-    await load();
+  };
+
+  const remove = async (id: string) => {
+    if (!user || id.startsWith("temp-")) return;
+    const snapshot = meals;
+    setMeals((m) => m.filter((r) => r.id !== id));
+    setDeletingId(id);
+    const { error } = await supabase.from("nutrition_logs").delete().eq("id", id).eq("user_id", user.id);
+    setDeletingId(null);
+    if (error) {
+      setMeals(snapshot);
+      toast.error(`Couldn't remove meal: ${error.message}`);
+    }
   };
 
   const total = meals.reduce((s, m) => s + (m.calories ?? 0), 0);
@@ -55,8 +79,9 @@ export function NutritionQuickLog() {
         <div className="flex items-center gap-2">
           <Apple className="h-3.5 w-3.5 text-gold" />
           <SectionLabel>Nutrition</SectionLabel>
+          {saving && <Loader2 className="h-3 w-3 animate-spin text-gold/70" />}
         </div>
-        <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground tabular-nums">
           {total.toLocaleString()} <span className="text-foreground/40">kcal today</span>
         </div>
       </div>
@@ -66,6 +91,8 @@ export function NutritionQuickLog() {
           placeholder="Meal (e.g. lunch)"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") void add(); }}
+          disabled={saving}
           className="bg-deluxe-black/40 border-gold/20 text-foreground placeholder:text-muted-foreground/60"
         />
         <Input
@@ -74,6 +101,8 @@ export function NutritionQuickLog() {
           placeholder="kcal"
           value={calories}
           onChange={(e) => setCalories(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") void add(); }}
+          disabled={saving}
           className="w-24 bg-deluxe-black/40 border-gold/20 text-foreground placeholder:text-muted-foreground/60"
         />
         <button
@@ -83,19 +112,40 @@ export function NutritionQuickLog() {
           className="flex h-9 w-9 shrink-0 items-center justify-center bg-gold text-deluxe-black hover:bg-gold-light disabled:opacity-50"
           aria-label="Log meal"
         >
-          <Plus className="h-4 w-4" />
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
         </button>
       </div>
 
-      {meals.length > 0 && (
+      {loading ? (
+        <div className="mt-3 space-y-1.5">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="h-9 animate-pulse border border-gold/10 bg-deluxe-black/30" />
+          ))}
+        </div>
+      ) : meals.length > 0 ? (
         <ul className="mt-3 space-y-1.5">
           {meals.map((m) => (
-            <li key={m.id} className="flex items-center justify-between border border-gold/10 bg-deluxe-black/30 px-3 py-2 text-xs">
+            <li key={m.id} className={`flex items-center justify-between border border-gold/10 bg-deluxe-black/30 px-3 py-2 text-xs ${m.id.startsWith("temp-") ? "opacity-60" : ""}`}>
               <span className="truncate text-foreground">{m.meal_label || "Meal"}</span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground tabular-nums">{m.calories} kcal</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground tabular-nums">{m.calories} kcal</span>
+                {!m.id.startsWith("temp-") && (
+                  <button
+                    type="button"
+                    onClick={() => remove(m.id)}
+                    disabled={deletingId === m.id}
+                    className="text-muted-foreground/60 hover:text-rose-400 disabled:opacity-30"
+                    aria-label="Remove meal"
+                  >
+                    {deletingId === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
+                  </button>
+                )}
+              </div>
             </li>
           ))}
         </ul>
+      ) : (
+        <p className="mt-3 text-center text-[11px] uppercase tracking-[0.2em] text-muted-foreground/60">No meals logged yet</p>
       )}
     </section>
   );
