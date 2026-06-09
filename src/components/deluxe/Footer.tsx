@@ -96,19 +96,19 @@ export function Footer() {
             <h4 className="eyebrow mt-8">Legal</h4>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               <li>
-                <a href="#" className="transition hover:text-gold">
+                <Link to="/terms" className="transition hover:text-gold">
                   Terms &amp; Conditions
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="transition hover:text-gold">
+                <Link to="/company-policy" className="transition hover:text-gold">
                   Company Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="transition hover:text-gold">
+                <Link to="/privacy" className="transition hover:text-gold">
                   Privacy
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
