@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Flame, Heart, Users, ArrowRight, Quote } from "lucide-react";
+import { ArrowRight, Quote } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton, SectionLabel, GoldDivider } from "@/components/deluxe/ui";
 
@@ -7,8 +7,8 @@ export const Route = createFileRoute("/founder")({
   head: () => ({
     meta: [
       { title: "Founder Story — Deluxe Fitness" },
-      { name: "description", content: "The story behind Deluxe Fitness. Built on discipline, self-improvement and the belief that fitness is the foundation for a better life." },
-      { property: "og:title", content: "Why Deluxe Fitness Exists" },
+      { name: "description", content: "The vision behind Deluxe Fitness — a movement built on discipline, identity, and the belief that most people are capable of far more than they're currently living." },
+      { property: "og:title", content: "The Vision Behind Deluxe" },
       { property: "og:description", content: "The founder story behind a luxury self-improvement movement." },
       { property: "og:url", content: "https://deluxefitness.app/founder" },
     ],
@@ -17,11 +17,6 @@ export const Route = createFileRoute("/founder")({
   component: FounderPage,
 });
 
-const PILLARS = [
-  { Icon: Flame, title: "Discipline", body: "Showing up is the only edge that actually compounds." },
-  { Icon: Heart, title: "Self-Improvement", body: "Body, mind, mindset — they're not separate projects." },
-  { Icon: Users, title: "Community", body: "Standards are contagious. So is mediocrity. Pick your room." },
-];
 
 function FounderPage() {
   return (
