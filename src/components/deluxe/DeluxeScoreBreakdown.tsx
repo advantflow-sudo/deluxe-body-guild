@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, TrendingUp } from "lucide-react";
+import { Share2, Sparkles, TrendingUp } from "lucide-react";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { useDeluxeScore } from "@/hooks/useDeluxeScore";
+import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { Confetti } from "./Confetti";
 import { ScoreBreakdownDrawer, type ScoreCategory } from "./ScoreBreakdownDrawer";
+import { ShareScoreCard } from "./ShareScoreCard";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 function getRating(score: number): { label: string; tone: string } {
   if (score >= 90) return { label: "Elite", tone: "text-gold" };
@@ -17,13 +21,19 @@ const CONFETTI_KEY = (d: string) => `df_score_confetti_${d}`;
 
 export function DeluxeScoreBreakdown() {
   const s = useDeluxeScore();
+  const { reduceMotion } = useReduceMotion();
+  const { user } = useAuth();
   const [animated, setAnimated] = useState(0);
   const [confetti, setConfetti] = useState(false);
   const [openCat, setOpenCat] = useState<ScoreCategory | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [streakLen, setStreakLen] = useState(0);
   const lastTotal = useRef(0);
 
+  // Count-up animation (skipped if reduce-motion)
   useEffect(() => {
     if (s.loading) return;
+    if (reduceMotion) { setAnimated(s.total); return; }
     const start = animated;
     const target = s.total;
     const duration = 900;
@@ -38,14 +48,14 @@ export function DeluxeScoreBreakdown() {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [s.total, s.loading]);
+  }, [s.total, s.loading, reduceMotion]);
 
-  // Confetti: fire once per day when crossing into 100
+  // Confetti on first crossing into 100 — gated by reduce-motion and once per day
   useEffect(() => {
     if (s.loading) return;
     const prev = lastTotal.current;
     lastTotal.current = s.total;
-    if (s.total >= 100 && prev < 100) {
+    if (s.total >= 100 && prev < 100 && !reduceMotion) {
       if (typeof window !== "undefined") {
         const key = CONFETTI_KEY(todayIso());
         if (!localStorage.getItem(key)) {
@@ -54,12 +64,20 @@ export function DeluxeScoreBreakdown() {
         }
       }
     }
-  }, [s.total, s.loading]);
+  }, [s.total, s.loading, reduceMotion]);
+
+  // Fetch streak for share card
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("streaks").select("current_len").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => { if (data?.current_len != null) setStreakLen(data.current_len); });
+  }, [user, s.total]);
 
   const rating = getRating(s.total);
   const circumference = 2 * Math.PI * 42;
   const dashOffset = circumference - (Math.min(s.total, 100) / 100) * circumference;
   const glow = s.total >= 80;
+  const perfect = s.total >= 100;
 
   const components: { key: ScoreCategory; label: string; earned: number; max: number }[] = [
     { key: "training", label: "Train", earned: s.training, max: 20 },
@@ -70,25 +88,48 @@ export function DeluxeScoreBreakdown() {
   ];
 
   if (s.loading) {
-    return <div className="mt-5 h-44 animate-pulse border border-gold/15 bg-deluxe-forest/10" />;
+    return <div className="mt-5 h-44 animate-pulse border border-gold/15 bg-deluxe-forest/10" aria-label="Loading Deluxe score" />;
   }
 
   return (
     <>
-      <section className="relative mt-5 border border-gold/30 bg-deluxe-forest/30 p-5 sm:p-6">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-gold" />
-          <SectionLabel>Deluxe Score</SectionLabel>
+      <section
+        className="relative mt-5 border border-gold/30 bg-deluxe-forest/30 p-5 sm:p-6"
+        aria-labelledby="deluxe-score-heading"
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-gold" aria-hidden />
+            <SectionLabel id="deluxe-score-heading">Deluxe Score</SectionLabel>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShareOpen(true)}
+            className={`flex items-center gap-1.5 border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70 ${
+              perfect
+                ? "border-gold bg-gold text-deluxe-black hover:bg-gold-light"
+                : "border-gold/40 text-gold hover:bg-gold/10"
+            }`}
+            aria-label={`Share your Deluxe score${perfect ? " — perfect day" : ""}`}
+          >
+            <Share2 className="h-3 w-3" aria-hidden />
+            {perfect ? "Share Perfect" : "Share"}
+          </button>
         </div>
 
         <div className="mt-4 flex items-center gap-5 sm:gap-6">
           <div className="relative h-28 w-28 shrink-0 sm:h-32 sm:w-32">
-            <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
+            <svg
+              viewBox="0 0 100 100"
+              className="h-full w-full -rotate-90"
+              role="img"
+              aria-label={`${s.total} of 100 Deluxe Score`}
+            >
               <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(212,175,55,0.15)" strokeWidth="6" />
               <circle
                 cx="50" cy="50" r="42" fill="none" stroke="url(#deluxeBreakGrad)" strokeWidth="6"
                 strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={dashOffset}
-                className="transition-all duration-700"
+                className={reduceMotion ? "" : "transition-all duration-700"}
                 style={glow ? { filter: "drop-shadow(0 0 6px rgba(245,217,122,0.7))" } : undefined}
               />
               <defs>
@@ -100,22 +141,23 @@ export function DeluxeScoreBreakdown() {
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <div
-                className={`font-display text-3xl sm:text-4xl tabular-nums transition-all ${
+                className={`font-display text-3xl sm:text-4xl tabular-nums ${
                   glow ? "text-gold [text-shadow:0_0_20px_rgba(245,217,122,0.7)]" : "text-foreground"
                 }`}
+                aria-live="polite"
               >
                 {animated}
               </div>
               <div className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground">/ 100</div>
             </div>
-            <Confetti fire={confetti} onDone={() => setConfetti(false)} />
+            <Confetti fire={confetti && !reduceMotion} onDone={() => setConfetti(false)} />
           </div>
 
           <div className="min-w-0 flex-1">
             <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Today's Rating</div>
             <div className={`font-display text-2xl sm:text-3xl ${rating.tone}`}>{rating.label}</div>
             <div className="mt-2 flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              <TrendingUp className="h-3 w-3 text-gold" />
+              <TrendingUp className="h-3 w-3 text-gold" aria-hidden />
               {100 - s.total === 0 ? "Perfect day" : `${100 - s.total} pts to Elite`}
             </div>
             <div className="mt-1 text-[9px] uppercase tracking-[0.2em] text-muted-foreground/70">
@@ -124,7 +166,7 @@ export function DeluxeScoreBreakdown() {
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-5 gap-1.5">
+        <div className="mt-4 grid grid-cols-5 gap-1.5" role="group" aria-label="Score breakdown by category">
           {components.map((c) => {
             const pct = c.max > 0 ? Math.min(1, c.earned / c.max) : 0;
             const hit = c.earned >= c.max;
@@ -133,12 +175,18 @@ export function DeluxeScoreBreakdown() {
                 key={c.key}
                 type="button"
                 onClick={() => setOpenCat(c.key)}
-                className="group text-center transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-1 focus-visible:ring-gold"
-                aria-label={`View ${c.label} breakdown`}
+                className="group text-center transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70"
+                aria-label={`${c.label}: ${c.earned} of ${c.max} points. Tap for details.`}
               >
-                <div className="relative h-1 w-full bg-gold/10 overflow-hidden">
+                <div
+                  className="relative h-1 w-full bg-gold/10 overflow-hidden"
+                  role="progressbar"
+                  aria-valuenow={Math.round(pct * 100)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
                   <div
-                    className="absolute inset-y-0 left-0 bg-gold-gradient transition-all duration-700"
+                    className={`absolute inset-y-0 left-0 bg-gold-gradient ${reduceMotion ? "" : "transition-all duration-700"}`}
                     style={{ width: `${pct * 100}%` }}
                   />
                 </div>
@@ -159,6 +207,13 @@ export function DeluxeScoreBreakdown() {
         onOpenChange={(o) => !o && setOpenCat(null)}
         category={openCat}
         score={s}
+      />
+
+      <ShareScoreCard
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        score={s.total}
+        streak={streakLen}
       />
     </>
   );
