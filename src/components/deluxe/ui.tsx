@@ -31,8 +31,8 @@ export function OutlineButton({
   );
 }
 
-export function SectionLabel({ children }: { children: ReactNode }) {
-  return <span className="eyebrow">{children}</span>;
+export function SectionLabel({ children, id }: { children: ReactNode; id?: string }) {
+  return <span id={id} className="eyebrow">{children}</span>;
 }
 
 export function GoldDivider({ className = "" }: { className?: string }) {
