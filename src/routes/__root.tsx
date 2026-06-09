@@ -180,6 +180,7 @@ function RootComponent() {
           <CommandPalette />
           <MarketingChatBot />
           <CookieConsent />
+          <InstallPrompt />
           <Toaster theme="dark" position="top-right" />
         </AuthProvider>
       </ReduceMotionProvider>
