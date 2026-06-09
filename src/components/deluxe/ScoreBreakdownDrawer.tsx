@@ -110,8 +110,8 @@ export function ScoreBreakdownDrawer({ open, onOpenChange, category, score }: Pr
               </div>
             </div>
             <DrawerClose
-              className="flex h-8 w-8 items-center justify-center border border-gold/20 text-muted-foreground hover:text-gold"
-              aria-label="Close"
+              className="flex h-8 w-8 items-center justify-center border border-gold/20 text-muted-foreground hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70"
+              aria-label={`Close ${section.title} breakdown`}
             >
               <X className="h-4 w-4" />
             </DrawerClose>
