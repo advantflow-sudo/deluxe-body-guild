@@ -20,7 +20,9 @@ export const Route = createFileRoute("/fitness")({
         content:
           "AI-personalised workouts and full body breakdown. Train smarter at every level.",
       },
+      { property: "og:url", content: "https://deluxefitness.app/fitness" },
     ],
+    links: [{ rel: "canonical", href: "https://deluxefitness.app/fitness" }],
   }),
   component: Page,
 });

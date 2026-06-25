@@ -12,7 +12,9 @@ export const Route = createFileRoute("/gallery")({
       { name: "description", content: "The Deluxe Gallery — real training, real people, real results from inside the Deluxe Fitness movement." },
       { property: "og:title", content: "The Deluxe Gallery" },
       { property: "og:description", content: "Real training. Real people. Real results." },
+      { property: "og:url", content: "https://deluxefitness.app/gallery" },
     ],
+    links: [{ rel: "canonical", href: "https://deluxefitness.app/gallery" }],
   }),
   component: Page,
 });

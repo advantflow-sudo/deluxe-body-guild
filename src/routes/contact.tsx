@@ -20,7 +20,9 @@ export const Route = createFileRoute("/contact")({
         content:
           "Reach the Deluxe Fitness team — partnerships, press, gym contracts and member support.",
       },
+      { property: "og:url", content: "https://deluxefitness.app/contact" },
     ],
+    links: [{ rel: "canonical", href: "https://deluxefitness.app/contact" }],
   }),
   component: Page,
 });
