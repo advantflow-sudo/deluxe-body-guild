@@ -19,6 +19,9 @@ const PATHS = [
   "/founder",
   "/challenges",
   "/roadmap",
+  "/terms",
+  "/privacy",
+  "/company-policy",
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({

@@ -13,6 +13,21 @@ export const Route = createFileRoute("/founder")({
       { property: "og:url", content: "https://deluxefitness.app/founder" },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/founder" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: "The Vision Behind Deluxe Fitness",
+          url: "https://deluxefitness.app/founder",
+          author: { "@type": "Organization", name: "Deluxe Fitness" },
+          publisher: { "@type": "Organization", name: "Deluxe Fitness" },
+          articleBody:
+            "Built for the people who knew there was more in them — and refused to settle for another generic fitness app. A movement built on discipline, identity, and the belief that most people are capable of far more than they're currently living.",
+        }),
+      },
+    ],
   }),
   component: FounderPage,
 });
