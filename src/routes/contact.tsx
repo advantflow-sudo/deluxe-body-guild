@@ -23,6 +23,24 @@ export const Route = createFileRoute("/contact")({
       { property: "og:url", content: "https://deluxefitness.app/contact" },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/contact" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: "Deluxe Fitness",
+          url: "https://deluxefitness.app",
+          telephone: "+44 20 0000 0000",
+          email: "hello@deluxefitness.app",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "London",
+            addressCountry: "GB",
+          },
+        }),
+      },
+    ],
   }),
   component: Page,
 });

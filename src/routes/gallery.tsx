@@ -15,6 +15,19 @@ export const Route = createFileRoute("/gallery")({
       { property: "og:url", content: "https://deluxefitness.app/gallery" },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/gallery" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ImageGallery",
+          name: "The Deluxe Gallery",
+          url: "https://deluxefitness.app/gallery",
+          description:
+            "Real training, real people, real results from inside the Deluxe Fitness movement.",
+        }),
+      },
+    ],
   }),
   component: Page,
 });
