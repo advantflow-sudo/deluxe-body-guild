@@ -17,7 +17,9 @@ export const Route = createFileRoute("/wellbeing")({
         content:
           "Yoga, pilates, mobility, mindset and recovery — premium wellbeing content.",
       },
+      { property: "og:url", content: "https://deluxefitness.app/wellbeing" },
     ],
+    links: [{ rel: "canonical", href: "https://deluxefitness.app/wellbeing" }],
   }),
   component: Page,
 });

@@ -26,7 +26,9 @@ export const Route = createFileRoute("/what-we-offer")({
         content:
           "Workouts, AI coach, nutrition, wellbeing, community, rewards. Built for those who demand more.",
       },
+      { property: "og:url", content: "https://deluxefitness.app/what-we-offer" },
     ],
+    links: [{ rel: "canonical", href: "https://deluxefitness.app/what-we-offer" }],
   }),
   component: Page,
 });

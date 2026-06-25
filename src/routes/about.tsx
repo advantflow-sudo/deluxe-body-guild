@@ -19,7 +19,9 @@ export const Route = createFileRoute("/about")({
         content:
           "Our history, where we are, where we're going, and the Deluxe community.",
       },
+      { property: "og:url", content: "https://deluxefitness.app/about" },
     ],
+    links: [{ rel: "canonical", href: "https://deluxefitness.app/about" }],
   }),
   component: Page,
 });
