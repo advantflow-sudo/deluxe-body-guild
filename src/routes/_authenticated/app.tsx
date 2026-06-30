@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { BottomNav } from "@/components/deluxe/BottomNav";
 import { NotificationBell } from "@/components/deluxe/NotificationBell";
+import { BiometricLock } from "@/components/deluxe/BiometricLock";
 
 export const Route = createFileRoute("/_authenticated/app")({
   component: AppShell,
