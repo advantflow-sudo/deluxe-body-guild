@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Dumbbell, Target, TrendingUp, Wand2, User } from "lucide-react";
+import { haptic } from "@/hooks/useHaptics";
 
 const items = [
   { to: "/app", label: "Home", icon: Home, exact: true },
@@ -19,6 +20,7 @@ export function BottomNav() {
           <Link
             key={i.to}
             to={i.to}
+            onClick={() => haptic("selection")}
             activeOptions={{ exact: i.exact ?? false }}
             className="group flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 rounded px-0.5 py-1.5 text-[8px] font-semibold uppercase tracking-[0.12em] text-foreground/50 transition-colors hover:text-gold sm:gap-1 sm:px-1 sm:py-2 sm:tracking-[0.18em]"
             activeProps={{ className: "text-gold" }}
