@@ -8,6 +8,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
 import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
 import { SuggestedMembers } from "@/components/deluxe/SuggestedMembers";
+import { haptic } from "@/hooks/useHaptics";
+import { ShareButton } from "@/components/deluxe/ShareButton";
 
 export const Route = createFileRoute("/_authenticated/app/community")({
   component: CommunityTab,
