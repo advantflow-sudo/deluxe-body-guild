@@ -612,7 +612,7 @@ function Comments({
         >
           <div className="min-w-0">
             <span className="font-semibold text-gold">{c.name}</span>{" "}
-            <span className="text-foreground">{c.body}</span>
+            <span className="text-foreground">{renderRichText(String(c.body))}</span>
           </div>
           <div className="flex shrink-0 items-center gap-1">
             <ShareButton
