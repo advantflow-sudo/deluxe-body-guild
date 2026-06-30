@@ -18,6 +18,7 @@ import { InstallPrompt } from "@/components/deluxe/InstallPrompt";
 import { ReduceMotionProvider } from "@/hooks/useReduceMotion";
 import { CursorSpotlight } from "@/components/deluxe/CursorSpotlight";
 import { ScrollProgress } from "@/components/deluxe/ScrollProgress";
+import { ConfirmDialogProvider } from "@/components/deluxe/ConfirmDialog";
 
 import appCss from "../styles.css?url";
 
@@ -174,14 +175,16 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ReduceMotionProvider>
         <AuthProvider>
-          <ScrollProgress />
-          <CursorSpotlight />
-          <Outlet />
-          <CommandPalette />
-          <MarketingChatBot />
-          <CookieConsent />
-          <InstallPrompt />
-          <Toaster theme="dark" position="top-right" />
+          <ConfirmDialogProvider>
+            <ScrollProgress />
+            <CursorSpotlight />
+            <Outlet />
+            <CommandPalette />
+            <MarketingChatBot />
+            <CookieConsent />
+            <InstallPrompt />
+            <Toaster theme="dark" position="top-right" />
+          </ConfirmDialogProvider>
         </AuthProvider>
       </ReduceMotionProvider>
     </QueryClientProvider>
