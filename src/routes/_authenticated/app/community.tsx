@@ -149,8 +149,11 @@ function CommunityTab() {
     const pid = sp.get("p");
     const cid = sp.get("c");
     if (!pid) return;
-    if (!posts.some((p) => p.id === pid)) return;
     scrolledRef.current = true;
+    if (!posts.some((p) => p.id === pid)) {
+      toast.error("That post is no longer available.");
+      return;
+    }
     setOpenComments(pid);
     if (cid) setFocusCommentId(cid);
     requestAnimationFrame(() => {
