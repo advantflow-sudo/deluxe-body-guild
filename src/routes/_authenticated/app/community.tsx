@@ -13,6 +13,8 @@ import { ShareButton } from "@/components/deluxe/ShareButton";
 
 const MUTE_KEY = "df_muted_posts_v1";
 const REPORT_KEY = "df_reported_posts_v1";
+const MUTE_COMMENT_USER_KEY = "df_muted_comment_users_v1";
+const REPORT_COMMENT_KEY = "df_reported_comments_v1";
 function readSet(key: string): Set<string> {
   if (typeof window === "undefined") return new Set();
   try { return new Set(JSON.parse(localStorage.getItem(key) ?? "[]")); } catch { return new Set(); }
