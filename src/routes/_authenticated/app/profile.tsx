@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Crown, Bell, HelpCircle, FileText, Shield, ChevronRight } from "lucide-react";
+import { LogOut, Crown, Bell, HelpCircle, FileText, Shield, ChevronRight, Fingerprint } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { TransformationLevel } from "@/components/deluxe/TransformationLevel";
 import { PushPrompt } from "@/components/deluxe/PushPrompt";
+import { useBiometric } from "@/hooks/useBiometric";
+import { haptic } from "@/hooks/useHaptics";
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
   component: ProfileTab,
