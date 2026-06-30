@@ -429,7 +429,7 @@ function CommunityTab() {
                 )}
               </div>
             </header>
-            <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{p.body}</p>
+            <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{renderRichText(p.body)}</p>
             {p.workout_title && (
               <div className="mt-3 inline-flex items-center gap-2 border border-gold/20 bg-deluxe-black px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-gold">
                 <Dumbbell className="h-3 w-3" /> {p.workout_title}
