@@ -101,7 +101,7 @@ export function SuggestedMembers() {
                 {m.followers} followers
               </div>
               <button
-                onClick={() => toggle(m)}
+                onClick={() => { haptic(m.following ? "light" : "success"); toggle(m); }}
                 className={`mt-2 flex w-full items-center justify-center gap-1 border px-2 py-1.5 text-[10px] uppercase tracking-[0.2em] transition ${
                   m.following
                     ? "border-gold/30 bg-gold/5 text-gold"
