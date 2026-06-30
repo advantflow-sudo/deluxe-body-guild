@@ -4,6 +4,7 @@ import { UserPlus, UserCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "./ui";
+import { haptic } from "@/hooks/useHaptics";
 
 interface Member {
   id: string;
