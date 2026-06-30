@@ -170,6 +170,29 @@ function CommunityTab() {
 
   const confirmDialog = useConfirm();
 
+  // Hashtag/mention filters from URL (?tag=, ?u=)
+  const searchStr = useRouterState({ select: (s) => s.location.searchStr });
+  const { activeTag, activeUser } = useMemo(() => {
+    const sp = new URLSearchParams(searchStr ?? "");
+    return { activeTag: sp.get("tag")?.toLowerCase() ?? null, activeUser: sp.get("u") ?? null };
+  }, [searchStr]);
+
+  const filteredPosts = useMemo(() => {
+    const base = posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id));
+    if (activeTag) {
+      const needle = `#${activeTag}`;
+      return base.filter((p) => p.body.toLowerCase().includes(needle));
+    }
+    if (activeUser) {
+      const needle = activeUser.toLowerCase();
+      return base.filter((p) => {
+        if (p.body.toLowerCase().includes(`@${needle}`)) return true;
+        return (p.profile?.display_name ?? "").toLowerCase().includes(needle);
+      });
+    }
+    return base;
+  }, [posts, muted, reported, activeTag, activeUser]);
+
   const muteUser = async (post: Post) => {
     const ok = await confirmDialog({
       title: "Mute member",
