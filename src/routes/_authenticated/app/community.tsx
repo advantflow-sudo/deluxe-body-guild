@@ -49,6 +49,11 @@ function CommunityTab() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
   const [openComments, setOpenComments] = useState<string | null>(null);
+  const [muted, setMuted] = useState<Set<string>>(() => readSet(MUTE_KEY));
+  const [reported, setReported] = useState<Set<string>>(() => readSet(REPORT_KEY));
+  const [menuFor, setMenuFor] = useState<string | null>(null);
+  const [focusCommentId, setFocusCommentId] = useState<string | null>(null);
+  const scrolledRef = useRef(false);
 
   const load = async () => {
     setLoading(true);
