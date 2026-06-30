@@ -6,6 +6,7 @@ import { format, subDays } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
+import { haptic } from "@/hooks/useHaptics";
 
 export const Route = createFileRoute("/_authenticated/app/habits")({
   component: HabitsTab,
