@@ -36,6 +36,9 @@ function AppShell() {
 
   return (
     <div className="min-h-screen bg-deluxe-black pb-24">
+      <div className="pointer-events-none fixed right-3 top-[max(env(safe-area-inset-top),0.75rem)] z-40 sm:right-5">
+        <div className="pointer-events-auto"><NotificationBell /></div>
+      </div>
       <Outlet />
       <BottomNav />
     </div>
