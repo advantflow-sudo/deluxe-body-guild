@@ -131,7 +131,7 @@ function HabitsTab() {
                     </div>
                   </div>
                 </div>
-                <button onClick={() => remove(h)} className="text-muted-foreground hover:text-gold">
+                <button onClick={() => { haptic("warning"); remove(h); }} className="text-muted-foreground hover:text-gold">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
