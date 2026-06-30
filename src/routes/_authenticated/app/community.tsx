@@ -329,15 +329,28 @@ function CommunityTab() {
         </div>
       </form>
 
+      {/* Active filter banner */}
+      {(activeTag || activeUser) && (
+        <div className="mt-4 flex items-center justify-between border border-gold/30 bg-deluxe-forest/30 px-3 py-2 text-xs">
+          <div className="flex items-center gap-2 text-foreground">
+            {activeTag ? <Hash className="h-3.5 w-3.5 text-gold" /> : <AtSign className="h-3.5 w-3.5 text-gold" />}
+            <span className="uppercase tracking-[0.2em] text-muted-foreground">Filter</span>
+            <span className="font-semibold text-gold">{activeTag ?? activeUser}</span>
+            <span className="text-muted-foreground">· {filteredPosts.length} result{filteredPosts.length === 1 ? "" : "s"}</span>
+          </div>
+          <Link to="/app/community" className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-gold">Clear</Link>
+        </div>
+      )}
+
       {/* Feed */}
       <div className="mt-6 space-y-4 pb-12">
         {loading && <div className="text-center text-xs text-muted-foreground">Loading feed…</div>}
-        {!loading && posts.length === 0 && (
+        {!loading && filteredPosts.length === 0 && (
           <div className="border border-gold/10 bg-deluxe-forest/10 p-8 text-center text-sm text-muted-foreground">
-            Be the first to post.
+            {activeTag || activeUser ? "No posts match this filter yet." : "Be the first to post."}
           </div>
         )}
-        {posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id)).map((p) => (
+        {filteredPosts.map((p) => (
           <article
             key={p.id}
             id={`post-${p.id}`}
