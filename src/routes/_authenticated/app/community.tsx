@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
-import { Heart, MessageCircle, Image as ImageIcon, Dumbbell, Send, Globe, Crown, X, Trash2 } from "lucide-react";
+import { useEffect, useState, useRef, type FormEvent } from "react";
+import { Heart, MessageCircle, Image as ImageIcon, Dumbbell, Send, Globe, Crown, X, Trash2, MoreHorizontal, Flag, BellOff } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,16 @@ import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
 import { SuggestedMembers } from "@/components/deluxe/SuggestedMembers";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
+
+const MUTE_KEY = "df_muted_posts_v1";
+const REPORT_KEY = "df_reported_posts_v1";
+function readSet(key: string): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try { return new Set(JSON.parse(localStorage.getItem(key) ?? "[]")); } catch { return new Set(); }
+}
+function writeSet(key: string, s: Set<string>) {
+  try { localStorage.setItem(key, JSON.stringify(Array.from(s))); } catch { /* noop */ }
+}
 
 export const Route = createFileRoute("/_authenticated/app/community")({
   component: CommunityTab,
@@ -39,6 +49,11 @@ function CommunityTab() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
   const [openComments, setOpenComments] = useState<string | null>(null);
+  const [muted, setMuted] = useState<Set<string>>(() => readSet(MUTE_KEY));
+  const [reported, setReported] = useState<Set<string>>(() => readSet(REPORT_KEY));
+  const [menuFor, setMenuFor] = useState<string | null>(null);
+  const [focusCommentId, setFocusCommentId] = useState<string | null>(null);
+  const scrolledRef = useRef(false);
 
   const load = async () => {
     setLoading(true);
@@ -124,6 +139,52 @@ function CommunityTab() {
         );
       });
   }, [user]);
+
+  // Deep-link: /app/community?p=POSTID(&c=COMMENTID) — scroll & focus once posts load.
+  useEffect(() => {
+    if (loading || scrolledRef.current || typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    const pid = sp.get("p");
+    const cid = sp.get("c");
+    if (!pid) return;
+    if (!posts.some((p) => p.id === pid)) return;
+    scrolledRef.current = true;
+    setOpenComments(pid);
+    if (cid) setFocusCommentId(cid);
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`post-${pid}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("ring-2", "ring-gold/60");
+        setTimeout(() => el.classList.remove("ring-2", "ring-gold/60"), 2400);
+      }
+    });
+  }, [loading, posts]);
+
+  const muteUser = (post: Post) => {
+    haptic("warning");
+    if (!confirm(`Mute posts from ${post.profile?.display_name ?? "this member"}?`)) return;
+    const next = new Set(muted);
+    next.add(post.user_id);
+    setMuted(next);
+    writeSet(MUTE_KEY, next);
+    haptic("success");
+    toast.success("Muted. You won't see their posts.");
+    setMenuFor(null);
+  };
+
+  const reportPost = (post: Post) => {
+    haptic("warning");
+    if (!confirm("Report this post for review?\nOur team will check it within 24 hours.")) return;
+    const next = new Set(reported);
+    next.add(post.id);
+    setReported(next);
+    writeSet(REPORT_KEY, next);
+    haptic("success");
+    toast.success("Reported. Thank you for keeping the community safe.");
+    setMenuFor(null);
+  };
+
 
   const handleImage = (f: File | null) => {
     setImageFile(f);
@@ -250,8 +311,12 @@ function CommunityTab() {
             Be the first to post.
           </div>
         )}
-        {posts.map((p) => (
-          <article key={p.id} className="border border-gold/15 bg-deluxe-forest/20 p-4">
+        {posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id)).map((p) => (
+          <article
+            key={p.id}
+            id={`post-${p.id}`}
+            className="relative scroll-mt-24 border border-gold/15 bg-deluxe-forest/20 p-4 transition-shadow"
+          >
             <header className="flex items-center justify-between">
               <Link to="/app/u/$userId" params={{ userId: p.user_id }} className="flex items-center gap-3">
                 <Avatar url={p.profile?.avatar_url} name={p.profile?.display_name} />
@@ -263,11 +328,44 @@ function CommunityTab() {
                   </div>
                 </div>
               </Link>
-              {p.user_id === user?.id && (
-                <button onClick={() => deletePost(p.id)} className="text-muted-foreground hover:text-gold">
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                {p.user_id === user?.id && (
+                  <button onClick={() => { haptic("warning"); deletePost(p.id); }} className="text-muted-foreground hover:text-gold" aria-label="Delete post">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                )}
+                {p.user_id !== user?.id && (
+                  <div className="relative">
+                    <button
+                      onClick={() => { haptic("selection"); setMenuFor(menuFor === p.id ? null : p.id); }}
+                      className="text-muted-foreground hover:text-gold"
+                      aria-label="More options"
+                      aria-haspopup="menu"
+                      aria-expanded={menuFor === p.id}
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </button>
+                    {menuFor === p.id && (
+                      <div role="menu" className="absolute right-0 top-6 z-20 w-44 border border-gold/30 bg-deluxe-black/95 p-1 shadow-xl backdrop-blur">
+                        <button
+                          role="menuitem"
+                          onClick={() => muteUser(p)}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-foreground hover:bg-gold/10"
+                        >
+                          <BellOff className="h-3.5 w-3.5" /> Mute member
+                        </button>
+                        <button
+                          role="menuitem"
+                          onClick={() => reportPost(p)}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10"
+                        >
+                          <Flag className="h-3.5 w-3.5" /> Report post
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </header>
             <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{p.body}</p>
             {p.workout_title && (
@@ -295,7 +393,13 @@ function CommunityTab() {
                 className="ml-auto inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-gold"
               />
             </div>
-            {openComments === p.id && <Comments postId={p.id} onChange={load} />}
+            {openComments === p.id && (
+              <Comments
+                postId={p.id}
+                onChange={load}
+                focusCommentId={focusCommentId}
+              />
+            )}
           </article>
         ))}
       </div>
@@ -312,10 +416,19 @@ function Avatar({ url, name }: { url?: string | null; name?: string | null }) {
   );
 }
 
-function Comments({ postId, onChange }: { postId: string; onChange: () => void }) {
+function Comments({
+  postId,
+  onChange,
+  focusCommentId,
+}: {
+  postId: string;
+  onChange: () => void;
+  focusCommentId?: string | null;
+}) {
   const { user } = useAuth();
   const [items, setItems] = useState<any[]>([]);
   const [text, setText] = useState("");
+  const focusedRef = useRef(false);
 
   const load = async () => {
     const { data } = await supabase
@@ -332,11 +445,28 @@ function Comments({ postId, onChange }: { postId: string; onChange: () => void }
   };
   useEffect(() => { load(); }, [postId]);
 
+  // Scroll to the targeted comment once loaded
+  useEffect(() => {
+    if (!focusCommentId || focusedRef.current) return;
+    if (!items.some((c) => c.id === focusCommentId)) return;
+    focusedRef.current = true;
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`comment-${focusCommentId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("bg-gold/10");
+        setTimeout(() => el.classList.remove("bg-gold/10"), 2400);
+      }
+    });
+  }, [items, focusCommentId]);
+
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user || !text.trim()) return;
+    haptic("light");
     const { error } = await supabase.from("post_comments").insert({ post_id: postId, user_id: user.id, body: text.trim() });
-    if (error) return toast.error(error.message);
+    if (error) { haptic("error"); return toast.error(error.message); }
+    haptic("success");
     setText("");
     await load();
     onChange();
@@ -345,9 +475,22 @@ function Comments({ postId, onChange }: { postId: string; onChange: () => void }
   return (
     <div className="mt-3 space-y-2 border-t border-gold/10 pt-3">
       {items.map((c) => (
-        <div key={c.id} className="text-xs">
-          <span className="font-semibold text-gold">{c.name}</span>{" "}
-          <span className="text-foreground">{c.body}</span>
+        <div
+          key={c.id}
+          id={`comment-${c.id}`}
+          className="group flex items-start justify-between gap-2 rounded px-1 py-1 text-xs transition-colors"
+        >
+          <div className="min-w-0">
+            <span className="font-semibold text-gold">{c.name}</span>{" "}
+            <span className="text-foreground">{c.body}</span>
+          </div>
+          <ShareButton
+            title="Deluxe Fitness comment"
+            text={`${c.name}: ${String(c.body).slice(0, 140)}`}
+            url={`/app/community?p=${postId}&c=${c.id}`}
+            label=""
+            className="shrink-0 text-muted-foreground opacity-0 transition hover:text-gold group-hover:opacity-100"
+          />
         </div>
       ))}
       <form onSubmit={submit} className="flex items-center gap-2">
