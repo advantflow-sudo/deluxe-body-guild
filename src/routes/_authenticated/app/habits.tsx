@@ -6,6 +6,7 @@ import { format, subDays } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
+import { haptic } from "@/hooks/useHaptics";
 
 export const Route = createFileRoute("/_authenticated/app/habits")({
   component: HabitsTab,
@@ -130,7 +131,7 @@ function HabitsTab() {
                     </div>
                   </div>
                 </div>
-                <button onClick={() => remove(h)} className="text-muted-foreground hover:text-gold">
+                <button onClick={() => { haptic("warning"); remove(h); }} className="text-muted-foreground hover:text-gold">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -158,7 +159,7 @@ function HabitsTab() {
               <button
                 key={p.name}
                 disabled={added}
-                onClick={() => addPreset(p)}
+                onClick={() => { haptic("success"); addPreset(p); }}
                 className={`flex items-center gap-2 border p-3 text-left transition-colors ${
                   added ? "border-gold/10 bg-deluxe-black/40 opacity-40" : "border-gold/20 bg-deluxe-forest/20 hover:border-gold/50"
                 }`}
