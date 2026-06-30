@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { BottomNav } from "@/components/deluxe/BottomNav";
+import { NotificationBell } from "@/components/deluxe/NotificationBell";
 
 export const Route = createFileRoute("/_authenticated/app")({
   component: AppShell,
