@@ -279,14 +279,21 @@ function CommunityTab() {
               <img src={p.image_url} alt="" loading="lazy" className="mt-3 max-h-96 w-full rounded border border-gold/10 object-cover" />
             )}
             <div className="mt-4 flex items-center gap-4 border-t border-gold/10 pt-3">
-              <button onClick={() => toggleLike(p)}
+              <button onClick={() => { haptic(p.liked ? "light" : "success"); toggleLike(p); }}
                 className={`flex items-center gap-1.5 text-xs transition-colors ${p.liked ? "text-gold" : "text-muted-foreground hover:text-gold"}`}>
                 <Heart className={`h-4 w-4 ${p.liked ? "fill-gold" : ""}`} /> {p.likes}
               </button>
-              <button onClick={() => setOpenComments(openComments === p.id ? null : p.id)}
+              <button onClick={() => { haptic("selection"); setOpenComments(openComments === p.id ? null : p.id); }}
                 className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-gold">
                 <MessageCircle className="h-4 w-4" /> {p.comments}
               </button>
+              <ShareButton
+                title={`Deluxe Fitness — ${p.profile?.display_name ?? "Member"}`}
+                text={p.body.slice(0, 140)}
+                url={`/app/community?p=${p.id}`}
+                label="Share"
+                className="ml-auto inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-gold"
+              />
             </div>
             {openComments === p.id && <Comments postId={p.id} onChange={load} />}
           </article>
