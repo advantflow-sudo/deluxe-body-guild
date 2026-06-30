@@ -19,6 +19,8 @@ import { ReduceMotionProvider } from "@/hooks/useReduceMotion";
 import { CursorSpotlight } from "@/components/deluxe/CursorSpotlight";
 import { ScrollProgress } from "@/components/deluxe/ScrollProgress";
 import { ConfirmDialogProvider } from "@/components/deluxe/ConfirmDialog";
+import { NotificationsProvider } from "@/hooks/useNotifications";
+import { registerServiceWorker } from "@/lib/registerSW";
 
 import appCss from "../styles.css?url";
 
