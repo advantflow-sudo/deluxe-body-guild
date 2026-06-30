@@ -6,6 +6,8 @@ import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { ShareButton } from "@/components/deluxe/ShareButton";
+import { haptic } from "@/hooks/useHaptics";
 
 export const Route = createFileRoute("/_authenticated/app/u/$userId")({
   component: ProfileView,
@@ -118,7 +120,15 @@ function ProfileView() {
           </div>
         )}
         <div className="flex-1">
-          <h1 className="font-display text-2xl text-foreground">{profile?.display_name ?? "Member"}</h1>
+          <div className="flex items-start justify-between gap-2">
+            <h1 className="font-display text-2xl text-foreground">{profile?.display_name ?? "Member"}</h1>
+            <ShareButton
+              title={`${profile?.display_name ?? "Member"} on Deluxe Fitness`}
+              text="Check out my profile on Deluxe Fitness"
+              url={`/app/u/${userId}`}
+              label="Share"
+            />
+          </div>
           {ext?.subscription_tier && ext.subscription_tier !== "free" && (
             <span className="mt-1 inline-block text-[10px] uppercase tracking-[0.25em] text-gold">{ext.subscription_tier}</span>
           )}
@@ -133,7 +143,7 @@ function ProfileView() {
       </div>
 
       {!isSelf && (
-        <button onClick={toggleFollow}
+        <button onClick={() => { haptic(following ? "light" : "success"); toggleFollow(); }}
           className={`mt-4 flex w-full items-center justify-center gap-2 border px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] transition ${
             following ? "border-gold/30 bg-gold/5 text-gold" : "border-gold bg-gold-gradient text-deluxe-black"
           }`}>
