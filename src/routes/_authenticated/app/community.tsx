@@ -10,6 +10,7 @@ import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
 import { SuggestedMembers } from "@/components/deluxe/SuggestedMembers";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
+import { useConfirm } from "@/components/deluxe/ConfirmDialog";
 
 const MUTE_KEY = "df_muted_posts_v1";
 const REPORT_KEY = "df_reported_posts_v1";
@@ -166,26 +167,38 @@ function CommunityTab() {
     });
   }, [loading, posts]);
 
-  const muteUser = (post: Post) => {
-    haptic("warning");
-    if (!confirm(`Mute posts from ${post.profile?.display_name ?? "this member"}?`)) return;
+  const confirmDialog = useConfirm();
+
+  const muteUser = async (post: Post) => {
+    const ok = await confirmDialog({
+      title: "Mute member",
+      description: `Hide all posts from ${post.profile?.display_name ?? "this member"}. You can undo this later from settings.`,
+      confirmLabel: "Mute",
+      tone: "warning",
+      icon: <BellOff className="h-5 w-5" />,
+    });
+    if (!ok) return;
     const next = new Set(muted);
     next.add(post.user_id);
     setMuted(next);
     writeSet(MUTE_KEY, next);
-    haptic("success");
     toast.success("Muted. You won't see their posts.");
     setMenuFor(null);
   };
 
-  const reportPost = (post: Post) => {
-    haptic("warning");
-    if (!confirm("Report this post for review?\nOur team will check it within 24 hours.")) return;
+  const reportPost = async (post: Post) => {
+    const ok = await confirmDialog({
+      title: "Report post",
+      description: "Our moderation team will review this post within 24 hours. Thanks for keeping the community premium.",
+      confirmLabel: "Report",
+      tone: "danger",
+      icon: <Flag className="h-5 w-5" />,
+    });
+    if (!ok) return;
     const next = new Set(reported);
     next.add(post.id);
     setReported(next);
     writeSet(REPORT_KEY, next);
-    haptic("success");
     toast.success("Reported. Thank you for keeping the community safe.");
     setMenuFor(null);
   };
@@ -242,7 +255,14 @@ function CommunityTab() {
   };
 
   const deletePost = async (id: string) => {
-    if (!confirm("Delete this post?")) return;
+    const ok = await confirmDialog({
+      title: "Delete post",
+      description: "This will permanently remove your post and its comments. This cannot be undone.",
+      confirmLabel: "Delete",
+      tone: "danger",
+      icon: <Trash2 className="h-5 w-5" />,
+    });
+    if (!ok) return;
     await supabase.from("community_posts").delete().eq("id", id);
     setPosts((p) => p.filter((x) => x.id !== id));
   };
@@ -439,6 +459,7 @@ function Comments({
   const [mutedUsers, setMutedUsers] = useState<Set<string>>(() => readSet(MUTE_COMMENT_USER_KEY));
   const [reportedComments, setReportedComments] = useState<Set<string>>(() => readSet(REPORT_COMMENT_KEY));
   const [menuFor, setMenuFor] = useState<string | null>(null);
+  const confirmDialog = useConfirm();
 
   const load = async () => {
     const { data } = await supabase
@@ -493,36 +514,51 @@ function Comments({
     onChange();
   };
 
-  const muteCommentAuthor = (c: any) => {
-    haptic("warning");
-    if (!confirm(`Mute replies from ${c.name}?`)) return;
+  const muteCommentAuthor = async (c: any) => {
+    const ok = await confirmDialog({
+      title: "Mute member",
+      description: `Hide all replies from ${c.name}. You can undo this later from settings.`,
+      confirmLabel: "Mute",
+      tone: "warning",
+      icon: <BellOff className="h-5 w-5" />,
+    });
+    if (!ok) return;
     const next = new Set(mutedUsers);
     next.add(c.user_id);
     setMutedUsers(next);
     writeSet(MUTE_COMMENT_USER_KEY, next);
-    haptic("success");
     toast.success("Muted. Their replies are hidden.");
     setMenuFor(null);
   };
 
-  const reportComment = (c: any) => {
-    haptic("warning");
-    if (!confirm("Report this reply for review?\nOur team will check it within 24 hours.")) return;
+  const reportComment = async (c: any) => {
+    const ok = await confirmDialog({
+      title: "Report reply",
+      description: "Our moderation team will review this reply within 24 hours. Thanks for keeping the community premium.",
+      confirmLabel: "Report",
+      tone: "danger",
+      icon: <Flag className="h-5 w-5" />,
+    });
+    if (!ok) return;
     const next = new Set(reportedComments);
     next.add(c.id);
     setReportedComments(next);
     writeSet(REPORT_COMMENT_KEY, next);
-    haptic("success");
     toast.success("Reported. Thank you for keeping the community safe.");
     setMenuFor(null);
   };
 
   const deleteComment = async (c: any) => {
-    if (!confirm("Delete this reply?")) return;
-    haptic("warning");
+    const ok = await confirmDialog({
+      title: "Delete reply",
+      description: "This will permanently remove your reply. This cannot be undone.",
+      confirmLabel: "Delete",
+      tone: "danger",
+      icon: <Trash2 className="h-5 w-5" />,
+    });
+    if (!ok) return;
     const { error } = await supabase.from("post_comments").delete().eq("id", c.id);
     if (error) { haptic("error"); return toast.error(error.message); }
-    haptic("success");
     await load();
     onChange();
   };
