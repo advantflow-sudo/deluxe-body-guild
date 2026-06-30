@@ -25,10 +25,25 @@ function WorkoutsTab() {
   const [active, setActive] = useState<Workout | null>(null);
 
   useEffect(() => {
+    // Show cached recent workouts immediately while we fetch — works offline.
+    const cached = getRecentWorkouts();
+    if (cached.length) {
+      setWorkouts(cached.map((c) => ({
+        id: c.id, title: c.title, category: c.type ?? "Recent", level: c.level ?? "",
+        type: c.type ?? "", duration_min: 0, calories: null, description: null,
+      })));
+    }
     supabase.from("workouts").select("*").order("title").then(({ data }) => {
       if (data) setWorkouts(data as Workout[]);
     });
   }, []);
+
+  // Cache lightweight workout list for offline use.
+  useEffect(() => {
+    workouts.slice(0, 10).forEach((w) =>
+      cacheRecentWorkout({ id: w.id, title: w.title, type: w.type, level: w.level, cached_at: new Date().toISOString() }),
+    );
+  }, [workouts]);
 
   const categories = ["All", ...Array.from(new Set(workouts.map((w) => w.category)))];
   const filtered = category === "All" ? workouts : workouts.filter((w) => w.category === category);
