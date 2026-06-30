@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState, useRef, type FormEvent } from "react";
-import { Heart, MessageCircle, Image as ImageIcon, Dumbbell, Send, Globe, Crown, X, Trash2, MoreHorizontal, Flag, BellOff } from "lucide-react";
+import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useMemo, useState, useRef, type FormEvent } from "react";
+import { Heart, MessageCircle, Image as ImageIcon, Dumbbell, Send, Globe, Crown, X, Trash2, MoreHorizontal, Flag, BellOff, Hash, AtSign } from "lucide-react";
+import { renderRichText } from "@/lib/richText";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -169,6 +170,29 @@ function CommunityTab() {
 
   const confirmDialog = useConfirm();
 
+  // Hashtag/mention filters from URL (?tag=, ?u=)
+  const searchStr = useRouterState({ select: (s) => s.location.searchStr });
+  const { activeTag, activeUser } = useMemo(() => {
+    const sp = new URLSearchParams(searchStr ?? "");
+    return { activeTag: sp.get("tag")?.toLowerCase() ?? null, activeUser: sp.get("u") ?? null };
+  }, [searchStr]);
+
+  const filteredPosts = useMemo(() => {
+    const base = posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id));
+    if (activeTag) {
+      const needle = `#${activeTag}`;
+      return base.filter((p) => p.body.toLowerCase().includes(needle));
+    }
+    if (activeUser) {
+      const needle = activeUser.toLowerCase();
+      return base.filter((p) => {
+        if (p.body.toLowerCase().includes(`@${needle}`)) return true;
+        return (p.profile?.display_name ?? "").toLowerCase().includes(needle);
+      });
+    }
+    return base;
+  }, [posts, muted, reported, activeTag, activeUser]);
+
   const muteUser = async (post: Post) => {
     const ok = await confirmDialog({
       title: "Mute member",
@@ -328,15 +352,28 @@ function CommunityTab() {
         </div>
       </form>
 
+      {/* Active filter banner */}
+      {(activeTag || activeUser) && (
+        <div className="mt-4 flex items-center justify-between border border-gold/30 bg-deluxe-forest/30 px-3 py-2 text-xs">
+          <div className="flex items-center gap-2 text-foreground">
+            {activeTag ? <Hash className="h-3.5 w-3.5 text-gold" /> : <AtSign className="h-3.5 w-3.5 text-gold" />}
+            <span className="uppercase tracking-[0.2em] text-muted-foreground">Filter</span>
+            <span className="font-semibold text-gold">{activeTag ?? activeUser}</span>
+            <span className="text-muted-foreground">· {filteredPosts.length} result{filteredPosts.length === 1 ? "" : "s"}</span>
+          </div>
+          <Link to="/app/community" className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-gold">Clear</Link>
+        </div>
+      )}
+
       {/* Feed */}
       <div className="mt-6 space-y-4 pb-12">
         {loading && <div className="text-center text-xs text-muted-foreground">Loading feed…</div>}
-        {!loading && posts.length === 0 && (
+        {!loading && filteredPosts.length === 0 && (
           <div className="border border-gold/10 bg-deluxe-forest/10 p-8 text-center text-sm text-muted-foreground">
-            Be the first to post.
+            {activeTag || activeUser ? "No posts match this filter yet." : "Be the first to post."}
           </div>
         )}
-        {posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id)).map((p) => (
+        {filteredPosts.map((p) => (
           <article
             key={p.id}
             id={`post-${p.id}`}
@@ -392,7 +429,7 @@ function CommunityTab() {
                 )}
               </div>
             </header>
-            <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{p.body}</p>
+            <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{renderRichText(p.body)}</p>
             {p.workout_title && (
               <div className="mt-3 inline-flex items-center gap-2 border border-gold/20 bg-deluxe-black px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-gold">
                 <Dumbbell className="h-3 w-3" /> {p.workout_title}
@@ -575,7 +612,7 @@ function Comments({
         >
           <div className="min-w-0">
             <span className="font-semibold text-gold">{c.name}</span>{" "}
-            <span className="text-foreground">{c.body}</span>
+            <span className="text-foreground">{renderRichText(String(c.body))}</span>
           </div>
           <div className="flex shrink-0 items-center gap-1">
             <ShareButton
