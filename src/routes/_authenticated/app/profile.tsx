@@ -27,6 +27,7 @@ const COUNTRIES = ["United Kingdom","United States","Canada","Ireland","Australi
 
 function ProfileTab() {
   const { user, signOut } = useAuth();
+  const bio = useBiometric();
   const [name, setName] = useState("");
   const [ext, setExt] = useState<Ext | null>(null);
   const [saving, setSaving] = useState(false);
