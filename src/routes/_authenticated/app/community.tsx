@@ -10,6 +10,7 @@ import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
 import { SuggestedMembers } from "@/components/deluxe/SuggestedMembers";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
+import { useConfirm } from "@/components/deluxe/ConfirmDialog";
 
 const MUTE_KEY = "df_muted_posts_v1";
 const REPORT_KEY = "df_reported_posts_v1";
