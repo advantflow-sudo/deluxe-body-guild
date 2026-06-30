@@ -13,6 +13,8 @@ import { ShareButton } from "@/components/deluxe/ShareButton";
 
 const MUTE_KEY = "df_muted_posts_v1";
 const REPORT_KEY = "df_reported_posts_v1";
+const MUTE_COMMENT_USER_KEY = "df_muted_comment_users_v1";
+const REPORT_COMMENT_KEY = "df_reported_comments_v1";
 function readSet(key: string): Set<string> {
   if (typeof window === "undefined") return new Set();
   try { return new Set(JSON.parse(localStorage.getItem(key) ?? "[]")); } catch { return new Set(); }
@@ -147,8 +149,11 @@ function CommunityTab() {
     const pid = sp.get("p");
     const cid = sp.get("c");
     if (!pid) return;
-    if (!posts.some((p) => p.id === pid)) return;
     scrolledRef.current = true;
+    if (!posts.some((p) => p.id === pid)) {
+      toast.error("That post is no longer available.");
+      return;
+    }
     setOpenComments(pid);
     if (cid) setFocusCommentId(cid);
     requestAnimationFrame(() => {
@@ -428,7 +433,12 @@ function Comments({
   const { user } = useAuth();
   const [items, setItems] = useState<any[]>([]);
   const [text, setText] = useState("");
+  const [loaded, setLoaded] = useState(false);
   const focusedRef = useRef(false);
+  const missingNoticedRef = useRef(false);
+  const [mutedUsers, setMutedUsers] = useState<Set<string>>(() => readSet(MUTE_COMMENT_USER_KEY));
+  const [reportedComments, setReportedComments] = useState<Set<string>>(() => readSet(REPORT_COMMENT_KEY));
+  const [menuFor, setMenuFor] = useState<string | null>(null);
 
   const load = async () => {
     const { data } = await supabase
@@ -442,23 +452,34 @@ function Comments({
       : { data: [] };
     const pm = new Map((profs ?? []).map((p: any) => [p.id, p.display_name]));
     setItems((data ?? []).map((c) => ({ ...c, name: pm.get(c.user_id) ?? "Member" })));
+    setLoaded(true);
   };
   useEffect(() => { load(); }, [postId]);
 
-  // Scroll to the targeted comment once loaded
+  // Scroll to the targeted comment once loaded — with graceful fallback.
   useEffect(() => {
-    if (!focusCommentId || focusedRef.current) return;
-    if (!items.some((c) => c.id === focusCommentId)) return;
+    if (!focusCommentId || focusedRef.current || !loaded) return;
+    const visible = items.filter(
+      (c) => !mutedUsers.has(c.user_id) && !reportedComments.has(c.id),
+    );
+    if (!visible.some((c) => c.id === focusCommentId)) {
+      if (!missingNoticedRef.current) {
+        missingNoticedRef.current = true;
+        focusedRef.current = true;
+        toast.error("That reply is no longer available.");
+      }
+      return;
+    }
     focusedRef.current = true;
     requestAnimationFrame(() => {
       const el = document.getElementById(`comment-${focusCommentId}`);
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "center" });
-        el.classList.add("bg-gold/10");
-        setTimeout(() => el.classList.remove("bg-gold/10"), 2400);
+        el.classList.add("bg-gold/10", "ring-2", "ring-gold/50");
+        setTimeout(() => el.classList.remove("bg-gold/10", "ring-2", "ring-gold/50"), 2600);
       }
     });
-  }, [items, focusCommentId]);
+  }, [items, focusCommentId, loaded, mutedUsers, reportedComments]);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -472,25 +493,102 @@ function Comments({
     onChange();
   };
 
+  const muteCommentAuthor = (c: any) => {
+    haptic("warning");
+    if (!confirm(`Mute replies from ${c.name}?`)) return;
+    const next = new Set(mutedUsers);
+    next.add(c.user_id);
+    setMutedUsers(next);
+    writeSet(MUTE_COMMENT_USER_KEY, next);
+    haptic("success");
+    toast.success("Muted. Their replies are hidden.");
+    setMenuFor(null);
+  };
+
+  const reportComment = (c: any) => {
+    haptic("warning");
+    if (!confirm("Report this reply for review?\nOur team will check it within 24 hours.")) return;
+    const next = new Set(reportedComments);
+    next.add(c.id);
+    setReportedComments(next);
+    writeSet(REPORT_COMMENT_KEY, next);
+    haptic("success");
+    toast.success("Reported. Thank you for keeping the community safe.");
+    setMenuFor(null);
+  };
+
+  const deleteComment = async (c: any) => {
+    if (!confirm("Delete this reply?")) return;
+    haptic("warning");
+    const { error } = await supabase.from("post_comments").delete().eq("id", c.id);
+    if (error) { haptic("error"); return toast.error(error.message); }
+    haptic("success");
+    await load();
+    onChange();
+  };
+
+  const visible = items.filter((c) => !mutedUsers.has(c.user_id) && !reportedComments.has(c.id));
+
   return (
     <div className="mt-3 space-y-2 border-t border-gold/10 pt-3">
-      {items.map((c) => (
+      {visible.map((c) => (
         <div
           key={c.id}
           id={`comment-${c.id}`}
-          className="group flex items-start justify-between gap-2 rounded px-1 py-1 text-xs transition-colors"
+          className="group flex items-start justify-between gap-2 rounded px-1 py-1 text-xs transition-all"
         >
           <div className="min-w-0">
             <span className="font-semibold text-gold">{c.name}</span>{" "}
             <span className="text-foreground">{c.body}</span>
           </div>
-          <ShareButton
-            title="Deluxe Fitness comment"
-            text={`${c.name}: ${String(c.body).slice(0, 140)}`}
-            url={`/app/community?p=${postId}&c=${c.id}`}
-            label=""
-            className="shrink-0 text-muted-foreground opacity-0 transition hover:text-gold group-hover:opacity-100"
-          />
+          <div className="flex shrink-0 items-center gap-1">
+            <ShareButton
+              title="Deluxe Fitness reply"
+              text={`${c.name}: ${String(c.body).slice(0, 140)}`}
+              url={`/app/community?p=${postId}&c=${c.id}`}
+              label=""
+              className="text-muted-foreground opacity-0 transition hover:text-gold group-hover:opacity-100"
+            />
+            {c.user_id === user?.id ? (
+              <button
+                onClick={() => deleteComment(c)}
+                className="text-muted-foreground opacity-0 transition hover:text-gold group-hover:opacity-100"
+                aria-label="Delete reply"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={() => { haptic("selection"); setMenuFor(menuFor === c.id ? null : c.id); }}
+                  className="text-muted-foreground opacity-0 transition hover:text-gold group-hover:opacity-100"
+                  aria-label="More reply options"
+                  aria-haspopup="menu"
+                  aria-expanded={menuFor === c.id}
+                >
+                  <MoreHorizontal className="h-3.5 w-3.5" />
+                </button>
+                {menuFor === c.id && (
+                  <div role="menu" className="absolute right-0 top-5 z-20 w-44 border border-gold/30 bg-deluxe-black/95 p-1 shadow-xl backdrop-blur">
+                    <button
+                      role="menuitem"
+                      onClick={() => muteCommentAuthor(c)}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-foreground hover:bg-gold/10"
+                    >
+                      <BellOff className="h-3.5 w-3.5" /> Mute member
+                    </button>
+                    <button
+                      role="menuitem"
+                      onClick={() => reportComment(c)}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10"
+                    >
+                      <Flag className="h-3.5 w-3.5" /> Report reply
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       ))}
       <form onSubmit={submit} className="flex items-center gap-2">
