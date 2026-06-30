@@ -159,7 +159,7 @@ function HabitsTab() {
               <button
                 key={p.name}
                 disabled={added}
-                onClick={() => addPreset(p)}
+                onClick={() => { haptic("success"); addPreset(p); }}
                 className={`flex items-center gap-2 border p-3 text-left transition-colors ${
                   added ? "border-gold/10 bg-deluxe-black/40 opacity-40" : "border-gold/20 bg-deluxe-forest/20 hover:border-gold/50"
                 }`}
