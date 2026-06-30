@@ -48,6 +48,7 @@ import { Route as AuthenticatedAppHabitsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authenticated/app/community'
 import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/app/coach'
 import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authenticated/app/challenges'
+import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticated/app/body'
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
 import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
@@ -263,6 +264,11 @@ const AuthenticatedAppChallengesRoute =
     path: '/challenges',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
+const AuthenticatedAppBodyRoute = AuthenticatedAppBodyRouteImport.update({
+  id: '/body',
+  path: '/body',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppAiRoute = AuthenticatedAppAiRouteImport.update({
   id: '/ai',
   path: '/ai',
@@ -375,6 +381,7 @@ export interface FileRoutesByFullPath {
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
+  '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
@@ -428,6 +435,7 @@ export interface FileRoutesByTo {
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
+  '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
@@ -484,6 +492,7 @@ export interface FileRoutesById {
   '/_authenticated/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/_authenticated/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/_authenticated/app/ai': typeof AuthenticatedAppAiRoute
+  '/_authenticated/app/body': typeof AuthenticatedAppBodyRoute
   '/_authenticated/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/_authenticated/app/coach': typeof AuthenticatedAppCoachRoute
   '/_authenticated/app/community': typeof AuthenticatedAppCommunityRoute
@@ -540,6 +549,7 @@ export interface FileRouteTypes {
     | '/accept-invite/$code'
     | '/admin/domain-health'
     | '/app/ai'
+    | '/app/body'
     | '/app/challenges'
     | '/app/coach'
     | '/app/community'
@@ -593,6 +603,7 @@ export interface FileRouteTypes {
     | '/accept-invite/$code'
     | '/admin/domain-health'
     | '/app/ai'
+    | '/app/body'
     | '/app/challenges'
     | '/app/coach'
     | '/app/community'
@@ -648,6 +659,7 @@ export interface FileRouteTypes {
     | '/_authenticated/accept-invite/$code'
     | '/_authenticated/admin/domain-health'
     | '/_authenticated/app/ai'
+    | '/_authenticated/app/body'
     | '/_authenticated/app/challenges'
     | '/_authenticated/app/coach'
     | '/_authenticated/app/community'
@@ -985,6 +997,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppChallengesRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/body': {
+      id: '/_authenticated/app/body'
+      path: '/body'
+      fullPath: '/app/body'
+      preLoaderRoute: typeof AuthenticatedAppBodyRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/ai': {
       id: '/_authenticated/app/ai'
       path: '/ai'
@@ -1099,6 +1118,7 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppAiRoute: typeof AuthenticatedAppAiRoute
+  AuthenticatedAppBodyRoute: typeof AuthenticatedAppBodyRoute
   AuthenticatedAppChallengesRoute: typeof AuthenticatedAppChallengesRoute
   AuthenticatedAppCoachRoute: typeof AuthenticatedAppCoachRoute
   AuthenticatedAppCommunityRoute: typeof AuthenticatedAppCommunityRoute
@@ -1116,6 +1136,7 @@ interface AuthenticatedAppRouteChildren {
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppAiRoute: AuthenticatedAppAiRoute,
+  AuthenticatedAppBodyRoute: AuthenticatedAppBodyRoute,
   AuthenticatedAppChallengesRoute: AuthenticatedAppChallengesRoute,
   AuthenticatedAppCoachRoute: AuthenticatedAppCoachRoute,
   AuthenticatedAppCommunityRoute: AuthenticatedAppCommunityRoute,

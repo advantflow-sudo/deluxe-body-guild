@@ -93,7 +93,7 @@ function BodyMapTab() {
         </div>
       </div>
 
-      <SectionLabel className="mt-6">Target Your Body</SectionLabel>
+      <div className="mt-6"><SectionLabel>Target Your Body</SectionLabel></div>
       <h1 className="mt-2 font-display text-3xl text-foreground">Tap a muscle</h1>
       <p className="mt-1 text-xs text-muted-foreground">Pick a region and we'll surface workouts that train it.</p>
 
