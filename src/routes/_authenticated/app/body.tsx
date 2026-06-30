@@ -4,6 +4,8 @@ import { ChevronLeft, Clock, Flame, Dumbbell } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { haptic } from "@/hooks/useHaptics";
+import { ShareButton } from "@/components/deluxe/ShareButton";
 
 const searchSchema = z.object({
   muscle: z.string().optional(),
@@ -69,11 +71,17 @@ function BodyMapTab() {
       .map((x) => x.w);
   }, [activeMuscle, allWorkouts]);
 
-  const setMuscle = (key: string | null) =>
+  const setMuscle = (key: string | null) => {
+    haptic(key ? "selection" : "light");
     navigate({ to: "/app/body", search: { view, ...(key ? { muscle: key } : {}) } });
+  };
 
-  const setView = (v: "front" | "back") =>
+  const setView = (v: "front" | "back") => {
+    haptic("light");
     navigate({ to: "/app/body", search: { view: v, ...(muscle ? { muscle } : {}) } });
+  };
+
+  const shareUrl = `/app/body?view=${view}${activeMuscle ? `&muscle=${Object.keys(MUSCLES).find((k) => MUSCLES[k] === activeMuscle)}` : ""}`;
 
   return (
     <div className="mx-auto max-w-2xl px-5 pt-8 pb-28">
@@ -106,9 +114,17 @@ function BodyMapTab() {
           {activeMuscle ? (
             <div>
               <SectionLabel>Selected</SectionLabel>
-              <div className="mt-1 flex items-center justify-between">
+              <div className="mt-1 flex items-center justify-between gap-2">
                 <h2 className="font-display text-2xl text-gold">{activeMuscle.label}</h2>
-                <button onClick={() => setMuscle(null)} className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-gold">Clear</button>
+                <div className="flex items-center gap-2">
+                  <ShareButton
+                    title={`Deluxe Fitness — ${activeMuscle.label}`}
+                    text={`Train your ${activeMuscle.label} with these workouts`}
+                    url={shareUrl}
+                    label="Share"
+                  />
+                  <button onClick={() => setMuscle(null)} className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-gold">Clear</button>
+                </div>
               </div>
               <div className="mt-4 space-y-2">
                 {matches.length === 0 && (
