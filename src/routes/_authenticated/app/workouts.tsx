@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
+import { cacheRecentWorkout, getRecentWorkouts } from "@/lib/registerSW";
 
 export const Route = createFileRoute("/_authenticated/app/workouts")({
   component: WorkoutsTab,
