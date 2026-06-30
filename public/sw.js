@@ -55,3 +55,40 @@ self.addEventListener("fetch", (event) => {
     );
   }
 });
+
+// Web Push: show notification from server payload, fall back to a default message.
+self.addEventListener("push", (event) => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch { data = { body: event.data && event.data.text() }; }
+  const title = data.title || "Deluxe Fitness";
+  const options = {
+    body: data.body || "You have a new update.",
+    icon: "/app-icon-192.png",
+    badge: "/app-icon-192.png",
+    data: { url: data.url || "/app/community" },
+    tag: data.tag || "df-notif",
+    renotify: false,
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = (event.notification.data && event.notification.data.url) || "/";
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      for (const c of clients) {
+        if ("focus" in c) { c.navigate(target); return c.focus(); }
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(target);
+    }),
+  );
+});
+
+// Allow the page to ask the SW to display a local notification when Push isn't wired.
+self.addEventListener("message", (event) => {
+  const msg = event.data || {};
+  if (msg.type === "df-show-notification" && msg.title) {
+    self.registration.showNotification(msg.title, msg.options || {});
+  }
+});
