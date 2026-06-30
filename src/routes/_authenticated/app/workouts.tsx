@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
+import { haptic } from "@/hooks/useHaptics";
+import { ShareButton } from "@/components/deluxe/ShareButton";
 
 export const Route = createFileRoute("/_authenticated/app/workouts")({
   component: WorkoutsTab,
@@ -37,7 +39,7 @@ function WorkoutsTab() {
 
       <div className="mt-6 flex gap-2 overflow-x-auto pb-2">
         {categories.map((c) => (
-          <button key={c} onClick={() => setCategory(c)}
+          <button key={c} onClick={() => { haptic("selection"); setCategory(c); }}
             className={`whitespace-nowrap border px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] transition ${
               category === c ? "border-gold bg-gold text-deluxe-black" : "border-gold/20 text-foreground hover:border-gold/50"
             }`}>
@@ -48,7 +50,7 @@ function WorkoutsTab() {
 
       <div className="mt-4 space-y-3">
         {filtered.map((w) => (
-          <button key={w.id} onClick={() => setActive(w)}
+          <button key={w.id} onClick={() => { haptic("medium"); setActive(w); }}
             className="block w-full border border-gold/15 bg-deluxe-forest/20 p-5 text-left transition hover:border-gold/40">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -130,7 +132,15 @@ function WorkoutPlayer({ workout, userId, onClose }: { workout: Workout; userId:
         {!done ? (
           <>
             <SectionLabel>{workout.category}</SectionLabel>
-            <h2 className="mt-2 font-display text-2xl text-foreground">{workout.title}</h2>
+            <div className="mt-2 flex items-start justify-between gap-2">
+              <h2 className="font-display text-2xl text-foreground">{workout.title}</h2>
+              <ShareButton
+                title={`Deluxe Fitness — ${workout.title}`}
+                text={`Try this ${workout.duration_min}-min ${workout.category} session`}
+                url={`/app/workouts?w=${workout.id}`}
+                label="Share"
+              />
+            </div>
             {workout.description && <p className="mt-2 text-sm text-muted-foreground">{workout.description}</p>}
             <div className="my-8 text-center">
               <div className="font-display text-6xl text-gold tabular-nums">
@@ -141,10 +151,10 @@ function WorkoutPlayer({ workout, userId, onClose }: { workout: Workout; userId:
               </div>
             </div>
             <div className="flex gap-3">
-              <OutlineButton onClick={() => setRunning((r) => !r)} className="flex-1">
+              <OutlineButton onClick={() => { haptic(running ? "light" : "medium"); setRunning((r) => !r); }} className="flex-1">
                 {running ? <><Pause className="h-3 w-3" /> Pause</> : <><Play className="h-3 w-3" /> {seconds === 0 ? "Start" : "Resume"}</>}
               </OutlineButton>
-              <GoldButton onClick={complete} disabled={seconds === 0} className="flex-1">Finish</GoldButton>
+              <GoldButton onClick={() => { haptic("success"); complete(); }} disabled={seconds === 0} className="flex-1">Finish</GoldButton>
             </div>
           </>
         ) : (
