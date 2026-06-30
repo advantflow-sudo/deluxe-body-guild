@@ -140,6 +140,52 @@ function CommunityTab() {
       });
   }, [user]);
 
+  // Deep-link: /app/community?p=POSTID(&c=COMMENTID) — scroll & focus once posts load.
+  useEffect(() => {
+    if (loading || scrolledRef.current || typeof window === "undefined") return;
+    const sp = new URLSearchParams(window.location.search);
+    const pid = sp.get("p");
+    const cid = sp.get("c");
+    if (!pid) return;
+    if (!posts.some((p) => p.id === pid)) return;
+    scrolledRef.current = true;
+    setOpenComments(pid);
+    if (cid) setFocusCommentId(cid);
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`post-${pid}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("ring-2", "ring-gold/60");
+        setTimeout(() => el.classList.remove("ring-2", "ring-gold/60"), 2400);
+      }
+    });
+  }, [loading, posts]);
+
+  const muteUser = (post: Post) => {
+    haptic("warning");
+    if (!confirm(`Mute posts from ${post.profile?.display_name ?? "this member"}?`)) return;
+    const next = new Set(muted);
+    next.add(post.user_id);
+    setMuted(next);
+    writeSet(MUTE_KEY, next);
+    haptic("success");
+    toast.success("Muted. You won't see their posts.");
+    setMenuFor(null);
+  };
+
+  const reportPost = (post: Post) => {
+    haptic("warning");
+    if (!confirm("Report this post for review?\nOur team will check it within 24 hours.")) return;
+    const next = new Set(reported);
+    next.add(post.id);
+    setReported(next);
+    writeSet(REPORT_KEY, next);
+    haptic("success");
+    toast.success("Reported. Thank you for keeping the community safe.");
+    setMenuFor(null);
+  };
+
+
   const handleImage = (f: File | null) => {
     setImageFile(f);
     if (imagePreview) URL.revokeObjectURL(imagePreview);
