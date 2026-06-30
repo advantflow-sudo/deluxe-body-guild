@@ -147,11 +147,23 @@ function CommunityTab() {
   // Realtime: refresh feed when posts/comments/likes change.
   useEffect(() => {
     if (!user) return;
-    let queued = false;
+    // Coalesce realtime bursts: trailing-edge debounce + single in-flight reload.
+    // Prevents UI jank when many likes/comments land in a short window.
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    let inFlight = false;
+    let pending = false;
+    const WINDOW_MS = 1200;
     const refresh = () => {
-      if (queued) return;
-      queued = true;
-      setTimeout(() => { queued = false; load(); }, 500);
+      if (timer) return;
+      timer = setTimeout(async () => {
+        timer = null;
+        if (inFlight) { pending = true; return; }
+        inFlight = true;
+        try { await load(); } finally {
+          inFlight = false;
+          if (pending) { pending = false; refresh(); }
+        }
+      }, WINDOW_MS);
     };
     const channel = supabase
       .channel("community-feed")
@@ -159,7 +171,7 @@ function CommunityTab() {
       .on("postgres_changes", { event: "*", schema: "public", table: "post_comments" }, refresh)
       .on("postgres_changes", { event: "*", schema: "public", table: "post_likes" }, refresh)
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => { if (timer) clearTimeout(timer); supabase.removeChannel(channel); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
