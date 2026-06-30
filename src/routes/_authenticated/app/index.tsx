@@ -102,6 +102,19 @@ function HomeTab() {
       <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">Good day, {name}.</h1>
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
       <DailyMissionCard />
+
+      {/* Target Your Body — signature feature */}
+      <Link to="/app/body" className="mt-4 block border border-gold/40 bg-gradient-to-br from-deluxe-forest/40 to-deluxe-black p-5 transition hover:border-gold sm:p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.22em] text-gold">New · Signature</div>
+            <div className="mt-1 font-display text-2xl text-foreground">Target Your Body</div>
+            <div className="mt-1 text-xs text-muted-foreground">Tap a muscle. Get the workout.</div>
+          </div>
+          <div className="text-3xl">🎯</div>
+        </div>
+      </Link>
+
       <DeluxeScoreBreakdown />
       <DailyGoalsList />
       <WaterTracker />
