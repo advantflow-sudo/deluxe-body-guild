@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
-import { Heart, MessageCircle, Image as ImageIcon, Dumbbell, Send, Globe, Crown, X, Trash2 } from "lucide-react";
+import { useEffect, useState, useRef, type FormEvent } from "react";
+import { Heart, MessageCircle, Image as ImageIcon, Dumbbell, Send, Globe, Crown, X, Trash2, MoreHorizontal, Flag, BellOff } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +10,16 @@ import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
 import { SuggestedMembers } from "@/components/deluxe/SuggestedMembers";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
+
+const MUTE_KEY = "df_muted_posts_v1";
+const REPORT_KEY = "df_reported_posts_v1";
+function readSet(key: string): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try { return new Set(JSON.parse(localStorage.getItem(key) ?? "[]")); } catch { return new Set(); }
+}
+function writeSet(key: string, s: Set<string>) {
+  try { localStorage.setItem(key, JSON.stringify(Array.from(s))); } catch { /* noop */ }
+}
 
 export const Route = createFileRoute("/_authenticated/app/community")({
   component: CommunityTab,
