@@ -311,8 +311,12 @@ function CommunityTab() {
             Be the first to post.
           </div>
         )}
-        {posts.map((p) => (
-          <article key={p.id} className="border border-gold/15 bg-deluxe-forest/20 p-4">
+        {posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id)).map((p) => (
+          <article
+            key={p.id}
+            id={`post-${p.id}`}
+            className="relative scroll-mt-24 border border-gold/15 bg-deluxe-forest/20 p-4 transition-shadow"
+          >
             <header className="flex items-center justify-between">
               <Link to="/app/u/$userId" params={{ userId: p.user_id }} className="flex items-center gap-3">
                 <Avatar url={p.profile?.avatar_url} name={p.profile?.display_name} />
@@ -324,11 +328,44 @@ function CommunityTab() {
                   </div>
                 </div>
               </Link>
-              {p.user_id === user?.id && (
-                <button onClick={() => deletePost(p.id)} className="text-muted-foreground hover:text-gold">
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                {p.user_id === user?.id && (
+                  <button onClick={() => { haptic("warning"); deletePost(p.id); }} className="text-muted-foreground hover:text-gold" aria-label="Delete post">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                )}
+                {p.user_id !== user?.id && (
+                  <div className="relative">
+                    <button
+                      onClick={() => { haptic("selection"); setMenuFor(menuFor === p.id ? null : p.id); }}
+                      className="text-muted-foreground hover:text-gold"
+                      aria-label="More options"
+                      aria-haspopup="menu"
+                      aria-expanded={menuFor === p.id}
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </button>
+                    {menuFor === p.id && (
+                      <div role="menu" className="absolute right-0 top-6 z-20 w-44 border border-gold/30 bg-deluxe-black/95 p-1 shadow-xl backdrop-blur">
+                        <button
+                          role="menuitem"
+                          onClick={() => muteUser(p)}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-foreground hover:bg-gold/10"
+                        >
+                          <BellOff className="h-3.5 w-3.5" /> Mute member
+                        </button>
+                        <button
+                          role="menuitem"
+                          onClick={() => reportPost(p)}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-red-300 hover:bg-red-500/10"
+                        >
+                          <Flag className="h-3.5 w-3.5" /> Report post
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </header>
             <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{p.body}</p>
             {p.workout_title && (
@@ -356,7 +393,13 @@ function CommunityTab() {
                 className="ml-auto inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-gold"
               />
             </div>
-            {openComments === p.id && <Comments postId={p.id} onChange={load} />}
+            {openComments === p.id && (
+              <Comments
+                postId={p.id}
+                onChange={load}
+                focusCommentId={focusCommentId}
+              />
+            )}
           </article>
         ))}
       </div>
