@@ -481,6 +481,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          actor_id: string | null
+          body: string | null
+          comment_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          post_id: string | null
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          body?: string | null
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          post_id?: string | null
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          body?: string | null
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          post_id?: string | null
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       nutrition_logs: {
         Row: {
           calories: number
