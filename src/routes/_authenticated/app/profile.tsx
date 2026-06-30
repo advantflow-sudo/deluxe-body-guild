@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Crown, Bell, HelpCircle, FileText, Shield, ChevronRight } from "lucide-react";
+import { LogOut, Crown, Bell, HelpCircle, FileText, Shield, ChevronRight, Fingerprint } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { TransformationLevel } from "@/components/deluxe/TransformationLevel";
 import { PushPrompt } from "@/components/deluxe/PushPrompt";
+import { useBiometric } from "@/hooks/useBiometric";
+import { haptic } from "@/hooks/useHaptics";
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
   component: ProfileTab,
@@ -25,6 +27,7 @@ const COUNTRIES = ["United Kingdom","United States","Canada","Ireland","Australi
 
 function ProfileTab() {
   const { user, signOut } = useAuth();
+  const bio = useBiometric();
   const [name, setName] = useState("");
   const [ext, setExt] = useState<Ext | null>(null);
   const [saving, setSaving] = useState(false);
@@ -166,6 +169,31 @@ function ProfileTab() {
             right={<span className={`h-5 w-9 rounded-full transition ${ext?.weekly_recap_enabled ? "bg-gold" : "bg-gold/20"} relative`}>
               <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${ext?.weekly_recap_enabled ? "left-4" : "left-0.5"}`} />
             </span>} />
+          {bio.supported && (
+            <Row
+              icon={Fingerprint}
+              label={bio.enabled ? "Face ID / Touch ID — On" : "Enable Face ID / Touch ID"}
+              onClick={async () => {
+                haptic("selection");
+                try {
+                  if (bio.enabled) {
+                    bio.disable();
+                    toast.success("Biometric lock disabled");
+                  } else if (user) {
+                    await bio.enable(user.id, name || user.email || "Deluxe member");
+                    toast.success("Face ID enabled — you'll be asked on next launch");
+                    haptic("success");
+                  }
+                } catch (e) {
+                  haptic("error");
+                  toast.error((e as Error).message || "Couldn't enable biometric");
+                }
+              }}
+              right={<span className={`h-5 w-9 rounded-full transition ${bio.enabled ? "bg-gold" : "bg-gold/20"} relative`}>
+                <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${bio.enabled ? "left-4" : "left-0.5"}`} />
+              </span>}
+            />
+          )}
           <Row icon={HelpCircle} label="Help & Support" to="/contact" />
           <Row icon={FileText} label="Terms of Service" to="/about" />
           <Row icon={Shield} label="Privacy Policy" to="/about" />

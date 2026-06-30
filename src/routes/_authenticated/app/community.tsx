@@ -144,6 +144,26 @@ function CommunityTab() {
       });
   }, [user]);
 
+  // Realtime: refresh feed when posts/comments/likes change.
+  useEffect(() => {
+    if (!user) return;
+    let queued = false;
+    const refresh = () => {
+      if (queued) return;
+      queued = true;
+      setTimeout(() => { queued = false; load(); }, 500);
+    };
+    const channel = supabase
+      .channel("community-feed")
+      .on("postgres_changes", { event: "*", schema: "public", table: "community_posts" }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "post_comments" }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "post_likes" }, refresh)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+
   // Deep-link: /app/community?p=POSTID(&c=COMMENTID) — scroll & focus once posts load.
   useEffect(() => {
     if (loading || scrolledRef.current || typeof window === "undefined") return;

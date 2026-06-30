@@ -19,6 +19,8 @@ import { ReduceMotionProvider } from "@/hooks/useReduceMotion";
 import { CursorSpotlight } from "@/components/deluxe/CursorSpotlight";
 import { ScrollProgress } from "@/components/deluxe/ScrollProgress";
 import { ConfirmDialogProvider } from "@/components/deluxe/ConfirmDialog";
+import { NotificationsProvider } from "@/hooks/useNotifications";
+import { registerServiceWorker } from "@/lib/registerSW";
 
 import appCss from "../styles.css?url";
 
@@ -164,9 +166,11 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+    registerServiceWorker();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
-      queryClient.invalidateQueries();
+      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
     return () => subscription.unsubscribe();
   }, [router, queryClient]);
@@ -175,16 +179,18 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ReduceMotionProvider>
         <AuthProvider>
-          <ConfirmDialogProvider>
-            <ScrollProgress />
-            <CursorSpotlight />
-            <Outlet />
-            <CommandPalette />
-            <MarketingChatBot />
-            <CookieConsent />
-            <InstallPrompt />
-            <Toaster theme="dark" position="top-right" />
-          </ConfirmDialogProvider>
+          <NotificationsProvider>
+            <ConfirmDialogProvider>
+              <ScrollProgress />
+              <CursorSpotlight />
+              <Outlet />
+              <CommandPalette />
+              <MarketingChatBot />
+              <CookieConsent />
+              <InstallPrompt />
+              <Toaster theme="dark" position="top-right" />
+            </ConfirmDialogProvider>
+          </NotificationsProvider>
         </AuthProvider>
       </ReduceMotionProvider>
     </QueryClientProvider>

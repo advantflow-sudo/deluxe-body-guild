@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { BottomNav } from "@/components/deluxe/BottomNav";
+import { NotificationBell } from "@/components/deluxe/NotificationBell";
+import { BiometricLock } from "@/components/deluxe/BiometricLock";
 
 export const Route = createFileRoute("/_authenticated/app")({
   component: AppShell,
@@ -34,9 +36,14 @@ function AppShell() {
   if (state === "needs-onboarding") return <Navigate to="/onboarding" />;
 
   return (
-    <div className="min-h-screen bg-deluxe-black pb-24">
-      <Outlet />
-      <BottomNav />
-    </div>
+    <BiometricLock>
+      <div className="min-h-screen bg-deluxe-black pb-24">
+        <div className="pointer-events-none fixed right-3 top-[max(env(safe-area-inset-top),0.75rem)] z-40 sm:right-5">
+          <div className="pointer-events-auto"><NotificationBell /></div>
+        </div>
+        <Outlet />
+        <BottomNav />
+      </div>
+    </BiometricLock>
   );
 }
