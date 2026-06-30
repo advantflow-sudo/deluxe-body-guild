@@ -416,10 +416,19 @@ function Avatar({ url, name }: { url?: string | null; name?: string | null }) {
   );
 }
 
-function Comments({ postId, onChange }: { postId: string; onChange: () => void }) {
+function Comments({
+  postId,
+  onChange,
+  focusCommentId,
+}: {
+  postId: string;
+  onChange: () => void;
+  focusCommentId?: string | null;
+}) {
   const { user } = useAuth();
   const [items, setItems] = useState<any[]>([]);
   const [text, setText] = useState("");
+  const focusedRef = useRef(false);
 
   const load = async () => {
     const { data } = await supabase
@@ -436,11 +445,28 @@ function Comments({ postId, onChange }: { postId: string; onChange: () => void }
   };
   useEffect(() => { load(); }, [postId]);
 
+  // Scroll to the targeted comment once loaded
+  useEffect(() => {
+    if (!focusCommentId || focusedRef.current) return;
+    if (!items.some((c) => c.id === focusCommentId)) return;
+    focusedRef.current = true;
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`comment-${focusCommentId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("bg-gold/10");
+        setTimeout(() => el.classList.remove("bg-gold/10"), 2400);
+      }
+    });
+  }, [items, focusCommentId]);
+
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user || !text.trim()) return;
+    haptic("light");
     const { error } = await supabase.from("post_comments").insert({ post_id: postId, user_id: user.id, body: text.trim() });
-    if (error) return toast.error(error.message);
+    if (error) { haptic("error"); return toast.error(error.message); }
+    haptic("success");
     setText("");
     await load();
     onChange();
@@ -449,9 +475,22 @@ function Comments({ postId, onChange }: { postId: string; onChange: () => void }
   return (
     <div className="mt-3 space-y-2 border-t border-gold/10 pt-3">
       {items.map((c) => (
-        <div key={c.id} className="text-xs">
-          <span className="font-semibold text-gold">{c.name}</span>{" "}
-          <span className="text-foreground">{c.body}</span>
+        <div
+          key={c.id}
+          id={`comment-${c.id}`}
+          className="group flex items-start justify-between gap-2 rounded px-1 py-1 text-xs transition-colors"
+        >
+          <div className="min-w-0">
+            <span className="font-semibold text-gold">{c.name}</span>{" "}
+            <span className="text-foreground">{c.body}</span>
+          </div>
+          <ShareButton
+            title="Deluxe Fitness comment"
+            text={`${c.name}: ${String(c.body).slice(0, 140)}`}
+            url={`/app/community?p=${postId}&c=${c.id}`}
+            label=""
+            className="shrink-0 text-muted-foreground opacity-0 transition hover:text-gold group-hover:opacity-100"
+          />
         </div>
       ))}
       <form onSubmit={submit} className="flex items-center gap-2">
