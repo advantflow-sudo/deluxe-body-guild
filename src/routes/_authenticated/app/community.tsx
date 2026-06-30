@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState, useRef, type FormEvent } from "react";
-import { Heart, MessageCircle, Image as ImageIcon, Dumbbell, Send, Globe, Crown, X, Trash2, MoreHorizontal, Flag, BellOff } from "lucide-react";
+import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useMemo, useState, useRef, type FormEvent } from "react";
+import { Heart, MessageCircle, Image as ImageIcon, Dumbbell, Send, Globe, Crown, X, Trash2, MoreHorizontal, Flag, BellOff, Hash, AtSign } from "lucide-react";
+import { renderRichText } from "@/lib/richText";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
