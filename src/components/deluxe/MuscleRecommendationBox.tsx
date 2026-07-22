@@ -116,12 +116,12 @@ export function MuscleRecommendationBox({ muscleKey, muscleLabel, color, tagline
                   <div className="flex flex-wrap gap-2">
                     <Link
                       to="/app/workouts"
-                      search={{ q: ex.searchKey } as never}
                       onClick={() => haptic("selection")}
                       className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-gold hover:bg-gold/10"
                     >
                       Full details
                     </Link>
+
                   </div>
                 </div>
               )}
