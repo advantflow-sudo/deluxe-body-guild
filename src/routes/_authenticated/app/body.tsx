@@ -3,16 +3,21 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronLeft, ChevronRight, Clock, Flame, Dumbbell,
   Shield, Zap, Heart, Anchor, Crown, Mountain, Sparkles, Target,
+  Save, Trash2, LineChart, FileDown, ChevronDown,
 } from "lucide-react";
 import { z } from "zod";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { useAuth } from "@/hooks/useAuth";
+import { BodyExportCard } from "@/components/deluxe/BodyExportCard";
 import bodyFront from "@/assets/body-front.jpg";
 import bodyBack from "@/assets/body-back.jpg";
+
+interface Preset { id: string; name: string; muscles: string[]; view: "front" | "back"; createdAt: string }
 
 const searchSchema = z.object({
   muscles: z.string().optional(),
