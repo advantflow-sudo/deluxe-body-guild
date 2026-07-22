@@ -599,7 +599,7 @@ function BodyFigure({
         {view}
       </div>
       <div
-        className="relative mx-auto grid max-w-xl grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] items-stretch gap-2 sm:gap-3"
+        className="relative mx-auto grid w-full max-w-2xl grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] items-stretch gap-2 sm:gap-3"
         role="group"
         aria-label={`${view} body muscle selector`}
       >
