@@ -553,6 +553,16 @@ function BodyMapTab() {
             : "Turn on Select Multiple to combine muscle groups for personalised recommendations."}
         </div>
       </div>
+
+      <BodyExportCard
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        muscles={selected.map((k) => ({ label: MUSCLES[k].label, color: MUSCLES[k].color, tagline: MUSCLES[k].tagline }))}
+        workouts={matches.slice(0, 6).map(({ w, reasons }) => ({
+          title: w.title, category: w.category, level: w.level, duration_min: w.duration_min, reasons,
+        }))}
+        view={view}
+      />
     </div>
   );
 }
