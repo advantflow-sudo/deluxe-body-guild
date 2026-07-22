@@ -1,14 +1,19 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, Clock, Flame, Dumbbell } from "lucide-react";
+import {
+  ChevronLeft, ChevronRight, Clock, Flame, Dumbbell,
+  Shield, Zap, Heart, Anchor, Crown, Mountain, Sparkles, Target,
+} from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
+import bodyFront from "@/assets/body-front.jpg";
+import bodyBack from "@/assets/body-back.jpg";
 
 const searchSchema = z.object({
-  muscle: z.string().optional(),
+  muscles: z.string().optional(),
   view: z.enum(["front", "back"]).optional(),
 });
 
@@ -22,30 +27,50 @@ interface Workout {
   duration_min: number; calories: number | null; description: string | null;
 }
 
-// Each muscle maps to workout categories and a list of keywords used to
-// score relevance against workout title/description.
-const MUSCLES: Record<string, { label: string; categories: string[]; keywords: string[]; side: "front" | "back" }> = {
-  chest:       { label: "Chest",       categories: ["Strength"],            keywords: ["chest", "bench", "push", "press"], side: "front" },
-  shoulders:   { label: "Shoulders",   categories: ["Strength"],            keywords: ["shoulder", "press", "delt", "raise"], side: "front" },
-  biceps:      { label: "Biceps",      categories: ["Strength"],            keywords: ["bicep", "curl", "arm"], side: "front" },
-  forearms:    { label: "Forearms",    categories: ["Strength"],            keywords: ["forearm", "grip", "wrist"], side: "front" },
-  abs:         { label: "Abs",         categories: ["Core"],                keywords: ["abs", "core", "crunch", "plank"], side: "front" },
-  obliques:    { label: "Obliques",    categories: ["Core"],                keywords: ["oblique", "twist", "side"], side: "front" },
-  quads:       { label: "Quads",       categories: ["Strength", "Hybrid"],  keywords: ["quad", "squat", "leg", "lunge"], side: "front" },
-  calves_f:    { label: "Calves",      categories: ["Strength"],            keywords: ["calf", "calves", "calve"], side: "front" },
-  traps:       { label: "Traps",       categories: ["Strength"],            keywords: ["trap", "shrug", "upper back"], side: "back" },
-  lats:        { label: "Lats",        categories: ["Strength"],            keywords: ["lat", "pull", "row", "back"], side: "back" },
-  lower_back:  { label: "Lower Back",  categories: ["Strength", "Core"],    keywords: ["lower back", "deadlift", "hyperextension"], side: "back" },
-  triceps:     { label: "Triceps",     categories: ["Strength"],            keywords: ["tricep", "dip", "extension"], side: "back" },
-  glutes:      { label: "Glutes",      categories: ["Strength", "Hybrid"],  keywords: ["glute", "hip thrust", "bridge"], side: "back" },
-  hamstrings:  { label: "Hamstrings",  categories: ["Strength"],            keywords: ["hamstring", "deadlift", "curl"], side: "back" },
-  calves_b:    { label: "Calves",      categories: ["Strength"],            keywords: ["calf", "calves", "calve"], side: "back" },
+type MuscleDef = {
+  label: string;
+  tagline: string;
+  color: string;              // ring/dot color
+  keywords: string[];
+  categories: string[];
+  Icon: typeof Dumbbell;
+  side: "front" | "back";
+  // hotspot on the image, percent of image box
+  spot: { x: number; y: number };
+  // label side and vertical position (percent of image box)
+  labelSide: "left" | "right";
+  labelY: number;
+};
+
+const MUSCLES: Record<string, MuscleDef> = {
+  chest:      { label: "Chest",      tagline: "Build & define your chest",   color: "#ef4444", keywords: ["chest","bench","push","press"],           categories: ["Strength"],         Icon: Shield,   side: "front", spot: { x: 50, y: 26 }, labelSide: "left",  labelY: 22 },
+  shoulders:  { label: "Shoulders",  tagline: "Build strong shoulders",       color: "#f59e0b", keywords: ["shoulder","press","delt","raise"],         categories: ["Strength"],         Icon: Crown,    side: "front", spot: { x: 32, y: 22 }, labelSide: "left",  labelY: 32 },
+  biceps:     { label: "Biceps",     tagline: "Build bigger arms",            color: "#22c55e", keywords: ["bicep","curl","arm"],                      categories: ["Strength"],         Icon: Zap,      side: "front", spot: { x: 22, y: 34 }, labelSide: "left",  labelY: 42 },
+  forearms:   { label: "Forearms",   tagline: "Iron grip, iron mind",         color: "#eab308", keywords: ["forearm","grip","wrist"],                  categories: ["Strength"],         Icon: Anchor,   side: "front", spot: { x: 17, y: 45 }, labelSide: "left",  labelY: 52 },
+  abs:        { label: "Abs",        tagline: "Strengthen your core",         color: "#a855f7", keywords: ["abs","core","crunch","plank"],             categories: ["Core"],             Icon: Sparkles, side: "front", spot: { x: 50, y: 42 }, labelSide: "left",  labelY: 62 },
+  obliques:   { label: "Obliques",   tagline: "Sharpen your midline",         color: "#ec4899", keywords: ["oblique","twist","side"],                  categories: ["Core"],             Icon: Target,   side: "front", spot: { x: 40, y: 44 }, labelSide: "right", labelY: 42 },
+  quads:      { label: "Quads",      tagline: "Build powerful legs",          color: "#3b82f6", keywords: ["quad","squat","leg","lunge"],              categories: ["Strength","Hybrid"], Icon: Mountain, side: "front", spot: { x: 43, y: 62 }, labelSide: "left",  labelY: 72 },
+  calves_f:   { label: "Calves",     tagline: "Build strong calves",          color: "#14b8a6", keywords: ["calf","calves"],                           categories: ["Strength"],         Icon: Heart,    side: "front", spot: { x: 42, y: 84 }, labelSide: "right", labelY: 82 },
+
+  traps:      { label: "Traps",      tagline: "Build powerful upper traps",   color: "#a855f7", keywords: ["trap","shrug","upper back"],               categories: ["Strength"],         Icon: Crown,    side: "back",  spot: { x: 50, y: 18 }, labelSide: "right", labelY: 20 },
+  rear_delts: { label: "Rear Delts", tagline: "Sculpt round shoulders",       color: "#eab308", keywords: ["rear delt","face pull","reverse"],         categories: ["Strength"],         Icon: Zap,      side: "back",  spot: { x: 32, y: 22 }, labelSide: "right", labelY: 30 },
+  lats:       { label: "Back",       tagline: "Build a strong back",          color: "#3b82f6", keywords: ["lat","pull","row","back"],                 categories: ["Strength"],         Icon: Shield,   side: "back",  spot: { x: 50, y: 34 }, labelSide: "right", labelY: 40 },
+  triceps:    { label: "Triceps",    tagline: "Tone & build triceps",         color: "#22c55e", keywords: ["tricep","dip","extension"],                categories: ["Strength"],         Icon: Zap,      side: "back",  spot: { x: 22, y: 34 }, labelSide: "right", labelY: 50 },
+  glutes:     { label: "Glutes",     tagline: "Build & shape your glutes",    color: "#f97316", keywords: ["glute","hip thrust","bridge"],             categories: ["Strength","Hybrid"], Icon: Sparkles, side: "back",  spot: { x: 50, y: 52 }, labelSide: "right", labelY: 60 },
+  hamstrings: { label: "Hamstrings", tagline: "Strengthen your hamstrings",   color: "#14b8a6", keywords: ["hamstring","deadlift","curl"],             categories: ["Strength"],         Icon: Mountain, side: "back",  spot: { x: 42, y: 68 }, labelSide: "right", labelY: 70 },
+  calves_b:   { label: "Calves",     tagline: "Build strong calves",          color: "#ef4444", keywords: ["calf","calves"],                           categories: ["Strength"],         Icon: Heart,    side: "back",  spot: { x: 42, y: 86 }, labelSide: "right", labelY: 82 },
 };
 
 function BodyMapTab() {
-  const { muscle, view = "front" } = Route.useSearch();
+  const { muscles, view = "front" } = Route.useSearch();
   const navigate = useNavigate();
   const [allWorkouts, setAllWorkouts] = useState<Workout[]>([]);
+  const [multi, setMulti] = useState(false);
+
+  const selected = useMemo(
+    () => (muscles ? muscles.split(",").filter((k: string) => Boolean(MUSCLES[k])) : []),
+    [muscles]
+  );
 
   useEffect(() => {
     supabase.from("workouts")
@@ -53,186 +78,333 @@ function BodyMapTab() {
       .then(({ data }) => { if (data) setAllWorkouts(data as Workout[]); });
   }, []);
 
-  const activeMuscle = muscle && MUSCLES[muscle] ? MUSCLES[muscle] : null;
-
   const matches = useMemo(() => {
-    if (!activeMuscle) return [];
-    const kw = activeMuscle.keywords;
+    if (selected.length === 0) return [];
     return allWorkouts
       .map((w) => {
         const hay = `${w.title} ${w.description ?? ""}`.toLowerCase();
-        const kwHit = kw.some((k) => hay.includes(k));
-        const catHit = activeMuscle.categories.includes(w.category);
-        const score = (kwHit ? 2 : 0) + (catHit ? 1 : 0);
+        let score = 0;
+        for (const key of selected) {
+          const m = MUSCLES[key];
+          if (m.keywords.some((k) => hay.includes(k))) score += 2;
+          if (m.categories.includes(w.category)) score += 1;
+        }
         return { w, score };
       })
       .filter((x) => x.score > 0)
       .sort((a, b) => b.score - a.score)
+      .slice(0, 12)
       .map((x) => x.w);
-  }, [activeMuscle, allWorkouts]);
+  }, [selected, allWorkouts]);
 
-  const setMuscle = (key: string | null) => {
-    haptic(key ? "selection" : "light");
-    navigate({ to: "/app/body", search: { view, ...(key ? { muscle: key } : {}) } });
+  const commitSelection = (keys: string[]) => {
+    navigate({
+      to: "/app/body",
+      search: {
+        view,
+        ...(keys.length ? { muscles: keys.join(",") } : {}),
+      },
+    });
   };
 
+  const toggle = (key: string) => {
+    haptic("selection");
+    if (multi) {
+      const set = new Set<string>(selected);
+      if (set.has(key)) set.delete(key); else set.add(key);
+      commitSelection([...set]);
+    } else {
+      commitSelection(selected[0] === key ? [] : [key]);
+    }
+  };
+
+  const clearAll = () => { haptic("light"); commitSelection([]); };
   const setView = (v: "front" | "back") => {
     haptic("light");
-    navigate({ to: "/app/body", search: { view: v, ...(muscle ? { muscle } : {}) } });
+    navigate({ to: "/app/body", search: { view: v, ...(muscles ? { muscles } : {}) } });
   };
 
-  const shareUrl = `/app/body?view=${view}${activeMuscle ? `&muscle=${Object.keys(MUSCLES).find((k) => MUSCLES[k] === activeMuscle)}` : ""}`;
+  const shareUrl = `/app/body?view=${view}${selected.length ? `&muscles=${selected.join(",")}` : ""}`;
+  const primary = selected[0] ? MUSCLES[selected[0]] : null;
 
   return (
-    <div className="mx-auto max-w-2xl px-5 pt-8 pb-28">
+    <div className="mx-auto max-w-6xl px-4 pt-6 pb-28 sm:px-6">
+      {/* Top bar */}
       <div className="flex items-center justify-between">
         <Link to="/app" className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-gold">
           <ChevronLeft className="h-3 w-3" /> Home
         </Link>
-        <div className="flex border border-gold/30">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => { haptic("light"); setMulti((m) => !m); }}
+            className={`px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] transition border ${
+              multi ? "bg-gold text-deluxe-black border-gold" : "border-gold/30 text-foreground hover:text-gold"
+            }`}
+          >
+            {multi ? "Multi On" : "Select Multiple"}
+          </button>
+        </div>
+      </div>
+
+      {/* Header */}
+      <div className="mt-6 text-center">
+        <SectionLabel>Target Your Body</SectionLabel>
+        <h1 className="mt-3 font-display text-3xl uppercase tracking-wide text-foreground sm:text-5xl">
+          Select a Muscle Group
+        </h1>
+        <p className="mx-auto mt-2 max-w-xl text-xs text-muted-foreground sm:text-sm">
+          Tap a muscle to see the best workouts for that area. {multi ? "Tap more to combine groups." : ""}
+        </p>
+
+        {/* Front/Back toggle */}
+        <div className="mt-5 inline-flex overflow-hidden rounded-full border border-gold/40 bg-deluxe-forest/20">
           {(["front", "back"] as const).map((v) => (
-            <button key={v} onClick={() => setView(v)}
-              className={`px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] transition ${
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={`px-6 py-1.5 text-[11px] font-semibold uppercase tracking-[0.28em] transition ${
                 view === v ? "bg-gold text-deluxe-black" : "text-foreground hover:text-gold"
-              }`}>
+              }`}
+            >
               {v}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="mt-6"><SectionLabel>Target Your Body</SectionLabel></div>
-      <h1 className="mt-2 font-display text-3xl text-foreground">Tap a muscle</h1>
-      <p className="mt-1 text-xs text-muted-foreground">Pick a region and we'll surface workouts that train it.</p>
+      {/* Bodies: side-by-side on desktop, single on mobile */}
+      <div className="mt-8 grid gap-8 lg:grid-cols-2">
+        <BodyFigure
+          view="front"
+          image={bodyFront}
+          visibleOnMobile={view === "front"}
+          selected={selected}
+          onToggle={toggle}
+        />
+        <BodyFigure
+          view="back"
+          image={bodyBack}
+          visibleOnMobile={view === "back"}
+          selected={selected}
+          onToggle={toggle}
+        />
+      </div>
 
-      <div className="mt-6 grid gap-6 sm:grid-cols-[1fr_1fr]">
-        <div className="flex justify-center">
-          <BodySvg view={view} activeKey={activeMuscle ? Object.keys(MUSCLES).find((k) => MUSCLES[k] === activeMuscle) ?? null : null}
-                   onPick={(k) => setMuscle(k)} />
-        </div>
-        <div>
-          {activeMuscle ? (
-            <div>
-              <SectionLabel>Selected</SectionLabel>
-              <div className="mt-1 flex items-center justify-between gap-2">
-                <h2 className="font-display text-2xl text-gold">{activeMuscle.label}</h2>
-                <div className="flex items-center gap-2">
-                  <ShareButton
-                    title={`Deluxe Fitness — ${activeMuscle.label}`}
-                    text={`Train your ${activeMuscle.label} with these workouts`}
-                    url={shareUrl}
-                    label="Share"
-                  />
-                  <button onClick={() => setMuscle(null)} className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-gold">Clear</button>
+      {/* Selected panel */}
+      <div className="mt-10 rounded-lg border border-gold/25 bg-deluxe-forest/15 p-5 sm:p-6">
+        {selected.length === 0 ? (
+          <div className="text-center text-xs text-muted-foreground sm:text-sm">
+            Tap any glowing muscle on the body to see personalised workouts.
+          </div>
+        ) : (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Selected</div>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  {selected.map((k) => {
+                    const m = MUSCLES[k];
+                    return (
+                      <span
+                        key={k}
+                        className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.18em]"
+                        style={{ backgroundColor: `${m.color}20`, color: m.color, border: `1px solid ${m.color}60` }}
+                      >
+                        <m.Icon className="h-3 w-3" /> {m.label}
+                        <button
+                          aria-label={`Remove ${m.label}`}
+                          onClick={() => toggle(k)}
+                          className="ml-1 opacity-70 hover:opacity-100"
+                        >×</button>
+                      </span>
+                    );
+                  })}
                 </div>
-              </div>
-              <div className="mt-4 space-y-2">
-                {matches.length === 0 && (
-                  <div className="border border-gold/15 bg-deluxe-forest/10 p-4 text-center text-xs text-muted-foreground">
-                    No workouts found for {activeMuscle.label} yet.
-                  </div>
+                {primary && selected.length === 1 && (
+                  <div className="mt-2 text-xs text-muted-foreground">{primary.tagline}</div>
                 )}
-                {matches.map((w) => (
-                  <Link key={w.id} to="/app/workouts"
-                    className="block border border-gold/15 bg-deluxe-forest/20 p-4 transition hover:border-gold/40">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 text-foreground">
-                          <Dumbbell className="h-3.5 w-3.5 shrink-0 text-gold" />
-                          <span className="truncate font-display text-base">{w.title}</span>
-                        </div>
-                        <div className="mt-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                          {w.category} · {w.level}
-                        </div>
-                      </div>
-                      <div className="shrink-0 text-right">
-                        <div className="flex items-center gap-1 text-xs text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</div>
-                        {w.calories && <div className="flex items-center gap-1 text-xs text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</div>}
+              </div>
+              <div className="flex items-center gap-2">
+                <ShareButton
+                  title={`Deluxe Fitness — ${selected.map((k) => MUSCLES[k].label).join(" + ")}`}
+                  text="Train these muscles with these workouts"
+                  url={shareUrl}
+                  label="Share"
+                />
+                <button onClick={clearAll} className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-gold">
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              {matches.length === 0 && (
+                <div className="col-span-full border border-gold/15 bg-deluxe-black/40 p-4 text-center text-xs text-muted-foreground">
+                  No workouts matched yet. Try adding another muscle group.
+                </div>
+              )}
+              {matches.map((w) => (
+                <Link
+                  key={w.id}
+                  to="/app/workouts"
+                  className="group flex items-center justify-between gap-3 border border-gold/15 bg-deluxe-black/50 p-3 transition hover:border-gold/50"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
+                      <Dumbbell className="h-4 w-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate font-display text-sm text-foreground">{w.title}</div>
+                      <div className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                        {w.category} · {w.level}
                       </div>
                     </div>
-                  </Link>
-                ))}
-              </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3 text-[11px]">
+                    <span className="inline-flex items-center gap-1 text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</span>
+                    {w.calories && <span className="inline-flex items-center gap-1 text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</span>}
+                    <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:text-gold" />
+                  </div>
+                </Link>
+              ))}
             </div>
-          ) : (
-            <div className="border border-gold/15 bg-deluxe-forest/10 p-6 text-center text-xs text-muted-foreground">
-              Tap a glowing region on the body to see matching workouts.
-            </div>
-          )}
+          </>
+        )}
+      </div>
+
+      {/* Tip */}
+      <div className="mt-6 flex items-start gap-3 rounded-lg border border-gold/25 bg-deluxe-forest/10 p-4 text-xs text-muted-foreground">
+        <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+        <div>
+          <span className="text-foreground">Tip:</span> {multi
+            ? "Multi-select is on — combine muscles like Chest + Triceps for tailored push days."
+            : "Turn on Select Multiple to combine muscle groups for personalised recommendations."}
         </div>
       </div>
     </div>
   );
 }
 
-/** Stylised front/back silhouette with clickable muscle regions. */
-function BodySvg({
-  view,
-  activeKey,
-  onPick,
+function BodyFigure({
+  view, image, visibleOnMobile, selected, onToggle,
 }: {
   view: "front" | "back";
-  activeKey: string | null;
-  onPick: (key: string) => void;
+  image: string;
+  visibleOnMobile: boolean;
+  selected: string[];
+  onToggle: (key: string) => void;
 }) {
-  const regions = view === "front" ? FRONT_REGIONS : BACK_REGIONS;
+  const keys = Object.keys(MUSCLES).filter((k: string) => MUSCLES[k].side === view);
+  const leftLabels = keys.filter((k: string) => MUSCLES[k].labelSide === "left");
+  const rightLabels = keys.filter((k: string) => MUSCLES[k].labelSide === "right");
+
   return (
-    <svg viewBox="0 0 200 420" className="h-[520px] w-auto" role="img" aria-label={`${view} body map`}>
-      <defs>
-        <linearGradient id="bodyFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1a1a1a" />
-          <stop offset="100%" stopColor="#0a0a0a" />
-        </linearGradient>
-        <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-      </defs>
-      {/* Silhouette */}
-      <path d={SILHOUETTE} fill="url(#bodyFill)" stroke="rgba(212,175,55,0.35)" strokeWidth="1" />
-      {/* Muscle regions */}
-      {regions.map((r) => {
-        const isActive = activeKey === r.key;
-        return (
-          <g key={r.key} onClick={() => onPick(r.key)} className="cursor-pointer" tabIndex={0}
-             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onPick(r.key); }}>
-            <path d={r.d}
-              fill={isActive ? "rgba(212,175,55,0.55)" : "rgba(212,175,55,0.12)"}
-              stroke={isActive ? "#d4af37" : "rgba(212,175,55,0.4)"}
-              strokeWidth={isActive ? 1.5 : 0.8}
-              filter={isActive ? "url(#glow)" : undefined}
-              className="transition-all hover:fill-[rgba(212,175,55,0.35)]"
-            >
-              <title>{MUSCLES[r.key]?.label ?? r.key}</title>
-            </path>
-          </g>
-        );
-      })}
-    </svg>
+    <div className={`${visibleOnMobile ? "block" : "hidden"} lg:block`}>
+      <div className="mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.32em] text-muted-foreground">
+        {view}
+      </div>
+      <div className="relative mx-auto grid max-w-xl grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] items-stretch gap-2 sm:gap-3">
+        {/* Left labels */}
+        <div className="relative">
+          {leftLabels.map((k) => (
+            <LabelChip key={k} muscleKey={k} active={selected.includes(k)} onClick={() => onToggle(k)} side="left" />
+          ))}
+        </div>
+
+        {/* Body image + hotspots */}
+        <div className="relative aspect-[3/5] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black">
+          <img
+            src={image}
+            alt={`Anatomical ${view} view`}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          {/* Vignette */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.55)_100%)]" />
+          {keys.map((k) => {
+            const m = MUSCLES[k];
+            const active = selected.includes(k);
+            return (
+              <button
+                key={k}
+                onClick={() => onToggle(k)}
+                aria-label={m.label}
+                className="group absolute -translate-x-1/2 -translate-y-1/2"
+                style={{ left: `${m.spot.x}%`, top: `${m.spot.y}%` }}
+              >
+                <span
+                  className={`block h-4 w-4 rounded-full border-2 transition-all duration-300 ${
+                    active ? "scale-125" : "group-hover:scale-125"
+                  }`}
+                  style={{
+                    backgroundColor: active ? m.color : "rgba(255,255,255,0.9)",
+                    borderColor: m.color,
+                    boxShadow: active
+                      ? `0 0 0 4px ${m.color}55, 0 0 22px ${m.color}`
+                      : `0 0 0 2px ${m.color}30`,
+                  }}
+                />
+                {active && (
+                  <span
+                    className="absolute left-1/2 top-1/2 -z-10 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full animate-ping"
+                    style={{ backgroundColor: `${m.color}40` }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right labels */}
+        <div className="relative">
+          {rightLabels.map((k) => (
+            <LabelChip key={k} muscleKey={k} active={selected.includes(k)} onClick={() => onToggle(k)} side="right" />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
-// Generic vitruvian silhouette path — head, torso, arms, legs.
-const SILHOUETTE =
-  "M100 18 c-12 0 -20 9 -20 21 c0 9 5 17 12 20 l-2 8 c-12 2 -22 6 -28 14 l-12 30 c-3 8 -5 16 -5 24 l0 18 c0 6 -3 12 -8 18 l-8 14 c-3 6 -2 10 3 10 c4 0 8 -3 11 -8 l8 -12 c2 -3 3 -7 3 -11 l4 2 c2 12 4 26 7 40 c2 10 -2 22 -2 34 l0 50 c0 12 2 26 4 38 c1 8 -1 18 -3 28 l-3 16 c-1 6 2 9 7 9 c4 0 8 -3 10 -9 l4 -14 c2 -7 4 -16 5 -24 c1 -8 3 -16 6 -22 c2 -4 4 -10 4 -16 l0 -36 c2 4 4 8 4 12 l0 38 c0 6 2 12 4 16 c3 6 5 14 6 22 c1 8 3 17 5 24 l4 14 c2 6 6 9 10 9 c5 0 8 -3 7 -9 l-3 -16 c-2 -10 -4 -20 -3 -28 c2 -12 4 -26 4 -38 l0 -50 c0 -12 -4 -24 -2 -34 c3 -14 5 -28 7 -40 l4 -2 c0 4 1 8 3 11 l8 12 c3 5 7 8 11 8 c5 0 6 -4 3 -10 l-8 -14 c-5 -6 -8 -12 -8 -18 l0 -18 c0 -8 -2 -16 -5 -24 l-12 -30 c-6 -8 -16 -12 -28 -14 l-2 -8 c7 -3 12 -11 12 -20 c0 -12 -8 -21 -20 -21 z";
-
-interface Region { key: string; d: string }
-
-// Approximate muscle group ellipses/paths over the silhouette.
-const FRONT_REGIONS: Region[] = [
-  { key: "chest",     d: "M70 80 q15 -8 30 0 q15 -8 30 0 q-5 18 -15 22 q-15 4 -30 0 q-10 -4 -15 -22 z" },
-  { key: "shoulders", d: "M55 75 q10 -10 20 -2 q-5 12 -12 14 q-8 -2 -8 -12 z M145 75 q-10 -10 -20 -2 q5 12 12 14 q8 -2 8 -12 z" },
-  { key: "biceps",    d: "M50 110 q-6 14 -3 28 q8 -2 10 -12 q1 -10 -7 -16 z M150 110 q6 14 3 28 q-8 -2 -10 -12 q-1 -10 7 -16 z" },
-  { key: "forearms",  d: "M44 144 q-4 18 0 32 q8 -4 10 -16 q-2 -12 -10 -16 z M156 144 q4 18 0 32 q-8 -4 -10 -16 q2 -12 10 -16 z" },
-  { key: "abs",       d: "M85 110 q15 -3 30 0 q2 30 -2 60 q-13 4 -26 0 q-4 -30 -2 -60 z" },
-  { key: "obliques",  d: "M70 118 q5 30 8 50 q-8 -2 -12 -8 q-2 -20 4 -42 z M130 118 q-5 30 -8 50 q8 -2 12 -8 q2 -20 -4 -42 z" },
-  { key: "quads",     d: "M76 200 q12 -4 22 0 q2 40 -4 70 q-12 4 -20 0 q-6 -34 2 -70 z M124 200 q-12 -4 -22 0 q-2 40 4 70 q12 4 20 0 q6 -34 -2 -70 z" },
-  { key: "calves_f",  d: "M78 290 q10 -2 18 0 q-2 30 -8 50 q-8 2 -12 0 q-2 -26 2 -50 z M122 290 q-10 -2 -18 0 q2 30 8 50 q8 2 12 0 q2 -26 -2 -50 z" },
-];
-
-const BACK_REGIONS: Region[] = [
-  { key: "traps",     d: "M82 70 q18 -6 36 0 q-3 14 -18 16 q-15 -2 -18 -16 z" },
-  { key: "lats",      d: "M68 95 q14 -4 28 0 l0 50 q-18 -2 -26 -16 q-4 -16 -2 -34 z M132 95 q-14 -4 -28 0 l0 50 q18 -2 26 -16 q4 -16 2 -34 z" },
-  { key: "triceps",   d: "M52 110 q-8 16 -4 32 q8 -4 10 -14 q1 -12 -6 -18 z M148 110 q8 16 4 32 q-8 -4 -10 -14 q-1 -12 6 -18 z" },
-  { key: "lower_back",d: "M82 150 q18 -4 36 0 q2 22 -2 36 q-16 4 -32 0 q-4 -16 -2 -36 z" },
-  { key: "glutes",    d: "M76 190 q24 -6 48 0 q4 24 -2 38 q-22 6 -44 0 q-6 -14 -2 -38 z" },
-  { key: "hamstrings",d: "M76 232 q12 -4 22 0 q4 36 -2 60 q-12 4 -20 0 q-6 -30 0 -60 z M124 232 q-12 -4 -22 0 q-4 36 2 60 q12 4 20 0 q6 -30 0 -60 z" },
-  { key: "calves_b",  d: "M78 300 q10 -2 18 0 q-2 28 -8 46 q-8 2 -12 0 q-2 -24 2 -46 z M122 300 q-10 -2 -18 0 q2 28 8 46 q8 2 12 0 q2 -24 -2 -46 z" },
-];
+function LabelChip({
+  muscleKey, active, onClick, side,
+}: {
+  muscleKey: string;
+  active: boolean;
+  onClick: () => void;
+  side: "left" | "right";
+}) {
+  const m = MUSCLES[muscleKey];
+  const Icon = m.Icon;
+  return (
+    <button
+      onClick={onClick}
+      className={`absolute w-full transition-all duration-300 ${
+        side === "left" ? "text-right pr-1" : "text-left pl-1"
+      } ${active ? "scale-[1.03]" : ""}`}
+      style={{ top: `${m.labelY}%`, transform: `translateY(-50%) ${active ? "scale(1.03)" : ""}` }}
+    >
+      <div className={`flex items-center gap-2 ${side === "right" ? "" : "flex-row-reverse"}`}>
+        <span
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-full border-2 transition"
+          style={{
+            borderColor: m.color,
+            backgroundColor: active ? `${m.color}30` : "rgba(0,0,0,0.4)",
+            boxShadow: active ? `0 0 14px ${m.color}80` : "none",
+          }}
+        >
+          <Icon className="h-4 w-4" style={{ color: m.color }} />
+        </span>
+        <div className={`min-w-0 ${side === "right" ? "text-left" : "text-right"}`}>
+          <div
+            className="truncate text-[10px] font-bold uppercase tracking-[0.18em] transition"
+            style={{ color: active ? m.color : "hsl(var(--foreground))" }}
+          >
+            {m.label}
+          </div>
+          <div className="truncate text-[9px] leading-tight text-muted-foreground">{m.tagline}</div>
+        </div>
+      </div>
+    </button>
+  );
+}
