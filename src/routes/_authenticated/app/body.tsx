@@ -216,6 +216,14 @@ function BodyMapTab() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-6 pb-28 sm:px-6">
+      {/* Skip to results (keyboard/screen reader) */}
+      <a
+        href="#body-results"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-gold focus:px-3 focus:py-2 focus:text-xs focus:font-semibold focus:uppercase focus:tracking-[0.22em] focus:text-deluxe-black"
+      >
+        Skip to recommended workouts
+      </a>
+
       {/* Top bar */}
       <div className="flex items-center justify-between">
         <Link to="/app" className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-gold">
@@ -267,6 +275,7 @@ function BodyMapTab() {
           visibleOnMobile={view === "front"}
           selected={selected}
           onToggle={toggle}
+          reduceMotion={reduceMotion}
         />
         <BodyFigure
           view="back"
@@ -274,7 +283,15 @@ function BodyMapTab() {
           visibleOnMobile={view === "back"}
           selected={selected}
           onToggle={toggle}
+          reduceMotion={reduceMotion}
         />
+      </div>
+
+      {/* Live region: announce selection changes */}
+      <div aria-live="polite" className="sr-only">
+        {selected.length === 0
+          ? "No muscle selected"
+          : `${selected.length} muscle${selected.length > 1 ? "s" : ""} selected: ${selected.map((k) => MUSCLES[k].label).join(", ")}. ${matches.length} recommended workouts.`}
       </div>
 
       {/* Selected panel */}
