@@ -106,11 +106,13 @@ function BodyMapTab() {
       if (user) {
         const { data } = await supabase
           .from("user_profiles_ext")
-          .select("body_map_selection")
+          .select("body_map_selection, body_map_presets")
           .eq("user_id", user.id)
           .maybeSingle();
-        const remote = (data as { body_map_selection?: typeof saved } | null)?.body_map_selection;
+        const row = data as { body_map_selection?: typeof saved; body_map_presets?: Preset[] } | null;
+        const remote = row?.body_map_selection;
         if (remote && typeof remote === "object") saved = remote;
+        if (Array.isArray(row?.body_map_presets)) setPresets(row!.body_map_presets as Preset[]);
       }
       if (!saved) {
         try {
