@@ -339,7 +339,11 @@ function BodyFigure({
       <div className="mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.32em] text-muted-foreground">
         {view}
       </div>
-      <div className="relative mx-auto grid max-w-xl grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] items-stretch gap-2 sm:gap-3">
+      <div
+        className="relative mx-auto grid max-w-xl grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] items-stretch gap-2 sm:gap-3"
+        role="group"
+        aria-label={`${view} body muscle selector`}
+      >
         {/* Left labels */}
         <div className="relative">
           {leftLabels.map((k) => (
@@ -351,21 +355,40 @@ function BodyFigure({
         <div className="relative aspect-[3/5] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black">
           <img
             src={image}
-            alt={`Anatomical ${view} view`}
+            alt={`Anatomical ${view} view of the human body with selectable muscle groups`}
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"
           />
           {/* Vignette */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.55)_100%)]" />
-          {keys.map((k) => {
+          {keys.map((k, idx) => {
             const m = MUSCLES[k];
             const active = selected.includes(k);
             return (
               <button
                 key={k}
+                type="button"
                 onClick={() => onToggle(k)}
-                aria-label={m.label}
-                className="group absolute -translate-x-1/2 -translate-y-1/2"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onToggle(k);
+                    return;
+                  }
+                  if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                    e.preventDefault();
+                    const next = keys[(idx + 1) % keys.length];
+                    (document.querySelector(`[data-hotspot="${view}-${next}"]`) as HTMLButtonElement | null)?.focus();
+                  } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                    e.preventDefault();
+                    const prev = keys[(idx - 1 + keys.length) % keys.length];
+                    (document.querySelector(`[data-hotspot="${view}-${prev}"]`) as HTMLButtonElement | null)?.focus();
+                  }
+                }}
+                data-hotspot={`${view}-${k}`}
+                aria-label={`${m.label} — ${m.tagline}`}
+                aria-pressed={active}
+                className="group absolute -translate-x-1/2 -translate-y-1/2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deluxe-black"
                 style={{ left: `${m.spot.x}%`, top: `${m.spot.y}%` }}
               >
                 <span
