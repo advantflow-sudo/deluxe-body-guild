@@ -81,6 +81,10 @@ function BodyMapTab() {
   const [remoteLoaded, setRemoteLoaded] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const logTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [presets, setPresets] = useState<Preset[]>([]);
+  const [presetName, setPresetName] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const selected = useMemo<string[]>(
     () => (muscles ? muscles.split(",").filter((k: string) => Boolean(MUSCLES[k])) : []),
