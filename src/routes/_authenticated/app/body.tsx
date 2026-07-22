@@ -14,8 +14,10 @@ import { ShareButton } from "@/components/deluxe/ShareButton";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { useAuth } from "@/hooks/useAuth";
 import { BodyExportCard } from "@/components/deluxe/BodyExportCard";
+import { MuscleRecommendationBox } from "@/components/deluxe/MuscleRecommendationBox";
 import bodyFront from "@/assets/body-front.jpg";
 import bodyBack from "@/assets/body-back.jpg";
+
 
 interface Preset { id: string; name: string; muscles: string[]; view: "front" | "back"; createdAt: string }
 
@@ -309,8 +311,9 @@ function BodyMapTab() {
         </div>
       </div>
 
-      {/* Bodies: side-by-side on desktop, single on mobile */}
-      <div className="mt-8 grid gap-8 lg:grid-cols-2">
+      {/* Bodies + recommendation box in the centre.
+          Desktop: [Front | Recommendation | Back]. Mobile: Front → Box → Back. */}
+      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-8">
         <BodyFigure
           view="front"
           image={bodyFront}
@@ -319,6 +322,14 @@ function BodyMapTab() {
           onToggle={toggle}
           reduceMotion={reduceMotion}
         />
+        <div className="order-last lg:order-none">
+          <MuscleRecommendationBox
+            muscleKey={primary ? selected[selected.length - 1] : null}
+            muscleLabel={primary?.label ?? ""}
+            color={primary?.color ?? "#c9a24c"}
+            tagline={primary?.tagline ?? ""}
+          />
+        </div>
         <BodyFigure
           view="back"
           image={bodyBack}
@@ -328,6 +339,7 @@ function BodyMapTab() {
           reduceMotion={reduceMotion}
         />
       </div>
+
 
       {/* Live region: announce selection changes */}
       <div aria-live="polite" className="sr-only">
