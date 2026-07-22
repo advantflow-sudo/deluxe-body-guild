@@ -25,6 +25,14 @@ interface Ext {
 
 const COUNTRIES = ["United Kingdom","United States","Canada","Ireland","Australia","New Zealand","France","Germany","Spain","Italy","Netherlands","Belgium","Switzerland","Sweden","Norway","Denmark","Portugal","Poland","United Arab Emirates","Saudi Arabia","Qatar","Singapore","Hong Kong","Japan","South Korea","India","Brazil","Mexico","Argentina","South Africa","Nigeria","Kenya","Other"];
 
+interface Sub {
+  tier: string | null;
+  status: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  trial_end: string | null;
+}
+
 function ProfileTab() {
   const { user, signOut } = useAuth();
   const bio = useBiometric();
@@ -32,20 +40,24 @@ function ProfileTab() {
   const [ext, setExt] = useState<Ext | null>(null);
   const [saving, setSaving] = useState(false);
   const [points, setPoints] = useState(0);
+  const [sub, setSub] = useState<Sub | null>(null);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [{ data: p }, { data: e }, { data: bal }] = await Promise.all([
+      const [{ data: p }, { data: e }, { data: bal }, { data: s }] = await Promise.all([
         supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle(),
         supabase.from("user_profiles_ext").select("*").eq("user_id", user.id).maybeSingle(),
         supabase.from("reward_points").select("balance_after").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+        supabase.from("subscribers").select("tier,status,current_period_end,cancel_at_period_end,trial_end").eq("user_id", user.id).maybeSingle(),
       ]);
       setName(p?.display_name ?? "");
       if (e) setExt(e as Ext);
       setPoints(bal?.balance_after ?? 0);
+      setSub(s as Sub | null);
     })();
   }, [user]);
+
 
   const save = async () => {
     if (!user || !ext) return;
