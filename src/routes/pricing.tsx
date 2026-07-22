@@ -51,8 +51,8 @@ const TIERS = [
     name: "Essential",
     icon: Star,
     tagline: "Begin the discipline.",
-    monthly: 29,
-    yearly: 23,
+    monthly: 14.99,
+    yearly: 11.99,
     features: [
       "Full library of guided workouts",
       "Weekly fitness & wellbeing plan",
