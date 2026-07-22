@@ -14,8 +14,10 @@ import { ShareButton } from "@/components/deluxe/ShareButton";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { useAuth } from "@/hooks/useAuth";
 import { BodyExportCard } from "@/components/deluxe/BodyExportCard";
+import { MuscleRecommendationBox } from "@/components/deluxe/MuscleRecommendationBox";
 import bodyFront from "@/assets/body-front.jpg";
 import bodyBack from "@/assets/body-back.jpg";
+
 
 interface Preset { id: string; name: string; muscles: string[]; view: "front" | "back"; createdAt: string }
 
