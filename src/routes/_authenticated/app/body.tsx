@@ -313,7 +313,7 @@ function BodyMapTab() {
 
       {/* Bodies + recommendation box in the centre.
           Desktop: [Front | Recommendation | Back]. Mobile: Front → Box → Back. */}
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.8fr)_minmax(220px,0.55fr)_minmax(0,1.8fr)] lg:gap-8 lg:items-center">
+      <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1.8fr)_minmax(220px,0.55fr)_minmax(0,1.8fr)] lg:gap-8 lg:items-center">
         <BodyFigure
           view="front"
           image={bodyFront}
@@ -322,7 +322,7 @@ function BodyMapTab() {
           onToggle={toggle}
           reduceMotion={reduceMotion}
         />
-        <div className="order-last lg:order-none">
+        <div className="lg:order-none">
           <MuscleRecommendationBox
             muscleKey={primary ? selected[selected.length - 1] : null}
             muscleLabel={primary?.label ?? ""}
@@ -338,6 +338,7 @@ function BodyMapTab() {
           onToggle={toggle}
           reduceMotion={reduceMotion}
         />
+
       </div>
 
 
