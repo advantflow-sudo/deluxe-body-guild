@@ -235,27 +235,68 @@ function PricingPage() {
             </div>
           </div>
 
+          {/* Current plan / change plan banner */}
+          {currentTier && (
+            <div className="mb-8 border border-gold/40 bg-deluxe-forest/40 p-5">
+              <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+                <div className="flex items-center gap-3">
+                  <RefreshCw className="h-5 w-5 text-gold" />
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Your current plan</div>
+                    <div className="font-display text-lg capitalize text-foreground">{currentTier}</div>
+                  </div>
+                </div>
+                <div className="text-xs text-muted-foreground sm:max-w-md sm:text-right">
+                  Upgrades take effect immediately with prorated billing. Downgrades apply at the end of your current period. Manage everything from your billing portal.
+                </div>
+                <button onClick={openPortal} disabled={portalLoading}>
+                  <OutlineButton className="!px-5 !py-2 !text-[10px]">
+                    {portalLoading ? "Opening…" : "Manage billing"}
+                  </OutlineButton>
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Tiers */}
           <div className="grid gap-6 lg:grid-cols-3">
             {TIERS.map((tier) => {
               const Icon = tier.icon;
               const price = cycle === "monthly" ? tier.monthly : tier.yearly;
+              const tierKey = tier.name.toLowerCase();
+              const isCurrent = currentTier === tierKey;
+              const currentRank = currentTier ? tierRank[currentTier] ?? 0 : 0;
+              const thisRank = tierRank[tierKey] ?? 0;
+              const isUpgrade = currentTier && thisRank > currentRank;
+              const isDowngrade = currentTier && thisRank < currentRank;
+              let ctaLabel = tier.cta;
+              if (isCurrent) ctaLabel = "Current plan";
+              else if (isUpgrade) ctaLabel = "Upgrade";
+              else if (isDowngrade) ctaLabel = "Downgrade";
               return (
                 <div
                   key={tier.name}
                   className={`relative flex flex-col border bg-deluxe-forest/30 p-8 backdrop-blur-sm transition hover:bg-deluxe-forest/50 ${
-                    tier.featured
+                    isCurrent
+                      ? "border-gold ring-1 ring-gold/40"
+                      : tier.featured
                       ? "border-gold/70 shadow-[0_0_60px_-20px_rgba(201,162,76,0.4)] lg:-mt-4 lg:mb-4"
                       : "border-gold/20"
                   }`}
                 >
-                  {tier.featured && (
+                  {isCurrent ? (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <span className="bg-gold-gradient px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-deluxe-black">
+                        Your Plan
+                      </span>
+                    </div>
+                  ) : tier.featured ? (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                       <span className="bg-gold-gradient px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-deluxe-black">
                         Most Chosen
                       </span>
                     </div>
-                  )}
+                  ) : null}
 
                   <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-full border border-gold/40 bg-gold/5">
                     <Icon className="h-5 w-5 text-gold" />
@@ -276,6 +317,15 @@ function PricingPage() {
                     </p>
                   )}
 
+                  {currentTier && !isCurrent && (
+                    <p className="mt-3 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-gold">
+                      {isUpgrade ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                      {isUpgrade
+                        ? "Prorated instantly via portal"
+                        : "Applies at end of period"}
+                    </p>
+                  )}
+
                   <div className="my-6">
                     <GoldDivider />
                   </div>
@@ -289,14 +339,18 @@ function PricingPage() {
                     ))}
                   </ul>
 
-                  <button onClick={() => subscribe(tier.name)} className="mt-8 block w-full" disabled={loadingTier === tier.name}>
-                    {tier.featured ? (
+                  <button
+                    onClick={() => subscribe(tier.name)}
+                    className="mt-8 block w-full"
+                    disabled={loadingTier === tier.name || isCurrent || portalLoading}
+                  >
+                    {tier.featured && !isCurrent ? (
                       <GoldButton className="w-full">
-                        {loadingTier === tier.name ? "Loading…" : tier.cta}
+                        {loadingTier === tier.name ? "Loading…" : ctaLabel}
                       </GoldButton>
                     ) : (
                       <OutlineButton className="w-full">
-                        {loadingTier === tier.name ? "Loading…" : tier.cta}
+                        {loadingTier === tier.name ? "Loading…" : ctaLabel}
                       </OutlineButton>
                     )}
                   </button>
@@ -304,6 +358,7 @@ function PricingPage() {
               );
             })}
           </div>
+
 
 
           {/* Guarantee */}
