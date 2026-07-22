@@ -471,8 +471,8 @@ function BodyFigure({
                 style={{ left: `${m.spot.x}%`, top: `${m.spot.y}%` }}
               >
                 <span
-                  className={`block h-4 w-4 rounded-full border-2 transition-all duration-300 ${
-                    active ? "scale-125" : "group-hover:scale-125"
+                  className={`block h-4 w-4 rounded-full border-2 ${reduceMotion ? "" : "transition-all duration-300"} ${
+                    active && !reduceMotion ? "scale-125" : !reduceMotion ? "group-hover:scale-125" : ""
                   }`}
                   style={{
                     backgroundColor: active ? m.color : "rgba(255,255,255,0.9)",
@@ -482,7 +482,7 @@ function BodyFigure({
                       : `0 0 0 2px ${m.color}30`,
                   }}
                 />
-                {active && (
+                {active && !reduceMotion && (
                   <span
                     className="absolute left-1/2 top-1/2 -z-10 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full animate-ping"
                     style={{ backgroundColor: `${m.color}40` }}
