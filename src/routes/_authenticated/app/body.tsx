@@ -110,8 +110,8 @@ function BodyMapTab() {
   const toggle = (key: string) => {
     haptic("selection");
     if (multi) {
-      const set = new Set(selected);
-      set.has(key) ? set.delete(key) : set.add(key);
+      const set = new Set<string>(selected);
+      if (set.has(key)) set.delete(key); else set.add(key);
       commitSelection([...set]);
     } else {
       commitSelection(selected[0] === key ? [] : [key]);
