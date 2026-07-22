@@ -313,7 +313,7 @@ function BodyMapTab() {
 
       {/* Bodies + recommendation box in the centre.
           Desktop: [Front | Recommendation | Back]. Mobile: Front → Box → Back. */}
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(240px,0.75fr)_minmax(0,1.35fr)] lg:gap-6 lg:items-center">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.8fr)_minmax(220px,0.55fr)_minmax(0,1.8fr)] lg:gap-8 lg:items-center">
         <BodyFigure
           view="front"
           image={bodyFront}
