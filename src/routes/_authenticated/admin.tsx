@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Users, Dumbbell, Award, Trophy, BarChart3, ArrowLeft, ShieldAlert } from "lucide-react";
+import { Users, Dumbbell, Award, Trophy, BarChart3, ArrowLeft, ShieldAlert, CreditCard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
 import { SectionLabel, GoldDivider, OutlineButton } from "@/components/deluxe/ui";
@@ -83,12 +83,13 @@ function AdminPage() {
         </div>
 
         <Tabs defaultValue="users" className="mt-10">
-          <TabsList className="grid w-full grid-cols-2 gap-2 bg-deluxe-forest/20 sm:grid-cols-5">
+          <TabsList className="grid w-full grid-cols-2 gap-2 bg-deluxe-forest/20 sm:grid-cols-6">
             <TabsTrigger value="users"><Users className="mr-2 h-3.5 w-3.5" />Users</TabsTrigger>
             <TabsTrigger value="workouts"><Dumbbell className="mr-2 h-3.5 w-3.5" />Workouts</TabsTrigger>
             <TabsTrigger value="rewards"><Award className="mr-2 h-3.5 w-3.5" />Rewards</TabsTrigger>
             <TabsTrigger value="challenges"><Trophy className="mr-2 h-3.5 w-3.5" />Challenges</TabsTrigger>
             <TabsTrigger value="analytics"><BarChart3 className="mr-2 h-3.5 w-3.5" />Analytics</TabsTrigger>
+            <TabsTrigger value="stripe"><CreditCard className="mr-2 h-3.5 w-3.5" />Stripe</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users" className="mt-6"><UsersPanel /></TabsContent>
@@ -96,7 +97,9 @@ function AdminPage() {
           <TabsContent value="rewards" className="mt-6"><RewardsPanel /></TabsContent>
           <TabsContent value="challenges" className="mt-6"><ChallengesPanel /></TabsContent>
           <TabsContent value="analytics" className="mt-6"><AnalyticsPanel /></TabsContent>
+          <TabsContent value="stripe" className="mt-6"><StripePanel /></TabsContent>
         </Tabs>
+
       </div>
     </div>
   );
@@ -393,3 +396,166 @@ function Panel({ title, subtitle, children }: { title: string; subtitle?: string
     </section>
   );
 }
+
+interface StripeEvent {
+  id: string;
+  stripe_event_id: string | null;
+  event_type: string;
+  status: string;
+  error_message: string | null;
+  user_id: string | null;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  amount_total: number | null;
+  currency: string | null;
+  tier: string | null;
+  received_at: string;
+  processed_at: string | null;
+}
+
+interface SubscriberRow {
+  user_id: string;
+  email: string;
+  tier: string | null;
+  status: string | null;
+  current_period_end: string | null;
+  trial_end: string | null;
+  cancel_at_period_end: boolean;
+}
+
+function StripePanel() {
+  const [events, setEvents] = useState<StripeEvent[]>([]);
+  const [subs, setSubs] = useState<SubscriberRow[]>([]);
+  const [filter, setFilter] = useState<"all" | "error" | "processed">("all");
+  const [loading, setLoading] = useState(true);
+
+  const load = async () => {
+    setLoading(true);
+    const q = supabase
+      .from("stripe_webhook_events")
+      .select("id,stripe_event_id,event_type,status,error_message,user_id,stripe_customer_id,stripe_subscription_id,amount_total,currency,tier,received_at,processed_at")
+      .order("received_at", { ascending: false })
+      .limit(100);
+    const [{ data: ev }, { data: sb }] = await Promise.all([
+      filter === "all" ? q : q.eq("status", filter),
+      supabase
+        .from("subscribers")
+        .select("user_id,email,tier,status,current_period_end,trial_end,cancel_at_period_end")
+        .order("updated_at", { ascending: false })
+        .limit(50),
+    ]);
+    setEvents((ev ?? []) as StripeEvent[]);
+    setSubs((sb ?? []) as SubscriberRow[]);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [filter]);
+
+  const errorCount = events.filter((e) => e.status === "error").length;
+
+  return (
+    <div className="space-y-6">
+      <Panel title="Subscribers" subtitle={`${subs.length} recent`}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gold/15 text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                <th className="py-2 pr-4">Email</th>
+                <th className="py-2 pr-4">Tier</th>
+                <th className="py-2 pr-4">Status</th>
+                <th className="py-2 pr-4">Trial ends</th>
+                <th className="py-2 pr-4">Renews</th>
+              </tr>
+            </thead>
+            <tbody>
+              {subs.map((s) => (
+                <tr key={s.user_id} className="border-b border-gold/5">
+                  <td className="py-2 pr-4 text-foreground">{s.email}</td>
+                  <td className="py-2 pr-4 capitalize text-gold">{s.tier ?? "—"}</td>
+                  <td className="py-2 pr-4 text-muted-foreground">
+                    {s.status ?? "—"}{s.cancel_at_period_end && <span className="ml-1 text-destructive">(cancels)</span>}
+                  </td>
+                  <td className="py-2 pr-4 text-muted-foreground">
+                    {s.trial_end ? new Date(s.trial_end).toLocaleDateString() : "—"}
+                  </td>
+                  <td className="py-2 pr-4 text-muted-foreground">
+                    {s.current_period_end ? new Date(s.current_period_end).toLocaleDateString() : "—"}
+                  </td>
+                </tr>
+              ))}
+              {subs.length === 0 && (
+                <tr><td colSpan={5} className="py-6 text-center text-muted-foreground">No subscribers yet.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+
+      <Panel title="Stripe Webhook Events" subtitle={`${events.length} recent · ${errorCount} errors`}>
+        <div className="mb-4 flex flex-wrap gap-2">
+          {(["all", "processed", "error"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`border px-3 py-1 text-[10px] uppercase tracking-[0.2em] transition ${
+                filter === f
+                  ? "border-gold bg-gold/10 text-gold"
+                  : "border-gold/20 text-muted-foreground hover:text-gold"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+          <button
+            onClick={load}
+            className="ml-auto border border-gold/20 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-gold"
+          >
+            {loading ? "Loading…" : "Refresh"}
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gold/15 text-left text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                <th className="py-2 pr-4">Received</th>
+                <th className="py-2 pr-4">Event</th>
+                <th className="py-2 pr-4">Status</th>
+                <th className="py-2 pr-4">Tier</th>
+                <th className="py-2 pr-4">Amount</th>
+                <th className="py-2 pr-4">Customer</th>
+                <th className="py-2 pr-4">Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.map((e) => (
+                <tr key={e.id} className="border-b border-gold/5 align-top">
+                  <td className="py-2 pr-4 text-muted-foreground whitespace-nowrap">
+                    {new Date(e.received_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                  </td>
+                  <td className="py-2 pr-4 text-foreground font-mono text-[11px]">{e.event_type}</td>
+                  <td className="py-2 pr-4">
+                    <span className={`text-[10px] uppercase tracking-[0.18em] ${
+                      e.status === "error" ? "text-destructive" : e.status === "processed" ? "text-gold" : "text-muted-foreground"
+                    }`}>
+                      {e.status}
+                    </span>
+                  </td>
+                  <td className="py-2 pr-4 capitalize text-muted-foreground">{e.tier ?? "—"}</td>
+                  <td className="py-2 pr-4 text-muted-foreground">
+                    {e.amount_total != null ? `${(e.amount_total / 100).toFixed(2)} ${(e.currency ?? "").toUpperCase()}` : "—"}
+                  </td>
+                  <td className="py-2 pr-4 font-mono text-[10px] text-muted-foreground">{e.stripe_customer_id?.slice(0, 14) ?? "—"}</td>
+                  <td className="py-2 pr-4 text-destructive text-[11px] max-w-xs truncate" title={e.error_message ?? ""}>{e.error_message ?? "—"}</td>
+                </tr>
+              ))}
+              {events.length === 0 && !loading && (
+                <tr><td colSpan={7} className="py-6 text-center text-muted-foreground">No webhook events logged yet.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Panel>
+    </div>
+  );
+}
+

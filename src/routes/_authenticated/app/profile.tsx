@@ -25,6 +25,14 @@ interface Ext {
 
 const COUNTRIES = ["United Kingdom","United States","Canada","Ireland","Australia","New Zealand","France","Germany","Spain","Italy","Netherlands","Belgium","Switzerland","Sweden","Norway","Denmark","Portugal","Poland","United Arab Emirates","Saudi Arabia","Qatar","Singapore","Hong Kong","Japan","South Korea","India","Brazil","Mexico","Argentina","South Africa","Nigeria","Kenya","Other"];
 
+interface Sub {
+  tier: string | null;
+  status: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  trial_end: string | null;
+}
+
 function ProfileTab() {
   const { user, signOut } = useAuth();
   const bio = useBiometric();
@@ -32,20 +40,24 @@ function ProfileTab() {
   const [ext, setExt] = useState<Ext | null>(null);
   const [saving, setSaving] = useState(false);
   const [points, setPoints] = useState(0);
+  const [sub, setSub] = useState<Sub | null>(null);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [{ data: p }, { data: e }, { data: bal }] = await Promise.all([
+      const [{ data: p }, { data: e }, { data: bal }, { data: s }] = await Promise.all([
         supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle(),
         supabase.from("user_profiles_ext").select("*").eq("user_id", user.id).maybeSingle(),
         supabase.from("reward_points").select("balance_after").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+        supabase.from("subscribers").select("tier,status,current_period_end,cancel_at_period_end,trial_end").eq("user_id", user.id).maybeSingle(),
       ]);
       setName(p?.display_name ?? "");
       if (e) setExt(e as Ext);
       setPoints(bal?.balance_after ?? 0);
+      setSub(s as Sub | null);
     })();
   }, [user]);
+
 
   const save = async () => {
     if (!user || !ext) return;
@@ -79,34 +91,76 @@ function ProfileTab() {
         <TransformationLevel points={points} />
       </div>
 
-      <div className="mt-4 flex items-center justify-between border border-gold/30 bg-gold-gradient/10 p-5">
-        <div className="flex items-center gap-3">
-          <Crown className="h-6 w-6 text-gold" />
-          <div>
-            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Membership</div>
-            <div className="font-display text-xl text-foreground capitalize">{ext?.subscription_tier ?? "Free"}</div>
+      <div className="mt-4 border border-gold/30 bg-gold-gradient/10 p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Crown className="h-6 w-6 text-gold" />
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Membership</div>
+              <div className="font-display text-xl text-foreground capitalize">
+                {sub?.tier ?? ext?.subscription_tier ?? "Free"}
+                {sub?.status && (
+                  <span className="ml-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">
+                    {sub.status}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {ext?.subscription_tier && ext.subscription_tier !== "free" ? (
+              <button
+                onClick={async () => {
+                  const { createPortalSession } = await import("@/lib/stripe.functions");
+                  try {
+                    const res = await createPortalSession({ data: { origin: window.location.origin } });
+                    if (res?.url) window.location.href = res.url;
+                  } catch (e) {
+                    toast.error((e as Error).message);
+                  }
+                }}
+              >
+                <OutlineButton className="!px-4 !py-2 !text-[10px]">Manage billing</OutlineButton>
+              </button>
+            ) : (
+              <Link to="/pricing"><OutlineButton className="!px-4 !py-2 !text-[10px]">Upgrade</OutlineButton></Link>
+            )}
           </div>
         </div>
-        <div className="flex gap-2">
-          {ext?.subscription_tier && ext.subscription_tier !== "free" ? (
-            <button
-              onClick={async () => {
-                const { createPortalSession } = await import("@/lib/stripe.functions");
-                try {
-                  const res = await createPortalSession({ data: { origin: window.location.origin } });
-                  if (res?.url) window.location.href = res.url;
-                } catch (e) {
-                  alert((e as Error).message);
-                }
-              }}
-            >
-              <OutlineButton className="!px-4 !py-2 !text-[10px]">Manage billing</OutlineButton>
-            </button>
-          ) : (
-            <Link to="/pricing"><OutlineButton className="!px-4 !py-2 !text-[10px]">Upgrade</OutlineButton></Link>
-          )}
-        </div>
+        {sub && (sub.trial_end || sub.current_period_end) && (
+          <div className="mt-4 grid gap-2 border-t border-gold/20 pt-4 sm:grid-cols-2">
+            {sub.trial_end && new Date(sub.trial_end) > new Date() && (
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Trial ends in</div>
+                <div className="mt-1 font-display text-lg text-gold">
+                  {Math.max(0, Math.ceil((new Date(sub.trial_end).getTime() - Date.now()) / 86400000))} days
+                </div>
+                <div className="text-[10px] text-muted-foreground">
+                  {new Date(sub.trial_end).toLocaleDateString()}
+                </div>
+              </div>
+            )}
+            {sub.current_period_end && (
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  {sub.cancel_at_period_end ? "Ends on" : "Renews on"}
+                </div>
+                <div className="mt-1 font-display text-lg text-foreground">
+                  {new Date(sub.current_period_end).toLocaleDateString(undefined, {
+                    day: "numeric", month: "short", year: "numeric",
+                  })}
+                </div>
+                {sub.cancel_at_period_end && (
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-destructive">
+                    Cancels at period end
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
 
 
       {ext && (
