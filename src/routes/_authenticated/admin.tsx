@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Users, Dumbbell, Award, Trophy, BarChart3, ArrowLeft, ShieldAlert } from "lucide-react";
+import { Users, Dumbbell, Award, Trophy, BarChart3, ArrowLeft, ShieldAlert, CreditCard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
 import { SectionLabel, GoldDivider, OutlineButton } from "@/components/deluxe/ui";
