@@ -330,28 +330,38 @@ function BodyMapTab() {
                   No workouts matched yet. Try adding another muscle group.
                 </div>
               )}
-              {matches.map((w) => (
+              {matches.map(({ w, reasons }) => (
                 <Link
                   key={w.id}
                   to="/app/workouts"
-                  className="group flex items-center justify-between gap-3 border border-gold/15 bg-deluxe-black/50 p-3 transition hover:border-gold/50"
+                  className="group flex flex-col gap-2 border border-gold/15 bg-deluxe-black/50 p-3 transition hover:border-gold/50"
                 >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
-                      <Dumbbell className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="truncate font-display text-sm text-foreground">{w.title}</div>
-                      <div className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                        {w.category} · {w.level}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
+                        <Dumbbell className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="truncate font-display text-sm text-foreground">{w.title}</div>
+                        <div className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                          {w.category} · {w.level}
+                        </div>
                       </div>
                     </div>
+                    <div className="flex shrink-0 items-center gap-3 text-[11px]">
+                      <span className="inline-flex items-center gap-1 text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</span>
+                      {w.calories && <span className="inline-flex items-center gap-1 text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</span>}
+                      <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:text-gold" />
+                    </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-3 text-[11px]">
-                    <span className="inline-flex items-center gap-1 text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</span>
-                    {w.calories && <span className="inline-flex items-center gap-1 text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</span>}
-                    <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:text-gold" />
-                  </div>
+                  {reasons.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pl-13 text-[10px] text-muted-foreground">
+                      <span className="uppercase tracking-[0.22em] text-gold/70">Why:</span>
+                      {reasons.slice(0, 3).map((r, i) => (
+                        <span key={i} className="rounded-full border border-gold/15 bg-deluxe-forest/20 px-2 py-0.5">{r}</span>
+                      ))}
+                    </div>
+                  )}
                 </Link>
               ))}
             </div>
