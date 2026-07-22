@@ -259,7 +259,7 @@ function BodyMapTab() {
   const primary = selected[0] ? MUSCLES[selected[0]] : null;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-6 pb-28 sm:px-6">
+    <div className="mx-auto max-w-[1600px] px-4 pt-6 pb-28 sm:px-6">
       {/* Skip to results (keyboard/screen reader) */}
       <a
         href="#body-results"
