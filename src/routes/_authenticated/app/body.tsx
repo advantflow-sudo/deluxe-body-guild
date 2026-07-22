@@ -336,7 +336,65 @@ function BodyMapTab() {
           : `${selected.length} muscle${selected.length > 1 ? "s" : ""} selected: ${selected.map((k) => MUSCLES[k].label).join(", ")}. ${matches.length} recommended workouts.`}
       </div>
 
+      {/* Presets bar */}
+      <section aria-label="Muscle target presets" className="mt-8 rounded-lg border border-gold/20 bg-deluxe-forest/10 p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.28em] text-gold/80">Presets</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">Save and quickly switch between your muscle-target combos.</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="preset-name" className="sr-only">Preset name</label>
+            <input
+              id="preset-name"
+              value={presetName}
+              onChange={(e) => setPresetName(e.target.value)}
+              placeholder="Name (e.g. Push Day)"
+              maxLength={40}
+              className="w-40 rounded border border-gold/25 bg-deluxe-black/60 px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none"
+            />
+            <button
+              onClick={saveCurrentPreset}
+              disabled={selected.length === 0}
+              className="inline-flex items-center gap-1.5 rounded border border-gold bg-gold px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-deluxe-black disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Save className="h-3.5 w-3.5" /> Save current
+            </button>
+          </div>
+        </div>
+        {presets.length === 0 ? (
+          <div className="mt-3 text-[11px] italic text-muted-foreground">No presets yet — pick muscles and save your first.</div>
+        ) : (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {presets.map((p) => {
+              const active = p.muscles.length === selected.length && p.muscles.every((m) => selected.includes(m)) && p.view === view;
+              return (
+                <div key={p.id} className={`group inline-flex items-center gap-1 rounded-full border px-1 py-0.5 text-[11px] transition ${active ? "border-gold bg-gold/10" : "border-gold/25 bg-deluxe-black/40 hover:border-gold/60"}`}>
+                  <button
+                    onClick={() => applyPreset(p)}
+                    aria-label={`Apply preset ${p.name}`}
+                    aria-pressed={active}
+                    className="px-2 py-1 text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-gold"
+                  >
+                    <span className="font-semibold">{p.name}</span>
+                    <span className="ml-1.5 text-muted-foreground">· {p.muscles.length}</span>
+                  </button>
+                  <button
+                    onClick={() => deletePreset(p.id)}
+                    aria-label={`Delete preset ${p.name}`}
+                    className="rounded-full p-1 text-muted-foreground hover:text-red-400"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
       {/* Selected panel */}
+
       <div
         id="body-results"
         ref={panelRef}
