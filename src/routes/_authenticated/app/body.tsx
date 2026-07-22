@@ -437,8 +437,11 @@ function LabelChip({
   const Icon = m.Icon;
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`absolute w-full transition-all duration-300 ${
+      aria-label={`${m.label} — ${m.tagline}`}
+      aria-pressed={active}
+      className={`absolute w-full rounded transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
         side === "left" ? "text-right pr-1" : "text-left pl-1"
       } ${active ? "scale-[1.03]" : ""}`}
       style={{ top: `${m.labelY}%`, transform: `translateY(-50%) ${active ? "scale(1.03)" : ""}` }}
