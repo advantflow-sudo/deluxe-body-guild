@@ -396,6 +396,13 @@ export type Database = {
             referencedRelation: "connected_devices"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "device_metrics_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "connected_devices_safe"
+            referencedColumns: ["id"]
+          },
         ]
       }
       exercises: {
@@ -1566,6 +1573,48 @@ export type Database = {
       }
     }
     Views: {
+      connected_devices_safe: {
+        Row: {
+          created_at: string | null
+          display_name: string | null
+          external_user_id: string | null
+          id: string | null
+          last_synced_at: string | null
+          provider: string | null
+          scopes: string[] | null
+          status: string | null
+          token_expires_at: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_name?: string | null
+          external_user_id?: string | null
+          id?: string | null
+          last_synced_at?: string | null
+          provider?: string | null
+          scopes?: string[] | null
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_name?: string | null
+          external_user_id?: string | null
+          id?: string | null
+          last_synced_at?: string | null
+          provider?: string | null
+          scopes?: string[] | null
+          status?: string | null
+          token_expires_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       leaderboard_weekly: {
         Row: {
           active_days: number | null
