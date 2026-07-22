@@ -307,14 +307,14 @@ function PricingPage() {
                   <p className="mt-1 font-serif italic text-muted-foreground">{tier.tagline}</p>
 
                   <div className="mt-6 flex items-baseline gap-2">
-                    <span className="text-gold-gradient font-display text-5xl">£{price}</span>
+                    <span className="text-gold-gradient font-display text-5xl">£{price.toFixed(2)}</span>
                     <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                       / month
                     </span>
                   </div>
                   {cycle === "yearly" && (
                     <p className="mt-1 text-[11px] text-muted-foreground">
-                      Billed annually — £{price * 12}
+                      Billed annually — £{(price * 12).toFixed(2)}
                     </p>
                   )}
 
