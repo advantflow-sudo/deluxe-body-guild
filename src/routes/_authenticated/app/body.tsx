@@ -409,40 +409,78 @@ function BodyMapTab() {
                   No workouts matched yet. Try adding another muscle group.
                 </div>
               )}
-              {matches.map(({ w, reasons }) => (
-                <Link
-                  key={w.id}
-                  to="/app/workouts"
-                  className="group flex flex-col gap-2 border border-gold/15 bg-deluxe-black/50 p-3 transition hover:border-gold/50"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
-                        <Dumbbell className="h-4 w-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="truncate font-display text-sm text-foreground">{w.title}</div>
-                        <div className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                          {w.category} · {w.level}
+              {matches.map(({ w, reasons }) => {
+                const isOpen = expandedId === w.id;
+                return (
+                  <div key={w.id} className="border border-gold/15 bg-deluxe-black/50 transition hover:border-gold/40">
+                    <button
+                      type="button"
+                      onClick={() => { haptic("selection"); setExpandedId(isOpen ? null : w.id); }}
+                      aria-expanded={isOpen}
+                      aria-controls={`w-detail-${w.id}`}
+                      className="group flex w-full flex-col gap-2 p-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
+                            <Dumbbell className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="truncate font-display text-sm text-foreground">{w.title}</div>
+                            <div className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                              {w.category} · {w.level}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-3 text-[11px]">
+                          <span className="inline-flex items-center gap-1 text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</span>
+                          {w.calories && <span className="inline-flex items-center gap-1 text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</span>}
+                          <ChevronDown className={`h-4 w-4 text-muted-foreground transition ${isOpen ? "rotate-180 text-gold" : "group-hover:text-gold"}`} />
                         </div>
                       </div>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-3 text-[11px]">
-                      <span className="inline-flex items-center gap-1 text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</span>
-                      {w.calories && <span className="inline-flex items-center gap-1 text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</span>}
-                      <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:text-gold" />
-                    </div>
+                      {reasons.length > 0 && !isOpen && (
+                        <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
+                          <span className="uppercase tracking-[0.22em] text-gold/70">Why:</span>
+                          {reasons.slice(0, 2).map((r, i) => (
+                            <span key={i} className="rounded-full border border-gold/15 bg-deluxe-forest/20 px-2 py-0.5">{r}</span>
+                          ))}
+                          {reasons.length > 2 && <span className="text-gold/70">+{reasons.length - 2} more</span>}
+                        </div>
+                      )}
+                    </button>
+                    {isOpen && (
+                      <div id={`w-detail-${w.id}`} className="border-t border-gold/15 bg-deluxe-forest/10 p-4 text-xs text-muted-foreground">
+                        {w.description && <p className="mb-3 text-foreground/80">{w.description}</p>}
+                        <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">Selected hotspots</div>
+                        <div className="mb-3 flex flex-wrap gap-1.5">
+                          {selected.map((k) => {
+                            const m = MUSCLES[k];
+                            return (
+                              <span key={k} className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px]"
+                                style={{ backgroundColor: `${m.color}20`, color: m.color, border: `1px solid ${m.color}60` }}>
+                                <m.Icon className="h-3 w-3" /> {m.label}
+                              </span>
+                            );
+                          })}
+                        </div>
+                        <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">Why this workout</div>
+                        <ul className="mb-3 list-disc space-y-0.5 pl-4">
+                          {reasons.map((r, i) => <li key={i}>{r}</li>)}
+                        </ul>
+                        <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">Goals it supports</div>
+                        <div className="mb-4 flex flex-wrap gap-1.5">
+                          {[...new Set(selected.map((k) => MUSCLES[k].tagline))].map((t, i) => (
+                            <span key={i} className="rounded border border-gold/15 bg-deluxe-black/40 px-2 py-0.5 text-[10px]">{t}</span>
+                          ))}
+                        </div>
+                        <Link to="/app/workouts" className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-gold hover:text-gold-light">
+                          Open workout <ChevronRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                  {reasons.length > 0 && (
-                    <div className="flex flex-wrap gap-1 pl-13 text-[10px] text-muted-foreground">
-                      <span className="uppercase tracking-[0.22em] text-gold/70">Why:</span>
-                      {reasons.slice(0, 3).map((r, i) => (
-                        <span key={i} className="rounded-full border border-gold/15 bg-deluxe-forest/20 px-2 py-0.5">{r}</span>
-                      ))}
-                    </div>
-                  )}
-                </Link>
-              ))}
+                );
+              })}
             </div>
           </>
         )}
