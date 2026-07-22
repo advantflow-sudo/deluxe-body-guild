@@ -400,13 +400,14 @@ function BodyMapTab() {
 }
 
 function BodyFigure({
-  view, image, visibleOnMobile, selected, onToggle,
+  view, image, visibleOnMobile, selected, onToggle, reduceMotion,
 }: {
   view: "front" | "back";
   image: string;
   visibleOnMobile: boolean;
   selected: string[];
   onToggle: (key: string) => void;
+  reduceMotion: boolean;
 }) {
   const keys = Object.keys(MUSCLES).filter((k: string) => MUSCLES[k].side === view);
   const leftLabels = keys.filter((k: string) => MUSCLES[k].labelSide === "left");
