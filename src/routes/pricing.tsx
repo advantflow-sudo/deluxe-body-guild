@@ -269,10 +269,11 @@ function PricingPage() {
               const thisRank = tierRank[tierKey] ?? 0;
               const isUpgrade = currentTier && thisRank > currentRank;
               const isDowngrade = currentTier && thisRank < currentRank;
-              let ctaLabel = tier.cta;
+              let ctaLabel: string = tier.cta;
               if (isCurrent) ctaLabel = "Current plan";
               else if (isUpgrade) ctaLabel = "Upgrade";
               else if (isDowngrade) ctaLabel = "Downgrade";
+
               return (
                 <div
                   key={tier.name}
