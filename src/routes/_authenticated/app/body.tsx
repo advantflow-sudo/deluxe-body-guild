@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronLeft, ChevronRight, Clock, Flame, Dumbbell,
   Shield, Zap, Heart, Anchor, Crown, Mountain, Sparkles, Target,
@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
+import { useReduceMotion } from "@/hooks/useReduceMotion";
+import { useAuth } from "@/hooks/useAuth";
 import bodyFront from "@/assets/body-front.jpg";
 import bodyBack from "@/assets/body-back.jpg";
 
@@ -66,9 +68,14 @@ const STORAGE_KEY = "deluxe.body.selection.v1";
 function BodyMapTab() {
   const { muscles, view = "front" } = Route.useSearch();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { reduceMotion } = useReduceMotion();
   const [allWorkouts, setAllWorkouts] = useState<Workout[]>([]);
   const [multi, setMulti] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [remoteLoaded, setRemoteLoaded] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const logTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const selected = useMemo<string[]>(
     () => (muscles ? muscles.split(",").filter((k: string) => Boolean(MUSCLES[k])) : []),
@@ -81,15 +88,31 @@ function BodyMapTab() {
       .then(({ data }) => { if (data) setAllWorkouts(data as Workout[]); });
   }, []);
 
-  // Restore from localStorage on first mount if URL has no selection
+  // Restore from Supabase profile first, fall back to localStorage
   useEffect(() => {
     if (hydrated) return;
-    setHydrated(true);
-    if (muscles) return;
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const saved = JSON.parse(raw) as { muscles?: string[]; view?: "front" | "back"; multi?: boolean };
+    let cancelled = false;
+    (async () => {
+      let saved: { muscles?: string[]; view?: "front" | "back"; multi?: boolean } | null = null;
+      if (user) {
+        const { data } = await supabase
+          .from("user_profiles_ext")
+          .select("body_map_selection")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        const remote = (data as { body_map_selection?: typeof saved } | null)?.body_map_selection;
+        if (remote && typeof remote === "object") saved = remote;
+      }
+      if (!saved) {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) saved = JSON.parse(raw);
+        } catch { /* ignore */ }
+      }
+      if (cancelled) return;
+      setHydrated(true);
+      setRemoteLoaded(true);
+      if (!saved || muscles) return;
       if (saved.multi) setMulti(true);
       const keys = (saved.muscles ?? []).filter((k: string) => Boolean(MUSCLES[k]));
       if (keys.length || saved.view) {
@@ -102,36 +125,63 @@ function BodyMapTab() {
           replace: true,
         });
       }
-    } catch { /* ignore */ }
+    })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.id]);
 
-  // Persist selection to localStorage
+  // Persist selection to localStorage + Supabase profile
   useEffect(() => {
-    if (!hydrated) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ muscles: selected, view, multi }));
-    } catch { /* ignore */ }
-  }, [selected, view, multi, hydrated]);
+    if (!hydrated || !remoteLoaded) return;
+    const payload = { muscles: selected, view, multi };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch { /* ignore */ }
+    if (user) {
+      supabase.from("user_profiles_ext")
+        .upsert({ user_id: user.id, body_map_selection: payload }, { onConflict: "user_id" })
+        .then(() => { /* fire and forget */ });
+    }
+  }, [selected, view, multi, hydrated, remoteLoaded, user]);
 
   const matches = useMemo(() => {
-    if (selected.length === 0) return [];
+    if (selected.length === 0) return [] as Array<{ w: Workout; score: number; reasons: string[] }>;
     return allWorkouts
       .map((w) => {
         const hay = `${w.title} ${w.description ?? ""}`.toLowerCase();
         let score = 0;
+        const reasons: string[] = [];
         for (const key of selected) {
           const m = MUSCLES[key];
-          if (m.keywords.some((k) => hay.includes(k))) score += 2;
-          if (m.categories.includes(w.category)) score += 1;
+          const hitKw = m.keywords.find((k) => hay.includes(k));
+          if (hitKw) { score += 2; reasons.push(`${m.label}: matches “${hitKw}”`); }
+          if (m.categories.includes(w.category)) { score += 1; reasons.push(`${m.label}: ${w.category} category`); }
         }
-        return { w, score };
+        return { w, score, reasons };
       })
       .filter((x) => x.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 12)
-      .map((x) => x.w);
+      .slice(0, 12);
   }, [selected, allWorkouts]);
+
+  // Log selections (debounced) so the coach can spot trends
+  useEffect(() => {
+    if (!hydrated || !user || selected.length === 0) return;
+    if (logTimer.current) clearTimeout(logTimer.current);
+    logTimer.current = setTimeout(() => {
+      supabase.from("body_map_selection_logs").insert({
+        user_id: user.id,
+        muscles: selected,
+        view,
+        multi,
+        matched_count: matches.length,
+      }).then(() => { /* ignore */ });
+    }, 1200);
+    return () => { if (logTimer.current) clearTimeout(logTimer.current); };
+  }, [selected, view, multi, matches.length, hydrated, user]);
+
+  // Focus the selection panel when the first selection is made (a11y)
+  useEffect(() => {
+    if (selected.length === 1) panelRef.current?.focus();
+  }, [selected.length]);
 
   const commitSelection = (keys: string[]) => {
     navigate({
@@ -160,11 +210,20 @@ function BodyMapTab() {
     navigate({ to: "/app/body", search: { view: v, ...(muscles ? { muscles } : {}) } });
   };
 
+
   const shareUrl = `/app/body?view=${view}${selected.length ? `&muscles=${selected.join(",")}` : ""}`;
   const primary = selected[0] ? MUSCLES[selected[0]] : null;
 
   return (
     <div className="mx-auto max-w-6xl px-4 pt-6 pb-28 sm:px-6">
+      {/* Skip to results (keyboard/screen reader) */}
+      <a
+        href="#body-results"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-gold focus:px-3 focus:py-2 focus:text-xs focus:font-semibold focus:uppercase focus:tracking-[0.22em] focus:text-deluxe-black"
+      >
+        Skip to recommended workouts
+      </a>
+
       {/* Top bar */}
       <div className="flex items-center justify-between">
         <Link to="/app" className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-gold">
@@ -216,6 +275,7 @@ function BodyMapTab() {
           visibleOnMobile={view === "front"}
           selected={selected}
           onToggle={toggle}
+          reduceMotion={reduceMotion}
         />
         <BodyFigure
           view="back"
@@ -223,11 +283,26 @@ function BodyMapTab() {
           visibleOnMobile={view === "back"}
           selected={selected}
           onToggle={toggle}
+          reduceMotion={reduceMotion}
         />
       </div>
 
+      {/* Live region: announce selection changes */}
+      <div aria-live="polite" className="sr-only">
+        {selected.length === 0
+          ? "No muscle selected"
+          : `${selected.length} muscle${selected.length > 1 ? "s" : ""} selected: ${selected.map((k) => MUSCLES[k].label).join(", ")}. ${matches.length} recommended workouts.`}
+      </div>
+
       {/* Selected panel */}
-      <div className="mt-10 rounded-lg border border-gold/25 bg-deluxe-forest/15 p-5 sm:p-6">
+      <div
+        id="body-results"
+        ref={panelRef}
+        tabIndex={-1}
+        role="region"
+        aria-label="Recommended workouts for your selected muscles"
+        className="mt-10 rounded-lg border border-gold/25 bg-deluxe-forest/15 p-5 sm:p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+      >
         {selected.length === 0 ? (
           <div className="text-center text-xs text-muted-foreground sm:text-sm">
             Tap any glowing muscle on the body to see personalised workouts.
@@ -279,28 +354,38 @@ function BodyMapTab() {
                   No workouts matched yet. Try adding another muscle group.
                 </div>
               )}
-              {matches.map((w) => (
+              {matches.map(({ w, reasons }) => (
                 <Link
                   key={w.id}
                   to="/app/workouts"
-                  className="group flex items-center justify-between gap-3 border border-gold/15 bg-deluxe-black/50 p-3 transition hover:border-gold/50"
+                  className="group flex flex-col gap-2 border border-gold/15 bg-deluxe-black/50 p-3 transition hover:border-gold/50"
                 >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
-                      <Dumbbell className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="truncate font-display text-sm text-foreground">{w.title}</div>
-                      <div className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                        {w.category} · {w.level}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
+                        <Dumbbell className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="truncate font-display text-sm text-foreground">{w.title}</div>
+                        <div className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                          {w.category} · {w.level}
+                        </div>
                       </div>
                     </div>
+                    <div className="flex shrink-0 items-center gap-3 text-[11px]">
+                      <span className="inline-flex items-center gap-1 text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</span>
+                      {w.calories && <span className="inline-flex items-center gap-1 text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</span>}
+                      <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:text-gold" />
+                    </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-3 text-[11px]">
-                    <span className="inline-flex items-center gap-1 text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</span>
-                    {w.calories && <span className="inline-flex items-center gap-1 text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</span>}
-                    <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:text-gold" />
-                  </div>
+                  {reasons.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pl-13 text-[10px] text-muted-foreground">
+                      <span className="uppercase tracking-[0.22em] text-gold/70">Why:</span>
+                      {reasons.slice(0, 3).map((r, i) => (
+                        <span key={i} className="rounded-full border border-gold/15 bg-deluxe-forest/20 px-2 py-0.5">{r}</span>
+                      ))}
+                    </div>
+                  )}
                 </Link>
               ))}
             </div>
@@ -322,13 +407,14 @@ function BodyMapTab() {
 }
 
 function BodyFigure({
-  view, image, visibleOnMobile, selected, onToggle,
+  view, image, visibleOnMobile, selected, onToggle, reduceMotion,
 }: {
   view: "front" | "back";
   image: string;
   visibleOnMobile: boolean;
   selected: string[];
   onToggle: (key: string) => void;
+  reduceMotion: boolean;
 }) {
   const keys = Object.keys(MUSCLES).filter((k: string) => MUSCLES[k].side === view);
   const leftLabels = keys.filter((k: string) => MUSCLES[k].labelSide === "left");
@@ -392,8 +478,8 @@ function BodyFigure({
                 style={{ left: `${m.spot.x}%`, top: `${m.spot.y}%` }}
               >
                 <span
-                  className={`block h-4 w-4 rounded-full border-2 transition-all duration-300 ${
-                    active ? "scale-125" : "group-hover:scale-125"
+                  className={`block h-4 w-4 rounded-full border-2 ${reduceMotion ? "" : "transition-all duration-300"} ${
+                    active && !reduceMotion ? "scale-125" : !reduceMotion ? "group-hover:scale-125" : ""
                   }`}
                   style={{
                     backgroundColor: active ? m.color : "rgba(255,255,255,0.9)",
@@ -403,7 +489,7 @@ function BodyFigure({
                       : `0 0 0 2px ${m.color}30`,
                   }}
                 />
-                {active && (
+                {active && !reduceMotion && (
                   <span
                     className="absolute left-1/2 top-1/2 -z-10 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full animate-ping"
                     style={{ backgroundColor: `${m.color}40` }}
