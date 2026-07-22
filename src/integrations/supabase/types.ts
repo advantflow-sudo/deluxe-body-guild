@@ -1667,6 +1667,22 @@ export type Database = {
         Args: { _delta: number; _reason: string }
         Returns: number
       }
+      claim_reward: {
+        Args: { _reward_id: string }
+        Returns: {
+          claimed_at: string
+          id: string
+          reward_id: string
+          status: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "reward_claims"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       complete_mission: {
         Args: never
         Returns: {
