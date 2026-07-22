@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronLeft, ChevronRight, Clock, Flame, Dumbbell,
   Shield, Zap, Heart, Anchor, Crown, Mountain, Sparkles, Target,
-  Save, Trash2, LineChart, FileDown, ChevronDown,
+  Save, Trash2, LineChart, FileDown, ChevronDown, ZoomIn, ZoomOut, RotateCcw,
 } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -594,10 +594,96 @@ function BodyFigure({
   const leftLabels = keys.filter((k: string) => MUSCLES[k].labelSide === "left");
   const rightLabels = keys.filter((k: string) => MUSCLES[k].labelSide === "right");
 
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const dragRef = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
+  const pinchRef = useRef<{ dist: number; zoom: number } | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  const clampPan = (z: number, x: number, y: number) => {
+    const el = stageRef.current;
+    if (!el) return { x, y };
+    const max = ((z - 1) / 2) * 100;
+    const w = el.clientWidth, h = el.clientHeight;
+    const mx = (max / 100) * w, my = (max / 100) * h;
+    return { x: Math.max(-mx, Math.min(mx, x)), y: Math.max(-my, Math.min(my, y)) };
+  };
+
+  const setZoomSafe = (z: number) => {
+    const nz = Math.max(1, Math.min(3, z));
+    setZoom(nz);
+    setPan((p) => clampPan(nz, p.x, p.y));
+  };
+
+  const zoomIn = () => { haptic("light"); setZoomSafe(zoom + 0.5); };
+  const zoomOut = () => { haptic("light"); setZoomSafe(zoom - 0.5); };
+  const resetView = () => { haptic("light"); setZoom(1); setPan({ x: 0, y: 0 }); };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (zoom <= 1) return;
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    dragRef.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!dragRef.current) return;
+    const dx = e.clientX - dragRef.current.x;
+    const dy = e.clientY - dragRef.current.y;
+    setPan(clampPan(zoom, dragRef.current.px + dx, dragRef.current.py + dy));
+  };
+  const onPointerUp = () => { dragRef.current = null; };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      pinchRef.current = { dist: Math.hypot(dx, dy), zoom };
+    }
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 2 && pinchRef.current) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const d = Math.hypot(dx, dy);
+      setZoomSafe(pinchRef.current.zoom * (d / pinchRef.current.dist));
+    }
+  };
+  const onTouchEnd = () => { pinchRef.current = null; };
+
   return (
     <div className={`${visibleOnMobile ? "block" : "hidden"} lg:block`}>
-      <div className="mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.32em] text-muted-foreground">
-        {view}
+      <div className="mb-3 flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.32em] text-muted-foreground">
+        <span>{view}</span>
+        <span className="ml-2 inline-flex items-center gap-1">
+          <button
+            type="button"
+            onClick={zoomOut}
+            disabled={zoom <= 1}
+            aria-label={`Zoom out ${view} body diagram`}
+            className="grid h-8 w-8 place-items-center rounded-full border border-gold/40 text-gold transition hover:bg-gold/10 disabled:opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          >
+            <ZoomOut className="h-4 w-4" />
+          </button>
+          <span aria-live="polite" className="min-w-[2.5rem] text-center tabular-nums text-foreground">{Math.round(zoom * 100)}%</span>
+          <button
+            type="button"
+            onClick={zoomIn}
+            disabled={zoom >= 3}
+            aria-label={`Zoom in ${view} body diagram`}
+            className="grid h-8 w-8 place-items-center rounded-full border border-gold/40 text-gold transition hover:bg-gold/10 disabled:opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          >
+            <ZoomIn className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            onClick={resetView}
+            disabled={zoom === 1 && pan.x === 0 && pan.y === 0}
+            aria-label={`Reset ${view} body diagram zoom and pan`}
+            className="grid h-8 w-8 place-items-center rounded-full border border-gold/40 text-gold transition hover:bg-gold/10 disabled:opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </button>
+        </span>
       </div>
       <div
         className="relative mx-auto grid w-full max-w-2xl grid-cols-1 items-stretch gap-2 sm:grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] sm:gap-3"
@@ -613,73 +699,108 @@ function BodyFigure({
 
 
         {/* Body image + hotspots */}
-        <div className="relative aspect-[3/5] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black">
-          <img
-            src={image}
-            alt={`Anatomical ${view} view of the human body with selectable muscle groups`}
-            loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          {/* Vignette */}
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.55)_100%)]" />
-          {keys.map((k, idx) => {
-            const m = MUSCLES[k];
-            const active = selected.includes(k);
-            return (
-              <button
-                key={k}
-                type="button"
-                onClick={() => onToggle(k)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onToggle(k);
-                    return;
-                  }
-                  if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-                    e.preventDefault();
-                    const next = keys[(idx + 1) % keys.length];
-                    (document.querySelector(`[data-hotspot="${view}-${next}"]`) as HTMLButtonElement | null)?.focus();
-                  } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-                    e.preventDefault();
-                    const prev = keys[(idx - 1 + keys.length) % keys.length];
-                    (document.querySelector(`[data-hotspot="${view}-${prev}"]`) as HTMLButtonElement | null)?.focus();
-                  }
-                }}
-                data-hotspot={`${view}-${k}`}
-                aria-label={`${active ? "Selected " : ""}${m.label} muscle group — ${m.tagline}. ${active ? "Press to deselect." : "Press to select."}`}
-                aria-pressed={active}
-                title={m.label}
-                className="group absolute -translate-x-1/2 -translate-y-1/2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deluxe-black"
-                style={{ left: `${m.spot.x}%`, top: `${m.spot.y}%` }}
-              >
-                <span
-                  className={`block rounded-full border-2 ${reduceMotion ? "h-4 w-4" : "transition-all duration-500 ease-out"} ${
-                    active ? "h-5 w-5" : "h-4 w-4"
-                  } ${active && !reduceMotion ? "scale-110" : !reduceMotion ? "group-hover:scale-125" : ""}`}
-                  style={{
-                    backgroundColor: active ? m.color : "rgba(255,255,255,0.92)",
-                    borderColor: active ? "#ffffff" : m.color,
-                    boxShadow: active
-                      ? `0 0 0 5px ${m.color}66, 0 0 28px 6px ${m.color}, 0 0 60px 2px ${m.color}80`
-                      : `0 0 0 2px ${m.color}30`,
+        <div
+          ref={stageRef}
+          className="relative aspect-[3/5] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black touch-none"
+          style={{ cursor: zoom > 1 ? (dragRef.current ? "grabbing" : "grab") : "default" }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {/* Skeleton */}
+          {!imgLoaded && (
+            <div
+              aria-hidden="true"
+              className={`absolute inset-0 bg-gradient-to-b from-deluxe-forest/30 via-deluxe-black to-deluxe-forest/20 ${reduceMotion ? "" : "animate-pulse"}`}
+            >
+              <div className="absolute inset-0 grid place-items-center">
+                <div className="h-1/2 w-1/3 rounded-full border border-gold/10 bg-gold/5" />
+              </div>
+            </div>
+          )}
+          <div
+            className="absolute inset-0 origin-center transition-transform duration-150 ease-out"
+            style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }}
+          >
+            <img
+              src={image}
+              alt={`Anatomical ${view} view of the human body with selectable muscle groups`}
+              loading="lazy"
+              decoding="async"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgLoaded(true)}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+            />
+            {/* Vignette */}
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.55)_100%)]" />
+            {keys.map((k, idx) => {
+              const m = MUSCLES[k];
+              const active = selected.includes(k);
+              return (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onToggle(k); }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onToggle(k);
+                      return;
+                    }
+                    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                      e.preventDefault();
+                      const next = keys[(idx + 1) % keys.length];
+                      (document.querySelector(`[data-hotspot="${view}-${next}"]`) as HTMLButtonElement | null)?.focus();
+                    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                      e.preventDefault();
+                      const prev = keys[(idx - 1 + keys.length) % keys.length];
+                      (document.querySelector(`[data-hotspot="${view}-${prev}"]`) as HTMLButtonElement | null)?.focus();
+                    }
                   }}
-                />
-                {active && !reduceMotion && (
-                  <>
-                    <span
-                      className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full animate-ping"
-                      style={{ backgroundColor: `${m.color}55` }}
-                    />
-                    <span
-                      className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full animate-pulse"
-                      style={{ backgroundColor: `${m.color}30` }}
-                    />
-                  </>
-                )}
-              </button>
-            );
-          })}
+                  data-hotspot={`${view}-${k}`}
+                  role="switch"
+                  aria-label={`${m.label} muscle group — ${m.tagline}`}
+                  aria-pressed={active}
+                  aria-checked={active}
+                  title={m.label}
+                  className="group absolute grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deluxe-black"
+                  style={{ left: `${m.spot.x}%`, top: `${m.spot.y}%`, minWidth: 44, minHeight: 44, width: 44, height: 44 }}
+                >
+                  {/* Invisible tap enlargement layer for ≥44px target on mobile */}
+                  <span aria-hidden="true" className="absolute inset-0 rounded-full" />
+                  <span
+                    className={`block rounded-full border-2 ${reduceMotion ? "h-4 w-4" : "transition-all duration-500 ease-out"} ${
+                      active ? "h-5 w-5" : "h-4 w-4"
+                    } ${active && !reduceMotion ? "scale-110" : !reduceMotion ? "group-hover:scale-125" : ""}`}
+                    style={{
+                      backgroundColor: active ? m.color : "rgba(255,255,255,0.92)",
+                      borderColor: active ? "#ffffff" : m.color,
+                      boxShadow: active
+                        ? `0 0 0 5px ${m.color}66, 0 0 28px 6px ${m.color}, 0 0 60px 2px ${m.color}80`
+                        : `0 0 0 2px ${m.color}30`,
+                    }}
+                  />
+                  {active && !reduceMotion && (
+                    <>
+                      <span
+                        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full animate-ping"
+                        style={{ backgroundColor: `${m.color}55` }}
+                      />
+                      <span
+                        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full animate-pulse"
+                        style={{ backgroundColor: `${m.color}30` }}
+                      />
+                    </>
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
         </div>
 
