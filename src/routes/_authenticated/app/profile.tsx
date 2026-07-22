@@ -91,34 +91,76 @@ function ProfileTab() {
         <TransformationLevel points={points} />
       </div>
 
-      <div className="mt-4 flex items-center justify-between border border-gold/30 bg-gold-gradient/10 p-5">
-        <div className="flex items-center gap-3">
-          <Crown className="h-6 w-6 text-gold" />
-          <div>
-            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Membership</div>
-            <div className="font-display text-xl text-foreground capitalize">{ext?.subscription_tier ?? "Free"}</div>
+      <div className="mt-4 border border-gold/30 bg-gold-gradient/10 p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Crown className="h-6 w-6 text-gold" />
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Membership</div>
+              <div className="font-display text-xl text-foreground capitalize">
+                {sub?.tier ?? ext?.subscription_tier ?? "Free"}
+                {sub?.status && (
+                  <span className="ml-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">
+                    {sub.status}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {ext?.subscription_tier && ext.subscription_tier !== "free" ? (
+              <button
+                onClick={async () => {
+                  const { createPortalSession } = await import("@/lib/stripe.functions");
+                  try {
+                    const res = await createPortalSession({ data: { origin: window.location.origin } });
+                    if (res?.url) window.location.href = res.url;
+                  } catch (e) {
+                    toast.error((e as Error).message);
+                  }
+                }}
+              >
+                <OutlineButton className="!px-4 !py-2 !text-[10px]">Manage billing</OutlineButton>
+              </button>
+            ) : (
+              <Link to="/pricing"><OutlineButton className="!px-4 !py-2 !text-[10px]">Upgrade</OutlineButton></Link>
+            )}
           </div>
         </div>
-        <div className="flex gap-2">
-          {ext?.subscription_tier && ext.subscription_tier !== "free" ? (
-            <button
-              onClick={async () => {
-                const { createPortalSession } = await import("@/lib/stripe.functions");
-                try {
-                  const res = await createPortalSession({ data: { origin: window.location.origin } });
-                  if (res?.url) window.location.href = res.url;
-                } catch (e) {
-                  alert((e as Error).message);
-                }
-              }}
-            >
-              <OutlineButton className="!px-4 !py-2 !text-[10px]">Manage billing</OutlineButton>
-            </button>
-          ) : (
-            <Link to="/pricing"><OutlineButton className="!px-4 !py-2 !text-[10px]">Upgrade</OutlineButton></Link>
-          )}
-        </div>
+        {sub && (sub.trial_end || sub.current_period_end) && (
+          <div className="mt-4 grid gap-2 border-t border-gold/20 pt-4 sm:grid-cols-2">
+            {sub.trial_end && new Date(sub.trial_end) > new Date() && (
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Trial ends in</div>
+                <div className="mt-1 font-display text-lg text-gold">
+                  {Math.max(0, Math.ceil((new Date(sub.trial_end).getTime() - Date.now()) / 86400000))} days
+                </div>
+                <div className="text-[10px] text-muted-foreground">
+                  {new Date(sub.trial_end).toLocaleDateString()}
+                </div>
+              </div>
+            )}
+            {sub.current_period_end && (
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  {sub.cancel_at_period_end ? "Ends on" : "Renews on"}
+                </div>
+                <div className="mt-1 font-display text-lg text-foreground">
+                  {new Date(sub.current_period_end).toLocaleDateString(undefined, {
+                    day: "numeric", month: "short", year: "numeric",
+                  })}
+                </div>
+                {sub.cancel_at_period_end && (
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-destructive">
+                    Cancels at period end
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
 
 
       {ext && (
