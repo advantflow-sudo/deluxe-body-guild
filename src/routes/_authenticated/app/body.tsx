@@ -68,7 +68,7 @@ function BodyMapTab() {
   const [multi, setMulti] = useState(false);
 
   const selected = useMemo(
-    () => (muscles ? muscles.split(",").filter((k) => MUSCLES[k]) : []),
+    () => (muscles ? muscles.split(",").filter((k: string) => Boolean(MUSCLES[k])) : []),
     [muscles]
   );
 
@@ -294,9 +294,9 @@ function BodyFigure({
   selected: string[];
   onToggle: (key: string) => void;
 }) {
-  const keys = Object.keys(MUSCLES).filter((k) => MUSCLES[k].side === view);
-  const leftLabels = keys.filter((k) => MUSCLES[k].labelSide === "left");
-  const rightLabels = keys.filter((k) => MUSCLES[k].labelSide === "right");
+  const keys = Object.keys(MUSCLES).filter((k: string) => MUSCLES[k].side === view);
+  const leftLabels = keys.filter((k: string) => MUSCLES[k].labelSide === "left");
+  const rightLabels = keys.filter((k: string) => MUSCLES[k].labelSide === "right");
 
   return (
     <div className={`${visibleOnMobile ? "block" : "hidden"} lg:block`}>
