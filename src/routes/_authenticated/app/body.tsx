@@ -61,11 +61,14 @@ const MUSCLES: Record<string, MuscleDef> = {
   calves_b:   { label: "Calves",     tagline: "Build strong calves",          color: "#ef4444", keywords: ["calf","calves"],                           categories: ["Strength"],         Icon: Heart,    side: "back",  spot: { x: 42, y: 86 }, labelSide: "right", labelY: 82 },
 };
 
+const STORAGE_KEY = "deluxe.body.selection.v1";
+
 function BodyMapTab() {
   const { muscles, view = "front" } = Route.useSearch();
   const navigate = useNavigate();
   const [allWorkouts, setAllWorkouts] = useState<Workout[]>([]);
   const [multi, setMulti] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   const selected = useMemo<string[]>(
     () => (muscles ? muscles.split(",").filter((k: string) => Boolean(MUSCLES[k])) : []),
@@ -77,6 +80,39 @@ function BodyMapTab() {
       .select("id,title,category,level,duration_min,calories,description")
       .then(({ data }) => { if (data) setAllWorkouts(data as Workout[]); });
   }, []);
+
+  // Restore from localStorage on first mount if URL has no selection
+  useEffect(() => {
+    if (hydrated) return;
+    setHydrated(true);
+    if (muscles) return;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as { muscles?: string[]; view?: "front" | "back"; multi?: boolean };
+      if (saved.multi) setMulti(true);
+      const keys = (saved.muscles ?? []).filter((k: string) => Boolean(MUSCLES[k]));
+      if (keys.length || saved.view) {
+        navigate({
+          to: "/app/body",
+          search: {
+            view: saved.view ?? view,
+            ...(keys.length ? { muscles: keys.join(",") } : {}),
+          },
+          replace: true,
+        });
+      }
+    } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist selection to localStorage
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ muscles: selected, view, multi }));
+    } catch { /* ignore */ }
+  }, [selected, view, multi, hydrated]);
 
   const matches = useMemo(() => {
     if (selected.length === 0) return [];
@@ -303,7 +339,11 @@ function BodyFigure({
       <div className="mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.32em] text-muted-foreground">
         {view}
       </div>
-      <div className="relative mx-auto grid max-w-xl grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] items-stretch gap-2 sm:gap-3">
+      <div
+        className="relative mx-auto grid max-w-xl grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] items-stretch gap-2 sm:gap-3"
+        role="group"
+        aria-label={`${view} body muscle selector`}
+      >
         {/* Left labels */}
         <div className="relative">
           {leftLabels.map((k) => (
@@ -315,21 +355,40 @@ function BodyFigure({
         <div className="relative aspect-[3/5] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black">
           <img
             src={image}
-            alt={`Anatomical ${view} view`}
+            alt={`Anatomical ${view} view of the human body with selectable muscle groups`}
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"
           />
           {/* Vignette */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.55)_100%)]" />
-          {keys.map((k) => {
+          {keys.map((k, idx) => {
             const m = MUSCLES[k];
             const active = selected.includes(k);
             return (
               <button
                 key={k}
+                type="button"
                 onClick={() => onToggle(k)}
-                aria-label={m.label}
-                className="group absolute -translate-x-1/2 -translate-y-1/2"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onToggle(k);
+                    return;
+                  }
+                  if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                    e.preventDefault();
+                    const next = keys[(idx + 1) % keys.length];
+                    (document.querySelector(`[data-hotspot="${view}-${next}"]`) as HTMLButtonElement | null)?.focus();
+                  } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                    e.preventDefault();
+                    const prev = keys[(idx - 1 + keys.length) % keys.length];
+                    (document.querySelector(`[data-hotspot="${view}-${prev}"]`) as HTMLButtonElement | null)?.focus();
+                  }
+                }}
+                data-hotspot={`${view}-${k}`}
+                aria-label={`${m.label} — ${m.tagline}`}
+                aria-pressed={active}
+                className="group absolute -translate-x-1/2 -translate-y-1/2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deluxe-black"
                 style={{ left: `${m.spot.x}%`, top: `${m.spot.y}%` }}
               >
                 <span
@@ -378,8 +437,11 @@ function LabelChip({
   const Icon = m.Icon;
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`absolute w-full transition-all duration-300 ${
+      aria-label={`${m.label} — ${m.tagline}`}
+      aria-pressed={active}
+      className={`absolute w-full rounded transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
         side === "left" ? "text-right pr-1" : "text-left pl-1"
       } ${active ? "scale-[1.03]" : ""}`}
       style={{ top: `${m.labelY}%`, transform: `translateY(-50%) ${active ? "scale(1.03)" : ""}` }}
