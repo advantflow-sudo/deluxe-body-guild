@@ -121,13 +121,49 @@ const FAQS = [
 function PricingPage() {
   const [cycle, setCycle] = useState<Cycle>("monthly");
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
+  const [currentTier, setCurrentTier] = useState<string | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("subscribers")
+      .select("tier,status")
+      .eq("user_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.tier && (data.status === "active" || data.status === "trialing")) {
+          setCurrentTier(data.tier);
+        }
+      });
+  }, [user]);
+
+  const tierRank: Record<string, number> = { essential: 1, signature: 2, private: 3 };
+
+  async function openPortal() {
+    setPortalLoading(true);
+    try {
+      const { createPortalSession } = await import("@/lib/stripe.functions");
+      const res = await createPortalSession({ data: { origin: window.location.origin } });
+      if (res?.url) window.location.href = res.url;
+    } catch (e) {
+      alert("Could not open billing portal: " + (e as Error).message);
+    } finally {
+      setPortalLoading(false);
+    }
+  }
 
   async function subscribe(tierName: string) {
     const tierKey = tierName.toLowerCase() as "essential" | "signature" | "private";
     if (!user) {
       navigate({ to: "/login", search: { redirect: "/pricing" } as never });
+      return;
+    }
+    // If they already have an active/trialing plan, route through the customer portal to change it
+    if (currentTier && currentTier !== tierKey) {
+      await openPortal();
       return;
     }
     setLoadingTier(tierName);
@@ -143,6 +179,7 @@ function PricingPage() {
       setLoadingTier(null);
     }
   }
+
 
 
   return (
