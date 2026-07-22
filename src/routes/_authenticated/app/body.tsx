@@ -295,7 +295,14 @@ function BodyMapTab() {
       </div>
 
       {/* Selected panel */}
-      <div className="mt-10 rounded-lg border border-gold/25 bg-deluxe-forest/15 p-5 sm:p-6">
+      <div
+        id="body-results"
+        ref={panelRef}
+        tabIndex={-1}
+        role="region"
+        aria-label="Recommended workouts for your selected muscles"
+        className="mt-10 rounded-lg border border-gold/25 bg-deluxe-forest/15 p-5 sm:p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+      >
         {selected.length === 0 ? (
           <div className="text-center text-xs text-muted-foreground sm:text-sm">
             Tap any glowing muscle on the body to see personalised workouts.
