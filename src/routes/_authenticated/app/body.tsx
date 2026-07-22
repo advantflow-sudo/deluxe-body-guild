@@ -646,32 +646,40 @@ function BodyFigure({
                   }
                 }}
                 data-hotspot={`${view}-${k}`}
-                aria-label={`${m.label} — ${m.tagline}`}
+                aria-label={`${active ? "Selected " : ""}${m.label} muscle group — ${m.tagline}. ${active ? "Press to deselect." : "Press to select."}`}
                 aria-pressed={active}
+                title={m.label}
                 className="group absolute -translate-x-1/2 -translate-y-1/2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deluxe-black"
                 style={{ left: `${m.spot.x}%`, top: `${m.spot.y}%` }}
               >
                 <span
-                  className={`block h-4 w-4 rounded-full border-2 ${reduceMotion ? "" : "transition-all duration-300"} ${
-                    active && !reduceMotion ? "scale-125" : !reduceMotion ? "group-hover:scale-125" : ""
-                  }`}
+                  className={`block rounded-full border-2 ${reduceMotion ? "h-4 w-4" : "transition-all duration-500 ease-out"} ${
+                    active ? "h-5 w-5" : "h-4 w-4"
+                  } ${active && !reduceMotion ? "scale-110" : !reduceMotion ? "group-hover:scale-125" : ""}`}
                   style={{
-                    backgroundColor: active ? m.color : "rgba(255,255,255,0.9)",
-                    borderColor: m.color,
+                    backgroundColor: active ? m.color : "rgba(255,255,255,0.92)",
+                    borderColor: active ? "#ffffff" : m.color,
                     boxShadow: active
-                      ? `0 0 0 4px ${m.color}55, 0 0 22px ${m.color}`
+                      ? `0 0 0 5px ${m.color}66, 0 0 28px 6px ${m.color}, 0 0 60px 2px ${m.color}80`
                       : `0 0 0 2px ${m.color}30`,
                   }}
                 />
                 {active && !reduceMotion && (
-                  <span
-                    className="absolute left-1/2 top-1/2 -z-10 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full animate-ping"
-                    style={{ backgroundColor: `${m.color}40` }}
-                  />
+                  <>
+                    <span
+                      className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full animate-ping"
+                      style={{ backgroundColor: `${m.color}55` }}
+                    />
+                    <span
+                      className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full animate-pulse"
+                      style={{ backgroundColor: `${m.color}30` }}
+                    />
+                  </>
                 )}
               </button>
             );
           })}
+
         </div>
 
         {/* Right labels */}
