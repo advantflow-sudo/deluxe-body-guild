@@ -83,12 +83,13 @@ function AdminPage() {
         </div>
 
         <Tabs defaultValue="users" className="mt-10">
-          <TabsList className="grid w-full grid-cols-2 gap-2 bg-deluxe-forest/20 sm:grid-cols-5">
+          <TabsList className="grid w-full grid-cols-2 gap-2 bg-deluxe-forest/20 sm:grid-cols-6">
             <TabsTrigger value="users"><Users className="mr-2 h-3.5 w-3.5" />Users</TabsTrigger>
             <TabsTrigger value="workouts"><Dumbbell className="mr-2 h-3.5 w-3.5" />Workouts</TabsTrigger>
             <TabsTrigger value="rewards"><Award className="mr-2 h-3.5 w-3.5" />Rewards</TabsTrigger>
             <TabsTrigger value="challenges"><Trophy className="mr-2 h-3.5 w-3.5" />Challenges</TabsTrigger>
             <TabsTrigger value="analytics"><BarChart3 className="mr-2 h-3.5 w-3.5" />Analytics</TabsTrigger>
+            <TabsTrigger value="stripe"><CreditCard className="mr-2 h-3.5 w-3.5" />Stripe</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users" className="mt-6"><UsersPanel /></TabsContent>
@@ -96,7 +97,9 @@ function AdminPage() {
           <TabsContent value="rewards" className="mt-6"><RewardsPanel /></TabsContent>
           <TabsContent value="challenges" className="mt-6"><ChallengesPanel /></TabsContent>
           <TabsContent value="analytics" className="mt-6"><AnalyticsPanel /></TabsContent>
+          <TabsContent value="stripe" className="mt-6"><StripePanel /></TabsContent>
         </Tabs>
+
       </div>
     </div>
   );
