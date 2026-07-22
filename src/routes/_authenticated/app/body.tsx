@@ -153,6 +153,37 @@ function BodyMapTab() {
     }
   }, [selected, view, multi, hydrated, remoteLoaded, user]);
 
+  const persistPresets = (next: Preset[]) => {
+    setPresets(next);
+    if (user) {
+      supabase.from("user_profiles_ext")
+        .upsert({ user_id: user.id, body_map_presets: next }, { onConflict: "user_id" })
+        .then(() => { /* ignore */ });
+    }
+  };
+
+  const saveCurrentPreset = () => {
+    const name = presetName.trim() || (selected.map((k) => MUSCLES[k].label).join(" + ") || "Untitled");
+    if (selected.length === 0) { toast.error("Select at least one muscle first"); return; }
+    haptic("success");
+    const preset: Preset = { id: crypto.randomUUID(), name, muscles: selected, view, createdAt: new Date().toISOString() };
+    persistPresets([preset, ...presets].slice(0, 20));
+    setPresetName("");
+    toast.success(`Preset "${name}" saved`);
+  };
+
+  const applyPreset = (p: Preset) => {
+    haptic("selection");
+    navigate({ to: "/app/body", search: { view: p.view, ...(p.muscles.length ? { muscles: p.muscles.join(",") } : {}) } });
+  };
+
+  const deletePreset = (id: string) => {
+    haptic("warning");
+    persistPresets(presets.filter((p) => p.id !== id));
+  };
+
+
+
   const matches = useMemo(() => {
     if (selected.length === 0) return [] as Array<{ w: Workout; score: number; reasons: string[] }>;
     return allWorkouts
