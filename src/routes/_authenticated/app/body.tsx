@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronLeft, ChevronRight, Clock, Flame, Dumbbell,
   Shield, Zap, Heart, Anchor, Crown, Mountain, Sparkles, Target,
-  Save, Trash2, LineChart, FileDown, ChevronDown,
+  Save, Trash2, LineChart, FileDown, ChevronDown, ZoomIn, ZoomOut, RotateCcw,
 } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
