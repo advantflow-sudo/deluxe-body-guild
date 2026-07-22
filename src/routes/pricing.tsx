@@ -1,9 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Check, Crown, Sparkles, Star, Flame, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Crown, Sparkles, Star, Flame, Clock, ArrowUpRight, ArrowDownRight, RefreshCw } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton, GoldDivider, SectionLabel } from "@/components/deluxe/ui";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
