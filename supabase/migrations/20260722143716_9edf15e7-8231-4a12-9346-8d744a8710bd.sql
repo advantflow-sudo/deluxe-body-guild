@@ -1,0 +1,1 @@
+ALTER TABLE public.user_profiles_ext ADD COLUMN IF NOT EXISTS body_map_presets jsonb NOT NULL DEFAULT '[]'::jsonb;

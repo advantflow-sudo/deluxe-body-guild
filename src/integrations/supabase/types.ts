@@ -1198,6 +1198,7 @@ export type Database = {
       user_profiles_ext: {
         Row: {
           age: number | null
+          body_map_presets: Json
           body_map_selection: Json | null
           country: string | null
           created_at: string
@@ -1224,6 +1225,7 @@ export type Database = {
         }
         Insert: {
           age?: number | null
+          body_map_presets?: Json
           body_map_selection?: Json | null
           country?: string | null
           created_at?: string
@@ -1250,6 +1252,7 @@ export type Database = {
         }
         Update: {
           age?: number | null
+          body_map_presets?: Json
           body_map_selection?: Json | null
           country?: string | null
           created_at?: string

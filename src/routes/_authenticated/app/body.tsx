@@ -3,16 +3,21 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChevronLeft, ChevronRight, Clock, Flame, Dumbbell,
   Shield, Zap, Heart, Anchor, Crown, Mountain, Sparkles, Target,
+  Save, Trash2, LineChart, FileDown, ChevronDown,
 } from "lucide-react";
 import { z } from "zod";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
 import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { useAuth } from "@/hooks/useAuth";
+import { BodyExportCard } from "@/components/deluxe/BodyExportCard";
 import bodyFront from "@/assets/body-front.jpg";
 import bodyBack from "@/assets/body-back.jpg";
+
+interface Preset { id: string; name: string; muscles: string[]; view: "front" | "back"; createdAt: string }
 
 const searchSchema = z.object({
   muscles: z.string().optional(),
@@ -76,6 +81,10 @@ function BodyMapTab() {
   const [remoteLoaded, setRemoteLoaded] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const logTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [presets, setPresets] = useState<Preset[]>([]);
+  const [presetName, setPresetName] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const selected = useMemo<string[]>(
     () => (muscles ? muscles.split(",").filter((k: string) => Boolean(MUSCLES[k])) : []),
@@ -97,11 +106,13 @@ function BodyMapTab() {
       if (user) {
         const { data } = await supabase
           .from("user_profiles_ext")
-          .select("body_map_selection")
+          .select("body_map_selection, body_map_presets")
           .eq("user_id", user.id)
           .maybeSingle();
-        const remote = (data as { body_map_selection?: typeof saved } | null)?.body_map_selection;
+        const row = data as { body_map_selection?: typeof saved; body_map_presets?: Preset[] } | null;
+        const remote = row?.body_map_selection;
         if (remote && typeof remote === "object") saved = remote;
+        if (Array.isArray(row?.body_map_presets)) setPresets(row!.body_map_presets as Preset[]);
       }
       if (!saved) {
         try {
@@ -141,6 +152,37 @@ function BodyMapTab() {
         .then(() => { /* fire and forget */ });
     }
   }, [selected, view, multi, hydrated, remoteLoaded, user]);
+
+  const persistPresets = (next: Preset[]) => {
+    setPresets(next);
+    if (user) {
+      supabase.from("user_profiles_ext")
+        .upsert({ user_id: user.id, body_map_presets: next as unknown as never }, { onConflict: "user_id" })
+        .then(() => { /* ignore */ });
+    }
+  };
+
+  const saveCurrentPreset = () => {
+    const name = presetName.trim() || (selected.map((k) => MUSCLES[k].label).join(" + ") || "Untitled");
+    if (selected.length === 0) { toast.error("Select at least one muscle first"); return; }
+    haptic("success");
+    const preset: Preset = { id: crypto.randomUUID(), name, muscles: selected, view, createdAt: new Date().toISOString() };
+    persistPresets([preset, ...presets].slice(0, 20));
+    setPresetName("");
+    toast.success(`Preset "${name}" saved`);
+  };
+
+  const applyPreset = (p: Preset) => {
+    haptic("selection");
+    navigate({ to: "/app/body", search: { view: p.view, ...(p.muscles.length ? { muscles: p.muscles.join(",") } : {}) } });
+  };
+
+  const deletePreset = (id: string) => {
+    haptic("warning");
+    persistPresets(presets.filter((p) => p.id !== id));
+  };
+
+
 
   const matches = useMemo(() => {
     if (selected.length === 0) return [] as Array<{ w: Workout; score: number; reasons: string[] }>;
@@ -294,7 +336,65 @@ function BodyMapTab() {
           : `${selected.length} muscle${selected.length > 1 ? "s" : ""} selected: ${selected.map((k) => MUSCLES[k].label).join(", ")}. ${matches.length} recommended workouts.`}
       </div>
 
+      {/* Presets bar */}
+      <section aria-label="Muscle target presets" className="mt-8 rounded-lg border border-gold/20 bg-deluxe-forest/10 p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.28em] text-gold/80">Presets</div>
+            <div className="mt-0.5 text-xs text-muted-foreground">Save and quickly switch between your muscle-target combos.</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="preset-name" className="sr-only">Preset name</label>
+            <input
+              id="preset-name"
+              value={presetName}
+              onChange={(e) => setPresetName(e.target.value)}
+              placeholder="Name (e.g. Push Day)"
+              maxLength={40}
+              className="w-40 rounded border border-gold/25 bg-deluxe-black/60 px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none"
+            />
+            <button
+              onClick={saveCurrentPreset}
+              disabled={selected.length === 0}
+              className="inline-flex items-center gap-1.5 rounded border border-gold bg-gold px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-deluxe-black disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Save className="h-3.5 w-3.5" /> Save current
+            </button>
+          </div>
+        </div>
+        {presets.length === 0 ? (
+          <div className="mt-3 text-[11px] italic text-muted-foreground">No presets yet — pick muscles and save your first.</div>
+        ) : (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {presets.map((p) => {
+              const active = p.muscles.length === selected.length && p.muscles.every((m) => selected.includes(m)) && p.view === view;
+              return (
+                <div key={p.id} className={`group inline-flex items-center gap-1 rounded-full border px-1 py-0.5 text-[11px] transition ${active ? "border-gold bg-gold/10" : "border-gold/25 bg-deluxe-black/40 hover:border-gold/60"}`}>
+                  <button
+                    onClick={() => applyPreset(p)}
+                    aria-label={`Apply preset ${p.name}`}
+                    aria-pressed={active}
+                    className="px-2 py-1 text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-gold"
+                  >
+                    <span className="font-semibold">{p.name}</span>
+                    <span className="ml-1.5 text-muted-foreground">· {p.muscles.length}</span>
+                  </button>
+                  <button
+                    onClick={() => deletePreset(p.id)}
+                    aria-label={`Delete preset ${p.name}`}
+                    className="rounded-full p-1 text-muted-foreground hover:text-red-400"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
       {/* Selected panel */}
+
       <div
         id="body-results"
         ref={panelRef}
@@ -335,13 +435,26 @@ function BodyMapTab() {
                   <div className="mt-2 text-xs text-muted-foreground">{primary.tagline}</div>
                 )}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <ShareButton
                   title={`Deluxe Fitness — ${selected.map((k) => MUSCLES[k].label).join(" + ")}`}
                   text="Train these muscles with these workouts"
                   url={shareUrl}
                   label="Share"
                 />
+                <button
+                  onClick={() => { haptic("selection"); setExportOpen(true); }}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-deluxe-forest/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-gold hover:bg-gold/10"
+                >
+                  <FileDown className="h-3.5 w-3.5" /> Export
+                </button>
+                <Link
+                  to="/app/body-trends"
+                  onClick={() => haptic("selection")}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gold/30 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground hover:text-gold"
+                >
+                  <LineChart className="h-3.5 w-3.5" /> Trends
+                </Link>
                 <button onClick={clearAll} className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-gold">
                   Clear
                 </button>
@@ -354,40 +467,78 @@ function BodyMapTab() {
                   No workouts matched yet. Try adding another muscle group.
                 </div>
               )}
-              {matches.map(({ w, reasons }) => (
-                <Link
-                  key={w.id}
-                  to="/app/workouts"
-                  className="group flex flex-col gap-2 border border-gold/15 bg-deluxe-black/50 p-3 transition hover:border-gold/50"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
-                        <Dumbbell className="h-4 w-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="truncate font-display text-sm text-foreground">{w.title}</div>
-                        <div className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                          {w.category} · {w.level}
+              {matches.map(({ w, reasons }) => {
+                const isOpen = expandedId === w.id;
+                return (
+                  <div key={w.id} className="border border-gold/15 bg-deluxe-black/50 transition hover:border-gold/40">
+                    <button
+                      type="button"
+                      onClick={() => { haptic("selection"); setExpandedId(isOpen ? null : w.id); }}
+                      aria-expanded={isOpen}
+                      aria-controls={`w-detail-${w.id}`}
+                      className="group flex w-full flex-col gap-2 p-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
+                            <Dumbbell className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="truncate font-display text-sm text-foreground">{w.title}</div>
+                            <div className="mt-0.5 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                              {w.category} · {w.level}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-3 text-[11px]">
+                          <span className="inline-flex items-center gap-1 text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</span>
+                          {w.calories && <span className="inline-flex items-center gap-1 text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</span>}
+                          <ChevronDown className={`h-4 w-4 text-muted-foreground transition ${isOpen ? "rotate-180 text-gold" : "group-hover:text-gold"}`} />
                         </div>
                       </div>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-3 text-[11px]">
-                      <span className="inline-flex items-center gap-1 text-gold"><Clock className="h-3 w-3" />{w.duration_min}m</span>
-                      {w.calories && <span className="inline-flex items-center gap-1 text-muted-foreground"><Flame className="h-3 w-3" />{w.calories}</span>}
-                      <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:text-gold" />
-                    </div>
+                      {reasons.length > 0 && !isOpen && (
+                        <div className="flex flex-wrap gap-1 text-[10px] text-muted-foreground">
+                          <span className="uppercase tracking-[0.22em] text-gold/70">Why:</span>
+                          {reasons.slice(0, 2).map((r, i) => (
+                            <span key={i} className="rounded-full border border-gold/15 bg-deluxe-forest/20 px-2 py-0.5">{r}</span>
+                          ))}
+                          {reasons.length > 2 && <span className="text-gold/70">+{reasons.length - 2} more</span>}
+                        </div>
+                      )}
+                    </button>
+                    {isOpen && (
+                      <div id={`w-detail-${w.id}`} className="border-t border-gold/15 bg-deluxe-forest/10 p-4 text-xs text-muted-foreground">
+                        {w.description && <p className="mb-3 text-foreground/80">{w.description}</p>}
+                        <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">Selected hotspots</div>
+                        <div className="mb-3 flex flex-wrap gap-1.5">
+                          {selected.map((k) => {
+                            const m = MUSCLES[k];
+                            return (
+                              <span key={k} className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px]"
+                                style={{ backgroundColor: `${m.color}20`, color: m.color, border: `1px solid ${m.color}60` }}>
+                                <m.Icon className="h-3 w-3" /> {m.label}
+                              </span>
+                            );
+                          })}
+                        </div>
+                        <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">Why this workout</div>
+                        <ul className="mb-3 list-disc space-y-0.5 pl-4">
+                          {reasons.map((r, i) => <li key={i}>{r}</li>)}
+                        </ul>
+                        <div className="mb-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">Goals it supports</div>
+                        <div className="mb-4 flex flex-wrap gap-1.5">
+                          {[...new Set(selected.map((k) => MUSCLES[k].tagline))].map((t, i) => (
+                            <span key={i} className="rounded border border-gold/15 bg-deluxe-black/40 px-2 py-0.5 text-[10px]">{t}</span>
+                          ))}
+                        </div>
+                        <Link to="/app/workouts" className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-gold hover:text-gold-light">
+                          Open workout <ChevronRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                  {reasons.length > 0 && (
-                    <div className="flex flex-wrap gap-1 pl-13 text-[10px] text-muted-foreground">
-                      <span className="uppercase tracking-[0.22em] text-gold/70">Why:</span>
-                      {reasons.slice(0, 3).map((r, i) => (
-                        <span key={i} className="rounded-full border border-gold/15 bg-deluxe-forest/20 px-2 py-0.5">{r}</span>
-                      ))}
-                    </div>
-                  )}
-                </Link>
-              ))}
+                );
+              })}
             </div>
           </>
         )}
@@ -402,6 +553,16 @@ function BodyMapTab() {
             : "Turn on Select Multiple to combine muscle groups for personalised recommendations."}
         </div>
       </div>
+
+      <BodyExportCard
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        muscles={selected.map((k) => ({ label: MUSCLES[k].label, color: MUSCLES[k].color, tagline: MUSCLES[k].tagline }))}
+        workouts={matches.slice(0, 6).map(({ w, reasons }) => ({
+          title: w.title, category: w.category, level: w.level, duration_min: w.duration_min, reasons,
+        }))}
+        view={view}
+      />
     </div>
   );
 }
