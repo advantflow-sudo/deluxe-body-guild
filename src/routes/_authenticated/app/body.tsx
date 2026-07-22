@@ -600,16 +600,17 @@ function BodyFigure({
         {view}
       </div>
       <div
-        className="relative mx-auto grid w-full max-w-2xl grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] items-stretch gap-2 sm:gap-3"
+        className="relative mx-auto grid w-full max-w-2xl grid-cols-1 items-stretch gap-2 sm:grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] sm:gap-3"
         role="group"
         aria-label={`${view} body muscle selector`}
       >
-        {/* Left labels */}
-        <div className="relative">
+        {/* Left labels (hidden on mobile — hotspots on the image handle selection) */}
+        <div className="relative hidden sm:block">
           {leftLabels.map((k) => (
             <LabelChip key={k} muscleKey={k} active={selected.includes(k)} onClick={() => onToggle(k)} side="left" />
           ))}
         </div>
+
 
         {/* Body image + hotspots */}
         <div className="relative aspect-[3/5] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black">
