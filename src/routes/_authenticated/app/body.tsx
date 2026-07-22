@@ -377,13 +377,26 @@ function BodyMapTab() {
                   <div className="mt-2 text-xs text-muted-foreground">{primary.tagline}</div>
                 )}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <ShareButton
                   title={`Deluxe Fitness — ${selected.map((k) => MUSCLES[k].label).join(" + ")}`}
                   text="Train these muscles with these workouts"
                   url={shareUrl}
                   label="Share"
                 />
+                <button
+                  onClick={() => { haptic("selection"); setExportOpen(true); }}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-deluxe-forest/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-gold hover:bg-gold/10"
+                >
+                  <FileDown className="h-3.5 w-3.5" /> Export
+                </button>
+                <Link
+                  to="/app/body-trends"
+                  onClick={() => haptic("selection")}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gold/30 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground hover:text-gold"
+                >
+                  <LineChart className="h-3.5 w-3.5" /> Trends
+                </Link>
                 <button onClick={clearAll} className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-gold">
                   Clear
                 </button>
