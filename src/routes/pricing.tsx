@@ -67,8 +67,8 @@ const TIERS = [
     name: "Signature",
     icon: Crown,
     tagline: "The Deluxe standard.",
-    monthly: 79,
-    yearly: 63,
+    monthly: 39.99,
+    yearly: 31.99,
     features: [
       "Everything in Essential",
       "Personalized 12-week programming",
