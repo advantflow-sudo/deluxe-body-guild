@@ -134,13 +134,13 @@ export function MuscleRecommendationBox({ muscleKey, muscleLabel, color, tagline
       <div className="border-t border-gold/20 p-4 sm:p-5">
         <Link
           to="/app/workouts"
-          search={{ muscle: muscleKey } as never}
           onClick={() => haptic("success")}
           className="group inline-flex w-full items-center justify-center gap-2 rounded-md bg-gold px-4 py-3 text-[11px] font-bold uppercase tracking-[0.28em] text-deluxe-black transition hover:brightness-110"
         >
           <Play className="h-4 w-4 fill-current" />
           Start Workout
         </Link>
+
         <p className="mt-2 text-center text-[10px] text-muted-foreground">
           Opens the full {muscleLabel.toLowerCase()} session in Train.
         </p>
