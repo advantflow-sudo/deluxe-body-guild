@@ -81,7 +81,6 @@ function BodyMapTab() {
   const [multi, setMulti] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [remoteLoaded, setRemoteLoaded] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
   const logTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [presets, setPresets] = useState<Preset[]>([]);
   const [presetName, setPresetName] = useState("");
@@ -221,11 +220,6 @@ function BodyMapTab() {
     }, 1200);
     return () => { if (logTimer.current) clearTimeout(logTimer.current); };
   }, [selected, view, multi, matches.length, hydrated, user]);
-
-  // Focus the selection panel when the first selection is made (a11y)
-  useEffect(() => {
-    if (selected.length === 1) panelRef.current?.focus();
-  }, [selected.length]);
 
   const commitSelection = (keys: string[]) => {
     navigate({
@@ -410,7 +404,6 @@ function BodyMapTab() {
 
       <div
         id="body-results"
-        ref={panelRef}
         tabIndex={-1}
         role="region"
         aria-label="Recommended workouts for your selected muscles"
