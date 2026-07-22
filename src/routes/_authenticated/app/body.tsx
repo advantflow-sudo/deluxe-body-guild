@@ -68,9 +68,14 @@ const STORAGE_KEY = "deluxe.body.selection.v1";
 function BodyMapTab() {
   const { muscles, view = "front" } = Route.useSearch();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { reduceMotion } = useReduceMotion();
   const [allWorkouts, setAllWorkouts] = useState<Workout[]>([]);
   const [multi, setMulti] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [remoteLoaded, setRemoteLoaded] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const logTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const selected = useMemo<string[]>(
     () => (muscles ? muscles.split(",").filter((k: string) => Boolean(MUSCLES[k])) : []),
@@ -83,15 +88,31 @@ function BodyMapTab() {
       .then(({ data }) => { if (data) setAllWorkouts(data as Workout[]); });
   }, []);
 
-  // Restore from localStorage on first mount if URL has no selection
+  // Restore from Supabase profile first, fall back to localStorage
   useEffect(() => {
     if (hydrated) return;
-    setHydrated(true);
-    if (muscles) return;
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-      const saved = JSON.parse(raw) as { muscles?: string[]; view?: "front" | "back"; multi?: boolean };
+    let cancelled = false;
+    (async () => {
+      let saved: { muscles?: string[]; view?: "front" | "back"; multi?: boolean } | null = null;
+      if (user) {
+        const { data } = await supabase
+          .from("user_profiles_ext")
+          .select("body_map_selection")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        const remote = (data as { body_map_selection?: typeof saved } | null)?.body_map_selection;
+        if (remote && typeof remote === "object") saved = remote;
+      }
+      if (!saved) {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) saved = JSON.parse(raw);
+        } catch { /* ignore */ }
+      }
+      if (cancelled) return;
+      setHydrated(true);
+      setRemoteLoaded(true);
+      if (!saved || muscles) return;
       if (saved.multi) setMulti(true);
       const keys = (saved.muscles ?? []).filter((k: string) => Boolean(MUSCLES[k]));
       if (keys.length || saved.view) {
@@ -104,36 +125,63 @@ function BodyMapTab() {
           replace: true,
         });
       }
-    } catch { /* ignore */ }
+    })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.id]);
 
-  // Persist selection to localStorage
+  // Persist selection to localStorage + Supabase profile
   useEffect(() => {
-    if (!hydrated) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ muscles: selected, view, multi }));
-    } catch { /* ignore */ }
-  }, [selected, view, multi, hydrated]);
+    if (!hydrated || !remoteLoaded) return;
+    const payload = { muscles: selected, view, multi };
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch { /* ignore */ }
+    if (user) {
+      supabase.from("user_profiles_ext")
+        .upsert({ user_id: user.id, body_map_selection: payload }, { onConflict: "user_id" })
+        .then(() => { /* fire and forget */ });
+    }
+  }, [selected, view, multi, hydrated, remoteLoaded, user]);
 
   const matches = useMemo(() => {
-    if (selected.length === 0) return [];
+    if (selected.length === 0) return [] as Array<{ w: Workout; score: number; reasons: string[] }>;
     return allWorkouts
       .map((w) => {
         const hay = `${w.title} ${w.description ?? ""}`.toLowerCase();
         let score = 0;
+        const reasons: string[] = [];
         for (const key of selected) {
           const m = MUSCLES[key];
-          if (m.keywords.some((k) => hay.includes(k))) score += 2;
-          if (m.categories.includes(w.category)) score += 1;
+          const hitKw = m.keywords.find((k) => hay.includes(k));
+          if (hitKw) { score += 2; reasons.push(`${m.label}: matches “${hitKw}”`); }
+          if (m.categories.includes(w.category)) { score += 1; reasons.push(`${m.label}: ${w.category} category`); }
         }
-        return { w, score };
+        return { w, score, reasons };
       })
       .filter((x) => x.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 12)
-      .map((x) => x.w);
+      .slice(0, 12);
   }, [selected, allWorkouts]);
+
+  // Log selections (debounced) so the coach can spot trends
+  useEffect(() => {
+    if (!hydrated || !user || selected.length === 0) return;
+    if (logTimer.current) clearTimeout(logTimer.current);
+    logTimer.current = setTimeout(() => {
+      supabase.from("body_map_selection_logs").insert({
+        user_id: user.id,
+        muscles: selected,
+        view,
+        multi,
+        matched_count: matches.length,
+      }).then(() => { /* ignore */ });
+    }, 1200);
+    return () => { if (logTimer.current) clearTimeout(logTimer.current); };
+  }, [selected, view, multi, matches.length, hydrated, user]);
+
+  // Focus the selection panel when the first selection is made (a11y)
+  useEffect(() => {
+    if (selected.length === 1) panelRef.current?.focus();
+  }, [selected.length]);
 
   const commitSelection = (keys: string[]) => {
     navigate({
@@ -161,6 +209,7 @@ function BodyMapTab() {
     haptic("light");
     navigate({ to: "/app/body", search: { view: v, ...(muscles ? { muscles } : {}) } });
   };
+
 
   const shareUrl = `/app/body?view=${view}${selected.length ? `&muscles=${selected.join(",")}` : ""}`;
   const primary = selected[0] ? MUSCLES[selected[0]] : null;
