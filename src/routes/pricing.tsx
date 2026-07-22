@@ -84,8 +84,8 @@ const TIERS = [
     name: "Private",
     icon: Sparkles,
     tagline: "By invitation. Limitless.",
-    monthly: 249,
-    yearly: 199,
+    monthly: 119.99,
+    yearly: 95.99,
     features: [
       "Everything in Signature",
       "1:1 coaching — 2 sessions / month",
