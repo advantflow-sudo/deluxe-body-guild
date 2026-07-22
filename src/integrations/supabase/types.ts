@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      body_map_selection_logs: {
+        Row: {
+          created_at: string
+          id: string
+          matched_count: number
+          multi: boolean
+          muscles: string[]
+          user_id: string
+          view: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          matched_count?: number
+          multi?: boolean
+          muscles?: string[]
+          user_id: string
+          view?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          matched_count?: number
+          multi?: boolean
+          muscles?: string[]
+          user_id?: string
+          view?: string
+        }
+        Relationships: []
+      }
       body_measurements: {
         Row: {
           arms_cm: number | null
@@ -1168,6 +1198,7 @@ export type Database = {
       user_profiles_ext: {
         Row: {
           age: number | null
+          body_map_selection: Json | null
           country: string | null
           created_at: string
           fitness_goal: string | null
@@ -1193,6 +1224,7 @@ export type Database = {
         }
         Insert: {
           age?: number | null
+          body_map_selection?: Json | null
           country?: string | null
           created_at?: string
           fitness_goal?: string | null
@@ -1218,6 +1250,7 @@ export type Database = {
         }
         Update: {
           age?: number | null
+          body_map_selection?: Json | null
           country?: string | null
           created_at?: string
           fitness_goal?: string | null
