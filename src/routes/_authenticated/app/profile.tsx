@@ -87,8 +87,27 @@ function ProfileTab() {
             <div className="font-display text-xl text-foreground capitalize">{ext?.subscription_tier ?? "Free"}</div>
           </div>
         </div>
-        <Link to="/pricing"><OutlineButton className="!px-4 !py-2 !text-[10px]">Upgrade</OutlineButton></Link>
+        <div className="flex gap-2">
+          {ext?.subscription_tier && ext.subscription_tier !== "free" ? (
+            <button
+              onClick={async () => {
+                const { createPortalSession } = await import("@/lib/stripe.functions");
+                try {
+                  const res = await createPortalSession({ data: { origin: window.location.origin } });
+                  if (res?.url) window.location.href = res.url;
+                } catch (e) {
+                  alert((e as Error).message);
+                }
+              }}
+            >
+              <OutlineButton className="!px-4 !py-2 !text-[10px]">Manage billing</OutlineButton>
+            </button>
+          ) : (
+            <Link to="/pricing"><OutlineButton className="!px-4 !py-2 !text-[10px]">Upgrade</OutlineButton></Link>
+          )}
+        </div>
       </div>
+
 
       {ext && (
         <div className="mt-4 space-y-4 border border-gold/15 bg-deluxe-forest/20 p-5">

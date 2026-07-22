@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check, Crown, Sparkles, Star, Flame, Clock } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton, GoldDivider, SectionLabel } from "@/components/deluxe/ui";
+import { useAuth } from "@/hooks/useAuth";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -117,6 +118,30 @@ const FAQS = [
 
 function PricingPage() {
   const [cycle, setCycle] = useState<Cycle>("monthly");
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  async function subscribe(tierName: string) {
+    const tierKey = tierName.toLowerCase() as "essential" | "signature" | "private";
+    if (!user) {
+      navigate({ to: "/login", search: { redirect: "/pricing" } as never });
+      return;
+    }
+    setLoadingTier(tierName);
+    try {
+      const { createCheckoutSession } = await import("@/lib/stripe.functions");
+      const res = await createCheckoutSession({
+        data: { tier: tierKey, cycle, origin: window.location.origin },
+      });
+      if (res?.url) window.location.href = res.url;
+    } catch (e) {
+      alert("Could not start checkout: " + (e as Error).message);
+    } finally {
+      setLoadingTier(null);
+    }
+  }
+
 
   return (
     <PageShell>
@@ -225,17 +250,22 @@ function PricingPage() {
                     ))}
                   </ul>
 
-                  <Link to="/login" className="mt-8 block">
+                  <button onClick={() => subscribe(tier.name)} className="mt-8 block w-full" disabled={loadingTier === tier.name}>
                     {tier.featured ? (
-                      <GoldButton className="w-full">{tier.cta}</GoldButton>
+                      <GoldButton className="w-full">
+                        {loadingTier === tier.name ? "Loading…" : tier.cta}
+                      </GoldButton>
                     ) : (
-                      <OutlineButton className="w-full">{tier.cta}</OutlineButton>
+                      <OutlineButton className="w-full">
+                        {loadingTier === tier.name ? "Loading…" : tier.cta}
+                      </OutlineButton>
                     )}
-                  </Link>
+                  </button>
                 </div>
               );
             })}
           </div>
+
 
           {/* Guarantee */}
           <div className="mx-auto mt-16 max-w-2xl border border-gold/20 bg-deluxe-forest/20 p-8 text-center">
