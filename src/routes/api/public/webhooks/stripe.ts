@@ -84,7 +84,9 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
                     stripe_subscription_id: sub.id,
                     tier,
                     status,
-                    current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+                    current_period_end: item?.current_period_end
+                      ? new Date(item.current_period_end * 1000).toISOString()
+                      : null,
                     cancel_at_period_end: sub.cancel_at_period_end,
                   })
                   .eq("user_id", row.user_id);
