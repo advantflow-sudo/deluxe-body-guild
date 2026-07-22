@@ -67,7 +67,7 @@ function BodyMapTab() {
   const [allWorkouts, setAllWorkouts] = useState<Workout[]>([]);
   const [multi, setMulti] = useState(false);
 
-  const selected = useMemo(
+  const selected = useMemo<string[]>(
     () => (muscles ? muscles.split(",").filter((k: string) => Boolean(MUSCLES[k])) : []),
     [muscles]
   );
