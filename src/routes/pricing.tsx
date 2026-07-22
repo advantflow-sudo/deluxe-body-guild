@@ -261,8 +261,11 @@ function PricingPage() {
                       </OutlineButton>
                     )}
                   </button>
-
+                </div>
+              );
+            })}
           </div>
+
 
           {/* Guarantee */}
           <div className="mx-auto mt-16 max-w-2xl border border-gold/20 bg-deluxe-forest/20 p-8 text-center">
