@@ -14,18 +14,18 @@ export function getStripe() {
 export const TIER_CONFIG = {
   essential: {
     name: "Essential",
-    monthly: 2900,
-    yearly: 27600, // £23 × 12
+    monthly: 1499,
+    yearly: 14388, // £11.99 × 12
   },
   signature: {
     name: "Signature",
-    monthly: 7900,
-    yearly: 75600, // £63 × 12
+    monthly: 3999,
+    yearly: 38388, // £31.99 × 12
   },
   private: {
     name: "Private",
-    monthly: 24900,
-    yearly: 238800, // £199 × 12
+    monthly: 11999,
+    yearly: 115188, // £95.99 × 12
   },
 } as const;
 

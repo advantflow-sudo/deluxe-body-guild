@@ -51,8 +51,8 @@ const TIERS = [
     name: "Essential",
     icon: Star,
     tagline: "Begin the discipline.",
-    monthly: 29,
-    yearly: 23,
+    monthly: 14.99,
+    yearly: 11.99,
     features: [
       "Full library of guided workouts",
       "Weekly fitness & wellbeing plan",
@@ -67,8 +67,8 @@ const TIERS = [
     name: "Signature",
     icon: Crown,
     tagline: "The Deluxe standard.",
-    monthly: 79,
-    yearly: 63,
+    monthly: 39.99,
+    yearly: 31.99,
     features: [
       "Everything in Essential",
       "Personalized 12-week programming",
@@ -84,8 +84,8 @@ const TIERS = [
     name: "Private",
     icon: Sparkles,
     tagline: "By invitation. Limitless.",
-    monthly: 249,
-    yearly: 199,
+    monthly: 119.99,
+    yearly: 95.99,
     features: [
       "Everything in Signature",
       "1:1 coaching — 2 sessions / month",
@@ -307,14 +307,14 @@ function PricingPage() {
                   <p className="mt-1 font-serif italic text-muted-foreground">{tier.tagline}</p>
 
                   <div className="mt-6 flex items-baseline gap-2">
-                    <span className="text-gold-gradient font-display text-5xl">£{price}</span>
+                    <span className="text-gold-gradient font-display text-5xl">£{price.toFixed(2)}</span>
                     <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                       / month
                     </span>
                   </div>
                   {cycle === "yearly" && (
                     <p className="mt-1 text-[11px] text-muted-foreground">
-                      Billed annually — £{price * 12}
+                      Billed annually — £{(price * 12).toFixed(2)}
                     </p>
                   )}
 
