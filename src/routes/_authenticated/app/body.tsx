@@ -157,7 +157,7 @@ function BodyMapTab() {
     setPresets(next);
     if (user) {
       supabase.from("user_profiles_ext")
-        .upsert({ user_id: user.id, body_map_presets: next }, { onConflict: "user_id" })
+        .upsert({ user_id: user.id, body_map_presets: next as unknown as never }, { onConflict: "user_id" })
         .then(() => { /* ignore */ });
     }
   };
