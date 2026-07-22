@@ -61,11 +61,14 @@ const MUSCLES: Record<string, MuscleDef> = {
   calves_b:   { label: "Calves",     tagline: "Build strong calves",          color: "#ef4444", keywords: ["calf","calves"],                           categories: ["Strength"],         Icon: Heart,    side: "back",  spot: { x: 42, y: 86 }, labelSide: "right", labelY: 82 },
 };
 
+const STORAGE_KEY = "deluxe.body.selection.v1";
+
 function BodyMapTab() {
   const { muscles, view = "front" } = Route.useSearch();
   const navigate = useNavigate();
   const [allWorkouts, setAllWorkouts] = useState<Workout[]>([]);
   const [multi, setMulti] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   const selected = useMemo<string[]>(
     () => (muscles ? muscles.split(",").filter((k: string) => Boolean(MUSCLES[k])) : []),
@@ -77,6 +80,39 @@ function BodyMapTab() {
       .select("id,title,category,level,duration_min,calories,description")
       .then(({ data }) => { if (data) setAllWorkouts(data as Workout[]); });
   }, []);
+
+  // Restore from localStorage on first mount if URL has no selection
+  useEffect(() => {
+    if (hydrated) return;
+    setHydrated(true);
+    if (muscles) return;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as { muscles?: string[]; view?: "front" | "back"; multi?: boolean };
+      if (saved.multi) setMulti(true);
+      const keys = (saved.muscles ?? []).filter((k: string) => Boolean(MUSCLES[k]));
+      if (keys.length || saved.view) {
+        navigate({
+          to: "/app/body",
+          search: {
+            view: saved.view ?? view,
+            ...(keys.length ? { muscles: keys.join(",") } : {}),
+          },
+          replace: true,
+        });
+      }
+    } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist selection to localStorage
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ muscles: selected, view, multi }));
+    } catch { /* ignore */ }
+  }, [selected, view, multi, hydrated]);
 
   const matches = useMemo(() => {
     if (selected.length === 0) return [];
