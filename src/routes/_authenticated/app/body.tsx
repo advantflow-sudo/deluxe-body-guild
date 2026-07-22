@@ -683,12 +683,13 @@ function BodyFigure({
 
         </div>
 
-        {/* Right labels */}
-        <div className="relative">
+        {/* Right labels (hidden on mobile) */}
+        <div className="relative hidden sm:block">
           {rightLabels.map((k) => (
             <LabelChip key={k} muscleKey={k} active={selected.includes(k)} onClick={() => onToggle(k)} side="right" />
           ))}
         </div>
+
       </div>
     </div>
   );
