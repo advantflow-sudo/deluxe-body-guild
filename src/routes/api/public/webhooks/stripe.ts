@@ -47,15 +47,18 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
         }
 
         // Log the received event immediately (idempotent on stripe_event_id)
-        const logBase = {
-          stripe_event_id: event.id,
-          event_type: event.type,
-          status: "received" as string,
-          payload: event.data.object as unknown as Record<string, unknown>,
-        };
         await supabaseAdmin
           .from("stripe_webhook_events")
-          .upsert(logBase, { onConflict: "stripe_event_id" });
+          .upsert(
+            {
+              stripe_event_id: event.id,
+              event_type: event.type,
+              status: "received",
+              payload: JSON.parse(JSON.stringify(event.data.object)),
+            },
+            { onConflict: "stripe_event_id" },
+          );
+
 
         let userId: string | null = null;
         let customerId: string | null = null;
