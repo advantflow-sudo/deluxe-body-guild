@@ -1,5 +1,5 @@
 /* Deluxe Fitness service worker — offline cache for shell + recent workouts */
-const VERSION = "df-v1";
+const VERSION = "df-v2-body-diagram-mobile";
 const SHELL = `df-shell-${VERSION}`;
 const RUNTIME = `df-runtime-${VERSION}`;
 
@@ -37,6 +37,22 @@ self.addEventListener("fetch", (event) => {
   if (req.mode === "navigate") {
     event.respondWith(
       fetch(req).catch(() => caches.match("/", { ignoreSearch: true }) || caches.match(req)),
+    );
+    return;
+  }
+
+  // Body diagrams must be network-first so mobile clients never stay stuck on an old cached layout/image.
+  if (req.destination === "image" && /body-(front|back)/.test(url.pathname)) {
+    event.respondWith(
+      caches.open(RUNTIME).then(async (cache) => {
+        try {
+          const fresh = await fetch(req);
+          if (fresh && fresh.status === 200) await cache.put(req, fresh.clone());
+          return fresh;
+        } catch {
+          return cache.match(req);
+        }
+      }),
     );
     return;
   }
