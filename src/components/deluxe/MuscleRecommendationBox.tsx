@@ -72,7 +72,10 @@ export function MuscleRecommendationBox({ muscleKey, muscleLabel, color, tagline
                 className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 px-3 py-2 text-left transition hover:bg-gold/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold sm:px-4 sm:py-2.5"
               >
                 {/* Demo */}
-                <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-md border border-gold/25 bg-deluxe-black sm:h-12 sm:w-12">
+                <div
+                  className="relative h-16 w-20 shrink-0 overflow-hidden rounded-md border border-gold/25 bg-deluxe-black sm:h-[72px] sm:w-24"
+                  aria-label={`${ex.name} demo`}
+                >
                   {ex.video && !reduceMotion ? (
                     <video
                       src={ex.video}
@@ -85,8 +88,15 @@ export function MuscleRecommendationBox({ muscleKey, muscleLabel, color, tagline
                   ) : (
                     <img src={ex.image} alt="" loading="lazy" className="h-full w-full object-cover" />
                   )}
-                  <span className="absolute left-0.5 top-0.5 grid h-3.5 w-3.5 place-items-center rounded-full bg-deluxe-black/80 text-[8px] font-bold text-gold">
+                  {/* Dark gradient for legibility */}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-deluxe-black/90 via-deluxe-black/25 to-transparent" />
+                  {/* Step number */}
+                  <span className="absolute left-1 top-1 grid h-4 w-4 place-items-center rounded-full bg-deluxe-black/85 text-[9px] font-bold text-gold">
                     {idx + 1}
+                  </span>
+                  {/* Exercise title overlay — makes the demo visibly reflect the text title */}
+                  <span className="absolute inset-x-0 bottom-0 px-1 pb-0.5 text-center font-display text-[8px] uppercase leading-tight tracking-[0.08em] text-gold line-clamp-2">
+                    {ex.name}
                   </span>
                 </div>
 
