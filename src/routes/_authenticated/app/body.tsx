@@ -588,11 +588,19 @@ function BodyFigure({
   const rightLabels = keys.filter((k: string) => MUSCLES[k].labelSide === "right");
 
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const dragRef = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
   const pinchRef = useRef<{ dist: number; zoom: number } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setImgLoaded(false);
+    setImageFailed(false);
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  }, [image]);
 
   const clampPan = (z: number, x: number, y: number) => {
     const el = stageRef.current;
@@ -679,12 +687,12 @@ function BodyFigure({
         </span>
       </div>
       <div
-        className="relative mx-auto grid w-full max-w-[28rem] grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-stretch gap-1 sm:grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] sm:gap-3 lg:max-w-2xl"
+        className="relative mx-auto grid w-full max-w-[min(100%,26rem)] grid-cols-1 items-stretch gap-2 sm:max-w-[34rem] sm:grid-cols-[minmax(0,7rem)_minmax(0,1fr)_minmax(0,7rem)] sm:gap-3 lg:max-w-2xl"
         role="group"
         aria-label={`${view} body muscle selector`}
       >
         {/* Left labels */}
-        <div className="relative block">
+        <div className="relative hidden sm:block">
           {leftLabels.map((k) => (
             <LabelChip key={k} muscleKey={k} active={selected.includes(k)} onClick={() => onToggle(k)} side="left" />
           ))}
@@ -694,7 +702,7 @@ function BodyFigure({
         {/* Body image + hotspots */}
         <div
           ref={stageRef}
-          className="relative aspect-[3/5] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black touch-none"
+          className="relative mx-auto aspect-[3/5] w-full max-w-[min(86vw,23rem)] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black touch-none sm:max-w-none"
           style={{ cursor: zoom > 1 ? (dragRef.current ? "grabbing" : "grab") : "default" }}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -725,9 +733,17 @@ function BodyFigure({
               loading={visibleOnMobile ? "eager" : "lazy"}
               decoding="async"
               onLoad={() => setImgLoaded(true)}
-              onError={() => setImgLoaded(true)}
-              className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+              onError={() => { setImageFailed(true); setImgLoaded(true); }}
+              className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ${imgLoaded && !imageFailed ? "opacity-100" : "opacity-0"}`}
             />
+            {imageFailed && (
+              <div role="status" className="absolute inset-0 grid place-items-center px-6 text-center">
+                <div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">Diagram loading</div>
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">Refresh this page to pull the newest body diagram.</p>
+                </div>
+              </div>
+            )}
             {/* Vignette */}
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.55)_100%)]" />
             {keys.map((k, idx) => {
@@ -797,8 +813,14 @@ function BodyFigure({
 
         </div>
 
+        <div className="grid grid-cols-4 gap-1.5 sm:hidden" aria-label={`${view} muscle shortcut buttons`}>
+          {keys.map((k) => (
+            <MobileMuscleChip key={k} muscleKey={k} active={selected.includes(k)} onClick={() => onToggle(k)} />
+          ))}
+        </div>
+
         {/* Right labels */}
-        <div className="relative block">
+        <div className="relative hidden sm:block">
           {rightLabels.map((k) => (
             <LabelChip key={k} muscleKey={k} active={selected.includes(k)} onClick={() => onToggle(k)} side="right" />
           ))}
@@ -806,6 +828,31 @@ function BodyFigure({
 
       </div>
     </div>
+  );
+}
+
+function MobileMuscleChip({
+  muscleKey, active, onClick,
+}: {
+  muscleKey: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  const m = MUSCLES[muscleKey];
+  const Icon = m.Icon;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`${m.label} — ${m.tagline}`}
+      aria-pressed={active}
+      className={`flex min-h-11 min-w-0 flex-col items-center justify-center gap-1 rounded border px-1.5 py-1.5 text-center transition focus:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+        active ? "border-gold bg-gold/10" : "border-gold/20 bg-deluxe-forest/20"
+      }`}
+    >
+      <Icon className="h-4 w-4 shrink-0" style={{ color: m.color }} />
+      <span className="w-full truncate text-[8px] font-bold uppercase tracking-[0.08em] text-foreground">{m.label}</span>
+    </button>
   );
 }
 
