@@ -28,11 +28,13 @@ function savePrefs(prefs: Prefs) {
 export function CookieConsent() {
   const [visible, setVisible] = useState(false);
   const [manageOpen, setManageOpen] = useState(false);
+  const [isAppRoute, setIsAppRoute] = useState(false);
   const [analytics, setAnalytics] = useState(true);
   const [marketing, setMarketing] = useState(false);
 
   useEffect(() => {
     const existing = readPrefs();
+    setIsAppRoute(window.location.pathname.startsWith("/app"));
     if (!existing) setVisible(true);
   }, []);
 
@@ -63,17 +65,21 @@ export function CookieConsent() {
         <div
           role="dialog"
           aria-label="Cookie consent"
-          className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-3xl rounded-2xl border border-gold/30 bg-deluxe-black/95 p-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-300 sm:p-6"
+          className={`fixed inset-x-3 z-[60] mx-auto max-w-3xl rounded-2xl border border-gold/30 bg-deluxe-black/95 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-4 duration-300 ${
+            isAppRoute
+              ? "bottom-[calc(5.25rem+env(safe-area-inset-bottom))] max-h-[34vh] overflow-y-auto p-3 sm:bottom-3 sm:max-h-none sm:p-6"
+              : "bottom-3 p-4 sm:p-6"
+          }`}
         >
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-3 sm:gap-4">
             <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gold/30 bg-gold/5 sm:flex">
               <Cookie className="h-5 w-5 text-gold" />
             </div>
             <div className="flex-1">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold">
+              <div className="text-[9px] font-semibold uppercase tracking-[0.25em] text-gold sm:text-[10px]">
                 Cookies & Privacy
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-foreground/85">
+              <p className="mt-1.5 text-xs leading-relaxed text-foreground/85 sm:mt-2 sm:text-sm">
                 We use cookies to run Deluxe Fitness, measure performance and personalise your
                 experience. You can accept all or choose which categories to allow. Read our{" "}
                 <a href="/privacy" className="text-gold underline-offset-4 hover:underline">
@@ -81,12 +87,12 @@ export function CookieConsent() {
                 </a>
                 .
               </p>
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <GoldButton onClick={acceptAll}>Accept all</GoldButton>
-                <OutlineButton onClick={() => setManageOpen(true)}>Manage preferences</OutlineButton>
+              <div className="mt-3 flex flex-wrap items-center gap-2 sm:mt-4">
+                <GoldButton onClick={acceptAll} className="px-4 py-2 text-[9px] sm:px-8 sm:py-3.5 sm:text-[11px]">Accept all</GoldButton>
+                <OutlineButton onClick={() => setManageOpen(true)} className="px-4 py-2 text-[9px] sm:px-8 sm:py-3.5 sm:text-[11px]">Manage preferences</OutlineButton>
                 <button
                   onClick={rejectNonEssential}
-                  className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground hover:text-gold"
+                  className="text-[9px] font-semibold uppercase tracking-[0.22em] text-muted-foreground hover:text-gold sm:text-[10px] sm:tracking-[0.25em]"
                 >
                   Reject non-essential
                 </button>
