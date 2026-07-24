@@ -679,7 +679,7 @@ function BodyFigure({
         </span>
       </div>
       <div
-        className="relative mx-auto grid w-full max-w-2xl grid-cols-[minmax(0,4.5rem)_1fr_minmax(0,4.5rem)] items-stretch gap-1.5 sm:grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] sm:gap-3"
+        className="relative mx-auto grid w-full max-w-[28rem] grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-stretch gap-1 sm:grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] sm:gap-3 lg:max-w-2xl"
         role="group"
         aria-label={`${view} body muscle selector`}
       >
@@ -722,11 +722,11 @@ function BodyFigure({
             <img
               src={image}
               alt={`Anatomical ${view} view of the human body with selectable muscle groups`}
-              loading="lazy"
+              loading={visibleOnMobile ? "eager" : "lazy"}
               decoding="async"
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgLoaded(true)}
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+              className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
             />
             {/* Vignette */}
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.55)_100%)]" />
@@ -830,18 +830,18 @@ function LabelChip({
       } ${active ? "scale-[1.03]" : ""}`}
       style={{ top: `${m.labelY}%`, transform: `translateY(-50%) ${active ? "scale(1.03)" : ""}` }}
     >
-      <div className={`flex items-center gap-1.5 sm:gap-2 ${side === "right" ? "" : "flex-row-reverse"}`}>
+      <div className={`flex w-full items-center gap-1.5 sm:gap-2 ${side === "right" ? "justify-start" : "flex-row-reverse justify-start"}`}>
         <span
-          className="grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 transition sm:h-8 sm:w-8"
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-full border-2 transition"
           style={{
             borderColor: m.color,
             backgroundColor: active ? `${m.color}30` : "rgba(0,0,0,0.4)",
             boxShadow: active ? `0 0 14px ${m.color}80` : "none",
           }}
         >
-          <Icon className="h-3 w-3 sm:h-4 sm:w-4" style={{ color: m.color }} />
+          <Icon className="h-4 w-4" style={{ color: m.color }} />
         </span>
-        <div className={`min-w-0 ${side === "right" ? "text-left" : "text-right"}`}>
+        <div className={`hidden min-w-0 sm:block ${side === "right" ? "text-left" : "text-right"}`}>
           <div
             className="truncate text-[8px] font-bold uppercase tracking-[0.14em] transition sm:text-[10px] sm:tracking-[0.18em]"
             style={{ color: active ? m.color : "hsl(var(--foreground))" }}
