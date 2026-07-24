@@ -306,8 +306,8 @@ function BodyMapTab() {
       </div>
 
       {/* Bodies + recommendation box in the centre.
-          Desktop: [Front | Recommendation | Back]. Mobile: Front → Box → Back. */}
-      <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1.8fr)_minmax(220px,0.55fr)_minmax(0,1.8fr)] lg:gap-8 lg:items-center">
+          Desktop: [Front | Recommendation | Back]. Mobile: diagram first, recommendation only after selection. */}
+      <div className="mt-5 grid gap-4 lg:mt-8 lg:grid-cols-[minmax(0,1.8fr)_minmax(220px,0.55fr)_minmax(0,1.8fr)] lg:gap-8 lg:items-center">
         <BodyFigure
           view="front"
           image={bodyFront}
@@ -316,7 +316,7 @@ function BodyMapTab() {
           onToggle={toggle}
           reduceMotion={reduceMotion}
         />
-        <div className="lg:order-none">
+        <div className={`${primary ? "block" : "hidden lg:block"} lg:order-none`}>
           <MuscleRecommendationBox
             muscleKey={primary ? selected[selected.length - 1] : null}
             muscleLabel={primary?.label ?? ""}
@@ -702,7 +702,7 @@ function BodyFigure({
         {/* Body image + hotspots */}
         <div
           ref={stageRef}
-          className="relative mx-auto aspect-[3/5] w-full max-w-[min(86vw,23rem)] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black touch-none sm:max-w-none"
+          className="relative mx-auto aspect-[3/5] w-full max-w-[min(94vw,24rem)] overflow-hidden rounded-lg border border-gold/20 bg-deluxe-black touch-none sm:max-w-none"
           style={{ cursor: zoom > 1 ? (dragRef.current ? "grabbing" : "grab") : "default" }}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -734,7 +734,7 @@ function BodyFigure({
               decoding="async"
               onLoad={() => setImgLoaded(true)}
               onError={() => { setImageFailed(true); setImgLoaded(true); }}
-              className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-500 ${imgLoaded && !imageFailed ? "opacity-100" : "opacity-0"}`}
+              className={`pointer-events-none absolute inset-0 h-full w-full select-none object-contain transition-opacity duration-500 ${imgLoaded && !imageFailed ? "opacity-100" : "opacity-0"}`}
             />
             {imageFailed && (
               <div role="status" className="absolute inset-0 grid place-items-center px-6 text-center">
@@ -777,7 +777,7 @@ function BodyFigure({
                   aria-pressed={active}
                   aria-checked={active}
                   title={m.label}
-                  className="group absolute grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deluxe-black"
+                  className="group absolute z-10 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-deluxe-black"
                   style={{ left: `${m.spot.x}%`, top: `${m.spot.y}%`, minWidth: 44, minHeight: 44, width: 44, height: 44 }}
                 >
                   {/* Invisible tap enlargement layer for ≥44px target on mobile */}
