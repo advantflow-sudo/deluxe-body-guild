@@ -73,7 +73,8 @@ const MUSCLES: Record<string, MuscleDef> = {
 const STORAGE_KEY = "deluxe.body.selection.v1";
 
 function BodyMapTab() {
-  const { muscles, view = "front" } = Route.useSearch();
+  const search = Route.useSearch();
+  const { muscles, view = "front" } = search;
   const navigate = useNavigate();
   const { user } = useAuth();
   const { reduceMotion } = useReduceMotion();
@@ -124,7 +125,7 @@ function BodyMapTab() {
       if (cancelled) return;
       setHydrated(true);
       setRemoteLoaded(true);
-      if (!saved || muscles) return;
+      if (!saved || muscles || search.view) return;
       if (saved.multi) setMulti(true);
       const keys = (saved.muscles ?? []).filter((k: string) => Boolean(MUSCLES[k]));
       if (keys.length || saved.view) {
@@ -312,11 +313,12 @@ function BodyMapTab() {
           view="front"
           image={bodyFront}
           visibleOnMobile={view === "front"}
+          className="order-1 lg:order-none"
           selected={selected}
           onToggle={toggle}
           reduceMotion={reduceMotion}
         />
-        <div className={`${primary ? "block" : "hidden lg:block"} lg:order-none`}>
+        <div className={`order-2 ${primary ? "block" : "hidden lg:block"} lg:order-none`}>
           <MuscleRecommendationBox
             muscleKey={primary ? selected[selected.length - 1] : null}
             muscleLabel={primary?.label ?? ""}
@@ -328,6 +330,7 @@ function BodyMapTab() {
           view="back"
           image={bodyBack}
           visibleOnMobile={view === "back"}
+          className="order-1 lg:order-none"
           selected={selected}
           onToggle={toggle}
           reduceMotion={reduceMotion}
@@ -574,11 +577,12 @@ function BodyMapTab() {
 }
 
 function BodyFigure({
-  view, image, visibleOnMobile, selected, onToggle, reduceMotion,
+  view, image, visibleOnMobile, className = "", selected, onToggle, reduceMotion,
 }: {
   view: "front" | "back";
   image: string;
   visibleOnMobile: boolean;
+  className?: string;
   selected: string[];
   onToggle: (key: string) => void;
   reduceMotion: boolean;
@@ -652,7 +656,7 @@ function BodyFigure({
   const onTouchEnd = () => { pinchRef.current = null; };
 
   return (
-    <div className={`${visibleOnMobile ? "block" : "hidden"} lg:block`}>
+    <div className={`${visibleOnMobile ? "block" : "hidden"} ${className} lg:block`}>
       <div className="mb-3 flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.32em] text-muted-foreground">
         <span>{view}</span>
         <span className="ml-2 inline-flex items-center gap-1">
@@ -730,7 +734,7 @@ function BodyFigure({
             <img
               src={image}
               alt={`Anatomical ${view} view of the human body with selectable muscle groups`}
-              loading={visibleOnMobile ? "eager" : "lazy"}
+              loading="eager"
               decoding="async"
               onLoad={() => setImgLoaded(true)}
               onError={() => { setImageFailed(true); setImgLoaded(true); }}
