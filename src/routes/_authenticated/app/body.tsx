@@ -679,12 +679,12 @@ function BodyFigure({
         </span>
       </div>
       <div
-        className="relative mx-auto grid w-full max-w-2xl grid-cols-1 items-stretch gap-2 sm:grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] sm:gap-3"
+        className="relative mx-auto grid w-full max-w-2xl grid-cols-[minmax(0,4.5rem)_1fr_minmax(0,4.5rem)] items-stretch gap-1.5 sm:grid-cols-[minmax(0,7rem)_1fr_minmax(0,7rem)] sm:gap-3"
         role="group"
         aria-label={`${view} body muscle selector`}
       >
-        {/* Left labels (hidden on mobile — hotspots on the image handle selection) */}
-        <div className="relative hidden sm:block">
+        {/* Left labels */}
+        <div className="relative block">
           {leftLabels.map((k) => (
             <LabelChip key={k} muscleKey={k} active={selected.includes(k)} onClick={() => onToggle(k)} side="left" />
           ))}
@@ -797,8 +797,8 @@ function BodyFigure({
 
         </div>
 
-        {/* Right labels (hidden on mobile) */}
-        <div className="relative hidden sm:block">
+        {/* Right labels */}
+        <div className="relative block">
           {rightLabels.map((k) => (
             <LabelChip key={k} muscleKey={k} active={selected.includes(k)} onClick={() => onToggle(k)} side="right" />
           ))}
@@ -830,25 +830,25 @@ function LabelChip({
       } ${active ? "scale-[1.03]" : ""}`}
       style={{ top: `${m.labelY}%`, transform: `translateY(-50%) ${active ? "scale(1.03)" : ""}` }}
     >
-      <div className={`flex items-center gap-2 ${side === "right" ? "" : "flex-row-reverse"}`}>
+      <div className={`flex items-center gap-1.5 sm:gap-2 ${side === "right" ? "" : "flex-row-reverse"}`}>
         <span
-          className="grid h-8 w-8 shrink-0 place-items-center rounded-full border-2 transition"
+          className="grid h-6 w-6 shrink-0 place-items-center rounded-full border-2 transition sm:h-8 sm:w-8"
           style={{
             borderColor: m.color,
             backgroundColor: active ? `${m.color}30` : "rgba(0,0,0,0.4)",
             boxShadow: active ? `0 0 14px ${m.color}80` : "none",
           }}
         >
-          <Icon className="h-4 w-4" style={{ color: m.color }} />
+          <Icon className="h-3 w-3 sm:h-4 sm:w-4" style={{ color: m.color }} />
         </span>
         <div className={`min-w-0 ${side === "right" ? "text-left" : "text-right"}`}>
           <div
-            className="truncate text-[10px] font-bold uppercase tracking-[0.18em] transition"
+            className="truncate text-[8px] font-bold uppercase tracking-[0.14em] transition sm:text-[10px] sm:tracking-[0.18em]"
             style={{ color: active ? m.color : "hsl(var(--foreground))" }}
           >
             {m.label}
           </div>
-          <div className="truncate text-[9px] leading-tight text-muted-foreground">{m.tagline}</div>
+          <div className="hidden sm:block truncate text-[9px] leading-tight text-muted-foreground">{m.tagline}</div>
         </div>
       </div>
     </button>
