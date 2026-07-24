@@ -73,7 +73,8 @@ const MUSCLES: Record<string, MuscleDef> = {
 const STORAGE_KEY = "deluxe.body.selection.v1";
 
 function BodyMapTab() {
-  const { muscles, view = "front" } = Route.useSearch();
+  const search = Route.useSearch();
+  const { muscles, view = "front" } = search;
   const navigate = useNavigate();
   const { user } = useAuth();
   const { reduceMotion } = useReduceMotion();
@@ -124,7 +125,7 @@ function BodyMapTab() {
       if (cancelled) return;
       setHydrated(true);
       setRemoteLoaded(true);
-      if (!saved || muscles) return;
+      if (!saved || muscles || search.view) return;
       if (saved.multi) setMulti(true);
       const keys = (saved.muscles ?? []).filter((k: string) => Boolean(MUSCLES[k]));
       if (keys.length || saved.view) {
