@@ -340,21 +340,26 @@ function PricingPage() {
                     ))}
                   </ul>
 
-                  <button
-                    onClick={() => subscribe(tier.name)}
-                    className="mt-8 block w-full"
-                    disabled={loadingTier === tier.name || isCurrent || portalLoading}
-                  >
+                  <div className="mt-8 block w-full">
                     {tier.featured && !isCurrent ? (
-                      <GoldButton className="w-full">
+                      <GoldButton
+                        className="w-full"
+                        onClick={() => subscribe(tier.name)}
+                        disabled={loadingTier === tier.name || isCurrent || portalLoading}
+                      >
                         {loadingTier === tier.name ? "Loading…" : ctaLabel}
                       </GoldButton>
                     ) : (
-                      <OutlineButton className="w-full">
+                      <OutlineButton
+                        className="w-full"
+                        onClick={() => subscribe(tier.name)}
+                        disabled={loadingTier === tier.name || isCurrent || portalLoading}
+                      >
                         {loadingTier === tier.name ? "Loading…" : ctaLabel}
                       </OutlineButton>
                     )}
-                  </button>
+                  </div>
+
                 </div>
               );
             })}
