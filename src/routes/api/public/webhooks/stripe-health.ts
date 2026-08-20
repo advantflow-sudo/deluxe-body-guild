@@ -34,15 +34,15 @@ export const Route = createFileRoute("/api/public/webhooks/stripe-health")({
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           const { data } = await supabaseAdmin
             .from("stripe_webhook_events")
-            .select("stripe_event_id, event_type, status, error_message, created_at, processed_at")
-            .order("created_at", { ascending: false })
+            .select("stripe_event_id, event_type, status, error_message, received_at, processed_at")
+            .order("received_at", { ascending: false })
             .limit(10);
           recent = data ?? [];
           const { data: fail } = await supabaseAdmin
             .from("stripe_webhook_events")
-            .select("event_type, error_message, created_at")
+            .select("event_type, error_message, received_at")
             .eq("status", "error")
-            .order("created_at", { ascending: false })
+            .order("received_at", { ascending: false })
             .limit(1)
             .maybeSingle();
           lastVerificationFailure = fail ?? null;
