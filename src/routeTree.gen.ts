@@ -58,6 +58,7 @@ import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public
 import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
+import { Route as ApiPublicHooksStripeWebhookTestRouteImport } from './routes/api/public/hooks/stripe-webhook-test'
 import { Route as ApiPublicHooksStreakAtRiskAlertRouteImport } from './routes/api/public/hooks/streak-at-risk-alert'
 import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
 import { Route as ApiPublicHooksScoreRecomputeRouteImport } from './routes/api/public/hooks/score-recompute'
@@ -324,6 +325,12 @@ const ApiPublicHooksSyncGoogleFitRoute =
     path: '/api/public/hooks/sync-google-fit',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksStripeWebhookTestRoute =
+  ApiPublicHooksStripeWebhookTestRouteImport.update({
+    id: '/api/public/hooks/stripe-webhook-test',
+    path: '/api/public/hooks/stripe-webhook-test',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksStreakAtRiskAlertRoute =
   ApiPublicHooksStreakAtRiskAlertRouteImport.update({
     id: '/api/public/hooks/streak-at-risk-alert',
@@ -423,6 +430,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
+  '/api/public/hooks/stripe-webhook-test': typeof ApiPublicHooksStripeWebhookTestRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
@@ -480,6 +488,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
+  '/api/public/hooks/stripe-webhook-test': typeof ApiPublicHooksStripeWebhookTestRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
@@ -540,6 +549,7 @@ export interface FileRoutesById {
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
+  '/api/public/hooks/stripe-webhook-test': typeof ApiPublicHooksStripeWebhookTestRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
@@ -600,6 +610,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
+    | '/api/public/hooks/stripe-webhook-test'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
@@ -657,6 +668,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
+    | '/api/public/hooks/stripe-webhook-test'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
@@ -716,6 +728,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
+    | '/api/public/hooks/stripe-webhook-test'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
@@ -754,6 +767,7 @@ export interface RootRouteChildren {
   ApiPublicHooksScoreRecomputeRoute: typeof ApiPublicHooksScoreRecomputeRoute
   ApiPublicHooksSendRemindersRoute: typeof ApiPublicHooksSendRemindersRoute
   ApiPublicHooksStreakAtRiskAlertRoute: typeof ApiPublicHooksStreakAtRiskAlertRoute
+  ApiPublicHooksStripeWebhookTestRoute: typeof ApiPublicHooksStripeWebhookTestRoute
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
   ApiPublicHooksWeeklyRecapRoute: typeof ApiPublicHooksWeeklyRecapRoute
@@ -1107,6 +1121,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncGoogleFitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/stripe-webhook-test': {
+      id: '/api/public/hooks/stripe-webhook-test'
+      path: '/api/public/hooks/stripe-webhook-test'
+      fullPath: '/api/public/hooks/stripe-webhook-test'
+      preLoaderRoute: typeof ApiPublicHooksStripeWebhookTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/streak-at-risk-alert': {
       id: '/api/public/hooks/streak-at-risk-alert'
       path: '/api/public/hooks/streak-at-risk-alert'
@@ -1269,6 +1290,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksScoreRecomputeRoute: ApiPublicHooksScoreRecomputeRoute,
   ApiPublicHooksSendRemindersRoute: ApiPublicHooksSendRemindersRoute,
   ApiPublicHooksStreakAtRiskAlertRoute: ApiPublicHooksStreakAtRiskAlertRoute,
+  ApiPublicHooksStripeWebhookTestRoute: ApiPublicHooksStripeWebhookTestRoute,
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
   ApiPublicHooksWeeklyRecapRoute: ApiPublicHooksWeeklyRecapRoute,
