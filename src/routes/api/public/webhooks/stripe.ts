@@ -16,17 +16,35 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const requestId = crypto.randomUUID().slice(0, 8);
+        const startedAt = Date.now();
+        const log = (msg: string, extra?: Record<string, unknown>) =>
+          console.log(`[stripe webhook ${requestId}] ${msg}`, extra ? JSON.stringify(extra) : "");
+
         const { getStripe } = await import("@/lib/stripe.server");
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const stripe = getStripe();
 
         const sig = request.headers.get("stripe-signature");
-        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim().replace(/\s+/g, "");
+        const rawSecret = process.env.STRIPE_WEBHOOK_SECRET;
+        const webhookSecret = rawSecret?.trim().replace(/\s+/g, "");
+        log("received request", {
+          hasSignature: !!sig,
+          signaturePreview: sig ? sig.slice(0, 24) + "..." : null,
+          secretPresent: !!webhookSecret,
+          secretPrefix: webhookSecret?.slice(0, 6) ?? null,
+          secretLength: webhookSecret?.length ?? 0,
+          secretHadWhitespace: !!rawSecret && rawSecret !== webhookSecret,
+          userAgent: request.headers.get("user-agent"),
+        });
+
         if (!sig || !webhookSecret) {
+          const reason = !sig ? "Missing stripe-signature header" : "Missing STRIPE_WEBHOOK_SECRET";
+          console.error(`[stripe webhook ${requestId}] ${reason}`);
           await supabaseAdmin.from("stripe_webhook_events").insert({
             event_type: "unknown",
             status: "error",
-            error_message: !sig ? "Missing stripe-signature header" : "Missing STRIPE_WEBHOOK_SECRET",
+            error_message: reason,
           });
           return new Response("Missing signature", { status: 400 });
         }
@@ -35,16 +53,31 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
         let event: Stripe.Event;
         try {
           event = await stripe.webhooks.constructEventAsync(body, sig, webhookSecret);
+          log("signature verified");
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
-          console.error("[stripe webhook] signature verify failed", err);
+          console.error(`[stripe webhook ${requestId}] signature verify FAILED`, {
+            message: msg,
+            bodyBytes: body.length,
+            bodyPreview: body.slice(0, 200),
+            secretPrefix: webhookSecret.slice(0, 6),
+            secretLength: webhookSecret.length,
+            signatureHeader: sig,
+          });
           await supabaseAdmin.from("stripe_webhook_events").insert({
             event_type: "signature_failed",
             status: "error",
-            error_message: msg,
+            error_message: `[${requestId}] ${msg} (secret ${webhookSecret.slice(0, 6)}…len${webhookSecret.length}, body ${body.length}B)`,
           });
           return new Response("Invalid signature", { status: 400 });
         }
+
+        log("event parsed", {
+          id: event.id,
+          type: event.type,
+          livemode: event.livemode,
+          apiVersion: event.api_version,
+        });
 
         // Log the received event immediately (idempotent on stripe_event_id)
         await supabaseAdmin
@@ -58,6 +91,8 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
             },
             { onConflict: "stripe_event_id" },
           );
+
+
 
 
         let userId: string | null = null;
@@ -161,12 +196,14 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
             })
             .eq("stripe_event_id", event.id);
 
-          return new Response(JSON.stringify({ received: true }), {
+          log("processed", { userId, customerId, subscriptionId, tier: tierLog, amountTotal, currency, ms: Date.now() - startedAt });
+
+          return new Response(JSON.stringify({ received: true, requestId, eventId: event.id }), {
             headers: { "content-type": "application/json" },
           });
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
-          console.error("[stripe webhook] handler error", err);
+          console.error(`[stripe webhook ${requestId}] handler error`, { eventId: event.id, type: event.type, message: msg, stack: err instanceof Error ? err.stack : undefined });
           await supabaseAdmin
             .from("stripe_webhook_events")
             .update({
