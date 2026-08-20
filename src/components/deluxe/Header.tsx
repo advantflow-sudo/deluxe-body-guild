@@ -23,10 +23,15 @@ export const NAV_LINKS = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
+const PRIMARY_LABELS = ["Home", "How It Works", "What We Offer", "Fitness", "Wellbeing", "Challenges", "Pricing"];
+export const PRIMARY_NAV = NAV_LINKS.filter((l) => PRIMARY_LABELS.includes(l.label));
+export const SECONDARY_NAV = NAV_LINKS.filter((l) => !PRIMARY_LABELS.includes(l.label));
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const { session } = useAuth();
+
   return (
     <header className="sticky top-0 z-50 border-b border-gold/20 bg-deluxe-black/85 pt-[env(safe-area-inset-top)] backdrop-blur-xl supports-[backdrop-filter]:bg-deluxe-black/70">
       <div className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
