@@ -196,12 +196,14 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
             })
             .eq("stripe_event_id", event.id);
 
-          return new Response(JSON.stringify({ received: true }), {
+          log("processed", { userId, customerId, subscriptionId, tier: tierLog, amountTotal, currency, ms: Date.now() - startedAt });
+
+          return new Response(JSON.stringify({ received: true, requestId, eventId: event.id }), {
             headers: { "content-type": "application/json" },
           });
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
-          console.error("[stripe webhook] handler error", err);
+          console.error(`[stripe webhook ${requestId}] handler error`, { eventId: event.id, type: event.type, message: msg, stack: err instanceof Error ? err.stack : undefined });
           await supabaseAdmin
             .from("stripe_webhook_events")
             .update({
