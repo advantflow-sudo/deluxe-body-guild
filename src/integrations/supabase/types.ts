@@ -1029,7 +1029,9 @@ export type Database = {
       }
       stripe_webhook_events: {
         Row: {
+          alerted_at: string | null
           amount_total: number | null
+          attempts: number
           currency: string | null
           error_message: string | null
           event_type: string
@@ -1037,6 +1039,8 @@ export type Database = {
           payload: Json | null
           processed_at: string | null
           received_at: string
+          signature_verified: boolean | null
+          source: string
           status: string
           stripe_customer_id: string | null
           stripe_event_id: string | null
@@ -1045,7 +1049,9 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          alerted_at?: string | null
           amount_total?: number | null
+          attempts?: number
           currency?: string | null
           error_message?: string | null
           event_type: string
@@ -1053,6 +1059,8 @@ export type Database = {
           payload?: Json | null
           processed_at?: string | null
           received_at?: string
+          signature_verified?: boolean | null
+          source?: string
           status?: string
           stripe_customer_id?: string | null
           stripe_event_id?: string | null
@@ -1061,7 +1069,9 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          alerted_at?: string | null
           amount_total?: number | null
+          attempts?: number
           currency?: string | null
           error_message?: string | null
           event_type?: string
@@ -1069,6 +1079,8 @@ export type Database = {
           payload?: Json | null
           processed_at?: string | null
           received_at?: string
+          signature_verified?: boolean | null
+          source?: string
           status?: string
           stripe_customer_id?: string | null
           stripe_event_id?: string | null
