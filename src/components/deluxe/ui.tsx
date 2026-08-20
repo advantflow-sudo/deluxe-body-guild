@@ -24,7 +24,7 @@ export function OutlineButton({
   return (
     <button
       {...rest}
-      className={`inline-flex items-center justify-center gap-2 border border-gold/50 bg-transparent px-8 py-3.5 font-body text-[11px] font-semibold uppercase tracking-[0.28em] text-gold transition-all hover:border-gold hover:bg-gold/5 hover:shadow-[0_0_24px_-8px_rgba(201,162,76,0.5)] ${className}`}
+      className={`inline-flex min-h-11 items-center justify-center gap-2 border border-gold/50 bg-transparent px-6 py-3.5 font-body text-[10px] font-semibold uppercase tracking-[0.24em] text-gold transition-all hover:border-gold hover:bg-gold/5 hover:shadow-[0_0_24px_-8px_rgba(201,162,76,0.5)] disabled:pointer-events-none disabled:opacity-50 sm:px-8 sm:text-[11px] sm:tracking-[0.28em] ${className}`}
     >
       {children}
     </button>
