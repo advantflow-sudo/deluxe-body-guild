@@ -80,7 +80,11 @@ function AdminPage() {
           <Link to="/admin/domain-health">
             <OutlineButton>Domain health</OutlineButton>
           </Link>
+          <Link to="/admin/webhooks">
+            <OutlineButton>Webhook deliveries</OutlineButton>
+          </Link>
         </div>
+
 
         <Tabs defaultValue="users" className="mt-10">
           <TabsList className="grid w-full grid-cols-2 gap-2 bg-deluxe-forest/20 sm:grid-cols-6">
