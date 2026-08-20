@@ -51,6 +51,7 @@ import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppBodyTrendsRouteImport } from './routes/_authenticated/app/body-trends'
 import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticated/app/body'
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
+import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin.webhooks'
 import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/public/webhooks/stripe-health'
@@ -284,6 +285,12 @@ const AuthenticatedAppAiRoute = AuthenticatedAppAiRouteImport.update({
   path: '/ai',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAdminWebhooksRoute =
+  AuthenticatedAdminWebhooksRouteImport.update({
+    id: '/webhooks',
+    path: '/webhooks',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDomainHealthRoute =
   AuthenticatedAdminDomainHealthRouteImport.update({
     id: '/domain-health',
@@ -407,6 +414,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -465,6 +473,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -526,6 +535,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/_authenticated/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/_authenticated/app/ai': typeof AuthenticatedAppAiRoute
   '/_authenticated/app/body': typeof AuthenticatedAppBodyRoute
   '/_authenticated/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -587,6 +597,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/accept-invite/$code'
     | '/admin/domain-health'
+    | '/admin/webhooks'
     | '/app/ai'
     | '/app/body'
     | '/app/body-trends'
@@ -645,6 +656,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/accept-invite/$code'
     | '/admin/domain-health'
+    | '/admin/webhooks'
     | '/app/ai'
     | '/app/body'
     | '/app/body-trends'
@@ -705,6 +717,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/_authenticated/accept-invite/$code'
     | '/_authenticated/admin/domain-health'
+    | '/_authenticated/admin/webhooks'
     | '/_authenticated/app/ai'
     | '/_authenticated/app/body'
     | '/_authenticated/app/body-trends'
@@ -1072,6 +1085,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAiRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/admin/webhooks': {
+      id: '/_authenticated/admin/webhooks'
+      path: '/webhooks'
+      fullPath: '/admin/webhooks'
+      preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/domain-health': {
       id: '/_authenticated/admin/domain-health'
       path: '/domain-health'
@@ -1189,10 +1209,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDomainHealthRoute: typeof AuthenticatedAdminDomainHealthRoute
+  AuthenticatedAdminWebhooksRoute: typeof AuthenticatedAdminWebhooksRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDomainHealthRoute: AuthenticatedAdminDomainHealthRoute,
+  AuthenticatedAdminWebhooksRoute: AuthenticatedAdminWebhooksRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
