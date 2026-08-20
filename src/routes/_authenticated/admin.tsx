@@ -77,7 +77,7 @@ function AdminPage() {
         <Overview />
 
         <div className="mt-6 flex flex-wrap gap-2">
-          <Link to="/_authenticated/admin/domain-health">
+          <Link to="/admin/domain-health">
             <OutlineButton>Domain health</OutlineButton>
           </Link>
         </div>
