@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Logo } from "./Logo";
 import { GoldButton, OutlineButton } from "./ui";
 import { useAuth } from "@/hooks/useAuth";
