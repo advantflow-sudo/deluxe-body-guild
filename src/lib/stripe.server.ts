@@ -3,7 +3,7 @@ import Stripe from "stripe";
 let _stripe: Stripe | undefined;
 export function getStripe() {
   if (!_stripe) {
-    const key = process.env.STRIPE_SECRET_KEY;
+    const key = process.env.STRIPE_SECRET_KEY?.trim();
     if (!key) throw new Error("STRIPE_SECRET_KEY not configured");
     _stripe = new Stripe(key, { apiVersion: "2024-11-20.acacia" as Stripe.LatestApiVersion });
   }
