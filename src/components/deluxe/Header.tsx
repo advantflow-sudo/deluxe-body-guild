@@ -85,7 +85,7 @@ export function Header() {
           </div>
         </nav>
 
-        <div className="hidden items-center gap-3 xl:flex">
+        <div className="hidden items-center gap-3 lg:flex">
           {session ? (
             <Link to="/app"><GoldButton>Dashboard</GoldButton></Link>
           ) : (
@@ -103,13 +103,13 @@ export function Header() {
         <button
           aria-label="Toggle menu"
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 text-gold transition hover:bg-gold/10 xl:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 text-gold transition hover:bg-gold/10 lg:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
       {open && (
-        <div className="border-t border-gold/15 bg-deluxe-black xl:hidden">
+        <div className="border-t border-gold/15 bg-deluxe-black lg:hidden">
           <nav className="flex flex-col px-6 py-4">
             {NAV_LINKS.map((l) => (
               <Link
