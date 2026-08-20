@@ -21,7 +21,7 @@ export const Route = createFileRoute("/api/public/webhooks/stripe")({
         const stripe = getStripe();
 
         const sig = request.headers.get("stripe-signature");
-        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
         if (!sig || !webhookSecret) {
           await supabaseAdmin.from("stripe_webhook_events").insert({
             event_type: "unknown",
