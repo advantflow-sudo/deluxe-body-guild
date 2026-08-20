@@ -48,7 +48,14 @@ export const syncGoogleFit = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    const { data: device } = await supabase
+    // OAuth tokens are only readable/writable with the service role.
+    const tokenAdmin = createClient<Database>(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { persistSession: false, autoRefreshToken: false } },
+    );
+
+    const { data: device } = await tokenAdmin
       .from("connected_devices")
       .select("*")
       .eq("user_id", userId)
@@ -76,7 +83,7 @@ export const syncGoogleFit = createServerFn({ method: "POST" })
         refreshToken: device.refresh_token,
       });
       accessToken = refreshed.access_token;
-      await supabase
+      await tokenAdmin
         .from("connected_devices")
         .update({
           access_token: refreshed.access_token,
@@ -84,6 +91,7 @@ export const syncGoogleFit = createServerFn({ method: "POST" })
         })
         .eq("id", device.id);
     }
+
 
     const now = new Date();
     const start = new Date();

@@ -54,7 +54,14 @@ export const syncOAuthProvider = createServerFn({ method: "POST" })
     const cfg = getProvider(data.provider);
     if (!cfg) return { ok: false, written: 0, reason: "unsupported_provider" };
 
-    const { data: device } = await supabase
+    // OAuth tokens are only readable/writable with the service role.
+    const tokenAdmin = createClient<Database>(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { persistSession: false, autoRefreshToken: false } },
+    );
+
+    const { data: device } = await tokenAdmin
       .from("connected_devices")
       .select("*")
       .eq("user_id", userId)
@@ -73,7 +80,7 @@ export const syncOAuthProvider = createServerFn({ method: "POST" })
       try {
         const refreshed = await refreshToken(cfg, device.refresh_token);
         accessToken = refreshed.access_token;
-        await supabase
+        await tokenAdmin
           .from("connected_devices")
           .update({
             access_token: refreshed.access_token,
@@ -85,6 +92,7 @@ export const syncOAuthProvider = createServerFn({ method: "POST" })
         return { ok: false, written: 0, reason: e instanceof Error ? e.message : "refresh_failed" };
       }
     }
+
 
     let snapshot;
     try {

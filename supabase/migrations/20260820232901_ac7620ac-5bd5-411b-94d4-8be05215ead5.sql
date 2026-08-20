@@ -1,0 +1,1 @@
+GRANT UPDATE (user_id, provider) ON public.connected_devices TO authenticated;

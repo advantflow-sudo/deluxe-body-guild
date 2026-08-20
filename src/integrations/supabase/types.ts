@@ -1679,6 +1679,10 @@ export type Database = {
         Args: { _delta: number; _reason: string }
         Returns: number
       }
+      can_create_challenge_team: {
+        Args: { _challenge_id: string }
+        Returns: boolean
+      }
       claim_reward: {
         Args: { _reward_id: string }
         Returns: {
