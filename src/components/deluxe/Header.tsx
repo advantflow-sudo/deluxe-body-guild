@@ -35,13 +35,13 @@ export function Header() {
         <Link to="/" className="shrink-0">
           <Logo />
         </Link>
-        <nav className="hidden items-center gap-1 xl:flex">
-          {NAV_LINKS.map((l) => (
+        <nav className="hidden min-w-0 items-center gap-0.5 lg:flex">
+          {PRIMARY_NAV.map((l) => (
             <Link
               key={l.to}
               to={l.to}
               activeOptions={{ exact: l.to === "/" }}
-              className="group relative px-3 py-2 text-[10.5px] font-semibold uppercase tracking-[0.28em] text-foreground/55 transition-colors duration-300 hover:text-gold"
+              className="group relative px-2 py-2 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-foreground/55 transition-colors duration-300 hover:text-gold xl:px-3 xl:text-[10.5px] xl:tracking-[0.26em]"
               activeProps={{ className: "text-gold" }}
             >
               <span className="relative">
@@ -50,7 +50,36 @@ export function Header() {
               </span>
             </Link>
           ))}
+          <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
+            <button
+              type="button"
+              aria-expanded={moreOpen}
+              aria-haspopup="true"
+              onClick={() => setMoreOpen((v) => !v)}
+              onMouseEnter={() => setMoreOpen(true)}
+              className="flex items-center gap-1 px-2 py-2 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-foreground/55 transition-colors hover:text-gold xl:px-3 xl:text-[10.5px] xl:tracking-[0.26em]"
+            >
+              More
+              <ChevronDown className={`h-3 w-3 transition-transform ${moreOpen ? "rotate-180" : ""}`} />
+            </button>
+            {moreOpen && (
+              <div className="absolute right-0 top-full z-50 mt-2 w-56 border border-gold/25 bg-deluxe-black/95 py-2 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+                {SECONDARY_NAV.map((l) => (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    onClick={() => setMoreOpen(false)}
+                    className="block px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/65 transition-colors hover:bg-gold/5 hover:text-gold"
+                    activeProps={{ className: "text-gold" }}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </nav>
+
         <div className="hidden items-center gap-3 xl:flex">
           {session ? (
             <Link to="/app"><GoldButton>Dashboard</GoldButton></Link>
