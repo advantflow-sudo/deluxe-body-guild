@@ -23,7 +23,7 @@ export const NAV_LINKS = [
   { to: "/contact", label: "Contact" },
 ] as const;
 
-const PRIMARY_LABELS = ["Home", "How It Works", "What We Offer", "Fitness", "Wellbeing", "Challenges", "Pricing"];
+const PRIMARY_LABELS = ["Home", "How It Works", "Fitness", "Wellbeing", "Pricing"];
 export const PRIMARY_NAV = NAV_LINKS.filter((l) => PRIMARY_LABELS.includes(l.label));
 export const SECONDARY_NAV = NAV_LINKS.filter((l) => !PRIMARY_LABELS.includes(l.label));
 
@@ -40,13 +40,13 @@ export function Header() {
         <Link to="/" className="shrink-0">
           <Logo />
         </Link>
-        <nav className="hidden min-w-0 items-center gap-0.5 lg:flex">
+        <nav className="hidden min-w-0 flex-1 items-center justify-end gap-0.5 lg:flex">
           {PRIMARY_NAV.map((l) => (
             <Link
               key={l.to}
               to={l.to}
               activeOptions={{ exact: l.to === "/" }}
-              className="group relative px-2 py-2 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-foreground/55 transition-colors duration-300 hover:text-gold xl:px-3 xl:text-[10.5px] xl:tracking-[0.26em]"
+              className="group relative whitespace-nowrap px-2 py-2 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-foreground/55 transition-colors duration-300 hover:text-gold xl:px-3 xl:text-[10.5px] xl:tracking-[0.26em]"
               activeProps={{ className: "text-gold" }}
             >
               <span className="relative">
@@ -62,7 +62,7 @@ export function Header() {
               aria-haspopup="true"
               onClick={() => setMoreOpen((v) => !v)}
               onMouseEnter={() => setMoreOpen(true)}
-              className="flex items-center gap-1 px-2 py-2 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-foreground/55 transition-colors hover:text-gold xl:px-3 xl:text-[10.5px] xl:tracking-[0.26em]"
+              className="flex shrink-0 items-center gap-1 whitespace-nowrap px-2 py-2 text-[9.5px] font-semibold uppercase tracking-[0.2em] text-foreground/55 transition-colors hover:text-gold xl:px-3 xl:text-[10.5px] xl:tracking-[0.26em]"
             >
               More
               <ChevronDown className={`h-3 w-3 transition-transform ${moreOpen ? "rotate-180" : ""}`} />
@@ -85,14 +85,14 @@ export function Header() {
           </div>
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden shrink-0 items-center gap-3 lg:flex">
           {session ? (
             <Link to="/app"><GoldButton>Dashboard</GoldButton></Link>
           ) : (
             <>
               <Link
                 to="/login"
-                className="text-[10.5px] font-semibold uppercase tracking-[0.28em] text-foreground/70 transition-colors hover:text-gold"
+                className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/70 transition-colors hover:text-gold"
               >
                 Sign In
               </Link>
