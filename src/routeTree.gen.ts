@@ -53,6 +53,7 @@ import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
 import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
+import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/public/webhooks/stripe-health'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
 import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
@@ -294,6 +295,12 @@ const AuthenticatedAcceptInviteCodeRoute =
     path: '/accept-invite/$code',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const ApiPublicWebhooksStripeHealthRoute =
+  ApiPublicWebhooksStripeHealthRouteImport.update({
+    id: '/api/public/webhooks/stripe-health',
+    path: '/api/public/webhooks/stripe-health',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
   id: '/api/public/webhooks/stripe',
   path: '/api/public/webhooks/stripe',
@@ -420,6 +427,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
+  '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -476,6 +484,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
+  '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRoutesById {
@@ -535,6 +544,7 @@ export interface FileRoutesById {
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
+  '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRouteTypes {
@@ -594,6 +604,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
     | '/api/public/webhooks/stripe'
+    | '/api/public/webhooks/stripe-health'
     | '/api/public/oauth/$provider/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -650,6 +661,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
     | '/api/public/webhooks/stripe'
+    | '/api/public/webhooks/stripe-health'
     | '/api/public/oauth/$provider/callback'
   id:
     | '__root__'
@@ -708,6 +720,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
     | '/api/public/webhooks/stripe'
+    | '/api/public/webhooks/stripe-health'
     | '/api/public/oauth/$provider/callback'
   fileRoutesById: FileRoutesById
 }
@@ -745,6 +758,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
   ApiPublicHooksWeeklyRecapRoute: typeof ApiPublicHooksWeeklyRecapRoute
   ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
+  ApiPublicWebhooksStripeHealthRoute: typeof ApiPublicWebhooksStripeHealthRoute
   ApiPublicOauthProviderCallbackRoute: typeof ApiPublicOauthProviderCallbackRoute
 }
 
@@ -1058,6 +1072,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAcceptInviteCodeRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/api/public/webhooks/stripe-health': {
+      id: '/api/public/webhooks/stripe-health'
+      path: '/api/public/webhooks/stripe-health'
+      fullPath: '/api/public/webhooks/stripe-health'
+      preLoaderRoute: typeof ApiPublicWebhooksStripeHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/webhooks/stripe': {
       id: '/api/public/webhooks/stripe'
       path: '/api/public/webhooks/stripe'
@@ -1252,6 +1273,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
   ApiPublicHooksWeeklyRecapRoute: ApiPublicHooksWeeklyRecapRoute,
   ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,
+  ApiPublicWebhooksStripeHealthRoute: ApiPublicWebhooksStripeHealthRoute,
   ApiPublicOauthProviderCallbackRoute: ApiPublicOauthProviderCallbackRoute,
 }
 export const routeTree = rootRouteImport
