@@ -61,7 +61,13 @@ export function ConnectedDevices() {
 
     const load = async () => {
       const [{ data: d }, { data: m }] = await Promise.all([
-        supabase.from("connected_devices").select("*").eq("user_id", user.id),
+        supabase
+          .from("connected_devices")
+          // Never request OAuth token columns from the client.
+          .select(
+            "id,user_id,provider,display_name,status,last_synced_at,external_user_id,scopes,created_at,updated_at",
+          )
+          .eq("user_id", user.id),
         supabase
           .from("device_metrics")
           .select("metric_type,value,unit,recorded_at,provider")
