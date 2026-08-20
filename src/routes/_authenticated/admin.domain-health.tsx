@@ -75,7 +75,7 @@ function DomainHealthPage() {
     <div className="min-h-screen bg-deluxe-black px-4 py-10 md:px-10">
       <div className="mx-auto max-w-4xl">
         <div className="flex items-center justify-between gap-4">
-          <Link to="/_authenticated/admin" className="inline-flex items-center text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-deluxe-gold">
+          <Link to="/admin" className="inline-flex items-center text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-deluxe-gold">
             <ArrowLeft className="mr-2 h-3.5 w-3.5" />
             Admin
           </Link>
