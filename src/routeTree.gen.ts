@@ -51,6 +51,7 @@ import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppBodyTrendsRouteImport } from './routes/_authenticated/app/body-trends'
 import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticated/app/body'
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
+import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin.webhooks'
 import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/public/webhooks/stripe-health'
@@ -58,6 +59,7 @@ import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public
 import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
+import { Route as ApiPublicHooksStripeWebhookTestRouteImport } from './routes/api/public/hooks/stripe-webhook-test'
 import { Route as ApiPublicHooksStreakAtRiskAlertRouteImport } from './routes/api/public/hooks/streak-at-risk-alert'
 import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
 import { Route as ApiPublicHooksScoreRecomputeRouteImport } from './routes/api/public/hooks/score-recompute'
@@ -283,6 +285,12 @@ const AuthenticatedAppAiRoute = AuthenticatedAppAiRouteImport.update({
   path: '/ai',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAdminWebhooksRoute =
+  AuthenticatedAdminWebhooksRouteImport.update({
+    id: '/webhooks',
+    path: '/webhooks',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDomainHealthRoute =
   AuthenticatedAdminDomainHealthRouteImport.update({
     id: '/domain-health',
@@ -322,6 +330,12 @@ const ApiPublicHooksSyncGoogleFitRoute =
   ApiPublicHooksSyncGoogleFitRouteImport.update({
     id: '/api/public/hooks/sync-google-fit',
     path: '/api/public/hooks/sync-google-fit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksStripeWebhookTestRoute =
+  ApiPublicHooksStripeWebhookTestRouteImport.update({
+    id: '/api/public/hooks/stripe-webhook-test',
+    path: '/api/public/hooks/stripe-webhook-test',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksStreakAtRiskAlertRoute =
@@ -400,6 +414,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -423,6 +438,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
+  '/api/public/hooks/stripe-webhook-test': typeof ApiPublicHooksStripeWebhookTestRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
@@ -457,6 +473,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -480,6 +497,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
+  '/api/public/hooks/stripe-webhook-test': typeof ApiPublicHooksStripeWebhookTestRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
@@ -517,6 +535,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/_authenticated/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/_authenticated/app/ai': typeof AuthenticatedAppAiRoute
   '/_authenticated/app/body': typeof AuthenticatedAppBodyRoute
   '/_authenticated/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -540,6 +559,7 @@ export interface FileRoutesById {
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
+  '/api/public/hooks/stripe-webhook-test': typeof ApiPublicHooksStripeWebhookTestRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
@@ -577,6 +597,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/accept-invite/$code'
     | '/admin/domain-health'
+    | '/admin/webhooks'
     | '/app/ai'
     | '/app/body'
     | '/app/body-trends'
@@ -600,6 +621,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
+    | '/api/public/hooks/stripe-webhook-test'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
@@ -634,6 +656,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/accept-invite/$code'
     | '/admin/domain-health'
+    | '/admin/webhooks'
     | '/app/ai'
     | '/app/body'
     | '/app/body-trends'
@@ -657,6 +680,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
+    | '/api/public/hooks/stripe-webhook-test'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
@@ -693,6 +717,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/_authenticated/accept-invite/$code'
     | '/_authenticated/admin/domain-health'
+    | '/_authenticated/admin/webhooks'
     | '/_authenticated/app/ai'
     | '/_authenticated/app/body'
     | '/_authenticated/app/body-trends'
@@ -716,6 +741,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
+    | '/api/public/hooks/stripe-webhook-test'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
@@ -754,6 +780,7 @@ export interface RootRouteChildren {
   ApiPublicHooksScoreRecomputeRoute: typeof ApiPublicHooksScoreRecomputeRoute
   ApiPublicHooksSendRemindersRoute: typeof ApiPublicHooksSendRemindersRoute
   ApiPublicHooksStreakAtRiskAlertRoute: typeof ApiPublicHooksStreakAtRiskAlertRoute
+  ApiPublicHooksStripeWebhookTestRoute: typeof ApiPublicHooksStripeWebhookTestRoute
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
   ApiPublicHooksWeeklyRecapRoute: typeof ApiPublicHooksWeeklyRecapRoute
@@ -1058,6 +1085,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAiRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/admin/webhooks': {
+      id: '/_authenticated/admin/webhooks'
+      path: '/webhooks'
+      fullPath: '/admin/webhooks'
+      preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/domain-health': {
       id: '/_authenticated/admin/domain-health'
       path: '/domain-health'
@@ -1105,6 +1139,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/sync-google-fit'
       fullPath: '/api/public/hooks/sync-google-fit'
       preLoaderRoute: typeof ApiPublicHooksSyncGoogleFitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/stripe-webhook-test': {
+      id: '/api/public/hooks/stripe-webhook-test'
+      path: '/api/public/hooks/stripe-webhook-test'
+      fullPath: '/api/public/hooks/stripe-webhook-test'
+      preLoaderRoute: typeof ApiPublicHooksStripeWebhookTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/streak-at-risk-alert': {
@@ -1168,10 +1209,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDomainHealthRoute: typeof AuthenticatedAdminDomainHealthRoute
+  AuthenticatedAdminWebhooksRoute: typeof AuthenticatedAdminWebhooksRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDomainHealthRoute: AuthenticatedAdminDomainHealthRoute,
+  AuthenticatedAdminWebhooksRoute: AuthenticatedAdminWebhooksRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -1269,6 +1312,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksScoreRecomputeRoute: ApiPublicHooksScoreRecomputeRoute,
   ApiPublicHooksSendRemindersRoute: ApiPublicHooksSendRemindersRoute,
   ApiPublicHooksStreakAtRiskAlertRoute: ApiPublicHooksStreakAtRiskAlertRoute,
+  ApiPublicHooksStripeWebhookTestRoute: ApiPublicHooksStripeWebhookTestRoute,
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
   ApiPublicHooksWeeklyRecapRoute: ApiPublicHooksWeeklyRecapRoute,
