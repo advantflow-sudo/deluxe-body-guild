@@ -65,7 +65,7 @@ export function RecoveryCheckin() {
       _soreness: values.soreness,
       _fatigue: values.fatigue,
       _energy: values.energy,
-      _note: values.note?.trim() ? values.note.trim() : null,
+      _note: values.note?.trim() ? values.note.trim() : undefined,
     });
     setSaving(false);
     if (error) {
