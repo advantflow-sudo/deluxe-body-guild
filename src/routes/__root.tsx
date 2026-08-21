@@ -21,6 +21,7 @@ import { ScrollProgress } from "@/components/deluxe/ScrollProgress";
 import { ConfirmDialogProvider } from "@/components/deluxe/ConfirmDialog";
 import { NotificationsProvider } from "@/hooks/useNotifications";
 import { registerServiceWorker } from "@/lib/registerSW";
+import { installMonitoring } from "@/lib/monitoring";
 
 import appCss from "../styles.css?url";
 
@@ -167,6 +168,7 @@ function RootComponent() {
 
   useEffect(() => {
     registerServiceWorker();
+    installMonitoring();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
