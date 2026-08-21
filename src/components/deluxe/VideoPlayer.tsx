@@ -147,7 +147,7 @@ export function VideoPlayer({
       const filtered = prev.filter((s) => s !== badSrc);
       return filtered.length > 0 ? filtered : prev;
     });
-    if (isPlaylist) advance();
+    if (isPlaylist) advance("error");
   };
 
   const toggleMute = (e?: React.MouseEvent) => {
