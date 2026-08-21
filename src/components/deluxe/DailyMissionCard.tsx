@@ -78,6 +78,7 @@ export function DailyMissionCard() {
       });
       if (error) { toast.error(error.message); return; }
       setLoggedHabits((s) => new Set(s).add(habit.id));
+      await supabase.rpc("award_xp", { _reason: "habit" });
     }
     await recompute();
   };
@@ -85,7 +86,8 @@ export function DailyMissionCard() {
   const completeMindset = async () => {
     const { error } = await supabase.rpc("complete_mission");
     if (error) return toast.error(error.message);
-    toast.success("Mission complete. +10 pts");
+    await supabase.rpc("award_xp", { _reason: "mission" });
+    toast.success("Mission complete. +10 pts, +10 XP");
     await load();
   };
 
