@@ -37,7 +37,7 @@ export const Route = createFileRoute("/api/public/monitoring/report")({
             route: parsed.route ?? null,
             user_agent: parsed.userAgent ?? request.headers.get("user-agent"),
             release: parsed.release ?? null,
-            extra: (parsed.extra ?? {}) as Record<string, unknown>,
+            extra: JSON.parse(JSON.stringify(parsed.extra ?? {})),
           });
 
           if (parsed.severity === "fatal") {

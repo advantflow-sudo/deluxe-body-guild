@@ -56,6 +56,7 @@ import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_au
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/public/webhooks/stripe-health'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
+import { Route as ApiPublicMonitoringReportRouteImport } from './routes/api/public/monitoring/report'
 import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
@@ -314,6 +315,12 @@ const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
   path: '/api/public/webhooks/stripe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMonitoringReportRoute =
+  ApiPublicMonitoringReportRouteImport.update({
+    id: '/api/public/monitoring/report',
+    path: '/api/public/monitoring/report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksWeeklyRecapRoute =
   ApiPublicHooksWeeklyRecapRouteImport.update({
     id: '/api/public/hooks/weekly-recap',
@@ -442,6 +449,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
+  '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -501,6 +509,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
+  '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -563,6 +572,7 @@ export interface FileRoutesById {
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
+  '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -625,6 +635,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
+    | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
     | '/api/public/webhooks/stripe-health'
     | '/api/public/oauth/$provider/callback'
@@ -684,6 +695,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
+    | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
     | '/api/public/webhooks/stripe-health'
     | '/api/public/oauth/$provider/callback'
@@ -745,6 +757,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
+    | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
     | '/api/public/webhooks/stripe-health'
     | '/api/public/oauth/$provider/callback'
@@ -784,6 +797,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
   ApiPublicHooksWeeklyRecapRoute: typeof ApiPublicHooksWeeklyRecapRoute
+  ApiPublicMonitoringReportRoute: typeof ApiPublicMonitoringReportRoute
   ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
   ApiPublicWebhooksStripeHealthRoute: typeof ApiPublicWebhooksStripeHealthRoute
   ApiPublicOauthProviderCallbackRoute: typeof ApiPublicOauthProviderCallbackRoute
@@ -1120,6 +1134,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWebhooksStripeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/monitoring/report': {
+      id: '/api/public/monitoring/report'
+      path: '/api/public/monitoring/report'
+      fullPath: '/api/public/monitoring/report'
+      preLoaderRoute: typeof ApiPublicMonitoringReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/weekly-recap': {
       id: '/api/public/hooks/weekly-recap'
       path: '/api/public/hooks/weekly-recap'
@@ -1316,6 +1337,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
   ApiPublicHooksWeeklyRecapRoute: ApiPublicHooksWeeklyRecapRoute,
+  ApiPublicMonitoringReportRoute: ApiPublicMonitoringReportRoute,
   ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,
   ApiPublicWebhooksStripeHealthRoute: ApiPublicWebhooksStripeHealthRoute,
   ApiPublicOauthProviderCallbackRoute: ApiPublicOauthProviderCallbackRoute,
