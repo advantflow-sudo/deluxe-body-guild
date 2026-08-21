@@ -81,7 +81,7 @@ function CoachTab() {
       } else {
         await supabase
           .from("ai_conversations")
-          .update({ title: undefined, updated_at: new Date().toISOString() })
+          .update({ updated_at: new Date().toISOString() })
           .eq("id", conversationId.current);
       }
       if (!conversationId.current) return;
