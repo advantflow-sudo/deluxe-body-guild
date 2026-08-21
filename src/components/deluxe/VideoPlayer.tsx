@@ -112,9 +112,13 @@ export function VideoPlayer({
     if (v && !v.ended) fire("pause", { current_time: v.currentTime, progress_pct: Math.round(progress) });
   };
 
-  const advance = () => {
+  const advance = (reason: "ended" | "error" = "ended") => {
     if (!isPlaylist) return;
-    fire("complete", { duration: activeRef.current?.duration ?? 0 });
+    const rawDuration = activeRef.current?.duration;
+    // Never report NaN/Infinity durations (happens when a clip fails to decode).
+    const duration = Number.isFinite(rawDuration) ? Math.round(rawDuration as number) : 0;
+    if (reason === "error") fire("error", { duration });
+    else fire("complete", { duration });
     const next = inactiveRef.current;
     // Start the preloaded clip immediately for a seamless handoff.
     if (next) {
