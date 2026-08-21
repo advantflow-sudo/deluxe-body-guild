@@ -121,6 +121,8 @@ function WorkoutPlayer({ workout, userId, onClose }: { workout: Workout; userId:
       _reason: `Completed ${workout.title}`,
       _delta: points,
     });
+    // Daily mission XP (+50, once per day)
+    await supabase.rpc("award_xp", { _reason: "workout" });
     // Update daily stats
     const today = new Date().toISOString().slice(0, 10);
     const { data: ds } = await supabase.from("daily_stats")
