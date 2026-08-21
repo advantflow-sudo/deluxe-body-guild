@@ -137,7 +137,7 @@ export function VideoPlayer({
   };
 
   const onEnded = () => {
-    if (isPlaylist) advance();
+    if (isPlaylist) advance("ended");
   };
 
   const onError = (badSrc: string) => {
