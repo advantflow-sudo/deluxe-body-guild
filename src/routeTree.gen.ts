@@ -52,6 +52,7 @@ import { Route as AuthenticatedAppBodyTrendsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticated/app/body'
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
 import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin.webhooks'
+import { Route as AuthenticatedAdminErrorsRouteImport } from './routes/_authenticated/admin.errors'
 import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/public/webhooks/stripe-health'
@@ -292,6 +293,12 @@ const AuthenticatedAdminWebhooksRoute =
     path: '/webhooks',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminErrorsRoute =
+  AuthenticatedAdminErrorsRouteImport.update({
+    id: '/errors',
+    path: '/errors',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDomainHealthRoute =
   AuthenticatedAdminDomainHealthRouteImport.update({
     id: '/domain-health',
@@ -421,6 +428,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
@@ -481,6 +489,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
@@ -544,6 +553,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/_authenticated/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/_authenticated/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/_authenticated/app/ai': typeof AuthenticatedAppAiRoute
   '/_authenticated/app/body': typeof AuthenticatedAppBodyRoute
@@ -607,6 +617,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/accept-invite/$code'
     | '/admin/domain-health'
+    | '/admin/errors'
     | '/admin/webhooks'
     | '/app/ai'
     | '/app/body'
@@ -667,6 +678,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/accept-invite/$code'
     | '/admin/domain-health'
+    | '/admin/errors'
     | '/admin/webhooks'
     | '/app/ai'
     | '/app/body'
@@ -729,6 +741,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/_authenticated/accept-invite/$code'
     | '/_authenticated/admin/domain-health'
+    | '/_authenticated/admin/errors'
     | '/_authenticated/admin/webhooks'
     | '/_authenticated/app/ai'
     | '/_authenticated/app/body'
@@ -1106,6 +1119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/errors': {
+      id: '/_authenticated/admin/errors'
+      path: '/errors'
+      fullPath: '/admin/errors'
+      preLoaderRoute: typeof AuthenticatedAdminErrorsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/domain-health': {
       id: '/_authenticated/admin/domain-health'
       path: '/domain-health'
@@ -1230,11 +1250,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDomainHealthRoute: typeof AuthenticatedAdminDomainHealthRoute
+  AuthenticatedAdminErrorsRoute: typeof AuthenticatedAdminErrorsRoute
   AuthenticatedAdminWebhooksRoute: typeof AuthenticatedAdminWebhooksRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDomainHealthRoute: AuthenticatedAdminDomainHealthRoute,
+  AuthenticatedAdminErrorsRoute: AuthenticatedAdminErrorsRoute,
   AuthenticatedAdminWebhooksRoute: AuthenticatedAdminWebhooksRoute,
 }
 
