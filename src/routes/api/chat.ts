@@ -52,13 +52,17 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
     const today = new Date().toISOString().slice(0, 10);
     const since = new Date(Date.now() - 14 * 864e5).toISOString();
 
-    const [{ data: profile }, { data: ext }, { data: stats }, { data: sessions }, { data: lastWorkout }] = await Promise.all([
+    const [{ data: profile }, { data: ext }, { data: stats }, { data: sessions }, { data: lastWorkout }, { data: memory }, { data: recovery }, { data: xp }] = await Promise.all([
       supabase.from("profiles").select("display_name,fitness_goal,bio").eq("id", userId).maybeSingle(),
       supabase.from("user_profiles_ext").select("fitness_goal,training_level,preferred_type,weight_kg,height_cm,age,subscription_tier").eq("user_id", userId).maybeSingle(),
       supabase.from("daily_stats").select("steps,calories,water_ml,streak").eq("user_id", userId).eq("stat_date", today).maybeSingle(),
       supabase.from("workout_sessions").select("completed_at,duration_min,calories,notes,workout_id").eq("user_id", userId).gte("completed_at", since).order("completed_at", { ascending: false }).limit(7),
       supabase.from("workout_sessions").select("completed_at,workout_id").eq("user_id", userId).order("completed_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("ai_coach_memory").select("category,key,value").eq("user_id", userId).limit(40),
+      supabase.from("recovery_logs").select("log_date,sleep_quality,soreness,fatigue,energy,readiness,note").eq("user_id", userId).order("log_date", { ascending: false }).limit(3),
+      supabase.rpc("get_xp_summary"),
     ]);
+
 
     // Resolve last workout title if available
     let lastWorkoutTitle: string | null = null;
@@ -100,9 +104,40 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
       lines.push(`- NOTE: Member missed ${daysSinceLast} day${daysSinceLast === 1 ? "" : "s"}. Acknowledge it directly and pull them back in.`);
     }
 
-    return "\n\n" + lines.join("\n");
+    const xpSummary = xp as { total_xp?: number; today_xp?: number; rank?: string } | null;
+    if (xpSummary?.rank) {
+      lines.push(`- Rank: ${xpSummary.rank} (${xpSummary.total_xp ?? 0} XP total, ${xpSummary.today_xp ?? 0}/100 today)`);
+    }
+
+    const latestRecovery = (recovery ?? [])[0];
+    if (latestRecovery) {
+      lines.push(
+        `- Readiness today: ${latestRecovery.readiness}/100 (sleep ${latestRecovery.sleep_quality}/5, soreness ${latestRecovery.soreness}/5, fatigue ${latestRecovery.fatigue}/5, energy ${latestRecovery.energy}/5)${latestRecovery.note ? `. Member note: ${latestRecovery.note}` : ""}`,
+      );
+      if ((latestRecovery.readiness ?? 100) < 45) {
+        lines.push("- NOTE: Readiness is low. Scale today's training back — deload, mobility or active recovery — and say why.");
+      }
+    } else {
+      lines.push("- Readiness today: not logged. Prompt them to complete the recovery check-in.");
+    }
+
+    let block = lines.join("\n");
+    if ((memory ?? []).length) {
+      const byCat = new Map<string, string[]>();
+      for (const m of memory ?? []) {
+        const list = byCat.get(m.category) ?? [];
+        list.push(`${m.key.replace(/_/g, " ")}: ${m.value}`);
+        byCat.set(m.category, list);
+      }
+      block +=
+        "\n\nCOACH MEMORY (long-term facts about this member — use them, never contradict them):\n" +
+        [...byCat.entries()].map(([cat, items]) => `- ${cat}: ${items.join("; ")}`).join("\n");
+    }
+
+    return "\n\n" + block;
   } catch (e) {
     console.error("buildMemberProfile failed:", e);
+
     return "";
   }
 }

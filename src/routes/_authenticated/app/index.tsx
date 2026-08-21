@@ -20,6 +20,8 @@ import { WaterTracker } from "@/components/deluxe/WaterTracker";
 import { SleepLogger } from "@/components/deluxe/SleepLogger";
 import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
 import { DailyGoalsList } from "@/components/deluxe/DailyGoalsList";
+import { RecoveryCheckin } from "@/components/deluxe/RecoveryCheckin";
+import { XpLevelCard } from "@/components/deluxe/XpLevelCard";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,

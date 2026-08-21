@@ -52,6 +52,10 @@ export function WaterTracker() {
       toast.error(`Couldn't save hydration: ${result.error}`);
     } else {
       lastSaved.current = clamped;
+      // Hydration target hit → +20 XP (once per day)
+      if (!result.queued && clamped >= TARGET_ML) {
+        await supabase.rpc("award_xp", { _reason: "water" });
+      }
       if (result.queued) toast("Saved offline — will sync when reconnected", { icon: <CloudOff className="h-4 w-4" /> });
     }
   };
