@@ -106,6 +106,51 @@ export type Database = {
           },
         ]
       }
+      app_error_events: {
+        Row: {
+          alerted_at: string | null
+          created_at: string
+          extra: Json
+          id: string
+          message: string
+          release: string | null
+          route: string | null
+          severity: string
+          source: string
+          stack: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          alerted_at?: string | null
+          created_at?: string
+          extra?: Json
+          id?: string
+          message: string
+          release?: string | null
+          route?: string | null
+          severity?: string
+          source?: string
+          stack?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          alerted_at?: string | null
+          created_at?: string
+          extra?: Json
+          id?: string
+          message?: string
+          release?: string | null
+          route?: string | null
+          severity?: string
+          source?: string
+          stack?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       body_map_selection_logs: {
         Row: {
           created_at: string
