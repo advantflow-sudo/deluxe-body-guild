@@ -7,6 +7,11 @@ import remarkGfm from "remark-gfm";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { usePremium } from "@/hooks/usePremium";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useServerFn } from "@tanstack/react-start";
+import { rememberFromChat } from "@/lib/coach-memory.functions";
+import { CoachMemoryPanel } from "@/components/deluxe/CoachMemoryPanel";
+import { AdaptiveWeekCard } from "@/components/deluxe/AdaptiveWeekCard";
 
 export const Route = createFileRoute("/_authenticated/app/coach")({
   component: CoachTab,
@@ -23,8 +28,12 @@ const SUGGESTIONS = [
 
 function CoachTab() {
   const { isPremium, loading: premLoading } = usePremium();
+  const { user } = useAuth();
+  const remember = useServerFn(rememberFromChat);
   const locked = !premLoading && !isPremium;
   const [messages, setMessages] = useState<Msg[]>([]);
+  const conversationId = useRef<string | null>(null);
+  const [memoryKey, setMemoryKey] = useState(0);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -32,6 +41,62 @@ function CoachTab() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
+
+  // Restore the member's most recent coach thread so context carries over.
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      const { data: conv } = await supabase
+        .from("ai_conversations")
+        .select("id")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (cancelled || !conv) return;
+      conversationId.current = conv.id;
+      const { data: msgs } = await supabase
+        .from("ai_messages")
+        .select("role,content")
+        .eq("conversation_id", conv.id)
+        .order("created_at")
+        .limit(40);
+      if (!cancelled && msgs?.length) setMessages(msgs as Msg[]);
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
+
+  /** Persist the exchange and distil durable facts into coach memory. */
+  const persist = async (userText: string, assistantText: string) => {
+    if (!user || !assistantText.trim()) return;
+    try {
+      if (!conversationId.current) {
+        const { data } = await supabase
+          .from("ai_conversations")
+          .insert({ user_id: user.id, title: userText.slice(0, 120) })
+          .select("id")
+          .single();
+        conversationId.current = data?.id ?? null;
+      } else {
+        await supabase
+          .from("ai_conversations")
+          .update({ title: undefined, updated_at: new Date().toISOString() })
+          .eq("id", conversationId.current);
+      }
+      if (!conversationId.current) return;
+      await supabase.from("ai_messages").insert([
+        { conversation_id: conversationId.current, user_id: user.id, role: "user", content: userText.slice(0, 20000) },
+        { conversation_id: conversationId.current, user_id: user.id, role: "assistant", content: assistantText.slice(0, 20000) },
+      ]);
+      const { saved } = await remember({
+        data: { transcript: `Member: ${userText}\n\nCoach: ${assistantText}`.slice(0, 20000) },
+      });
+      if (saved > 0) setMemoryKey((k) => k + 1);
+    } catch (e) {
+      console.error("coach persistence failed", e);
+    }
+  };
 
   async function send(text: string) {
     if (!text.trim() || loading) return;
@@ -102,6 +167,7 @@ function CoachTab() {
           }
         }
       }
+      void persist(userMsg.content, assistant);
     } catch (e) {
       console.error(e);
       toast.error("Connection lost. Try again.");
@@ -192,6 +258,8 @@ function CoachTab() {
         ))}
       </div>
 
+      <CoachMemoryPanel refreshKey={memoryKey} />
+
       <form
         onSubmit={(e) => { e.preventDefault(); send(input); }}
         className="mt-3 flex items-center gap-2 border border-gold/20 bg-deluxe-black/60 p-1.5"
@@ -211,7 +279,9 @@ function CoachTab() {
           <Send className="h-3 w-3" /> Send
         </button>
       </form>
-      <p className="mt-2 pb-4 text-center text-[10px] text-muted-foreground">
+      <AdaptiveWeekCard />
+
+      <p className="mt-4 pb-4 text-center text-[10px] text-muted-foreground">
         Informational only. Consult a professional for medical concerns.
       </p>
     </div>
