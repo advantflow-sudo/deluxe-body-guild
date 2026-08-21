@@ -104,9 +104,40 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
       lines.push(`- NOTE: Member missed ${daysSinceLast} day${daysSinceLast === 1 ? "" : "s"}. Acknowledge it directly and pull them back in.`);
     }
 
-    return "\n\n" + lines.join("\n");
+    const xpSummary = xp as { total_xp?: number; today_xp?: number; rank?: string } | null;
+    if (xpSummary?.rank) {
+      lines.push(`- Rank: ${xpSummary.rank} (${xpSummary.total_xp ?? 0} XP total, ${xpSummary.today_xp ?? 0}/100 today)`);
+    }
+
+    const latestRecovery = (recovery ?? [])[0];
+    if (latestRecovery) {
+      lines.push(
+        `- Readiness today: ${latestRecovery.readiness}/100 (sleep ${latestRecovery.sleep_quality}/5, soreness ${latestRecovery.soreness}/5, fatigue ${latestRecovery.fatigue}/5, energy ${latestRecovery.energy}/5)${latestRecovery.note ? `. Member note: ${latestRecovery.note}` : ""}`,
+      );
+      if ((latestRecovery.readiness ?? 100) < 45) {
+        lines.push("- NOTE: Readiness is low. Scale today's training back — deload, mobility or active recovery — and say why.");
+      }
+    } else {
+      lines.push("- Readiness today: not logged. Prompt them to complete the recovery check-in.");
+    }
+
+    let block = lines.join("\n");
+    if ((memory ?? []).length) {
+      const byCat = new Map<string, string[]>();
+      for (const m of memory ?? []) {
+        const list = byCat.get(m.category) ?? [];
+        list.push(`${m.key.replace(/_/g, " ")}: ${m.value}`);
+        byCat.set(m.category, list);
+      }
+      block +=
+        "\n\nCOACH MEMORY (long-term facts about this member — use them, never contradict them):\n" +
+        [...byCat.entries()].map(([cat, items]) => `- ${cat}: ${items.join("; ")}`).join("\n");
+    }
+
+    return "\n\n" + block;
   } catch (e) {
     console.error("buildMemberProfile failed:", e);
+
     return "";
   }
 }
