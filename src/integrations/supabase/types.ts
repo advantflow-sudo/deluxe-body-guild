@@ -14,6 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_coach_memory: {
+        Row: {
+          category: string
+          confidence: number
+          created_at: string
+          id: string
+          key: string
+          updated_at: string
+          user_id: string
+          value: string
+        }
+        Insert: {
+          category?: string
+          confidence?: number
+          created_at?: string
+          id?: string
+          key: string
+          updated_at?: string
+          user_id: string
+          value: string
+        }
+        Update: {
+          category?: string
+          confidence?: number
+          created_at?: string
+          id?: string
+          key?: string
+          updated_at?: string
+          user_id?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      ai_conversations: {
+        Row: {
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ai_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "ai_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       body_map_selection_logs: {
         Row: {
           created_at: string
@@ -875,6 +967,48 @@ export type Database = {
         }
         Relationships: []
       }
+      recovery_logs: {
+        Row: {
+          created_at: string
+          energy: number
+          fatigue: number
+          id: string
+          log_date: string
+          note: string | null
+          readiness: number
+          sleep_quality: number
+          soreness: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          energy: number
+          fatigue: number
+          id?: string
+          log_date?: string
+          note?: string | null
+          readiness?: number
+          sleep_quality: number
+          soreness: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          energy?: number
+          fatigue?: number
+          id?: string
+          log_date?: string
+          note?: string | null
+          readiness?: number
+          sleep_quality?: number
+          soreness?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       reward_claims: {
         Row: {
           claimed_at: string
@@ -1583,6 +1717,33 @@ export type Database = {
         }
         Relationships: []
       }
+      xp_events: {
+        Row: {
+          amount: number
+          created_at: string
+          event_date: string
+          id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          event_date?: string
+          id?: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          event_date?: string
+          id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       connected_devices_safe: {
@@ -1679,6 +1840,7 @@ export type Database = {
         Args: { _delta: number; _reason: string }
         Returns: number
       }
+      award_xp: { Args: { _amount?: number; _reason: string }; Returns: number }
       can_create_challenge_team: {
         Args: { _challenge_id: string }
         Returns: boolean
@@ -1792,6 +1954,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_xp_summary: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1800,6 +1963,34 @@ export type Database = {
         Returns: boolean
       }
       is_premium_member: { Args: { _user_id: string }; Returns: boolean }
+      log_recovery: {
+        Args: {
+          _energy: number
+          _fatigue: number
+          _note?: string
+          _sleep_quality: number
+          _soreness: number
+        }
+        Returns: {
+          created_at: string
+          energy: number
+          fatigue: number
+          id: string
+          log_date: string
+          note: string | null
+          readiness: number
+          sleep_quality: number
+          soreness: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "recovery_logs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       touch_streak: {
         Args: never
         Returns: {
