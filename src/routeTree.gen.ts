@@ -52,10 +52,12 @@ import { Route as AuthenticatedAppBodyTrendsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticated/app/body'
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
 import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin.webhooks'
+import { Route as AuthenticatedAdminErrorsRouteImport } from './routes/_authenticated/admin.errors'
 import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/public/webhooks/stripe-health'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
+import { Route as ApiPublicMonitoringReportRouteImport } from './routes/api/public/monitoring/report'
 import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
@@ -291,6 +293,12 @@ const AuthenticatedAdminWebhooksRoute =
     path: '/webhooks',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminErrorsRoute =
+  AuthenticatedAdminErrorsRouteImport.update({
+    id: '/errors',
+    path: '/errors',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDomainHealthRoute =
   AuthenticatedAdminDomainHealthRouteImport.update({
     id: '/domain-health',
@@ -314,6 +322,12 @@ const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
   path: '/api/public/webhooks/stripe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMonitoringReportRoute =
+  ApiPublicMonitoringReportRouteImport.update({
+    id: '/api/public/monitoring/report',
+    path: '/api/public/monitoring/report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksWeeklyRecapRoute =
   ApiPublicHooksWeeklyRecapRouteImport.update({
     id: '/api/public/hooks/weekly-recap',
@@ -414,6 +428,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
@@ -442,6 +457,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
+  '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -473,6 +489,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
@@ -501,6 +518,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
+  '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -535,6 +553,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/accept-invite/$code': typeof AuthenticatedAcceptInviteCodeRoute
   '/_authenticated/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
+  '/_authenticated/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/_authenticated/app/ai': typeof AuthenticatedAppAiRoute
   '/_authenticated/app/body': typeof AuthenticatedAppBodyRoute
@@ -563,6 +582,7 @@ export interface FileRoutesById {
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
+  '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
@@ -597,6 +617,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/accept-invite/$code'
     | '/admin/domain-health'
+    | '/admin/errors'
     | '/admin/webhooks'
     | '/app/ai'
     | '/app/body'
@@ -625,6 +646,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
+    | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
     | '/api/public/webhooks/stripe-health'
     | '/api/public/oauth/$provider/callback'
@@ -656,6 +678,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/accept-invite/$code'
     | '/admin/domain-health'
+    | '/admin/errors'
     | '/admin/webhooks'
     | '/app/ai'
     | '/app/body'
@@ -684,6 +707,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
+    | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
     | '/api/public/webhooks/stripe-health'
     | '/api/public/oauth/$provider/callback'
@@ -717,6 +741,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/_authenticated/accept-invite/$code'
     | '/_authenticated/admin/domain-health'
+    | '/_authenticated/admin/errors'
     | '/_authenticated/admin/webhooks'
     | '/_authenticated/app/ai'
     | '/_authenticated/app/body'
@@ -745,6 +770,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
     | '/api/public/hooks/weekly-recap'
+    | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
     | '/api/public/webhooks/stripe-health'
     | '/api/public/oauth/$provider/callback'
@@ -784,6 +810,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
   ApiPublicHooksWeeklyRecapRoute: typeof ApiPublicHooksWeeklyRecapRoute
+  ApiPublicMonitoringReportRoute: typeof ApiPublicMonitoringReportRoute
   ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
   ApiPublicWebhooksStripeHealthRoute: typeof ApiPublicWebhooksStripeHealthRoute
   ApiPublicOauthProviderCallbackRoute: typeof ApiPublicOauthProviderCallbackRoute
@@ -1092,6 +1119,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/errors': {
+      id: '/_authenticated/admin/errors'
+      path: '/errors'
+      fullPath: '/admin/errors'
+      preLoaderRoute: typeof AuthenticatedAdminErrorsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/domain-health': {
       id: '/_authenticated/admin/domain-health'
       path: '/domain-health'
@@ -1118,6 +1152,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/webhooks/stripe'
       fullPath: '/api/public/webhooks/stripe'
       preLoaderRoute: typeof ApiPublicWebhooksStripeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/monitoring/report': {
+      id: '/api/public/monitoring/report'
+      path: '/api/public/monitoring/report'
+      fullPath: '/api/public/monitoring/report'
+      preLoaderRoute: typeof ApiPublicMonitoringReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/weekly-recap': {
@@ -1209,11 +1250,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDomainHealthRoute: typeof AuthenticatedAdminDomainHealthRoute
+  AuthenticatedAdminErrorsRoute: typeof AuthenticatedAdminErrorsRoute
   AuthenticatedAdminWebhooksRoute: typeof AuthenticatedAdminWebhooksRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDomainHealthRoute: AuthenticatedAdminDomainHealthRoute,
+  AuthenticatedAdminErrorsRoute: AuthenticatedAdminErrorsRoute,
   AuthenticatedAdminWebhooksRoute: AuthenticatedAdminWebhooksRoute,
 }
 
@@ -1316,6 +1359,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
   ApiPublicHooksWeeklyRecapRoute: ApiPublicHooksWeeklyRecapRoute,
+  ApiPublicMonitoringReportRoute: ApiPublicMonitoringReportRoute,
   ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,
   ApiPublicWebhooksStripeHealthRoute: ApiPublicWebhooksStripeHealthRoute,
   ApiPublicOauthProviderCallbackRoute: ApiPublicOauthProviderCallbackRoute,

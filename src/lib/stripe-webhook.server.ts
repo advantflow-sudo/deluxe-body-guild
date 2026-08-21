@@ -227,7 +227,45 @@ export async function processStripeEvent(
         }
         break;
       }
+      case "invoice.payment_failed":
+      case "charge.failed": {
+        const obj = event.data.object as { customer?: string | { id: string } | null; amount_due?: number; amount?: number; currency?: string | null };
+        customerId = typeof obj.customer === "string" ? obj.customer : obj.customer?.id ?? null;
+        amountTotal = obj.amount_due ?? obj.amount ?? null;
+        currency = obj.currency ?? null;
+
+        if (customerId) {
+          const { data: row } = await supabaseAdmin
+            .from("subscribers")
+            .select("user_id, email")
+            .eq("stripe_customer_id", customerId)
+            .maybeSingle();
+          if (row?.user_id) {
+            userId = row.user_id;
+            await supabaseAdmin
+              .from("subscribers")
+              .update({ status: "past_due" })
+              .eq("user_id", row.user_id);
+          }
+        }
+
+        const { sendOpsAlert } = await import("@/lib/ops-alert.server");
+        await sendOpsAlert({
+          kind: "payment_failed",
+          title: "Stripe payment failed",
+          detail: `${event.type} for customer ${customerId ?? "unknown"}`,
+          context: {
+            eventId: event.id,
+            userId: userId ?? "unknown",
+            amount: amountTotal ?? "unknown",
+            currency: currency ?? "unknown",
+            requestId,
+          },
+        });
+        break;
+      }
     }
+
 
     await supabaseAdmin
       .from("stripe_webhook_events")
