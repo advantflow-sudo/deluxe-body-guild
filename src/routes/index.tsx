@@ -68,8 +68,18 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Transform your body. Elevate your life. Join 50,000+ members on the Deluxe Fitness journey.",
+          "Transform your body. Elevate your life. Premium workouts, AI coaching and an elite community.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Deluxe Fitness — Become Deluxe" },
+      {
+        name: "twitter:description",
+        content:
+          "Transform your body. Elevate your life. Premium workouts, AI coaching and an elite community.",
+      },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
   }),
   component: HomePage,
