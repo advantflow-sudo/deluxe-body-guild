@@ -16,6 +16,55 @@ interface Schedule {
   mission_reminder_push: boolean;
   mission_reminder_email: boolean;
   timezone: string;
+  quiet_hours_enabled: boolean;
+  quiet_start_hour: number;
+  quiet_end_hour: number;
+}
+
+function inQuietHours(hour: number, start: number, end: number) {
+  if (start === end) return false;
+  return start < end ? hour >= start && hour < end : hour >= start || hour < end;
+}
+
+/** Local date + hour in a given timezone right now. */
+function zoneNow(tz: string) {
+  try {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      hour12: false,
+    }).formatToParts(new Date());
+    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+    return { date: `${get("year")}-${get("month")}-${get("day")}`, hour: parseInt(get("hour"), 10) % 24 };
+  } catch {
+    const d = new Date();
+    return { date: d.toISOString().slice(0, 10), hour: d.getUTCHours() };
+  }
+}
+
+/** Next occurrences (local dates in the chosen timezone) honouring days + quiet hours. */
+function nextReminders(s: Schedule, count = 3) {
+  const out: string[] = [];
+  if (!s.mission_reminder_enabled) return out;
+  if (s.quiet_hours_enabled && inQuietHours(s.mission_reminder_hour, s.quiet_start_hour, s.quiet_end_hour)) return out;
+  const now = zoneNow(s.timezone);
+  for (let i = 0; i < 30 && out.length < count; i++) {
+    const base = new Date(`${now.date}T12:00:00Z`);
+    base.setUTCDate(base.getUTCDate() + i);
+    const isoDow = ((base.getUTCDay() + 6) % 7) + 1;
+    const dayOk =
+      s.mission_reminder_days === "all" ||
+      (s.mission_reminder_days === "weekdays" && isoDow <= 5) ||
+      (s.mission_reminder_days === "weekends" && isoDow >= 6);
+    if (!dayOk) continue;
+    if (i === 0 && s.mission_reminder_hour <= now.hour) continue;
+    const label = base.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
+    out.push(`${i === 0 ? "Today" : label} · ${String(s.mission_reminder_hour).padStart(2, "0")}:00`);
+  }
+  return out;
 }
 
 const DAY_OPTIONS: { value: Days; label: string; hint: string }[] = [
