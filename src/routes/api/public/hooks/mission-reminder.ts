@@ -100,7 +100,14 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
                     html: `<p>${body}</p><p><a href="https://deluxefitness.app/app?mission=1">Claim your XP</a></p>`,
                   }),
                 });
-                if (res.ok) emailed += 1;
+                if (res.ok) {
+                  emailed += 1;
+                  await admin.from("reminder_deliveries").insert({
+                    user_id: row.user_id,
+                    channel: "email",
+                    claimed_xp_at_send: Number(row.claimed_xp ?? 0),
+                  });
+                }
               } catch {
                 // Email is a best-effort channel.
               }
