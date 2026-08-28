@@ -111,7 +111,7 @@ export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
     const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `deluxe-mission-history-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `deluxe-mission-history-${bounds.start}_to_${bounds.end}.csv`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success("CSV downloaded");
