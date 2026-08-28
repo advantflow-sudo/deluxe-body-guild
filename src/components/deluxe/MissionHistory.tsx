@@ -166,9 +166,62 @@ ${rows()
       <div className="mt-3 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.18em]">
         <span className="border border-gold/30 px-2.5 py-1 text-gold">{perfect} perfect 100 XP days</span>
         <span className="border border-gold/15 px-2.5 py-1 text-muted-foreground">
-          {lifetime.toLocaleString()} mission XP · last 90 days
+          {lifetime.toLocaleString()} mission XP · {rangeLabel}
         </span>
       </div>
+
+      <fieldset className="mt-3">
+        <legend className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Date range</legend>
+        <div className="mt-1 flex flex-wrap gap-2">
+          {RANGES.map((r) => {
+            const active = range === r.value;
+            return (
+              <button
+                key={r.value}
+                type="button"
+                aria-pressed={active}
+                onClick={() => {
+                  haptic("selection");
+                  setRange(r.value);
+                }}
+                className={`min-h-10 border px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] transition ${
+                  active ? "border-gold/60 bg-gold/12 text-gold" : "border-gold/15 text-muted-foreground hover:text-gold"
+                }`}
+              >
+                {r.label}
+              </button>
+            );
+          })}
+        </div>
+        {range === "custom" && (
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            <label className="block">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">From</span>
+              <input
+                type="date"
+                value={from}
+                max={to}
+                onChange={(e) => setFrom(e.target.value)}
+                className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none"
+              />
+            </label>
+            <label className="block">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">To</span>
+              <input
+                type="date"
+                value={to}
+                min={from}
+                onChange={(e) => setTo(e.target.value)}
+                className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none"
+              />
+            </label>
+          </div>
+        )}
+        <p className="mt-2 text-[10px] text-muted-foreground">
+          Exports include only the {days.length} day{days.length === 1 ? "" : "s"} in this range.
+        </p>
+      </fieldset>
+
 
       <div className="mt-3 flex flex-wrap gap-2">
         <button
