@@ -12,6 +12,9 @@ import { SuggestedMembers } from "@/components/deluxe/SuggestedMembers";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
 import { useConfirm } from "@/components/deluxe/ConfirmDialog";
+import { CommunityTabBar, type CommunityTab } from "@/components/deluxe/CommunityTabBar";
+import { CommunityStories, type StoryItem } from "@/components/deluxe/CommunityStories";
+import { QuickCreate, POST_TYPES, type PostType } from "@/components/deluxe/QuickCreate";
 
 const MUTE_KEY = "df_muted_posts_v1";
 const REPORT_KEY = "df_reported_posts_v1";
