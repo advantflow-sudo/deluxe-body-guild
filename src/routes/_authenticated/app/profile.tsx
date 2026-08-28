@@ -44,6 +44,9 @@ function ProfileTab() {
   const [saving, setSaving] = useState(false);
   const [points, setPoints] = useState(0);
   const [sub, setSub] = useState<Sub | null>(null);
+  const [testing, setTesting] = useState(false);
+  const sendTest = useServerFn(sendTestMissionReminder);
+
 
   useEffect(() => {
     if (!user) return;
