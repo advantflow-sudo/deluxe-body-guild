@@ -278,7 +278,7 @@ function BadgeGallery() {
               }}
               aria-expanded={open}
               aria-label={`${m.name} badge, ${unlocked ? "unlocked" : "locked"}`}
-              className={`flex flex-col items-center gap-2 border p-4 text-center transition ${
+              className={`flex scroll-mt-24 flex-col items-center gap-2 border p-4 text-center transition ${
                 unlocked
                   ? "border-gold/45 bg-gradient-to-b from-gold/12 to-transparent"
                   : "border-gold/10 bg-deluxe-black/40 opacity-60"
