@@ -101,7 +101,7 @@ export function MissionScheduleSettings() {
     const { data } = await supabase
       .from("user_profiles_ext")
       .select(
-        "mission_reminder_enabled,mission_reminder_hour,mission_reminder_days,mission_reminder_push,mission_reminder_email,timezone",
+        "mission_reminder_enabled,mission_reminder_hour,mission_reminder_days,mission_reminder_push,mission_reminder_email,timezone,quiet_hours_enabled,quiet_start_hour,quiet_end_hour",
       )
       .eq("user_id", user.id)
       .maybeSingle();
