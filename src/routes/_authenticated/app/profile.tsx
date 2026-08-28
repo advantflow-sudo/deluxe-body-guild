@@ -9,6 +9,9 @@ import { TransformationLevel } from "@/components/deluxe/TransformationLevel";
 import { PushPrompt } from "@/components/deluxe/PushPrompt";
 import { useBiometric } from "@/hooks/useBiometric";
 import { haptic } from "@/hooks/useHaptics";
+import { useServerFn } from "@tanstack/react-start";
+import { sendTestMissionReminder } from "@/lib/reminders.functions";
+
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
   component: ProfileTab,
