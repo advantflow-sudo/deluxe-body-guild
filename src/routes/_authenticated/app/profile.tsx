@@ -245,6 +245,7 @@ function ProfileTab() {
               if (r.pushPending) parts.push(`${r.pushPending} device needs push re-enable`);
               if (r.emailRequested) parts.push(r.emailed ? "email sent" : "email not sent (delivery not configured)");
               toast.success(parts.length ? parts.join(" · ") : "Test reminder queued");
+              setReminderKey((k) => k + 1);
             } catch {
               toast.error("Couldn't send the test reminder");
             } finally {
