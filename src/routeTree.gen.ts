@@ -65,6 +65,7 @@ import { Route as ApiPublicHooksStripeWebhookTestRouteImport } from './routes/ap
 import { Route as ApiPublicHooksStreakAtRiskAlertRouteImport } from './routes/api/public/hooks/streak-at-risk-alert'
 import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
 import { Route as ApiPublicHooksScoreRecomputeRouteImport } from './routes/api/public/hooks/score-recompute'
+import { Route as ApiPublicHooksMissionReminderRouteImport } from './routes/api/public/hooks/mission-reminder'
 import { Route as ApiPublicHooksDailyMissionsGenerateRouteImport } from './routes/api/public/hooks/daily-missions-generate'
 import { Route as ApiPublicHooksAutoMatchPartnersRouteImport } from './routes/api/public/hooks/auto-match-partners'
 import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
@@ -370,6 +371,12 @@ const ApiPublicHooksScoreRecomputeRoute =
     path: '/api/public/hooks/score-recompute',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksMissionReminderRoute =
+  ApiPublicHooksMissionReminderRouteImport.update({
+    id: '/api/public/hooks/mission-reminder',
+    path: '/api/public/hooks/mission-reminder',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksDailyMissionsGenerateRoute =
   ApiPublicHooksDailyMissionsGenerateRouteImport.update({
     id: '/api/public/hooks/daily-missions-generate',
@@ -450,6 +457,7 @@ export interface FileRoutesByFullPath {
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/auto-match-partners': typeof ApiPublicHooksAutoMatchPartnersRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
+  '/api/public/hooks/mission-reminder': typeof ApiPublicHooksMissionReminderRoute
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
@@ -511,6 +519,7 @@ export interface FileRoutesByTo {
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/auto-match-partners': typeof ApiPublicHooksAutoMatchPartnersRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
+  '/api/public/hooks/mission-reminder': typeof ApiPublicHooksMissionReminderRoute
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
@@ -575,6 +584,7 @@ export interface FileRoutesById {
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/auto-match-partners': typeof ApiPublicHooksAutoMatchPartnersRoute
   '/api/public/hooks/daily-missions-generate': typeof ApiPublicHooksDailyMissionsGenerateRoute
+  '/api/public/hooks/mission-reminder': typeof ApiPublicHooksMissionReminderRoute
   '/api/public/hooks/score-recompute': typeof ApiPublicHooksScoreRecomputeRoute
   '/api/public/hooks/send-reminders': typeof ApiPublicHooksSendRemindersRoute
   '/api/public/hooks/streak-at-risk-alert': typeof ApiPublicHooksStreakAtRiskAlertRoute
@@ -639,6 +649,7 @@ export interface FileRouteTypes {
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/auto-match-partners'
     | '/api/public/hooks/daily-missions-generate'
+    | '/api/public/hooks/mission-reminder'
     | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
@@ -700,6 +711,7 @@ export interface FileRouteTypes {
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/auto-match-partners'
     | '/api/public/hooks/daily-missions-generate'
+    | '/api/public/hooks/mission-reminder'
     | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
@@ -763,6 +775,7 @@ export interface FileRouteTypes {
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/auto-match-partners'
     | '/api/public/hooks/daily-missions-generate'
+    | '/api/public/hooks/mission-reminder'
     | '/api/public/hooks/score-recompute'
     | '/api/public/hooks/send-reminders'
     | '/api/public/hooks/streak-at-risk-alert'
@@ -803,6 +816,7 @@ export interface RootRouteChildren {
   ApiPublicGoogleFitCallbackRoute: typeof ApiPublicGoogleFitCallbackRoute
   ApiPublicHooksAutoMatchPartnersRoute: typeof ApiPublicHooksAutoMatchPartnersRoute
   ApiPublicHooksDailyMissionsGenerateRoute: typeof ApiPublicHooksDailyMissionsGenerateRoute
+  ApiPublicHooksMissionReminderRoute: typeof ApiPublicHooksMissionReminderRoute
   ApiPublicHooksScoreRecomputeRoute: typeof ApiPublicHooksScoreRecomputeRoute
   ApiPublicHooksSendRemindersRoute: typeof ApiPublicHooksSendRemindersRoute
   ApiPublicHooksStreakAtRiskAlertRoute: typeof ApiPublicHooksStreakAtRiskAlertRoute
@@ -1210,6 +1224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksScoreRecomputeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/mission-reminder': {
+      id: '/api/public/hooks/mission-reminder'
+      path: '/api/public/hooks/mission-reminder'
+      fullPath: '/api/public/hooks/mission-reminder'
+      preLoaderRoute: typeof ApiPublicHooksMissionReminderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/daily-missions-generate': {
       id: '/api/public/hooks/daily-missions-generate'
       path: '/api/public/hooks/daily-missions-generate'
@@ -1352,6 +1373,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksAutoMatchPartnersRoute: ApiPublicHooksAutoMatchPartnersRoute,
   ApiPublicHooksDailyMissionsGenerateRoute:
     ApiPublicHooksDailyMissionsGenerateRoute,
+  ApiPublicHooksMissionReminderRoute: ApiPublicHooksMissionReminderRoute,
   ApiPublicHooksScoreRecomputeRoute: ApiPublicHooksScoreRecomputeRoute,
   ApiPublicHooksSendRemindersRoute: ApiPublicHooksSendRemindersRoute,
   ApiPublicHooksStreakAtRiskAlertRoute: ApiPublicHooksStreakAtRiskAlertRoute,
