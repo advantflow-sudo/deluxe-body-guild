@@ -249,7 +249,34 @@ function ProfileTab() {
               </span>} />
           </div>
         )}
+        <OutlineButton
+          onClick={async () => {
+            haptic("light");
+            setTesting(true);
+            try {
+              const r = await sendTest({ data: undefined });
+              const parts: string[] = [];
+              if (r.inApp) parts.push("in-app notification sent");
+              if (r.pushed) parts.push(`${r.pushed} push delivered`);
+              if (r.pushPending) parts.push(`${r.pushPending} device needs push re-enable`);
+              if (r.emailRequested) parts.push(r.emailed ? "email sent" : "email not sent (delivery not configured)");
+              toast.success(parts.length ? parts.join(" · ") : "Test reminder queued");
+            } catch {
+              toast.error("Couldn't send the test reminder");
+            } finally {
+              setTesting(false);
+            }
+          }}
+          disabled={testing}
+          className="w-full"
+        >
+          {testing ? "Sending…" : "Send test reminder"}
+        </OutlineButton>
+        <p className="text-[10px] text-muted-foreground">
+          Sends a reminder right now to every channel you have enabled so you can confirm it arrives.
+        </p>
       </div>
+
 
       <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5">
         <SectionLabel>Settings</SectionLabel>
