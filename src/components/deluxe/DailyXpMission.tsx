@@ -278,8 +278,14 @@ export function DailyXpMission() {
       </div>
 
       <div className="mt-4">
-        <div className="text-[9px] uppercase tracking-[0.22em] text-gold">Streak badges</div>
+        <div className="flex items-center justify-between">
+          <div className="text-[9px] uppercase tracking-[0.22em] text-gold">Streak badges</div>
+          <Link to="/app/badges" className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground hover:text-gold">
+            Badge gallery →
+          </Link>
+        </div>
         <div className="mt-2">
+
           <StreakBadges current={streak.current_streak} best={streak.longest_streak} />
         </div>
       </div>
