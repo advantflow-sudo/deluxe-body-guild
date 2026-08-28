@@ -72,7 +72,7 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
               from: "Deluxe Fitness <missions@deluxefitness.app>",
               to: [email],
               subject: "Test mission reminder",
-              html: `<p>${body}</p><p><a href="https://deluxefitness.app/app">Claim your XP</a></p>`,
+              html: `<p>${body}</p><p><a href="https://deluxefitness.app/app?mission=1">Claim your XP</a></p>`,
             }),
           });
           emailed = res.ok;
