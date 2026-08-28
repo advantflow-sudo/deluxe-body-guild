@@ -11,6 +11,7 @@ import { useBiometric } from "@/hooks/useBiometric";
 import { haptic } from "@/hooks/useHaptics";
 import { useServerFn } from "@tanstack/react-start";
 import { sendTestMissionReminder } from "@/lib/reminders.functions";
+import { MissionScheduleSettings } from "@/components/deluxe/MissionScheduleSettings";
 
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
@@ -227,34 +228,9 @@ function ProfileTab() {
               onChange={(v) => setExt({ ...ext, reminder_morning_hour: v ? Math.max(0, Math.min(23, parseInt(v))) : null })} />
             <Field label="Evening reminder (h, 0-23)" type="number" value={String(ext.reminder_evening_hour ?? 20)}
               onChange={(v) => setExt({ ...ext, reminder_evening_hour: v ? Math.max(0, Math.min(23, parseInt(v))) : null })} />
-            <Field label="Mission reminder (h, 0-23)" type="number" value={String(ext.mission_reminder_hour ?? 18)}
-              onChange={(v) => setExt({ ...ext, mission_reminder_hour: v ? Math.max(0, Math.min(23, parseInt(v))) : null })} />
           </div>
         )}
-        {ext && (
-          <div className="space-y-1">
-            <Row icon={Bell} label="Remind me to claim my 100 XP" onClick={async () => {
-              if (!user) return;
-              const next = !ext.mission_reminder_enabled;
-              setExt({ ...ext, mission_reminder_enabled: next });
-              const { error } = await supabase.from("user_profiles_ext").update({ mission_reminder_enabled: next }).eq("user_id", user.id);
-              if (error) { setExt({ ...ext, mission_reminder_enabled: !next }); toast.error("Couldn't update"); }
-            }}
-              right={<span className={`h-5 w-9 rounded-full transition ${ext.mission_reminder_enabled ? "bg-gold" : "bg-gold/20"} relative`}>
-                <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${ext.mission_reminder_enabled ? "left-4" : "left-0.5"}`} />
-              </span>} />
-            <Row icon={Bell} label="Also email me the reminder" onClick={async () => {
-              if (!user) return;
-              const next = !ext.mission_reminder_email;
-              setExt({ ...ext, mission_reminder_email: next });
-              const { error } = await supabase.from("user_profiles_ext").update({ mission_reminder_email: next }).eq("user_id", user.id);
-              if (error) { setExt({ ...ext, mission_reminder_email: !next }); toast.error("Couldn't update"); }
-            }}
-              right={<span className={`h-5 w-9 rounded-full transition ${ext.mission_reminder_email ? "bg-gold" : "bg-gold/20"} relative`}>
-                <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${ext.mission_reminder_email ? "left-4" : "left-0.5"}`} />
-              </span>} />
-          </div>
-        )}
+        <MissionScheduleSettings />
         <OutlineButton
           onClick={async () => {
             haptic("light");

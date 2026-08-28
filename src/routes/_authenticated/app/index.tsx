@@ -27,6 +27,8 @@ import { XpLevelCard } from "@/components/deluxe/XpLevelCard";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: HomeTab,
+  validateSearch: (search: Record<string, unknown>): { mission?: "1" } =>
+    search["mission"] === "1" || search["mission"] === 1 ? { mission: "1" } : {},
 });
 
 const QUOTES = [
@@ -52,6 +54,20 @@ function HomeTab() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [weekTotals, setWeekTotals] = useState({ sessions: 0, minutes: 0, calories: 0 });
   const quote = QUOTES[new Date().getDate() % QUOTES.length];
+  const { mission } = Route.useSearch();
+
+  // Deep link from mission reminders: scroll to and highlight the claimable mission.
+  useEffect(() => {
+    if (mission !== "1") return;
+    const t = window.setTimeout(() => {
+      const el = document.getElementById("mission");
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("ring-2", "ring-gold/70");
+      window.setTimeout(() => el.classList.remove("ring-2", "ring-gold/70"), 2600);
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [mission]);
 
   useEffect(() => {
     if (!user) return;

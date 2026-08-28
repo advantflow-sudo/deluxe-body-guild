@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Check, Dumbbell, Droplet, Beef, Sparkles, History } from "lucide-react";
+import { ChevronDown, Check, Dumbbell, Droplet, Beef, Sparkles, History, Download, FileText } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
@@ -60,6 +61,73 @@ export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
   const perfect = days.filter((d) => d.total >= 100).length;
   const lifetime = days.reduce((s, d) => s + d.total, 0);
 
+  function rows() {
+    return days.map((d) => ({
+      date: d.date,
+      total: d.total,
+      actions: REASONS.filter((r) => d.items.some((i) => i.reason === r)).map((r) => META[r].label),
+      missing: REASONS.filter((r) => !d.items.some((i) => i.reason === r)).map((r) => META[r].label),
+    }));
+  }
+
+  function exportCsv() {
+    haptic("light");
+    if (days.length === 0) return toast.error("No mission claims to export yet");
+    const header = ["Date", "XP total", "Actions claimed", "Actions included", "Actions missing", "Perfect day"];
+    const body = rows().map((r) => [
+      r.date,
+      String(r.total),
+      String(r.actions.length),
+      r.actions.join("; "),
+      r.missing.join("; "),
+      r.total >= 100 ? "Yes" : "No",
+    ]);
+    const csv = [header, ...body]
+      .map((line) => line.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(","))
+      .join("\r\n");
+    const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `deluxe-mission-history-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("CSV downloaded");
+  }
+
+  function exportPdf() {
+    haptic("light");
+    if (days.length === 0) return toast.error("No mission claims to export yet");
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Deluxe Fitness — Mission History</title>
+<style>
+  body{font-family:Georgia,serif;background:#07100c;color:#f5f1e6;padding:32px}
+  h1{color:#d4af37;font-size:22px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 4px}
+  p.meta{color:#b9b3a1;font-size:12px;margin:0 0 20px}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{text-align:left;color:#d4af37;border-bottom:1px solid rgba(212,175,55,.5);padding:8px 6px;text-transform:uppercase;letter-spacing:.1em;font-size:10px}
+  td{border-bottom:1px solid rgba(212,175,55,.15);padding:8px 6px;vertical-align:top}
+  .full{color:#d4af37;font-weight:700}
+  @media print{body{background:#fff;color:#111}h1{color:#8a6d1f}td,th{border-color:#ccc}.full{color:#8a6d1f}}
+</style></head><body>
+<h1>Mission History</h1>
+<p class="meta">Deluxe Fitness · ${perfect} perfect 100 XP days · ${lifetime.toLocaleString()} mission XP · last 90 days · generated ${new Date().toLocaleString()}</p>
+<table><thead><tr><th>Date</th><th>XP</th><th>Actions included</th><th>Missing</th></tr></thead><tbody>
+${rows()
+  .map(
+    (r) =>
+      `<tr><td>${r.date}</td><td class="${r.total >= 100 ? "full" : ""}">${r.total}</td><td>${
+        r.actions.join(", ") || "—"
+      }</td><td>${r.missing.join(", ") || "—"}</td></tr>`,
+  )
+  .join("")}
+</tbody></table></body></html>`;
+    const w = window.open("", "_blank");
+    if (!w) return toast.error("Allow pop-ups to export a PDF");
+    w.document.write(html);
+    w.document.close();
+    w.focus();
+    setTimeout(() => w.print(), 300);
+  }
+
   if (loading) return <div className="mt-5 h-32 animate-pulse border border-gold/15 bg-deluxe-forest/10" />;
 
   return (
@@ -77,6 +145,23 @@ export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
         <span className="border border-gold/15 px-2.5 py-1 text-muted-foreground">
           {lifetime.toLocaleString()} mission XP · last 90 days
         </span>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={exportCsv}
+          className="inline-flex min-h-10 items-center gap-2 border border-gold/30 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-gold transition hover:bg-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+        >
+          <Download className="h-3.5 w-3.5" aria-hidden /> Export CSV
+        </button>
+        <button
+          type="button"
+          onClick={exportPdf}
+          className="inline-flex min-h-10 items-center gap-2 border border-gold/20 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition hover:border-gold/50 hover:text-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+        >
+          <FileText className="h-3.5 w-3.5" aria-hidden /> Export PDF
+        </button>
       </div>
 
       {days.length === 0 ? (

@@ -144,7 +144,7 @@ export function DailyXpMission() {
   }
 
   return (
-    <section className="mt-5 border border-gold/25 bg-deluxe-forest/15 p-5">
+    <section id="mission" className="mt-5 scroll-mt-24 border border-gold/25 bg-deluxe-forest/15 p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <SectionLabel>Daily Mission</SectionLabel>
