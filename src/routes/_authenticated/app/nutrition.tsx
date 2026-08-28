@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   Apple, Beef, Wheat, Droplets, Sparkles, ChefHat, Repeat, MessageCircle,
-  Check, Clock, Loader2,
+  Check, Clock, Loader2, BookmarkPlus, Bookmark, Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -116,14 +116,18 @@ function NutritionTab() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [asking, setAsking] = useState(false);
+  const [saved, setSaved] = useState<any[]>([]);
+  const [savingPlan, setSavingPlan] = useState(false);
 
   const load = useCallback(async () => {
     if (!user) return;
-    const [extRes, planRes] = await Promise.all([
+    const [extRes, planRes, savedRes] = await Promise.all([
       supabase.from("user_profiles_ext").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("meal_plans").select("*").eq("user_id", user.id).eq("plan_date", today()).maybeSingle(),
+      supabase.from("saved_meal_plans").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     ]);
     setExt(extRes.data);
+    setSaved(savedRes.data ?? []);
     if (planRes.data) {
       setPlan({ ...(planRes.data as any), meals: (planRes.data as any).meals ?? [] });
     }
@@ -231,6 +235,69 @@ Return ONLY minified JSON for the single replacement meal in the identical shape
     } else {
       toast.success(`Logged. ${Math.max(0, Math.round(plan.protein_target_g - protein))}g protein to go`);
     }
+  };
+
+  const savePlanToProfile = async () => {
+    if (!plan || !user) return;
+    const name = window.prompt("Name this plan", `${ext?.fitness_goal ?? "Plan"} · ${plan.kcal_target} kcal`);
+    if (!name?.trim()) return;
+    setSavingPlan(true);
+    const { data, error } = await supabase
+      .from("saved_meal_plans")
+      .insert({
+        user_id: user.id,
+        name: name.trim().slice(0, 80),
+        kcal_target: plan.kcal_target,
+        protein_target_g: plan.protein_target_g,
+        carbs_target_g: plan.carbs_target_g,
+        fat_target_g: plan.fat_target_g,
+        water_target_ml: plan.water_target_ml,
+        weight_basis: plan.weight_basis,
+        meals: plan.meals as any,
+        notes: plan.notes ?? null,
+      })
+      .select()
+      .single();
+    setSavingPlan(false);
+    if (error) return toast.error(error.message);
+    setSaved([data, ...saved]);
+    haptic("success");
+    toast.success("Saved to your profile");
+  };
+
+  const applySaved = async (row: any) => {
+    if (!user) return;
+    const meals = (row.meals ?? []).map((m: Meal) => ({ ...m, logged: false }));
+    const { data, error } = await supabase
+      .from("meal_plans")
+      .upsert(
+        {
+          user_id: user.id,
+          plan_date: today(),
+          kcal_target: row.kcal_target,
+          protein_target_g: row.protein_target_g,
+          carbs_target_g: row.carbs_target_g,
+          fat_target_g: row.fat_target_g,
+          water_target_ml: row.water_target_ml,
+          weight_basis: row.weight_basis,
+          meals: meals as any,
+          notes: row.notes,
+        },
+        { onConflict: "user_id,plan_date" },
+      )
+      .select()
+      .single();
+    if (error) return toast.error(error.message);
+    setPlan({ ...(data as any), meals: (data as any).meals ?? [] });
+    haptic("success");
+    toast.success(`"${row.name}" loaded for today`);
+  };
+
+  const deleteSaved = async (id: string) => {
+    const { error } = await supabase.from("saved_meal_plans").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    setSaved(saved.filter((s2) => s2.id !== id));
+    toast.success("Removed");
   };
 
   const ask = async () => {
@@ -390,7 +457,45 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           <OutlineButton onClick={generate} disabled={generating}>
             {generating ? "Rebuilding…" : "Rebuild plan"}
           </OutlineButton>
+          <OutlineButton onClick={savePlanToProfile} disabled={savingPlan}>
+            <span className="inline-flex items-center gap-1.5">
+              <BookmarkPlus className="h-3.5 w-3.5" />
+              {savingPlan ? "Saving…" : "Save to my profile"}
+            </span>
+          </OutlineButton>
         </div>
+      )}
+
+      {saved.length > 0 && (
+        <section className="mt-8">
+          <SectionLabel>My saved plans</SectionLabel>
+          <ul className="mt-3 space-y-2">
+            {saved.map((row) => (
+              <li key={row.id} className="flex items-center gap-3 border border-gold/15 bg-deluxe-black/40 p-3">
+                <Bookmark className="h-4 w-4 shrink-0 text-gold" />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm text-foreground">{row.name}</div>
+                  <div className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                    {row.kcal_target} kcal · {row.protein_target_g}g protein · {(row.meals ?? []).length} meals
+                  </div>
+                </div>
+                <button
+                  onClick={() => applySaved(row)}
+                  className="min-h-11 border border-gold/40 px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-gold hover:bg-gold/10"
+                >
+                  Use today
+                </button>
+                <button
+                  onClick={() => deleteSaved(row.id)}
+                  aria-label={`Delete ${row.name}`}
+                  className="min-h-11 px-2 text-muted-foreground hover:text-gold"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
 
       {/* Ask the nutritionist */}
