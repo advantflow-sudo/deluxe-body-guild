@@ -260,6 +260,7 @@ function ProfileTab() {
         <p className="text-[10px] text-muted-foreground">
           Sends a reminder right now to every channel you have enabled so you can confirm it arrives.
         </p>
+        <ReminderHistory refreshKey={reminderKey} />
       </div>
 
 
