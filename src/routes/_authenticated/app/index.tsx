@@ -15,6 +15,7 @@ import { formatGoal } from "@/lib/format";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
 import { DailyMissionCard } from "@/components/deluxe/DailyMissionCard";
+import { DailyXpMission } from "@/components/deluxe/DailyXpMission";
 import { DeluxeScoreBreakdown } from "@/components/deluxe/DeluxeScoreBreakdown";
 import { WaterTracker } from "@/components/deluxe/WaterTracker";
 import { SleepLogger } from "@/components/deluxe/SleepLogger";
