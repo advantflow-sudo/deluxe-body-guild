@@ -210,7 +210,10 @@ function CommunityTab() {
   }, [searchStr]);
 
   const filteredPosts = useMemo(() => {
-    const base = posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id));
+    let base = posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id));
+    if (tab === "following") {
+      base = base.filter((p) => following.has(p.user_id) || p.user_id === user?.id);
+    }
     if (activeTag) {
       const needle = `#${activeTag}`;
       return base.filter((p) => p.body.toLowerCase().includes(needle));
@@ -223,7 +226,25 @@ function CommunityTab() {
       });
     }
     return base;
-  }, [posts, muted, reported, activeTag, activeUser]);
+  }, [posts, muted, reported, activeTag, activeUser, tab, following, user?.id]);
+
+  // Stories rail — most recent poster per member in the last 48h.
+  const stories = useMemo(() => {
+    const seen = new Map<string, StoryItem>();
+    const cutoff = Date.now() - 48 * 60 * 60 * 1000;
+    for (const p of posts) {
+      if (muted.has(p.user_id) || seen.has(p.user_id)) continue;
+      const ts = new Date(p.created_at).getTime();
+      seen.set(p.user_id, {
+        userId: p.user_id,
+        name: p.profile?.display_name ?? "Member",
+        avatarUrl: p.profile?.avatar_url ?? null,
+        preview: p.image_url,
+        fresh: ts >= cutoff,
+      });
+    }
+    return Array.from(seen.values()).slice(0, 15);
+  }, [posts, muted]);
 
   const muteUser = async (post: Post) => {
     const ok = await confirmDialog({
