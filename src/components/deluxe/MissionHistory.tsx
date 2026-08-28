@@ -132,7 +132,7 @@ export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
   @media print{body{background:#fff;color:#111}h1{color:#8a6d1f}td,th{border-color:#ccc}.full{color:#8a6d1f}}
 </style></head><body>
 <h1>Mission History</h1>
-<p class="meta">Deluxe Fitness · ${perfect} perfect 100 XP days · ${lifetime.toLocaleString()} mission XP · last 90 days · generated ${new Date().toLocaleString()}</p>
+<p class="meta">Deluxe Fitness · ${perfect} perfect 100 XP days · ${lifetime.toLocaleString()} mission XP · ${rangeLabel} · generated ${new Date().toLocaleString()}</p>
 <table><thead><tr><th>Date</th><th>XP</th><th>Actions included</th><th>Missing</th></tr></thead><tbody>
 ${rows()
   .map(
