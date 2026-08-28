@@ -12,6 +12,7 @@ import { haptic } from "@/hooks/useHaptics";
 import { useServerFn } from "@tanstack/react-start";
 import { sendTestMissionReminder } from "@/lib/reminders.functions";
 import { MissionScheduleSettings } from "@/components/deluxe/MissionScheduleSettings";
+import { ReminderHistory } from "@/components/deluxe/ReminderHistory";
 
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
