@@ -50,6 +50,7 @@ import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authenticated/app/challenges'
 import { Route as AuthenticatedAppBodyTrendsRouteImport } from './routes/_authenticated/app/body-trends'
 import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticated/app/body'
+import { Route as AuthenticatedAppBadgesRouteImport } from './routes/_authenticated/app/badges'
 import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
 import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin.webhooks'
 import { Route as AuthenticatedAdminErrorsRouteImport } from './routes/_authenticated/admin.errors'
@@ -283,6 +284,11 @@ const AuthenticatedAppBodyRoute = AuthenticatedAppBodyRouteImport.update({
   path: '/body',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppBadgesRoute = AuthenticatedAppBadgesRouteImport.update({
+  id: '/badges',
+  path: '/badges',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppAiRoute = AuthenticatedAppAiRouteImport.update({
   id: '/ai',
   path: '/ai',
@@ -438,6 +444,7 @@ export interface FileRoutesByFullPath {
   '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
+  '/app/badges': typeof AuthenticatedAppBadgesRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
   '/app/challenges': typeof AuthenticatedAppChallengesRoute
@@ -500,6 +507,7 @@ export interface FileRoutesByTo {
   '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/app/ai': typeof AuthenticatedAppAiRoute
+  '/app/badges': typeof AuthenticatedAppBadgesRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
   '/app/challenges': typeof AuthenticatedAppChallengesRoute
@@ -565,6 +573,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
   '/_authenticated/app/ai': typeof AuthenticatedAppAiRoute
+  '/_authenticated/app/badges': typeof AuthenticatedAppBadgesRoute
   '/_authenticated/app/body': typeof AuthenticatedAppBodyRoute
   '/_authenticated/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
   '/_authenticated/app/challenges': typeof AuthenticatedAppChallengesRoute
@@ -630,6 +639,7 @@ export interface FileRouteTypes {
     | '/admin/errors'
     | '/admin/webhooks'
     | '/app/ai'
+    | '/app/badges'
     | '/app/body'
     | '/app/body-trends'
     | '/app/challenges'
@@ -692,6 +702,7 @@ export interface FileRouteTypes {
     | '/admin/errors'
     | '/admin/webhooks'
     | '/app/ai'
+    | '/app/badges'
     | '/app/body'
     | '/app/body-trends'
     | '/app/challenges'
@@ -756,6 +767,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/errors'
     | '/_authenticated/admin/webhooks'
     | '/_authenticated/app/ai'
+    | '/_authenticated/app/badges'
     | '/_authenticated/app/body'
     | '/_authenticated/app/body-trends'
     | '/_authenticated/app/challenges'
@@ -1119,6 +1131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppBodyRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/badges': {
+      id: '/_authenticated/app/badges'
+      path: '/badges'
+      fullPath: '/app/badges'
+      preLoaderRoute: typeof AuthenticatedAppBadgesRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/ai': {
       id: '/_authenticated/app/ai'
       path: '/ai'
@@ -1286,6 +1305,7 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppAiRoute: typeof AuthenticatedAppAiRoute
+  AuthenticatedAppBadgesRoute: typeof AuthenticatedAppBadgesRoute
   AuthenticatedAppBodyRoute: typeof AuthenticatedAppBodyRoute
   AuthenticatedAppBodyTrendsRoute: typeof AuthenticatedAppBodyTrendsRoute
   AuthenticatedAppChallengesRoute: typeof AuthenticatedAppChallengesRoute
@@ -1305,6 +1325,7 @@ interface AuthenticatedAppRouteChildren {
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppAiRoute: AuthenticatedAppAiRoute,
+  AuthenticatedAppBadgesRoute: AuthenticatedAppBadgesRoute,
   AuthenticatedAppBodyRoute: AuthenticatedAppBodyRoute,
   AuthenticatedAppBodyTrendsRoute: AuthenticatedAppBodyTrendsRoute,
   AuthenticatedAppChallengesRoute: AuthenticatedAppChallengesRoute,
