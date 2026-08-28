@@ -50,6 +50,7 @@ function ProfileTab() {
   const [points, setPoints] = useState(0);
   const [sub, setSub] = useState<Sub | null>(null);
   const [testing, setTesting] = useState(false);
+  const [reminderKey, setReminderKey] = useState(0);
   const sendTest = useServerFn(sendTestMissionReminder);
 
 
