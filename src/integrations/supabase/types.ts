@@ -1194,6 +1194,54 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_meal_plans: {
+        Row: {
+          carbs_target_g: number
+          created_at: string
+          fat_target_g: number
+          id: string
+          kcal_target: number
+          meals: Json
+          name: string
+          notes: string | null
+          protein_target_g: number
+          updated_at: string
+          user_id: string
+          water_target_ml: number
+          weight_basis: string
+        }
+        Insert: {
+          carbs_target_g?: number
+          created_at?: string
+          fat_target_g?: number
+          id?: string
+          kcal_target?: number
+          meals?: Json
+          name: string
+          notes?: string | null
+          protein_target_g?: number
+          updated_at?: string
+          user_id: string
+          water_target_ml?: number
+          weight_basis?: string
+        }
+        Update: {
+          carbs_target_g?: number
+          created_at?: string
+          fat_target_g?: number
+          id?: string
+          kcal_target?: number
+          meals?: Json
+          name?: string
+          notes?: string | null
+          protein_target_g?: number
+          updated_at?: string
+          user_id?: string
+          water_target_ml?: number
+          weight_basis?: string
+        }
+        Relationships: []
+      }
       streak_events: {
         Row: {
           created_at: string
@@ -1450,6 +1498,9 @@ export type Database = {
           created_at: string
           fitness_goal: string | null
           height_cm: number | null
+          mission_reminder_email: boolean
+          mission_reminder_enabled: boolean
+          mission_reminder_hour: number
           notifications_enabled: boolean
           onboarded_at: string | null
           preferred_type: string | null
@@ -1477,6 +1528,9 @@ export type Database = {
           created_at?: string
           fitness_goal?: string | null
           height_cm?: number | null
+          mission_reminder_email?: boolean
+          mission_reminder_enabled?: boolean
+          mission_reminder_hour?: number
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
@@ -1504,6 +1558,9 @@ export type Database = {
           created_at?: string
           fitness_goal?: string | null
           height_cm?: number | null
+          mission_reminder_email?: boolean
+          mission_reminder_enabled?: boolean
+          mission_reminder_hour?: number
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
@@ -2016,6 +2073,14 @@ export type Database = {
       }
       cron_auto_match_unpaired: { Args: never; Returns: number }
       cron_generate_missions_for_active: { Args: never; Returns: number }
+      cron_mission_reminder_users: {
+        Args: never
+        Returns: {
+          claimed_xp: number
+          email_opt_in: boolean
+          user_id: string
+        }[]
+      }
       cron_streak_at_risk_users: {
         Args: never
         Returns: {
@@ -2049,6 +2114,7 @@ export type Database = {
         }
       }
       get_mission_xp_today: { Args: never; Returns: Json }
+      get_xp_streak: { Args: never; Returns: Json }
       get_xp_summary: { Args: never; Returns: Json }
       has_role: {
         Args: {
