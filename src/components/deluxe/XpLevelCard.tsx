@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
+
 import { Zap, Trophy, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
