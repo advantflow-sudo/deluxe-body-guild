@@ -139,6 +139,8 @@ export function MissionScheduleSettings() {
     }
   };
 
+  const upcoming = nextReminders(sched);
+
   const localPreview = (() => {
     try {
       const d = new Date();
