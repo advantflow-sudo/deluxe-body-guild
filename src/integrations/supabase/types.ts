@@ -1498,9 +1498,11 @@ export type Database = {
           created_at: string
           fitness_goal: string | null
           height_cm: number | null
+          mission_reminder_days: string
           mission_reminder_email: boolean
           mission_reminder_enabled: boolean
           mission_reminder_hour: number
+          mission_reminder_push: boolean
           notifications_enabled: boolean
           onboarded_at: string | null
           preferred_type: string | null
@@ -1528,9 +1530,11 @@ export type Database = {
           created_at?: string
           fitness_goal?: string | null
           height_cm?: number | null
+          mission_reminder_days?: string
           mission_reminder_email?: boolean
           mission_reminder_enabled?: boolean
           mission_reminder_hour?: number
+          mission_reminder_push?: boolean
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
@@ -1558,9 +1562,11 @@ export type Database = {
           created_at?: string
           fitness_goal?: string | null
           height_cm?: number | null
+          mission_reminder_days?: string
           mission_reminder_email?: boolean
           mission_reminder_enabled?: boolean
           mission_reminder_hour?: number
+          mission_reminder_push?: boolean
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
@@ -2078,6 +2084,7 @@ export type Database = {
         Returns: {
           claimed_xp: number
           email_opt_in: boolean
+          push_opt_in: boolean
           user_id: string
         }[]
       }

@@ -78,10 +78,11 @@ self.addEventListener("push", (event) => {
   try { data = event.data ? event.data.json() : {}; } catch { data = { body: event.data && event.data.text() }; }
   const title = data.title || "Deluxe Fitness";
   const options = {
-    body: data.body || "You have a new update.",
+    body: data.body || "Your daily mission is ready to claim.",
     icon: "/app-icon-192.png",
     badge: "/app-icon-192.png",
-    data: { url: data.url || "/app/community" },
+    // Payload-less pushes are mission reminders; deep link straight to the mission card.
+    data: { url: data.url || "/app?mission=1" },
     tag: data.tag || "df-notif",
     renotify: false,
   };

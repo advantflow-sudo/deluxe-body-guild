@@ -6,7 +6,7 @@ import { haptic } from "@/hooks/useHaptics";
 
 export interface AppNotification {
   id: string;
-  kind: "like" | "comment";
+  kind: "like" | "comment" | "mission_ready";
   post_id: string;
   comment_id?: string | null;
   actor_id: string;
@@ -99,11 +99,17 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
           const [enriched] = await enrich([row]);
           setItems((prev) => [enriched, ...prev.filter((p) => p.id !== enriched.id)].slice(0, MAX));
           haptic("light");
-          const title = enriched.kind === "like"
+          const isMission = enriched.kind === "mission_ready";
+          const title = isMission
+            ? "Mission ready to claim"
+            : enriched.kind === "like"
             ? `${enriched.actor_name} liked your post`
             : `${enriched.actor_name} commented on your post`;
+          const url = isMission
+            ? "/app?mission=1"
+            : `/app/community?p=${enriched.post_id}${enriched.comment_id ? `&c=${enriched.comment_id}` : ""}`;
           toast(title, { description: enriched.body?.slice(0, 80) ?? undefined });
-          tryShowSystemNotification(title, enriched.body ?? undefined, `/app/community?p=${enriched.post_id}${enriched.comment_id ? `&c=${enriched.comment_id}` : ""}`);
+          tryShowSystemNotification(title, enriched.body ?? undefined, url);
         },
       )
       .on(

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bell, Heart, MessageCircle, X } from "lucide-react";
+import { Bell, Flame, Heart, MessageCircle, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useNotifications } from "@/hooks/useNotifications";
 import { haptic } from "@/hooks/useHaptics";
@@ -106,24 +106,38 @@ export function NotificationBell() {
                   You're all caught up.
                 </li>
               )}
-              {items.map((n) => (
+              {items.map((n) => {
+                const isMission = n.kind === "mission_ready";
+                return (
                 <li key={n.id} className="border-b border-gold/10 last:border-b-0">
                   <Link
-                    to="/app/community"
-                    search={{ p: n.post_id, ...(n.comment_id ? { c: n.comment_id } : {}) } as never}
+                    to={isMission ? "/app" : "/app/community"}
+                    search={(isMission
+                      ? { mission: "1" }
+                      : { p: n.post_id, ...(n.comment_id ? { c: n.comment_id } : {}) }) as never}
                     onClick={() => { markRead(n.id); close(); }}
                     className={`flex items-start gap-3 px-4 py-3 transition hover:bg-gold/5 focus:outline-none focus:bg-gold/10 ${n.read_at ? "opacity-70" : ""}`}
-                    aria-label={`${n.actor_name} ${n.kind === "like" ? "liked your post" : "commented on your post"}`}
+                    aria-label={isMission
+                      ? "Your daily mission is ready to claim"
+                      : `${n.actor_name} ${n.kind === "like" ? "liked your post" : "commented on your post"}`}
                   >
                     <div className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border border-gold/30 bg-deluxe-forest/30 text-gold">
-                      {n.kind === "like"
+                      {isMission
+                        ? <Flame className="h-3.5 w-3.5" aria-hidden="true" />
+                        : n.kind === "like"
                         ? <Heart className="h-3.5 w-3.5" aria-hidden="true" />
                         : <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" />}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-xs text-foreground">
-                        <span className="font-semibold text-gold">{n.actor_name}</span>{" "}
-                        {n.kind === "like" ? "liked your post" : "commented on your post"}
+                        {isMission ? (
+                          <span className="font-semibold text-gold">Mission ready to claim</span>
+                        ) : (
+                          <>
+                            <span className="font-semibold text-gold">{n.actor_name}</span>{" "}
+                            {n.kind === "like" ? "liked your post" : "commented on your post"}
+                          </>
+                        )}
                       </p>
                       {n.body && <p className="mt-0.5 line-clamp-2 text-[11px] text-muted-foreground">{n.body}</p>}
                       <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/70">
@@ -135,7 +149,7 @@ export function NotificationBell() {
                     )}
                   </Link>
                 </li>
-              ))}
+              );})}
             </ul>
           </div>
         </>

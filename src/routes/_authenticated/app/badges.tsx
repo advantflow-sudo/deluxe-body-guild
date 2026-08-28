@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Lock, Share2, Download } from "lucide-react";
+import { ArrowLeft, ArrowUpDown, Lock, Share2, Download } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,6 +35,8 @@ function BadgeGallery() {
   const [loading, setLoading] = useState(true);
   const [sharing, setSharing] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
+  const [filter, setFilter] = useState<"all" | "unlocked" | "locked">("all");
+  const [sort, setSort] = useState<"asc" | "desc">("asc");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -55,6 +57,10 @@ function BadgeGallery() {
   const unlockedCount = MILESTONES.filter((m) => streak.best >= m.days).length;
   const next = nextMilestone(streak.best);
   const highest = [...MILESTONES].reverse().find((m) => streak.best >= m.days) ?? null;
+
+  const visible = MILESTONES.filter((m) =>
+    filter === "all" ? true : filter === "unlocked" ? streak.best >= m.days : streak.best < m.days,
+  ).sort((a, b) => (sort === "asc" ? a.days - b.days : b.days - a.days));
 
   function drawCard(): HTMLCanvasElement | null {
     const canvas = canvasRef.current;
@@ -192,8 +198,70 @@ function BadgeGallery() {
           : `${unlockedCount} of ${MILESTONES.length} unlocked${next ? ` · ${next.days - streak.best} perfect days to ${next.name}` : " · complete set"}`}
       </p>
 
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <div className="flex gap-1" role="group" aria-label="Filter badges">
+          {([
+            { v: "all" as const, l: `All ${MILESTONES.length}` },
+            { v: "unlocked" as const, l: `Unlocked ${unlockedCount}` },
+            { v: "locked" as const, l: `Locked ${MILESTONES.length - unlockedCount}` },
+          ]).map((o) => (
+            <button
+              key={o.v}
+              type="button"
+              aria-pressed={filter === o.v}
+              onClick={() => {
+                haptic("selection");
+                setFilter(o.v);
+              }}
+              className={`min-h-10 border px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] transition ${
+                filter === o.v ? "border-gold/60 bg-gold/12 text-gold" : "border-gold/15 text-muted-foreground hover:text-gold"
+              }`}
+            >
+              {o.l}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            haptic("selection");
+            setSort(sort === "asc" ? "desc" : "asc");
+          }}
+          className="ml-auto inline-flex min-h-10 items-center gap-2 border border-gold/20 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition hover:border-gold/50 hover:text-gold"
+        >
+          <ArrowUpDown className="h-3.5 w-3.5" aria-hidden /> {sort === "asc" ? "Low to high" : "High to low"}
+        </button>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Jump to milestone">
+        {[...MILESTONES]
+          .sort((a, b) => a.days - b.days)
+          .map((m) => (
+            <button
+              key={m.days}
+              type="button"
+              onClick={() => {
+                haptic("light");
+                setFilter("all");
+                setSelected(m.days);
+                document.getElementById(`badge-${m.days}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+              className={`min-h-9 border px-2.5 py-1 text-[10px] uppercase tracking-[0.16em] transition ${
+                selected === m.days ? "border-gold/60 text-gold" : "border-gold/15 text-muted-foreground hover:text-gold"
+              }`}
+            >
+              {m.days}d
+            </button>
+          ))}
+      </div>
+
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {MILESTONES.map((m) => {
+        {visible.length === 0 && (
+          <p className="col-span-full text-[11px] text-muted-foreground">
+            {filter === "locked" ? "Every badge is unlocked. Impeccable." : "No badges unlocked yet — start a streak today."}
+          </p>
+        )}
+        {visible.map((m) => {
           const Icon = m.icon;
           const unlocked = streak.best >= m.days;
           const live = streak.current >= m.days;
@@ -201,14 +269,16 @@ function BadgeGallery() {
           return (
             <button
               key={m.days}
+              id={`badge-${m.days}`}
               type="button"
+              
               onClick={() => {
                 haptic("light");
                 setSelected(open ? null : m.days);
               }}
               aria-expanded={open}
               aria-label={`${m.name} badge, ${unlocked ? "unlocked" : "locked"}`}
-              className={`flex flex-col items-center gap-2 border p-4 text-center transition ${
+              className={`flex scroll-mt-24 flex-col items-center gap-2 border p-4 text-center transition ${
                 unlocked
                   ? "border-gold/45 bg-gradient-to-b from-gold/12 to-transparent"
                   : "border-gold/10 bg-deluxe-black/40 opacity-60"

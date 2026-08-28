@@ -24,6 +24,7 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
         const due = (data as unknown as Array<{
           user_id: string;
           email_opt_in: boolean;
+          push_opt_in?: boolean;
           claimed_xp: number;
         }> | null) ?? [];
 
@@ -44,7 +45,7 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
           if (!nErr) notified += 1;
 
           // Web Push — only rows created by a real browser subscription.
-          const { data: subs } = await admin
+          const { data: subs } = row.push_opt_in === false ? { data: [] } : await admin
             .from("push_subscriptions")
             .select("id,endpoint")
             .eq("user_id", row.user_id);
@@ -84,7 +85,7 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
                     from: "Deluxe Fitness <missions@deluxefitness.app>",
                     to: [email],
                     subject: `${remaining} XP left on today's mission`,
-                    html: `<p>${body}</p><p><a href="https://deluxefitness.app/app">Claim your XP</a></p>`,
+                    html: `<p>${body}</p><p><a href="https://deluxefitness.app/app?mission=1">Claim your XP</a></p>`,
                   }),
                 });
                 if (res.ok) emailed += 1;
