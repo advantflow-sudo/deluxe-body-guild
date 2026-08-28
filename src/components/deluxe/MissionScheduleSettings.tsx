@@ -89,6 +89,9 @@ export function MissionScheduleSettings() {
     mission_reminder_push: true,
     mission_reminder_email: false,
     timezone: browserZone,
+    quiet_hours_enabled: false,
+    quiet_start_hour: 22,
+    quiet_end_hour: 7,
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
