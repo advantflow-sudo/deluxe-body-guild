@@ -269,7 +269,9 @@ function BadgeGallery() {
           return (
             <button
               key={m.days}
+              id={`badge-${m.days}`}
               type="button"
+              className="scroll-mt-24"
               onClick={() => {
                 haptic("light");
                 setSelected(open ? null : m.days);
