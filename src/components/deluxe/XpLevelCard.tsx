@@ -31,7 +31,7 @@ export function XpLevelCard() {
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      const [{ data: s }, { data: today }, { data: st }] = await Promise.all([
+      const [{ data: s }, { data: st }, { data: today }] = await Promise.all([
         supabase.rpc("get_xp_summary"),
         supabase.rpc("get_xp_streak"),
         supabase
