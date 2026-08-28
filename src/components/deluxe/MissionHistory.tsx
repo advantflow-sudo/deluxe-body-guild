@@ -242,7 +242,7 @@ ${rows()
 
       {days.length === 0 ? (
         <p className="mt-4 text-[11px] text-muted-foreground">
-          No claims logged yet. Complete an action above and your timeline starts today.
+          No claims in this range. Widen the dates, or complete an action above to start today's entry.
         </p>
       ) : (
         <ol className="mt-4 space-y-2">
