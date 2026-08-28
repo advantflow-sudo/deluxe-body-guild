@@ -104,6 +104,7 @@ function HomeTab() {
       <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">Good day, {name}.</h1>
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
       <DailyMissionCard />
+      <DailyXpMission />
 
       {/* Target Your Body — signature feature */}
       <Link to="/app/body" className="mt-4 block border border-gold/40 bg-gradient-to-br from-deluxe-forest/40 to-deluxe-black p-5 transition hover:border-gold sm:p-6">
