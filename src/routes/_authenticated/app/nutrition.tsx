@@ -454,10 +454,11 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
         ))}
       </div>
 
-      {plan && (
-        <WeeklyNutritionSummary refreshKey={loggedCount} />
+      <WeeklyNutritionSummary refreshKey={loggedCount} />
 
-      <div className="mt-5 flex flex-wrap gap-2">
+      {plan && (
+        <div className="mt-5 flex flex-wrap gap-2">
+
           <OutlineButton onClick={generate} disabled={generating}>
             {generating ? "Rebuilding…" : "Rebuild plan"}
           </OutlineButton>
