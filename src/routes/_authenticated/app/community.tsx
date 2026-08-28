@@ -329,20 +329,30 @@ function CommunityTab() {
       <h1 className="mt-2 font-display text-3xl text-foreground">The Feed</h1>
       <p className="mt-1 text-xs text-muted-foreground">Share milestones, photos, and inspiration.</p>
 
+      <CommunityStories items={stories} onCreate={() => composerRef.current?.focus()} />
+
+      <CommunityTabBar active={tab} onSelect={setTab} />
+
       <SuggestedMembers />
 
-
-
-      {/* Composer */}
+      {/* Quick create */}
       <form onSubmit={submit} className="mt-6 border border-gold/20 bg-deluxe-forest/20 p-4">
+        <QuickCreate value={postType} onChange={setPostType} />
         <textarea
+          ref={composerRef}
           value={body}
           onChange={(e) => setBody(e.target.value)}
           maxLength={2000}
-          placeholder="What did you crush today?"
+          placeholder={activeType.placeholder}
           rows={3}
-          className="w-full resize-none border-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          className="mt-3 w-full resize-none border-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
+        {postType === "photo" && !imagePreview && (
+          <p className="text-[10px] text-muted-foreground">
+            Progress photos post to your chosen audience only — premium keeps it members-only.
+          </p>
+        )}
+
         {imagePreview && (
           <div className="relative mt-2 inline-block">
             <img src={imagePreview} alt="" className="max-h-48 rounded border border-gold/20" />
