@@ -58,6 +58,20 @@ function CommunityTab() {
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [focusCommentId, setFocusCommentId] = useState<string | null>(null);
   const scrolledRef = useRef(false);
+  const composerRef = useRef<HTMLTextAreaElement | null>(null);
+  const [tab, setTab] = useState<CommunityTab>("feed");
+  const [postType, setPostType] = useState<PostType>("workout");
+  const [following, setFollowing] = useState<Set<string>>(new Set());
+  const activeType = POST_TYPES.find((t) => t.id === postType) ?? POST_TYPES[0];
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("user_followers")
+      .select("followed_id")
+      .eq("follower_id", user.id)
+      .then(({ data }) => setFollowing(new Set((data ?? []).map((r) => r.followed_id))));
+  }, [user]);
 
   const load = async () => {
     setLoading(true);
