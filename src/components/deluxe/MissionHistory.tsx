@@ -68,13 +68,21 @@ export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
         d.items.push(r);
         map.set(r.event_date, d);
       }
-      setDays([...map.values()]);
+      setAllDays([...map.values()]);
       setLoading(false);
     })();
   }, [user, refreshKey]);
 
+  const bounds =
+    range === "custom"
+      ? { start: from <= to ? from : to, end: from <= to ? to : from }
+      : { start: iso(Number(range) - 1), end: iso(0) };
+
+  const days = allDays.filter((d) => d.date >= bounds.start && d.date <= bounds.end);
+
   const perfect = days.filter((d) => d.total >= 100).length;
   const lifetime = days.reduce((s, d) => s + d.total, 0);
+  const rangeLabel = `${bounds.start} → ${bounds.end}`;
 
   function rows() {
     return days.map((d) => ({
