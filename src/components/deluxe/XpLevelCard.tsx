@@ -3,6 +3,7 @@ import { Zap, Trophy, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { StreakBadges } from "@/components/deluxe/StreakBadges";
 
 type Summary = {
   total_xp: number;
@@ -103,6 +104,13 @@ export function XpLevelCard() {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-4 border-t border-gold/10 pt-3">
+          <div className="text-[9px] uppercase tracking-[0.22em] text-gold">Streak badges</div>
+          <div className="mt-2">
+            <StreakBadges current={streak.current_streak} best={streak.longest_streak} />
+          </div>
         </div>
       </div>
     </div>

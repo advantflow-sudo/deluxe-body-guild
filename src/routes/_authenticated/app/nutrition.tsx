@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { PremiumGate } from "@/components/deluxe/PremiumGate";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
+import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSummary";
 import { haptic } from "@/hooks/useHaptics";
 
 export const Route = createFileRoute("/_authenticated/app/nutrition")({
@@ -319,6 +320,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
   };
 
   const eaten = (plan?.meals ?? []).filter((m) => m.logged);
+  const loggedCount = eaten.length;
   const proteinSoFar = eaten.reduce((s, m) => s + Number(m.protein_g ?? 0), 0);
 
   if (loading) {
@@ -452,8 +454,11 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
         ))}
       </div>
 
+      <WeeklyNutritionSummary refreshKey={loggedCount} />
+
       {plan && (
         <div className="mt-5 flex flex-wrap gap-2">
+
           <OutlineButton onClick={generate} disabled={generating}>
             {generating ? "Rebuilding…" : "Rebuild plan"}
           </OutlineButton>
