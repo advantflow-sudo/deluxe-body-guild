@@ -21,6 +21,9 @@ interface Ext {
   reminder_morning_hour: number | null; reminder_evening_hour: number | null;
   weekly_recap_enabled: boolean; timezone: string;
   country: string | null;
+  mission_reminder_enabled: boolean;
+  mission_reminder_hour: number | null;
+  mission_reminder_email: boolean;
 }
 
 const COUNTRIES = ["United Kingdom","United States","Canada","Ireland","Australia","New Zealand","France","Germany","Spain","Italy","Netherlands","Belgium","Switzerland","Sweden","Norway","Denmark","Portugal","Poland","United Arab Emirates","Saudi Arabia","Qatar","Singapore","Hong Kong","Japan","South Korea","India","Brazil","Mexico","Argentina","South Africa","Nigeria","Kenya","Other"];
@@ -74,6 +77,9 @@ function ProfileTab() {
         weekly_recap_enabled: ext.weekly_recap_enabled,
         timezone: ext.timezone,
         country: ext.country,
+        mission_reminder_enabled: ext.mission_reminder_enabled,
+        mission_reminder_hour: ext.mission_reminder_hour ?? 18,
+        mission_reminder_email: ext.mission_reminder_email,
       }).eq("user_id", user.id),
     ]);
     setSaving(false);
@@ -215,6 +221,32 @@ function ProfileTab() {
               onChange={(v) => setExt({ ...ext, reminder_morning_hour: v ? Math.max(0, Math.min(23, parseInt(v))) : null })} />
             <Field label="Evening reminder (h, 0-23)" type="number" value={String(ext.reminder_evening_hour ?? 20)}
               onChange={(v) => setExt({ ...ext, reminder_evening_hour: v ? Math.max(0, Math.min(23, parseInt(v))) : null })} />
+            <Field label="Mission reminder (h, 0-23)" type="number" value={String(ext.mission_reminder_hour ?? 18)}
+              onChange={(v) => setExt({ ...ext, mission_reminder_hour: v ? Math.max(0, Math.min(23, parseInt(v))) : null })} />
+          </div>
+        )}
+        {ext && (
+          <div className="space-y-1">
+            <Row icon={Bell} label="Remind me to claim my 100 XP" onClick={async () => {
+              if (!user) return;
+              const next = !ext.mission_reminder_enabled;
+              setExt({ ...ext, mission_reminder_enabled: next });
+              const { error } = await supabase.from("user_profiles_ext").update({ mission_reminder_enabled: next }).eq("user_id", user.id);
+              if (error) { setExt({ ...ext, mission_reminder_enabled: !next }); toast.error("Couldn't update"); }
+            }}
+              right={<span className={`h-5 w-9 rounded-full transition ${ext.mission_reminder_enabled ? "bg-gold" : "bg-gold/20"} relative`}>
+                <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${ext.mission_reminder_enabled ? "left-4" : "left-0.5"}`} />
+              </span>} />
+            <Row icon={Bell} label="Also email me the reminder" onClick={async () => {
+              if (!user) return;
+              const next = !ext.mission_reminder_email;
+              setExt({ ...ext, mission_reminder_email: next });
+              const { error } = await supabase.from("user_profiles_ext").update({ mission_reminder_email: next }).eq("user_id", user.id);
+              if (error) { setExt({ ...ext, mission_reminder_email: !next }); toast.error("Couldn't update"); }
+            }}
+              right={<span className={`h-5 w-9 rounded-full transition ${ext.mission_reminder_email ? "bg-gold" : "bg-gold/20"} relative`}>
+                <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-deluxe-black transition-all ${ext.mission_reminder_email ? "left-4" : "left-0.5"}`} />
+              </span>} />
           </div>
         )}
       </div>
