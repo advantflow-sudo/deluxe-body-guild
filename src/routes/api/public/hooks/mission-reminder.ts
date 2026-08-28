@@ -71,6 +71,11 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
                   .from("push_subscriptions")
                   .update({ last_used_at: new Date().toISOString() })
                   .eq("id", sub.id);
+                await admin.from("reminder_deliveries").insert({
+                  user_id: row.user_id,
+                  channel: "push",
+                  claimed_xp_at_send: Number(row.claimed_xp ?? 0),
+                });
               }
             } catch {
               // Delivery failures must never break the batch.
