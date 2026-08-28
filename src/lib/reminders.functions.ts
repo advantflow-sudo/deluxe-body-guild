@@ -82,6 +82,12 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
       }
     }
 
+    const logs: { user_id: string; channel: string; is_test: boolean }[] = [];
+    if (!nErr) logs.push({ user_id: userId, channel: "in_app", is_test: true });
+    for (let i = 0; i < pushed; i++) logs.push({ user_id: userId, channel: "push", is_test: true });
+    if (emailed) logs.push({ user_id: userId, channel: "email", is_test: true });
+    if (logs.length > 0) await supabaseAdmin.from("reminder_deliveries").insert(logs);
+
     return {
       inApp: !nErr,
       pushed,

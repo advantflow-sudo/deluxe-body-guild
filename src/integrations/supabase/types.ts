@@ -1102,6 +1102,39 @@ export type Database = {
         }
         Relationships: []
       }
+      reminder_deliveries: {
+        Row: {
+          channel: string
+          claimed_xp_at_send: number
+          created_at: string
+          id: string
+          is_test: boolean
+          kind: string
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          channel: string
+          claimed_xp_at_send?: number
+          created_at?: string
+          id?: string
+          is_test?: boolean
+          kind?: string
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          channel?: string
+          claimed_xp_at_send?: number
+          created_at?: string
+          id?: string
+          is_test?: boolean
+          kind?: string
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       reward_claims: {
         Row: {
           claimed_at: string
@@ -1506,6 +1539,9 @@ export type Database = {
           notifications_enabled: boolean
           onboarded_at: string | null
           preferred_type: string | null
+          quiet_end_hour: number
+          quiet_hours_enabled: boolean
+          quiet_start_hour: number
           reminder_evening_hour: number | null
           reminder_goals_enabled: boolean
           reminder_goals_hour: number | null
@@ -1538,6 +1574,9 @@ export type Database = {
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
+          quiet_end_hour?: number
+          quiet_hours_enabled?: boolean
+          quiet_start_hour?: number
           reminder_evening_hour?: number | null
           reminder_goals_enabled?: boolean
           reminder_goals_hour?: number | null
@@ -1570,6 +1609,9 @@ export type Database = {
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
+          quiet_end_hour?: number
+          quiet_hours_enabled?: boolean
+          quiet_start_hour?: number
           reminder_evening_hour?: number | null
           reminder_goals_enabled?: boolean
           reminder_goals_hour?: number | null
@@ -2121,6 +2163,17 @@ export type Database = {
         }
       }
       get_mission_xp_today: { Args: never; Returns: Json }
+      get_reminder_history: {
+        Args: { _limit?: number }
+        Returns: {
+          channel: string
+          claimed_after: boolean
+          id: string
+          is_test: boolean
+          kind: string
+          sent_at: string
+        }[]
+      }
       get_xp_streak: { Args: never; Returns: Json }
       get_xp_summary: { Args: never; Returns: Json }
       has_role: {

@@ -42,7 +42,14 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
             kind: "mission_ready",
             body,
           });
-          if (!nErr) notified += 1;
+          if (!nErr) {
+            notified += 1;
+            await admin.from("reminder_deliveries").insert({
+              user_id: row.user_id,
+              channel: "in_app",
+              claimed_xp_at_send: Number(row.claimed_xp ?? 0),
+            });
+          }
 
           // Web Push — only rows created by a real browser subscription.
           const { data: subs } = row.push_opt_in === false ? { data: [] } : await admin
@@ -64,6 +71,11 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
                   .from("push_subscriptions")
                   .update({ last_used_at: new Date().toISOString() })
                   .eq("id", sub.id);
+                await admin.from("reminder_deliveries").insert({
+                  user_id: row.user_id,
+                  channel: "push",
+                  claimed_xp_at_send: Number(row.claimed_xp ?? 0),
+                });
               }
             } catch {
               // Delivery failures must never break the batch.
@@ -88,7 +100,14 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
                     html: `<p>${body}</p><p><a href="https://deluxefitness.app/app?mission=1">Claim your XP</a></p>`,
                   }),
                 });
-                if (res.ok) emailed += 1;
+                if (res.ok) {
+                  emailed += 1;
+                  await admin.from("reminder_deliveries").insert({
+                    user_id: row.user_id,
+                    channel: "email",
+                    claimed_xp_at_send: Number(row.claimed_xp ?? 0),
+                  });
+                }
               } catch {
                 // Email is a best-effort channel.
               }

@@ -28,11 +28,26 @@ function label(date: string) {
   return d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
 }
 
+const RANGES = [
+  { value: "7", label: "7 days" },
+  { value: "30", label: "30 days" },
+  { value: "90", label: "90 days" },
+  { value: "custom", label: "Custom" },
+] as const;
+type RangeValue = (typeof RANGES)[number]["value"];
+
+function iso(offsetDays: number) {
+  return new Date(Date.now() - offsetDays * 86400000).toISOString().slice(0, 10);
+}
+
 export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
   const { user } = useAuth();
-  const [days, setDays] = useState<Day[]>([]);
+  const [allDays, setAllDays] = useState<Day[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState<string | null>(null);
+  const [range, setRange] = useState<RangeValue>("90");
+  const [from, setFrom] = useState(iso(29));
+  const [to, setTo] = useState(iso(0));
 
   useEffect(() => {
     if (!user) return;
@@ -53,13 +68,21 @@ export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
         d.items.push(r);
         map.set(r.event_date, d);
       }
-      setDays([...map.values()]);
+      setAllDays([...map.values()]);
       setLoading(false);
     })();
   }, [user, refreshKey]);
 
+  const bounds =
+    range === "custom"
+      ? { start: from <= to ? from : to, end: from <= to ? to : from }
+      : { start: iso(Number(range) - 1), end: iso(0) };
+
+  const days = allDays.filter((d) => d.date >= bounds.start && d.date <= bounds.end);
+
   const perfect = days.filter((d) => d.total >= 100).length;
   const lifetime = days.reduce((s, d) => s + d.total, 0);
+  const rangeLabel = `${bounds.start} → ${bounds.end}`;
 
   function rows() {
     return days.map((d) => ({
@@ -88,7 +111,7 @@ export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
     const url = URL.createObjectURL(new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" }));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `deluxe-mission-history-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `deluxe-mission-history-${bounds.start}_to_${bounds.end}.csv`;
     a.click();
     URL.revokeObjectURL(url);
     toast.success("CSV downloaded");
@@ -109,7 +132,7 @@ export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
   @media print{body{background:#fff;color:#111}h1{color:#8a6d1f}td,th{border-color:#ccc}.full{color:#8a6d1f}}
 </style></head><body>
 <h1>Mission History</h1>
-<p class="meta">Deluxe Fitness · ${perfect} perfect 100 XP days · ${lifetime.toLocaleString()} mission XP · last 90 days · generated ${new Date().toLocaleString()}</p>
+<p class="meta">Deluxe Fitness · ${perfect} perfect 100 XP days · ${lifetime.toLocaleString()} mission XP · ${rangeLabel} · generated ${new Date().toLocaleString()}</p>
 <table><thead><tr><th>Date</th><th>XP</th><th>Actions included</th><th>Missing</th></tr></thead><tbody>
 ${rows()
   .map(
@@ -143,9 +166,62 @@ ${rows()
       <div className="mt-3 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.18em]">
         <span className="border border-gold/30 px-2.5 py-1 text-gold">{perfect} perfect 100 XP days</span>
         <span className="border border-gold/15 px-2.5 py-1 text-muted-foreground">
-          {lifetime.toLocaleString()} mission XP · last 90 days
+          {lifetime.toLocaleString()} mission XP · {rangeLabel}
         </span>
       </div>
+
+      <fieldset className="mt-3">
+        <legend className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Date range</legend>
+        <div className="mt-1 flex flex-wrap gap-2">
+          {RANGES.map((r) => {
+            const active = range === r.value;
+            return (
+              <button
+                key={r.value}
+                type="button"
+                aria-pressed={active}
+                onClick={() => {
+                  haptic("selection");
+                  setRange(r.value);
+                }}
+                className={`min-h-10 border px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] transition ${
+                  active ? "border-gold/60 bg-gold/12 text-gold" : "border-gold/15 text-muted-foreground hover:text-gold"
+                }`}
+              >
+                {r.label}
+              </button>
+            );
+          })}
+        </div>
+        {range === "custom" && (
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            <label className="block">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">From</span>
+              <input
+                type="date"
+                value={from}
+                max={to}
+                onChange={(e) => setFrom(e.target.value)}
+                className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none"
+              />
+            </label>
+            <label className="block">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">To</span>
+              <input
+                type="date"
+                value={to}
+                min={from}
+                onChange={(e) => setTo(e.target.value)}
+                className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none"
+              />
+            </label>
+          </div>
+        )}
+        <p className="mt-2 text-[10px] text-muted-foreground">
+          Exports include only the {days.length} day{days.length === 1 ? "" : "s"} in this range.
+        </p>
+      </fieldset>
+
 
       <div className="mt-3 flex flex-wrap gap-2">
         <button
@@ -166,7 +242,7 @@ ${rows()
 
       {days.length === 0 ? (
         <p className="mt-4 text-[11px] text-muted-foreground">
-          No claims logged yet. Complete an action above and your timeline starts today.
+          No claims in this range. Widen the dates, or complete an action above to start today's entry.
         </p>
       ) : (
         <ol className="mt-4 space-y-2">

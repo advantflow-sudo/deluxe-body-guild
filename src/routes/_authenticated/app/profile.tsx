@@ -12,6 +12,7 @@ import { haptic } from "@/hooks/useHaptics";
 import { useServerFn } from "@tanstack/react-start";
 import { sendTestMissionReminder } from "@/lib/reminders.functions";
 import { MissionScheduleSettings } from "@/components/deluxe/MissionScheduleSettings";
+import { ReminderHistory } from "@/components/deluxe/ReminderHistory";
 
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
@@ -49,6 +50,7 @@ function ProfileTab() {
   const [points, setPoints] = useState(0);
   const [sub, setSub] = useState<Sub | null>(null);
   const [testing, setTesting] = useState(false);
+  const [reminderKey, setReminderKey] = useState(0);
   const sendTest = useServerFn(sendTestMissionReminder);
 
 
@@ -243,6 +245,7 @@ function ProfileTab() {
               if (r.pushPending) parts.push(`${r.pushPending} device needs push re-enable`);
               if (r.emailRequested) parts.push(r.emailed ? "email sent" : "email not sent (delivery not configured)");
               toast.success(parts.length ? parts.join(" · ") : "Test reminder queued");
+              setReminderKey((k) => k + 1);
             } catch {
               toast.error("Couldn't send the test reminder");
             } finally {
@@ -257,6 +260,7 @@ function ProfileTab() {
         <p className="text-[10px] text-muted-foreground">
           Sends a reminder right now to every channel you have enabled so you can confirm it arrives.
         </p>
+        <ReminderHistory refreshKey={reminderKey} />
       </div>
 
 
