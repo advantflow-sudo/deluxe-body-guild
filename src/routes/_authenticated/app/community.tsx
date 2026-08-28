@@ -12,6 +12,9 @@ import { SuggestedMembers } from "@/components/deluxe/SuggestedMembers";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
 import { useConfirm } from "@/components/deluxe/ConfirmDialog";
+import { CommunityTabBar, type CommunityTab } from "@/components/deluxe/CommunityTabBar";
+import { CommunityStories, type StoryItem } from "@/components/deluxe/CommunityStories";
+import { QuickCreate, POST_TYPES, type PostType } from "@/components/deluxe/QuickCreate";
 
 const MUTE_KEY = "df_muted_posts_v1";
 const REPORT_KEY = "df_reported_posts_v1";
@@ -58,6 +61,20 @@ function CommunityTab() {
   const [menuFor, setMenuFor] = useState<string | null>(null);
   const [focusCommentId, setFocusCommentId] = useState<string | null>(null);
   const scrolledRef = useRef(false);
+  const composerRef = useRef<HTMLTextAreaElement | null>(null);
+  const [tab, setTab] = useState<CommunityTab>("feed");
+  const [postType, setPostType] = useState<PostType>("workout");
+  const [following, setFollowing] = useState<Set<string>>(new Set());
+  const activeType = POST_TYPES.find((t) => t.id === postType) ?? POST_TYPES[0];
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("user_followers")
+      .select("followed_id")
+      .eq("follower_id", user.id)
+      .then(({ data }) => setFollowing(new Set((data ?? []).map((r) => r.followed_id))));
+  }, [user]);
 
   const load = async () => {
     setLoading(true);
@@ -210,7 +227,10 @@ function CommunityTab() {
   }, [searchStr]);
 
   const filteredPosts = useMemo(() => {
-    const base = posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id));
+    let base = posts.filter((p) => !muted.has(p.user_id) && !reported.has(p.id));
+    if (tab === "following") {
+      base = base.filter((p) => following.has(p.user_id) || p.user_id === user?.id);
+    }
     if (activeTag) {
       const needle = `#${activeTag}`;
       return base.filter((p) => p.body.toLowerCase().includes(needle));
@@ -223,7 +243,25 @@ function CommunityTab() {
       });
     }
     return base;
-  }, [posts, muted, reported, activeTag, activeUser]);
+  }, [posts, muted, reported, activeTag, activeUser, tab, following, user?.id]);
+
+  // Stories rail — most recent poster per member in the last 48h.
+  const stories = useMemo(() => {
+    const seen = new Map<string, StoryItem>();
+    const cutoff = Date.now() - 48 * 60 * 60 * 1000;
+    for (const p of posts) {
+      if (muted.has(p.user_id) || seen.has(p.user_id)) continue;
+      const ts = new Date(p.created_at).getTime();
+      seen.set(p.user_id, {
+        userId: p.user_id,
+        name: p.profile?.display_name ?? "Member",
+        avatarUrl: p.profile?.avatar_url ?? null,
+        preview: p.image_url,
+        fresh: ts >= cutoff,
+      });
+    }
+    return Array.from(seen.values()).slice(0, 15);
+  }, [posts, muted]);
 
   const muteUser = async (post: Post) => {
     const ok = await confirmDialog({
@@ -329,20 +367,30 @@ function CommunityTab() {
       <h1 className="mt-2 font-display text-3xl text-foreground">The Feed</h1>
       <p className="mt-1 text-xs text-muted-foreground">Share milestones, photos, and inspiration.</p>
 
+      <CommunityStories items={stories} onCreate={() => composerRef.current?.focus()} />
+
+      <CommunityTabBar active={tab} onSelect={setTab} />
+
       <SuggestedMembers />
 
-
-
-      {/* Composer */}
+      {/* Quick create */}
       <form onSubmit={submit} className="mt-6 border border-gold/20 bg-deluxe-forest/20 p-4">
+        <QuickCreate value={postType} onChange={setPostType} />
         <textarea
+          ref={composerRef}
           value={body}
           onChange={(e) => setBody(e.target.value)}
           maxLength={2000}
-          placeholder="What did you crush today?"
+          placeholder={activeType.placeholder}
           rows={3}
-          className="w-full resize-none border-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          className="mt-3 w-full resize-none border-0 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
         />
+        {postType === "photo" && !imagePreview && (
+          <p className="text-[10px] text-muted-foreground">
+            Progress photos post to your chosen audience only — premium keeps it members-only.
+          </p>
+        )}
+
         {imagePreview && (
           <div className="relative mt-2 inline-block">
             <img src={imagePreview} alt="" className="max-h-48 rounded border border-gold/20" />

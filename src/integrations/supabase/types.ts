@@ -655,6 +655,54 @@ export type Database = {
         }
         Relationships: []
       }
+      meal_plans: {
+        Row: {
+          carbs_target_g: number
+          created_at: string
+          fat_target_g: number
+          id: string
+          kcal_target: number
+          meals: Json
+          notes: string | null
+          plan_date: string
+          protein_target_g: number
+          updated_at: string
+          user_id: string
+          water_target_ml: number
+          weight_basis: string
+        }
+        Insert: {
+          carbs_target_g?: number
+          created_at?: string
+          fat_target_g?: number
+          id?: string
+          kcal_target?: number
+          meals?: Json
+          notes?: string | null
+          plan_date?: string
+          protein_target_g?: number
+          updated_at?: string
+          user_id: string
+          water_target_ml?: number
+          weight_basis?: string
+        }
+        Update: {
+          carbs_target_g?: number
+          created_at?: string
+          fat_target_g?: number
+          id?: string
+          kcal_target?: number
+          meals?: Json
+          notes?: string | null
+          plan_date?: string
+          protein_target_g?: number
+          updated_at?: string
+          user_id?: string
+          water_target_ml?: number
+          weight_basis?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           actor_id: string | null
@@ -1881,6 +1929,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      award_mission_xp: { Args: { _reason: string }; Returns: Json }
       award_points: {
         Args: { _delta: number; _reason: string }
         Returns: number
@@ -1999,6 +2048,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_mission_xp_today: { Args: never; Returns: Json }
       get_xp_summary: { Args: never; Returns: Json }
       has_role: {
         Args: {
@@ -2036,6 +2086,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      revoke_mission_xp: { Args: { _reason: string }; Returns: Json }
       touch_streak: {
         Args: never
         Returns: {
