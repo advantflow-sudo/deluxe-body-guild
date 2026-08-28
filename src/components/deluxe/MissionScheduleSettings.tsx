@@ -278,8 +278,94 @@ export function MissionScheduleSettings() {
         ))}
       </ul>
 
+      <div className="mt-3 border border-gold/15 bg-deluxe-black/30 p-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <MoonStar className="h-4 w-4 shrink-0 text-gold" aria-hidden />
+            <div className="min-w-0">
+              <div className="text-sm text-foreground">Quiet hours</div>
+              <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                Never nudge me while I sleep
+              </div>
+            </div>
+          </div>
+          <Switch
+            checked={sched.quiet_hours_enabled}
+            disabled={loading}
+            onCheckedChange={(v) => {
+              haptic("selection");
+              void save({ quiet_hours_enabled: v });
+            }}
+            aria-label="Enable quiet hours"
+          />
+        </div>
+        {sched.quiet_hours_enabled && (
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {(
+              [
+                { key: "quiet_start_hour" as const, label: "Quiet from", value: sched.quiet_start_hour },
+                { key: "quiet_end_hour" as const, label: "Quiet until", value: sched.quiet_end_hour },
+              ]
+            ).map((f) => (
+              <label key={f.key} className="block">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{f.label}</span>
+                <select
+                  value={f.value}
+                  disabled={loading}
+                  onChange={(e) => void save({ [f.key]: parseInt(e.target.value, 10) } as Partial<Schedule>)}
+                  className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none disabled:opacity-50"
+                >
+                  {Array.from({ length: 24 }).map((_, h) => (
+                    <option key={h} value={h}>
+                      {String(h).padStart(2, "0")}:00
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 border border-gold/15 bg-deluxe-black/30 p-3">
+        <div className="flex items-center gap-2">
+          <BellRing className="h-3.5 w-3.5 text-gold" aria-hidden />
+          <SectionLabel>Next reminders</SectionLabel>
+        </div>
+        {upcoming.length === 0 ? (
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            {sched.mission_reminder_enabled
+              ? "Your reminder time falls inside quiet hours, so nothing is scheduled. Move the time or narrow quiet hours."
+              : "Reminders are switched off, so nothing is scheduled."}
+          </p>
+        ) : (
+          <ul className="mt-2 space-y-1.5">
+            {upcoming.map((u) => (
+              <li key={u} className="flex flex-wrap items-center gap-2 text-[11px] text-foreground">
+                <span>{u}</span>
+                <span className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">{sched.timezone}</span>
+                {sched.mission_reminder_push && (
+                  <span className="border border-gold/25 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.16em] text-gold">
+                    Push
+                  </span>
+                )}
+                {sched.mission_reminder_email && (
+                  <span className="border border-gold/25 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.16em] text-gold">
+                    Email
+                  </span>
+                )}
+                {!sched.mission_reminder_push && !sched.mission_reminder_email && (
+                  <span className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">In-app only</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
       <p className="mt-3 text-[10px] text-muted-foreground">
-        Reminders only fire when today's 100 XP is still unclaimed, and open straight to your mission.
+        Reminders only fire when today's 100 XP is still unclaimed, skip your quiet hours, and open straight to your
+        mission.
       </p>
     </section>
   );
