@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Zap, Trophy } from "lucide-react";
+import { Zap, Trophy, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
@@ -26,20 +26,23 @@ export function XpLevelCard() {
   const { user } = useAuth();
   const [summary, setSummary] = useState<Summary | null>(null);
   const [earned, setEarned] = useState<string[]>([]);
+  const [streak, setStreak] = useState({ current_streak: 0, longest_streak: 0 });
 
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      const [{ data: s }, { data: today }] = await Promise.all([
+      const [{ data: s }, { data: st }, { data: today }] = await Promise.all([
         supabase.rpc("get_xp_summary"),
+        supabase.rpc("get_xp_streak"),
         supabase
           .from("xp_events")
           .select("reason")
           .eq("user_id", user.id)
           .eq("event_date", new Date().toISOString().slice(0, 10)),
       ]);
-      if (s) setSummary(s as unknown as Summary);
       if (today) setEarned(today.map((r) => r.reason));
+      if (s) setSummary(s as unknown as Summary);
+      if (st) setStreak(st as unknown as typeof streak);
     };
     load();
   }, [user]);
@@ -53,8 +56,12 @@ export function XpLevelCard() {
       <div className="mt-3 border border-gold/20 bg-deluxe-forest/25 p-4">
         <div className="flex items-end justify-between gap-3">
           <div className="min-w-0">
-            <div className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.24em] text-gold">
-              <Trophy className="h-3 w-3" /> {summary?.rank ?? "—"}
+            <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] uppercase tracking-[0.24em] text-gold">
+              <span className="inline-flex items-center gap-1.5"><Trophy className="h-3 w-3" /> {summary?.rank ?? "—"}</span>
+              <span className="inline-flex items-center gap-1.5">
+                <Flame className="h-3 w-3" /> {streak.current_streak} day streak
+                <span className="text-muted-foreground">· best {streak.longest_streak}</span>
+              </span>
             </div>
             <div className="mt-1 font-display text-2xl text-foreground">
               {(summary?.total_xp ?? 0).toLocaleString()}

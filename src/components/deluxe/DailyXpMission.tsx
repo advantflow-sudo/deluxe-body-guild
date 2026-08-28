@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, Dumbbell, Droplet, Beef, Sparkles, Undo2, HeartPulse } from "lucide-react";
+import { Check, Dumbbell, Droplet, Beef, Sparkles, Undo2, HeartPulse, Flame, Trophy } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
+import { useConfirm } from "@/components/deluxe/ConfirmDialog";
 
 type Reason = "mission_workout" | "mission_water" | "mission_protein" | "mission_mindset";
 
@@ -44,13 +45,17 @@ export function DailyXpMission() {
   const [waterMl, setWaterMl] = useState(0);
   const [proteinG, setProteinG] = useState(0);
   const [busy, setBusy] = useState<Reason | null>(null);
+  const [claimingAll, setClaimingAll] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [streak, setStreak] = useState({ current_streak: 0, longest_streak: 0, complete_today: false });
+  const confirmDialog = useConfirm();
 
   const load = useCallback(async () => {
     if (!user) return;
     const d = today();
-    const [xpRes, sessions, recovery, stats, nutrition, ext, mission] = await Promise.all([
+    const [xpRes, streakRes, sessions, recovery, stats, nutrition, ext, mission] = await Promise.all([
       supabase.rpc("get_mission_xp_today"),
+      supabase.rpc("get_xp_streak"),
       supabase.from("workout_sessions").select("id").eq("user_id", user.id).gte("completed_at", `${d}T00:00:00Z`),
       supabase.from("recovery_logs").select("id,readiness").eq("user_id", user.id).eq("log_date", d).maybeSingle(),
       supabase.from("daily_stats").select("water_ml").eq("user_id", user.id).eq("stat_date", d).maybeSingle(),
@@ -60,6 +65,7 @@ export function DailyXpMission() {
     ]);
 
     setAwarded((xpRes.data as Partial<Record<Reason, number>>) ?? {});
+    if (streakRes.data) setStreak(streakRes.data as unknown as typeof streak);
 
     const weight = Number(ext.data?.weight_kg ?? 75);
     const target = Math.max(80, Math.round(weight * 1.6));
@@ -103,6 +109,32 @@ export function DailyXpMission() {
     await load();
   };
 
+  const claimAll = async () => {
+    const pending = ACTIONS.filter((a) => evidence[a.reason] && !awarded[a.reason]);
+    if (pending.length === 0) return;
+    const total = pending.reduce((s2, a) => s2 + a.xp, 0);
+    const ok = await confirmDialog({
+      title: `Claim ${total} XP?`,
+      description: `Locking in ${pending.map((p) => p.label.toLowerCase()).join(", ")}. Each action is recorded once for today and can be reversed individually.`,
+      confirmLabel: `Claim ${total} XP`,
+      tone: "default",
+      icon: <Sparkles className="h-5 w-5" />,
+    });
+    if (!ok) return;
+    setClaimingAll(true);
+    for (const a of pending) {
+      const { error } = await supabase.rpc("award_mission_xp", { _reason: a.reason });
+      if (error) {
+        setClaimingAll(false);
+        return toast.error(error.message);
+      }
+    }
+    setClaimingAll(false);
+    haptic("success");
+    await load();
+    toast.success(`+${total} XP claimed — mission logged for today`);
+  };
+
   const earned = ACTIONS.reduce((s, a) => s + (awarded[a.reason] ?? 0), 0);
   const pct = Math.min(100, earned);
 
@@ -124,6 +156,20 @@ export function DailyXpMission() {
           <div className="font-display text-2xl text-gold-gradient">{earned}</div>
           <div className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground">of 100 XP</div>
         </div>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <span className="inline-flex items-center gap-1.5 border border-gold/30 bg-deluxe-black/50 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-gold">
+          <Flame className="h-3.5 w-3.5" /> {streak.current_streak} day XP streak
+        </span>
+        <span className="inline-flex items-center gap-1.5 border border-gold/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          <Trophy className="h-3.5 w-3.5" /> Best {streak.longest_streak}
+        </span>
+        {streak.complete_today && (
+          <span className="inline-flex items-center gap-1.5 bg-gold px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-deluxe-black">
+            <Check className="h-3.5 w-3.5" /> Today secured
+          </span>
+        )}
       </div>
 
       <div className="mt-4 h-1 w-full bg-gold/10">
@@ -190,6 +236,31 @@ export function DailyXpMission() {
           );
         })}
       </ul>
+
+      {(() => {
+        const readyCount = ACTIONS.filter((a) => evidence[a.reason] && !awarded[a.reason]).length;
+        const readyXp = ACTIONS.filter((a) => evidence[a.reason] && !awarded[a.reason]).reduce((s2, a) => s2 + a.xp, 0);
+        if (earned >= 100) {
+          return (
+            <p className="mt-4 border border-gold/30 bg-gold/5 p-3 text-center text-[11px] uppercase tracking-[0.18em] text-gold">
+              Full 100 XP secured — streak extended to {streak.current_streak} days
+            </p>
+          );
+        }
+        return (
+          <button
+            onClick={claimAll}
+            disabled={claimingAll || readyCount === 0}
+            className="mt-4 w-full min-h-12 bg-gold-gradient px-4 text-[11px] font-semibold uppercase tracking-[0.24em] text-deluxe-black transition disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {claimingAll
+              ? "Claiming…"
+              : readyCount === 0
+                ? "Complete an action to claim"
+                : `Claim ${readyXp} XP${readyXp === 100 ? "" : ` (${readyCount} ready)`}`}
+          </button>
+        );
+      })()}
 
       <p className="mt-3 flex items-start gap-2 text-[10px] leading-relaxed text-muted-foreground">
         <HeartPulse className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />
