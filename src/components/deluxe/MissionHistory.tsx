@@ -28,11 +28,26 @@ function label(date: string) {
   return d.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
 }
 
+const RANGES = [
+  { value: "7", label: "7 days" },
+  { value: "30", label: "30 days" },
+  { value: "90", label: "90 days" },
+  { value: "custom", label: "Custom" },
+] as const;
+type RangeValue = (typeof RANGES)[number]["value"];
+
+function iso(offsetDays: number) {
+  return new Date(Date.now() - offsetDays * 86400000).toISOString().slice(0, 10);
+}
+
 export function MissionHistory({ refreshKey = 0 }: { refreshKey?: number }) {
   const { user } = useAuth();
-  const [days, setDays] = useState<Day[]>([]);
+  const [allDays, setAllDays] = useState<Day[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState<string | null>(null);
+  const [range, setRange] = useState<RangeValue>("90");
+  const [from, setFrom] = useState(iso(29));
+  const [to, setTo] = useState(iso(0));
 
   useEffect(() => {
     if (!user) return;
