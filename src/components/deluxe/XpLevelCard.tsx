@@ -3,6 +3,7 @@ import { Zap, Trophy, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { StreakBadges } from "@/components/deluxe/StreakBadges";
 
 type Summary = {
   total_xp: number;

@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Check, Dumbbell, Droplet, Beef, Sparkles, Undo2, HeartPulse, Flame, Trophy } from "lucide-react";
+import { Check, Dumbbell, Droplet, Beef, Sparkles, Undo2, HeartPulse, Flame, Trophy, CircleDashed } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { useConfirm } from "@/components/deluxe/ConfirmDialog";
+import { StreakBadges } from "@/components/deluxe/StreakBadges";
 
 type Reason = "mission_workout" | "mission_water" | "mission_protein" | "mission_mindset";
 
@@ -236,6 +237,52 @@ export function DailyXpMission() {
           );
         })}
       </ul>
+
+      <div className="mt-4 border border-gold/20 bg-deluxe-black/40 p-3">
+        <div className="text-[9px] uppercase tracking-[0.22em] text-gold">Pre-claim readiness</div>
+        <ul className="mt-2 space-y-1.5">
+          {ACTIONS.map((a) => {
+            const done = !!awarded[a.reason];
+            const ready = evidence[a.reason];
+            const missing =
+              a.reason === "mission_water"
+                ? `${Math.max(0, 2000 - waterMl)} ml of water to go`
+                : a.reason === "mission_protein"
+                  ? `${Math.max(0, proteinTarget - Math.round(proteinG))} g of protein to go`
+                  : a.reason === "mission_workout"
+                    ? "Log a workout or recovery check-in"
+                    : "Complete today's mindset check-in";
+            return (
+              <li key={`ready-${a.reason}`} className="flex items-center gap-2 text-[11px]">
+                <span
+                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[8px] ${
+                    done || ready ? "bg-gold text-deluxe-black" : "border border-gold/25 text-muted-foreground"
+                  }`}
+                >
+                  {done || ready ? <Check className="h-2.5 w-2.5" /> : <CircleDashed className="h-2.5 w-2.5" />}
+                </span>
+                <span className={done || ready ? "text-foreground" : "text-muted-foreground"}>
+                  {done ? `${a.label} — claimed` : ready ? `${a.label} — ready to claim` : missing}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="mt-2 text-[10px] text-muted-foreground">
+          {ACTIONS.every((a) => awarded[a.reason])
+            ? "Everything claimed for today."
+            : ACTIONS.every((a) => evidence[a.reason] || awarded[a.reason])
+              ? "All four requirements met — the full 100 XP is available."
+              : `${ACTIONS.filter((a) => !evidence[a.reason] && !awarded[a.reason]).length} requirement(s) still outstanding before a full 100 XP day.`}
+        </p>
+      </div>
+
+      <div className="mt-4">
+        <div className="text-[9px] uppercase tracking-[0.22em] text-gold">Streak badges</div>
+        <div className="mt-2">
+          <StreakBadges current={streak.current_streak} best={streak.longest_streak} />
+        </div>
+      </div>
 
       {(() => {
         const readyCount = ACTIONS.filter((a) => evidence[a.reason] && !awarded[a.reason]).length;

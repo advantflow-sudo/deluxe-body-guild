@@ -15,6 +15,7 @@ import { formatGoal } from "@/lib/format";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
 import { DailyMissionCard } from "@/components/deluxe/DailyMissionCard";
+import { MissionHistory } from "@/components/deluxe/MissionHistory";
 import { DailyXpMission } from "@/components/deluxe/DailyXpMission";
 import { DeluxeScoreBreakdown } from "@/components/deluxe/DeluxeScoreBreakdown";
 import { WaterTracker } from "@/components/deluxe/WaterTracker";
@@ -106,6 +107,7 @@ function HomeTab() {
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
       <DailyMissionCard />
       <DailyXpMission />
+      <MissionHistory />
 
       {/* Target Your Body — signature feature */}
       <Link to="/app/body" className="mt-4 block border border-gold/40 bg-gradient-to-br from-deluxe-forest/40 to-deluxe-black p-5 transition hover:border-gold sm:p-6">
