@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { PremiumGate } from "@/components/deluxe/PremiumGate";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSummary";
+import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
 import { haptic } from "@/hooks/useHaptics";
 
 export const Route = createFileRoute("/_authenticated/app/nutrition")({
