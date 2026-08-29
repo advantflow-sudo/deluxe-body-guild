@@ -120,6 +120,7 @@ function NutritionTab() {
   const [asking, setAsking] = useState(false);
   const [saved, setSaved] = useState<any[]>([]);
   const [savingPlan, setSavingPlan] = useState(false);
+  const [logTick, setLogTick] = useState(0);
 
   const load = useCallback(async () => {
     if (!user) return;
