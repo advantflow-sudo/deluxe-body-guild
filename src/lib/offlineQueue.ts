@@ -17,6 +17,9 @@ type NutritionInsertOp = {
   date: string;
   meal_label: string;
   calories: number;
+  protein_g?: number;
+  carbs_g?: number;
+  fat_g?: number;
 };
 type NutritionDeleteOp = { kind: "nutritionDelete"; id: string; userId: string };
 type HabitToggleOp = {
