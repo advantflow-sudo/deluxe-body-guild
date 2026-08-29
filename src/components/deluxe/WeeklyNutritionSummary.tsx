@@ -87,13 +87,17 @@ export function WeeklyNutritionSummary({ refreshKey = 0 }: { refreshKey?: number
 
   const loggedDays = byDay.filter((d) => d.meals > 0).length;
   const maxKcal = Math.max(targets.kcal, ...byDay.map((d) => d.kcal), 1);
+  const paceDays = Math.max(1, loggedDays);
 
   const metrics = [
-    { key: "kcal", label: "Calories", value: totals.kcal, goal: targets.kcal * 7, unit: "kcal" },
-    { key: "protein", label: "Protein", value: totals.protein, goal: targets.protein * 7, unit: "g" },
-    { key: "carbs", label: "Carbs", value: totals.carbs, goal: targets.carbs * 7, unit: "g" },
-    { key: "fat", label: "Fats", value: totals.fat, goal: targets.fat * 7, unit: "g" },
+    { key: "kcal", label: "Calories", value: totals.kcal, daily: targets.kcal, unit: "kcal" },
+    { key: "protein", label: "Protein", value: totals.protein, daily: targets.protein, unit: "g" },
+    { key: "carbs", label: "Carbs", value: totals.carbs, daily: targets.carbs, unit: "g" },
+    { key: "fat", label: "Fats", value: totals.fat, daily: targets.fat, unit: "g" },
   ];
+
+  const macrosMissing = totals.kcal > 0 && totals.protein + totals.carbs + totals.fat === 0;
+  const avgProtein = totals.protein / paceDays;
 
   return (
     <section className="mt-6 border border-gold/20 bg-deluxe-forest/12 p-5">
@@ -121,15 +125,18 @@ export function WeeklyNutritionSummary({ refreshKey = 0 }: { refreshKey?: number
 
       <ul className="mt-4 space-y-2.5">
         {metrics.map((m) => {
-          const pct = m.goal > 0 ? Math.min(100, Math.round((m.value / m.goal) * 100)) : 0;
+          const avg = m.value / paceDays;
+          const pct = m.daily > 0 ? Math.min(100, Math.round((avg / m.daily) * 100)) : 0;
           const onTrack = pct >= 85;
           return (
             <li key={m.key}>
               <div className="flex items-baseline justify-between gap-3">
                 <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{m.label}</span>
                 <span className={`text-xs ${onTrack ? "text-gold" : "text-foreground"}`}>
-                  {Math.round(m.value).toLocaleString()} / {Math.round(m.goal).toLocaleString()} {m.unit}
-                  <span className="ml-2 text-[10px] text-muted-foreground">{pct}%</span>
+                  {Math.round(avg).toLocaleString()} / {Math.round(m.daily).toLocaleString()} {m.unit}
+                  <span className="ml-2 text-[10px] text-muted-foreground">
+                    avg/day · {pct}% · {Math.round(m.value).toLocaleString()} {m.unit} total
+                  </span>
                 </span>
               </div>
               <div className="mt-1 h-1 w-full bg-gold/10">
@@ -144,9 +151,13 @@ export function WeeklyNutritionSummary({ refreshKey = 0 }: { refreshKey?: number
       </ul>
 
       <p className="mt-3 text-[10px] leading-relaxed text-muted-foreground">
-        {totals.protein >= targets.protein * 7 * 0.85
-          ? "Protein intake is on target — ideal for lean muscle retention."
-          : "Protein is trailing your weekly goal. Log a high-protein meal today to close the gap."}
+        {loggedDays === 0
+          ? "No meals logged in the last 7 days — log one to start tracking your macros."
+          : macrosMissing
+            ? "Your meals have calories but no macros. Add protein, carbs and fat when logging so these totals are accurate."
+            : avgProtein >= targets.protein * 0.85
+              ? "Protein intake is on target — ideal for lean muscle retention."
+              : "Protein is trailing your daily goal. Log a high-protein meal today to close the gap."}
       </p>
     </section>
   );

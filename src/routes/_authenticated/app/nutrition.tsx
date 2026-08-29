@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { PremiumGate } from "@/components/deluxe/PremiumGate";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSummary";
+import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
 import { haptic } from "@/hooks/useHaptics";
 
 export const Route = createFileRoute("/_authenticated/app/nutrition")({
@@ -119,6 +120,7 @@ function NutritionTab() {
   const [asking, setAsking] = useState(false);
   const [saved, setSaved] = useState<any[]>([]);
   const [savingPlan, setSavingPlan] = useState(false);
+  const [logTick, setLogTick] = useState(0);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -454,11 +456,8 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
         ))}
       </div>
 
-      <WeeklyNutritionSummary refreshKey={loggedCount} />
-
       {plan && (
         <div className="mt-5 flex flex-wrap gap-2">
-
           <OutlineButton onClick={generate} disabled={generating}>
             {generating ? "Rebuilding…" : "Rebuild plan"}
           </OutlineButton>
@@ -470,6 +469,10 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           </OutlineButton>
         </div>
       )}
+
+      <NutritionQuickLog onLogged={() => setLogTick((t) => t + 1)} />
+
+      <WeeklyNutritionSummary refreshKey={loggedCount + logTick} />
 
       {saved.length > 0 && (
         <section className="mt-8">

@@ -17,6 +17,9 @@ type NutritionInsertOp = {
   date: string;
   meal_label: string;
   calories: number;
+  protein_g?: number;
+  carbs_g?: number;
+  fat_g?: number;
 };
 type NutritionDeleteOp = { kind: "nutritionDelete"; id: string; userId: string };
 type HabitToggleOp = {
@@ -61,6 +64,7 @@ async function runOp(op: QueuedOp): Promise<{ ok: boolean; error?: string }> {
     case "nutritionInsert": {
       const { error } = await supabase.from("nutrition_logs").insert({
         user_id: op.userId, log_date: op.date, meal_label: op.meal_label, calories: op.calories,
+        protein_g: op.protein_g ?? 0, carbs_g: op.carbs_g ?? 0, fat_g: op.fat_g ?? 0,
       });
       return error ? { ok: false, error: error.message } : { ok: true };
     }

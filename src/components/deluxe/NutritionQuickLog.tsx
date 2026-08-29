@@ -9,12 +9,23 @@ import { enqueueOrApply, useOnline, useQueueSize } from "@/lib/offlineQueue";
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
-interface MealRow { id: string; meal_label: string | null; calories: number; pending?: boolean }
+interface MealRow {
+  id: string;
+  meal_label: string | null;
+  calories: number;
+  protein_g: number | null;
+  carbs_g: number | null;
+  fat_g: number | null;
+  pending?: boolean;
+}
 
-export function NutritionQuickLog() {
+export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) {
   const { user } = useAuth();
   const [label, setLabel] = useState("");
   const [calories, setCalories] = useState("");
+  const [protein, setProtein] = useState("");
+  const [carbs, setCarbs] = useState("");
+  const [fat, setFat] = useState("");
   const [meals, setMeals] = useState<MealRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -26,12 +37,11 @@ export function NutritionQuickLog() {
     if (!user) return;
     const { data, error } = await supabase
       .from("nutrition_logs")
-      .select("id,meal_label,calories")
+      .select("id,meal_label,calories,protein_g,carbs_g,fat_g")
       .eq("user_id", user.id)
       .eq("log_date", todayIso())
       .order("logged_at", { ascending: false });
     if (error && online) toast.error(error.message);
-    // Preserve any locally-pending rows on top
     setMeals((current) => {
       const pending = current.filter((r) => r.pending);
       return [...pending, ...((data as MealRow[]) ?? [])];
@@ -42,7 +52,6 @@ export function NutritionQuickLog() {
   useEffect(() => { void load(); }, [load]);
   useEffect(() => {
     if (online && queued === 0 && !loading) {
-      // queue drained — clear pending flags
       setMeals((m) => m.filter((r) => !r.pending));
       void load();
     }
@@ -52,13 +61,23 @@ export function NutritionQuickLog() {
     if (!user) return;
     const cal = parseInt(calories, 10);
     if (!cal || cal <= 0) return toast.error("Enter calories");
+    const num = (v: string) => {
+      const n = Number(v);
+      return Number.isFinite(n) && n > 0 ? Math.round(n * 10) / 10 : 0;
+    };
+    const p = num(protein);
+    const c = num(carbs);
+    const f = num(fat);
     const meal_label = label.trim() || "Meal";
     const tempId = `temp-${Date.now()}`;
-    setMeals((m) => [{ id: tempId, meal_label, calories: cal, pending: true }, ...m]);
+    setMeals((m) => [
+      { id: tempId, meal_label, calories: cal, protein_g: p, carbs_g: c, fat_g: f, pending: true },
+      ...m,
+    ]);
     setSaving(true);
     const result = await enqueueOrApply({
       kind: "nutritionInsert", userId: user.id, date: todayIso(),
-      meal_label, calories: cal,
+      meal_label, calories: cal, protein_g: p, carbs_g: c, fat_g: f,
     });
     setSaving(false);
     if (!result.ok) {
@@ -66,11 +85,11 @@ export function NutritionQuickLog() {
       toast.error(`Couldn't log meal: ${result.error}`);
       return;
     }
-    setLabel(""); setCalories("");
+    setLabel(""); setCalories(""); setProtein(""); setCarbs(""); setFat("");
+    onLogged?.();
     if (result.queued) {
       toast("Saved offline — will sync when reconnected", { icon: <CloudOff className="h-4 w-4" /> });
     } else {
-      // Refetch to swap the temp row for the real one
       void load();
     }
   };
@@ -85,24 +104,35 @@ export function NutritionQuickLog() {
     if (!result.ok) {
       setMeals(snapshot);
       toast.error(`Couldn't remove meal: ${result.error}`);
-    } else if (result.queued) {
-      toast("Removed offline — will sync when reconnected", { icon: <CloudOff className="h-4 w-4" /> });
+    } else {
+      onLogged?.();
+      if (result.queued) {
+        toast("Removed offline — will sync when reconnected", { icon: <CloudOff className="h-4 w-4" /> });
+      }
     }
   };
 
-  const total = meals.reduce((s, m) => s + (m.calories ?? 0), 0);
+  const totals = meals.reduce(
+    (s, m) => ({
+      kcal: s.kcal + Number(m.calories ?? 0),
+      protein: s.protein + Number(m.protein_g ?? 0),
+      carbs: s.carbs + Number(m.carbs_g ?? 0),
+      fat: s.fat + Number(m.fat_g ?? 0),
+    }),
+    { kcal: 0, protein: 0, carbs: 0, fat: 0 },
+  );
 
   return (
     <section className="mt-5 border border-gold/20 bg-deluxe-forest/20 p-4 sm:p-5" aria-labelledby="nutrition-heading">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Apple className="h-3.5 w-3.5 text-gold" aria-hidden />
-          <SectionLabel id="nutrition-heading">Nutrition</SectionLabel>
+          <SectionLabel id="nutrition-heading">Quick log</SectionLabel>
           {saving && <Loader2 className="h-3 w-3 animate-spin text-gold/70" aria-label="Saving meal" />}
           {!online && <CloudOff className="h-3 w-3 text-amber-400" aria-label="Offline — entries queued" />}
         </div>
         <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground tabular-nums" aria-live="polite">
-          {total.toLocaleString()} <span className="text-foreground/40">kcal today</span>
+          {totals.kcal.toLocaleString()} <span className="text-foreground/40">kcal today</span>
         </div>
       </div>
 
@@ -138,6 +168,30 @@ export function NutritionQuickLog() {
         </button>
       </div>
 
+      <div className="mt-2 grid grid-cols-3 gap-2">
+        {([
+          ["Protein g", protein, setProtein],
+          ["Carbs g", carbs, setCarbs],
+          ["Fat g", fat, setFat],
+        ] as const).map(([lab, val, set]) => (
+          <Input
+            key={lab}
+            type="number"
+            inputMode="decimal"
+            placeholder={lab}
+            value={val}
+            onChange={(e) => set(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") void add(); }}
+            disabled={saving}
+            aria-label={lab}
+            className="bg-deluxe-black/40 border-gold/20 text-foreground placeholder:text-muted-foreground/60"
+          />
+        ))}
+      </div>
+      <p className="mt-1.5 text-[10px] text-muted-foreground/70">
+        Macros are optional, but adding them keeps your weekly protein, carb and fat totals accurate.
+      </p>
+
       {loading ? (
         <div className="mt-3 space-y-1.5" aria-hidden>
           {Array.from({ length: 2 }).map((_, i) => (
@@ -145,31 +199,43 @@ export function NutritionQuickLog() {
           ))}
         </div>
       ) : meals.length > 0 ? (
-        <ul className="mt-3 space-y-1.5" aria-label="Meals logged today">
-          {meals.map((m) => (
-            <li
-              key={m.id}
-              className={`flex items-center justify-between border border-gold/10 bg-deluxe-black/30 px-3 py-2 text-xs ${m.pending || m.id.startsWith("temp-") ? "opacity-60" : ""}`}
-            >
-              <span className="truncate text-foreground">{m.meal_label || "Meal"}</span>
-              <div className="flex items-center gap-2">
-                {m.pending && <CloudOff className="h-3 w-3 text-amber-400" aria-label="Pending sync" />}
-                <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground tabular-nums">{m.calories} kcal</span>
-                {!m.id.startsWith("temp-") && (
-                  <button
-                    type="button"
-                    onClick={() => remove(m.id)}
-                    disabled={deletingId === m.id}
-                    className="text-muted-foreground/60 hover:text-rose-400 disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70"
-                    aria-label={`Remove ${m.meal_label ?? "meal"}`}
-                  >
-                    {deletingId === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
-                  </button>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="mt-3 space-y-1.5" aria-label="Meals logged today">
+            {meals.map((m) => (
+              <li
+                key={m.id}
+                className={`flex items-center justify-between gap-2 border border-gold/10 bg-deluxe-black/30 px-3 py-2 text-xs ${m.pending || m.id.startsWith("temp-") ? "opacity-60" : ""}`}
+              >
+                <div className="min-w-0">
+                  <div className="truncate text-foreground">{m.meal_label || "Meal"}</div>
+                  <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground tabular-nums">
+                    P {Math.round(Number(m.protein_g ?? 0))}g · C {Math.round(Number(m.carbs_g ?? 0))}g · F {Math.round(Number(m.fat_g ?? 0))}g
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {m.pending && <CloudOff className="h-3 w-3 text-amber-400" aria-label="Pending sync" />}
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground tabular-nums">{m.calories} kcal</span>
+                  {!m.id.startsWith("temp-") && (
+                    <button
+                      type="button"
+                      onClick={() => remove(m.id)}
+                      disabled={deletingId === m.id}
+                      className="text-muted-foreground/60 hover:text-rose-400 disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70"
+                      aria-label={`Remove ${m.meal_label ?? "meal"}`}
+                    >
+                      {deletingId === m.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
+                    </button>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-2 flex justify-end gap-3 text-[10px] uppercase tracking-[0.18em] text-gold tabular-nums">
+            <span>P {Math.round(totals.protein)}g</span>
+            <span>C {Math.round(totals.carbs)}g</span>
+            <span>F {Math.round(totals.fat)}g</span>
+          </div>
+        </>
       ) : (
         <p className="mt-3 text-center text-[11px] uppercase tracking-[0.2em] text-muted-foreground/60">No meals logged yet</p>
       )}
