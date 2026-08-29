@@ -455,11 +455,8 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
         ))}
       </div>
 
-      <WeeklyNutritionSummary refreshKey={loggedCount} />
-
       {plan && (
         <div className="mt-5 flex flex-wrap gap-2">
-
           <OutlineButton onClick={generate} disabled={generating}>
             {generating ? "Rebuilding…" : "Rebuild plan"}
           </OutlineButton>
@@ -471,6 +468,10 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           </OutlineButton>
         </div>
       )}
+
+      <NutritionQuickLog onLogged={() => setLogTick((t) => t + 1)} />
+
+      <WeeklyNutritionSummary refreshKey={loggedCount + logTick} />
 
       {saved.length > 0 && (
         <section className="mt-8">
