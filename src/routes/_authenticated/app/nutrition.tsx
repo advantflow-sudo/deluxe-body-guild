@@ -633,6 +633,12 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           {asking ? "Thinking…" : "Ask"}
         </GoldButton>
         {answer && <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{answer}</p>}
+        {!answer && fallbackAnswer && (
+          <div className="mt-3 border border-gold/25 bg-deluxe-black/50 p-3">
+            <div className="text-[9px] uppercase tracking-[0.22em] text-gold">Deluxe offline guidance</div>
+            <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-foreground">{fallbackAnswer}</p>
+          </div>
+        )}
       </section>
     </div>
   );
