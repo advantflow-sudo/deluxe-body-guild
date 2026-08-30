@@ -1,20 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { CheckCircle2, Circle, Clock, Pause, Play, TimerReset, X } from "lucide-react";
+import { CheckCircle2, Circle, Clock, Pause, Play, PlayCircle, TimerReset, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
+import { exerciseClip, formReference } from "@/config/exercise-media";
 import type { Workout } from "@/components/deluxe/WorkoutDetail";
 
 interface Exercise {
   id: string;
   name: string;
+  slug?: string | null;
   muscle_group: string;
   equipment: string;
   cues: string | null;
   is_premium: boolean;
 }
+
 
 interface BlockExercise {
   id: string;
@@ -169,21 +172,85 @@ export function WorkoutSessionPlayer({
                     <ul className="mt-3 space-y-2">
                       {b.workout_block_exercises.map((be) => {
                         const isDone = completed.has(be.id);
+                        const ex = be.exercises;
+                        const open = openDemo === be.id;
+                        const clip = exerciseClip(ex?.slug ?? ex?.name);
+                        const form = formReference(ex?.name, ex?.muscle_group, b.compartment, b.label);
                         return (
                           <li key={be.id}>
-                            <button
-                              onClick={() => toggleExercise(b, be)}
-                              className={`flex w-full items-center gap-2 border px-3 py-2 text-left text-sm transition ${
-                                isDone ? "border-gold/40 bg-gold/10 text-gold" : "border-gold/10 text-foreground hover:border-gold/30"
+                            <div
+                              className={`flex items-center gap-2 border px-3 py-2 text-sm transition ${
+                                isDone ? "border-gold/40 bg-gold/10 text-gold" : "border-gold/10 text-foreground"
                               }`}
                             >
-                              {isDone ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <Circle className="h-4 w-4 shrink-0 text-muted-foreground" />}
-                              <span className={isDone ? "line-through" : ""}>{be.exercises?.name ?? "Exercise"}</span>
-                            </button>
+                              <button
+                                onClick={() => toggleExercise(b, be)}
+                                className="flex flex-1 items-center gap-2 text-left"
+                              >
+                                {isDone ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <Circle className="h-4 w-4 shrink-0 text-muted-foreground" />}
+                                <span className={isDone ? "line-through" : ""}>{ex?.name ?? "Exercise"}</span>
+                              </button>
+                              <button
+                                onClick={() => { haptic("selection"); setOpenDemo(open ? null : be.id); }}
+                                aria-expanded={open}
+                                aria-label={`${open ? "Hide" : "Show"} demo and form check for ${ex?.name ?? "exercise"}`}
+                                className="flex shrink-0 items-center gap-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground hover:text-gold"
+                              >
+                                <PlayCircle className="h-4 w-4" /> {open ? "Hide" : "Demo"}
+                              </button>
+                            </div>
+
+                            {open && (
+                              <div className="border border-t-0 border-gold/15 bg-deluxe-black/50 p-3">
+                                {clip ? (
+                                  <video
+                                    src={clip}
+                                    poster={form.image}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    preload="metadata"
+                                    aria-label={`${ex?.name ?? "Exercise"} demonstration clip`}
+                                    className="h-44 w-full border border-gold/20 object-cover"
+                                  />
+                                ) : (
+                                  <img
+                                    src={form.image}
+                                    alt={`${form.label} form reference`}
+                                    loading="lazy"
+                                    width={1024}
+                                    height={768}
+                                    className="h-44 w-full border border-gold/20 object-cover"
+                                  />
+                                )}
+                                <div className="mt-3 grid gap-3 sm:grid-cols-[110px_1fr]">
+                                  <img
+                                    src={form.image}
+                                    alt={`${form.label} form check reference`}
+                                    loading="lazy"
+                                    width={1024}
+                                    height={768}
+                                    className="hidden h-24 w-full border border-gold/20 object-cover sm:block"
+                                  />
+                                  <div>
+                                    <div className="text-[10px] uppercase tracking-[0.22em] text-gold">
+                                      Form check · {form.label}
+                                    </div>
+                                    <ul className="mt-2 space-y-1 text-[11px] leading-relaxed text-muted-foreground">
+                                      {(ex?.cues ? [ex.cues, ...form.cues.slice(0, 2)] : form.cues).map((c) => (
+                                        <li key={c}>· {c}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </li>
                         );
                       })}
                     </ul>
+
                   </div>
                 ))}
                 <p className="text-center text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
