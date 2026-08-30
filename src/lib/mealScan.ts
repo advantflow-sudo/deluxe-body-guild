@@ -21,9 +21,8 @@ export const SCAN_FAILURE_COPY: Record<ScanFailure, { title: string; detail: str
   rate_limited: {
     title: "Scanner is rate limited",
     detail: "Too many scans in a short window. Retry in a few seconds — your photo is kept.",
-    detailShort: "Retry shortly.",
     retryable: true,
-  } as never,
+  },
   out_of_credits: {
     title: "AI credits exhausted",
     detail: "The workspace is out of AI credits. Log the meal manually or top up to scan again.",
