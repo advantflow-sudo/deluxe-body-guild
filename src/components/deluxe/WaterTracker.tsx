@@ -5,14 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { enqueueOrApply, useOnline, useQueueSize } from "@/lib/offlineQueue";
+import { useTargets } from "@/hooks/useTargets";
+import { clampPct } from "@/lib/targets";
 
-const TARGET_ML = 3000;
 const STEP_ML = 250;
 const MAX_ML = 8000;
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
 export function WaterTracker() {
   const { user } = useAuth();
+  // Unified hydration target (35 ml/kg or the saved plan's target) — audit M2.
+  const { targets } = useTargets();
+  const targetMl = targets.waterMl;
   const [ml, setMl] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

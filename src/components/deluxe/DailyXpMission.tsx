@@ -69,8 +69,11 @@ export function DailyXpMission() {
     if (streakRes.data) setStreak(streakRes.data as unknown as typeof streak);
 
     const weight = Number(ext.data?.weight_kg ?? 75);
-    const target = Math.max(80, Math.round(weight * 1.6));
+    // Unified targets — same formulas the nutrition plan uses (audit M2).
+    const target = proteinTargetG(weight);
+    const waterTarget = waterTargetMl(weight);
     setProteinTarget(target);
+    setWaterTargetMl(waterTarget);
 
     const water = Number(stats.data?.water_ml ?? 0);
     const protein = (nutrition.data ?? []).reduce((s, r) => s + Number(r.protein_g ?? 0), 0);
@@ -80,7 +83,7 @@ export function DailyXpMission() {
     setEvidence({
       // Planned recovery counts as valid workout progress.
       mission_workout: (sessions.data?.length ?? 0) > 0 || !!recovery.data,
-      mission_water: water >= 2000,
+      mission_water: water >= waterTarget,
       mission_protein: protein >= target,
       mission_mindset: !!mission.data?.completed_at || !!recovery.data,
     });

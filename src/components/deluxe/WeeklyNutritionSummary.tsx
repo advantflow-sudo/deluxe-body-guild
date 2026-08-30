@@ -49,14 +49,9 @@ export function WeeklyNutritionSummary({ refreshKey = 0 }: { refreshKey?: number
           fat: Number(planRes.data.fat_target_g),
         });
       } else {
-        const w = Number(extRes.data?.weight_kg ?? 75);
-        const kcal = Math.round(w * 30);
-        setTargets({
-          kcal,
-          protein: Math.max(80, Math.round(w * 1.6)),
-          carbs: Math.round((kcal * 0.4) / 4),
-          fat: Math.round((kcal * 0.28) / 9),
-        });
+        // Unified fallback targets (audit M2) — same engine as the nutrition plan.
+        const t = fallbackTargets(Number(extRes.data?.weight_kg ?? 75));
+        setTargets({ kcal: t.kcal, protein: t.protein, carbs: t.carbs, fat: t.fat });
       }
       setLoading(false);
     })();
