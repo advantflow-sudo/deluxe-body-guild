@@ -337,7 +337,7 @@ function MealPanel() {
         </Card>
       )}
       <div className="mt-5 border-t border-gold/10 pt-5">
-        <TodayNutritionRings />
+        <TodayNutritionRings key={ringsKey} />
         <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
           Every scanned meal lands here instantly
         </p>
