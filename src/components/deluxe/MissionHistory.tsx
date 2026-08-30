@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
+import { DAILY_XP_AWARDS } from "@/lib/targets";
 
 const REASONS = ["mission_workout", "mission_water", "mission_protein", "mission_mindset"] as const;
 type Reason = (typeof REASONS)[number];

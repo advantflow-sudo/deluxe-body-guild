@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { StreakBadges } from "@/components/deluxe/StreakBadges";
+import { DAILY_XP_AWARDS, XP_RANKS } from "@/lib/targets";
 
 type Summary = {
   total_xp: number;
