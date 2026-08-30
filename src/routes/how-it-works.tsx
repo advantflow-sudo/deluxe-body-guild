@@ -64,7 +64,7 @@ function HowItWorksPage() {
         eyebrow="The Journey"
         title="Five steps."
         highlight="One transformation."
-        body="From download to deluxe — exactly how Deluxe Fitness becomes the operating system for your life."
+        body="From sign-up to deluxe — exactly how Deluxe Fitness becomes the operating system for your life."
       />
 
       <section className="bg-deluxe-black py-20">

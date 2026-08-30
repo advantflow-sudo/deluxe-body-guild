@@ -52,7 +52,7 @@ const services = [
   {
     Icon: Heart,
     title: "Wellbeing & Education",
-    body: "Yoga, pilates, mobility, recovery and mindset content built by certified professionals.",
+    body: "Guided mobility, recovery check-ins, sleep and mindset tools — plus wellbeing reading built into the app.",
   },
   {
     Icon: Users,
