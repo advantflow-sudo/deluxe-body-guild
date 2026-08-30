@@ -54,12 +54,24 @@ interface Plan {
 const today = () => new Date().toISOString().slice(0, 10);
 
 async function streamChat(prompt: string) {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+  if (!token) throw new Error("Your session expired. Please sign in again.");
   const res = await fetch("/api/chat", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
   });
-  if (!res.ok || !res.body) throw new Error("The nutritionist is unavailable right now.");
+  if (!res.ok || !res.body) {
+    if (res.status === 429) throw new Error("Too many requests. Try again in a moment.");
+    if (res.status === 402) throw new Error("AI credits exhausted.");
+    if (res.status === 401) throw new Error("Your session expired. Please sign in again.");
+    throw new Error("The nutritionist is unavailable right now.");
+  }
+
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
