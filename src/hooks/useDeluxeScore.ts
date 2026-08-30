@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { computeTargets } from "@/lib/targets";
 
 export interface ScoreDetails {
   workoutCount: number;
@@ -29,24 +30,24 @@ export interface DeluxeScoreBreakdown {
   details: ScoreDetails;
 }
 
-const TARGETS = {
-  waterMl: 3000,
+// Static parts of the score rubric. Water/calorie targets come from the
+// unified engine (src/lib/targets.ts) per user — no more hardcoded 3000 ml.
+const SCORE = {
   sleepHours: 7.5,
-  calorieMin: 1600,
-  calorieMax: 2800,
   goalSlots: 5,
 };
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 const todayStart = () => `${todayIso()}T00:00:00`;
 
+const FALLBACK = computeTargets(null);
 const EMPTY_DETAILS: ScoreDetails = {
   workoutCount: 0,
-  waterMl: 0, waterTargetMl: TARGETS.waterMl,
-  sleepHours: 0, sleepTargetHours: TARGETS.sleepHours,
+  waterMl: 0, waterTargetMl: FALLBACK.waterMl,
+  sleepHours: 0, sleepTargetHours: SCORE.sleepHours,
   mealCount: 0, totalCalories: 0,
-  calorieMin: TARGETS.calorieMin, calorieMax: TARGETS.calorieMax,
-  goalsCompleted: 0, goalsTotal: 0, goalSlots: TARGETS.goalSlots,
+  calorieMin: Math.round(FALLBACK.kcal * 0.85), calorieMax: Math.round(FALLBACK.kcal * 1.15),
+  goalsCompleted: 0, goalsTotal: 0, goalSlots: SCORE.goalSlots,
 };
 
 export function useDeluxeScore(): DeluxeScoreBreakdown {
@@ -61,13 +62,19 @@ export function useDeluxeScore(): DeluxeScoreBreakdown {
     if (!user) return;
     if (!silent) setState((s) => ({ ...s, refreshing: true }));
     const today = todayIso();
-    const [dailyRes, workoutsRes, nutritionRes, habitsRes, habitLogsRes] = await Promise.all([
+    const [dailyRes, workoutsRes, nutritionRes, habitsRes, habitLogsRes, extRes] = await Promise.all([
       supabase.from("daily_stats").select("water_ml,sleep_hours").eq("user_id", user.id).eq("stat_date", today).maybeSingle(),
       supabase.from("workout_sessions").select("id").eq("user_id", user.id).gte("completed_at", todayStart()),
       supabase.from("nutrition_logs").select("calories").eq("user_id", user.id).eq("log_date", today),
       supabase.from("habits").select("id").eq("user_id", user.id).eq("active", true),
       supabase.from("habit_logs").select("habit_id").eq("user_id", user.id).eq("log_date", today),
+      supabase.from("user_profiles_ext").select("weight_kg,height_cm,age,fitness_goal").eq("user_id", user.id).maybeSingle(),
     ]);
+
+    // Unified per-user targets (audit M2).
+    const t = computeTargets(extRes.data ?? null);
+    const calorieMin = Math.round(t.kcal * 0.85);
+    const calorieMax = Math.round(t.kcal * 1.15);
 
     const waterMl = (dailyRes.data?.water_ml as number | undefined) ?? 0;
     const sleepHours = Number(dailyRes.data?.sleep_hours ?? 0);
@@ -76,17 +83,17 @@ export function useDeluxeScore(): DeluxeScoreBreakdown {
     const totalCalories = meals.reduce((s, r) => s + (r.calories ?? 0), 0);
 
     const training = workoutCount > 0 ? 20 : 0;
-    const water = Math.min(10, Math.round((waterMl / TARGETS.waterMl) * 10));
-    const sleep = Math.min(15, Math.round((sleepHours / TARGETS.sleepHours) * 15));
+    const water = Math.min(10, Math.round((waterMl / t.waterMl) * 10));
+    const sleep = Math.min(15, Math.round((sleepHours / SCORE.sleepHours) * 15));
     const nutrition = meals.length === 0 ? 0
-      : (totalCalories >= TARGETS.calorieMin && totalCalories <= TARGETS.calorieMax ? 15 : 10);
+      : (totalCalories >= calorieMin && totalCalories <= calorieMax ? 15 : 10);
 
     const habitIds = new Set((habitsRes.data ?? []).map((h) => h.id));
     const completed = new Set(
       (habitLogsRes.data ?? []).map((l) => l.habit_id).filter((id) => habitIds.has(id))
     );
-    const goalsCompleted = Math.min(TARGETS.goalSlots, completed.size);
-    const goalsTotal = Math.min(TARGETS.goalSlots, habitIds.size);
+    const goalsCompleted = Math.min(SCORE.goalSlots, completed.size);
+    const goalsTotal = Math.min(SCORE.goalSlots, habitIds.size);
     const dailyGoals = goalsCompleted * 8;
 
     const total = training + water + nutrition + sleep + dailyGoals;
@@ -95,11 +102,11 @@ export function useDeluxeScore(): DeluxeScoreBreakdown {
       total, training, water, nutrition, sleep, dailyGoals,
       loading: false, refreshing: false,
       details: {
-        workoutCount, waterMl, waterTargetMl: TARGETS.waterMl,
-        sleepHours, sleepTargetHours: TARGETS.sleepHours,
+        workoutCount, waterMl, waterTargetMl: t.waterMl,
+        sleepHours, sleepTargetHours: SCORE.sleepHours,
         mealCount: meals.length, totalCalories,
-        calorieMin: TARGETS.calorieMin, calorieMax: TARGETS.calorieMax,
-        goalsCompleted, goalsTotal, goalSlots: TARGETS.goalSlots,
+        calorieMin: calorieMin, calorieMax: calorieMax,
+        goalsCompleted, goalsTotal, goalSlots: SCORE.goalSlots,
       },
     });
 

@@ -72,19 +72,8 @@ function extractJson<T>(raw: string): T {
   return JSON.parse(raw.slice(start, end + 1)) as T;
 }
 
-function computeTargets(ext: any) {
-  const w = Number(ext?.weight_kg ?? 75);
-  const h = Number(ext?.height_cm ?? 175);
-  const a = Number(ext?.age ?? 30);
-  const bmr = 10 * w + 6.25 * h - 5 * a + 5;
-  const goal = String(ext?.fitness_goal ?? "").toLowerCase();
-  const factor = goal.includes("lose") || goal.includes("lean") ? 1.35 : goal.includes("muscle") ? 1.65 : 1.5;
-  const kcal = Math.round((bmr * factor) / 10) * 10;
-  const protein = Math.max(80, Math.round(w * 1.8));
-  const fat = Math.round((kcal * 0.28) / 9);
-  const carbs = Math.max(60, Math.round((kcal - protein * 4 - fat * 9) / 4));
-  return { kcal, protein, carbs, fat, water: Math.round((w * 35) / 100) * 100 };
-}
+// Unified daily targets — single source of truth lives in src/lib/targets.ts (audit M2).
+import { computeTargets } from "@/lib/targets";
 
 function NutritionTab() {
   const { user } = useAuth();
@@ -144,7 +133,7 @@ function NutritionTab() {
     try {
       const raw = await streamChat(
         `You are an elite sports nutritionist. Build TODAY's meal plan for a ${ext.age ?? 30}yo ${ext.weight_kg ?? 75}kg ${ext.height_cm ?? 175}cm ${ext.training_level ?? "intermediate"} athlete whose goal is "${ext.fitness_goal ?? "lean muscle"}".
-Targets: ${targets.kcal} kcal, ${targets.protein}g protein, ${targets.carbs}g carbs, ${targets.fat}g fat, ${targets.water}ml water.
+Targets: ${targets.kcal} kcal, ${targets.protein}g protein, ${targets.carbs}g carbs, ${targets.fat}g fat, ${targets.waterMl}ml water.
 Return ONLY minified JSON, no markdown, matching:
 {"weight_basis":"raw","notes":"short coaching note","meals":[{"name":"","slot":"Breakfast","kcal":0,"protein_g":0,"carbs_g":0,"fat_g":0,"prep_minutes":0,"ingredients":[{"item":"","amount":"120g","basis":"raw"}],"steps":["numbered instruction"]}]}
 Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether the weight is raw or cooked; meal macros must sum within 5% of the targets; steps must be timed and numbered; simple UK supermarket ingredients.`,
@@ -158,7 +147,7 @@ Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether th
         protein_target_g: targets.protein,
         carbs_target_g: targets.carbs,
         fat_target_g: targets.fat,
-        water_target_ml: targets.water,
+        water_target_ml: targets.waterMl,
         weight_basis: parsed.weight_basis ?? "raw",
         meals: parsed.meals as any,
         notes: parsed.notes ?? null,
@@ -326,7 +315,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           protein: plan?.protein_target_g ?? targets?.protein ?? 150,
           carbs: plan?.carbs_target_g ?? targets?.carbs ?? 220,
           fat: plan?.fat_target_g ?? targets?.fat ?? 70,
-          water: plan?.water_target_ml ?? targets?.water ?? 2500,
+          water: plan?.water_target_ml ?? targets?.waterMl ?? 2500,
           meals: plan?.meals ?? [],
         }),
       );

@@ -5,15 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
+import { DAILY_XP_AWARDS } from "@/lib/targets";
 
 const REASONS = ["mission_workout", "mission_water", "mission_protein", "mission_mindset"] as const;
 type Reason = (typeof REASONS)[number];
 
+// Labels/XP values come from the unified engine (audit M2); icons stay local.
+const award = (r: Reason) => DAILY_XP_AWARDS.find((a) => a.missionReason === r)!;
 const META: Record<Reason, { label: string; icon: typeof Dumbbell; xp: number }> = {
-  mission_workout: { label: "Workout or planned recovery", icon: Dumbbell, xp: 50 },
-  mission_water: { label: "Hydration target", icon: Droplet, xp: 20 },
-  mission_protein: { label: "Protein target", icon: Beef, xp: 20 },
-  mission_mindset: { label: "Mindset check-in", icon: Sparkles, xp: 10 },
+  mission_workout: { label: award("mission_workout").label, icon: Dumbbell, xp: award("mission_workout").xp },
+  mission_water: { label: award("mission_water").label, icon: Droplet, xp: award("mission_water").xp },
+  mission_protein: { label: award("mission_protein").label, icon: Beef, xp: award("mission_protein").xp },
+  mission_mindset: { label: award("mission_mindset").label, icon: Sparkles, xp: award("mission_mindset").xp },
 };
 
 type Row = { reason: string; amount: number; event_date: string; created_at: string };

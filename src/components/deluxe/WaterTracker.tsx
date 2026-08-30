@@ -5,14 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { enqueueOrApply, useOnline, useQueueSize } from "@/lib/offlineQueue";
+import { useTargets } from "@/hooks/useTargets";
+import { clampPct } from "@/lib/targets";
 
-const TARGET_ML = 3000;
 const STEP_ML = 250;
 const MAX_ML = 8000;
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
 export function WaterTracker() {
   const { user } = useAuth();
+  // Unified hydration target (35 ml/kg or the saved plan's target) — audit M2.
+  const { targets } = useTargets();
+  const targetMl = targets.waterMl;
   const [ml, setMl] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -53,14 +57,14 @@ export function WaterTracker() {
     } else {
       lastSaved.current = clamped;
       // Hydration target hit → +20 XP (once per day)
-      if (!result.queued && clamped >= TARGET_ML) {
+      if (!result.queued && clamped >= targetMl) {
         await supabase.rpc("award_xp", { _reason: "water" });
       }
       if (result.queued) toast("Saved offline — will sync when reconnected", { icon: <CloudOff className="h-4 w-4" /> });
     }
   };
 
-  const pct = Math.min(100, Math.round((ml / TARGET_ML) * 100));
+  const pct = Math.min(100, Math.round((ml / targetMl) * 100));
 
   return (
     <section className="mt-5 border border-gold/20 bg-deluxe-forest/20 p-4 sm:p-5" aria-labelledby="water-heading">
@@ -72,7 +76,7 @@ export function WaterTracker() {
           {!online && <CloudOff className="h-3 w-3 text-amber-400" aria-label="Offline — changes queued" />}
         </div>
         <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground tabular-nums" aria-live="polite">
-          {(ml / 1000).toFixed(2)}L <span className="text-foreground/40">/ {(TARGET_ML / 1000).toFixed(1)}L</span>
+          {(ml / 1000).toFixed(2)}L <span className="text-foreground/40">/ {(targetMl / 1000).toFixed(1)}L</span>
         </div>
       </div>
 

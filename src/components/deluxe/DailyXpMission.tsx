@@ -8,6 +8,7 @@ import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { useConfirm } from "@/components/deluxe/ConfirmDialog";
 import { StreakBadges } from "@/components/deluxe/StreakBadges";
+import { proteinTargetG, waterTargetMl as waterTargetFor } from "@/lib/targets";
 
 type Reason = "mission_workout" | "mission_water" | "mission_protein" | "mission_mindset";
 
@@ -43,6 +44,7 @@ export function DailyXpMission() {
     mission_mindset: false,
   });
   const [proteinTarget, setProteinTarget] = useState(120);
+  const [waterTarget, setWaterTargetMl] = useState(2000);
   const [waterMl, setWaterMl] = useState(0);
   const [proteinG, setProteinG] = useState(0);
   const [busy, setBusy] = useState<Reason | null>(null);
@@ -69,8 +71,11 @@ export function DailyXpMission() {
     if (streakRes.data) setStreak(streakRes.data as unknown as typeof streak);
 
     const weight = Number(ext.data?.weight_kg ?? 75);
-    const target = Math.max(80, Math.round(weight * 1.6));
+    // Unified targets — same formulas the nutrition plan uses (audit M2).
+    const target = proteinTargetG(weight);
+    const waterTarget = waterTargetFor(weight);
     setProteinTarget(target);
+    setWaterTargetMl(waterTarget);
 
     const water = Number(stats.data?.water_ml ?? 0);
     const protein = (nutrition.data ?? []).reduce((s, r) => s + Number(r.protein_g ?? 0), 0);
@@ -80,7 +85,7 @@ export function DailyXpMission() {
     setEvidence({
       // Planned recovery counts as valid workout progress.
       mission_workout: (sessions.data?.length ?? 0) > 0 || !!recovery.data,
-      mission_water: water >= 2000,
+      mission_water: water >= waterTarget,
       mission_protein: protein >= target,
       mission_mindset: !!mission.data?.completed_at || !!recovery.data,
     });

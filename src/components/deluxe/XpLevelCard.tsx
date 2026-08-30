@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { StreakBadges } from "@/components/deluxe/StreakBadges";
+import { DAILY_XP_AWARDS, XP_RANKS } from "@/lib/targets";
 
 type Summary = {
   total_xp: number;
@@ -16,14 +17,10 @@ type Summary = {
   progress_pct: number;
 };
 
-const RANKS = ["Beginner", "Consistent", "Warrior", "Elite", "Beast", "Legend"];
+// Unified XP values + rank ladder from the shared calculation engine (audit M2).
+const RANKS: string[] = XP_RANKS.map((r) => r.name);
 
-const DAILY = [
-  { label: "Workout", xp: 50, reason: "workout" },
-  { label: "Water target", xp: 20, reason: "water" },
-  { label: "Protein target", xp: 20, reason: "protein" },
-  { label: "Mindset habit", xp: 10, reason: "habit" },
-];
+const DAILY = DAILY_XP_AWARDS.map((a) => ({ label: a.label.replace(" or planned recovery", ""), xp: a.xp, reason: a.reason }));
 
 export function XpLevelCard() {
   const { user } = useAuth();
