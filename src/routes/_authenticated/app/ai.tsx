@@ -165,28 +165,54 @@ function MealPanel() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [note, setNote] = useState("");
+  const [scanError, setScanError] = useState<ScanFailure | null>(null);
+  const [ringsKey, setRingsKey] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  async function onFile(f: File) {
-    setResult(null); setEdit(null); setSaved(false);
+  /** Analyze an already-scaled data URL, retrying transient AI failures. */
+  async function analyze(url: string) {
+    setResult(null); setEdit(null); setSaved(false); setScanError(null);
     setLoading(true);
     try {
-      const url = await fileToScaledDataUrl(f);
-      setImg(url);
-      const r = (await fn({ data: { imageDataUrl: url, note: note || undefined } })) as MealScan;
+      const r = await withScanRetry(
+        () => fn({ data: { imageDataUrl: url, note: note || undefined } }) as Promise<MealScan>,
+        {
+          attempts: 3,
+          onRetry: (attempt, waitMs) =>
+            toast.message(`Scanner busy — retrying in ${Math.round(waitMs / 100) / 10}s (attempt ${attempt + 2}/3)`),
+        },
+      );
       setResult(r);
       setEdit({ ...r });
       if (r.confidence === "low") {
         toast("I'm not completely sure what this is — please check the foods and portions before saving.");
       }
     } catch (e: any) {
+      const kind: ScanFailure = e instanceof MealScanError ? e.kind : "unavailable";
+      setScanError(kind);
       reportError({
-        message: `meal-scan failed: ${e?.message ?? "unknown"}`,
+        message: `meal-scan failed (${kind}): ${e?.message ?? "unknown"}`,
+        severity: "error",
+        extra: { area: "meal-scan", kind },
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function onFile(f: File) {
+    setLoading(true);
+    try {
+      const url = await fileToScaledDataUrl(f);
+      setImg(url);
+      await analyze(url);
+    } catch (e: any) {
+      setScanError("bad_image");
+      reportError({
+        message: `meal-scan scale failed: ${e?.message ?? "unknown"}`,
         severity: "error",
         extra: { area: "meal-scan", fileKb: Math.round(f.size / 1024), type: f.type },
       });
-      toast.error(e?.message ?? "Couldn't analyze that photo. Try a clearer, well-lit shot.");
-    } finally {
       setLoading(false);
     }
   }
@@ -195,7 +221,8 @@ function MealPanel() {
     if (!user || !edit) return;
     setSaving(true);
     try {
-      const today = new Date().toISOString().slice(0, 10);
+      const d = new Date();
+      const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
       const { error } = await supabase.from("nutrition_logs").insert({
         user_id: user.id,
         log_date: today,
@@ -207,6 +234,7 @@ function MealPanel() {
       });
       if (error) throw error;
       setSaved(true);
+      setRingsKey((k) => k + 1);
       toast.success("Meal saved to today's nutrition log.");
     } catch (e: any) {
       reportError({ message: `meal-scan save failed: ${e?.message ?? "unknown"}`, severity: "error", extra: { area: "meal-scan" } });
@@ -233,6 +261,26 @@ function MealPanel() {
         />
       </div>
       {img && <img src={img} alt="meal" className="mt-3 max-h-56 border border-gold/20" />}
+
+      {scanError && (
+        <div className="mt-3 flex items-start gap-3 border border-red-500/30 bg-red-950/20 p-3" role="alert">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+          <div className="flex-1 text-[11px] text-muted-foreground">
+            <span className="block font-display text-sm text-foreground">{SCAN_FAILURE_COPY[scanError].title}</span>
+            {SCAN_FAILURE_COPY[scanError].detail}
+          </div>
+          {SCAN_FAILURE_COPY[scanError].retryable && img && (
+            <button
+              onClick={() => void analyze(img)}
+              disabled={loading}
+              className="inline-flex shrink-0 items-center gap-1.5 border border-gold/30 bg-deluxe-black/40 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-gold hover:border-gold/60 disabled:opacity-50"
+            >
+              <RotateCw className="h-3 w-3" /> Retry scan
+            </button>
+          )}
+        </div>
+      )}
+
       {loading && (
         <div className="mt-3 space-y-2" aria-live="polite">
           <div className="text-xs text-muted-foreground"><Loader2 className="inline h-3 w-3 animate-spin" /> Analyzing your plate…</div>
