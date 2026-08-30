@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
-import { exerciseClip, formReference } from "@/config/exercise-media";
+import { exerciseMedia, formReference } from "@/config/exercise-media";
 import type { Workout } from "@/components/deluxe/WorkoutDetail";
 
 interface Exercise {
