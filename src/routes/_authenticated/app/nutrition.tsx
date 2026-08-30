@@ -579,7 +579,8 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
       )}
 
       {/* Ask the nutritionist */}
-      <section className="mt-8 border border-gold/20 bg-deluxe-forest/20 p-4">
+      <section id="ask-nutritionist" className="mt-8 border border-gold/20 bg-deluxe-forest/20 p-4">
+
         <div className="flex items-center gap-2">
           <MessageCircle className="h-4 w-4 text-gold" />
           <h2 className="font-display text-lg text-foreground">Ask the nutritionist</h2>
