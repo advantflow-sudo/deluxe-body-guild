@@ -383,78 +383,141 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
         </p>
       )}
 
-      <div className="mt-5 space-y-4">
-        {(plan?.meals ?? []).map((m, i) => (
-          <article key={`${m.name}-${i}`} className="border border-gold/15 bg-deluxe-forest/15 p-4">
-            <header className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="text-[9px] uppercase tracking-[0.22em] text-gold">{m.slot}</div>
-                <h2 className="mt-0.5 font-display text-lg text-foreground">{m.name}</h2>
-                <div className="mt-1 flex flex-wrap gap-x-3 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                  <span>{Math.round(m.kcal)} kcal</span>
-                  <span>P {m.protein_g}g</span>
-                  <span>C {m.carbs_g}g</span>
-                  <span>F {m.fat_g}g</span>
-                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{m.prep_minutes}m</span>
+      <div className="mt-5 space-y-6">
+        {(plan?.meals ?? []).map((m, i) => {
+          const waterPerMeal = plan
+            ? Math.round(plan.water_target_ml / Math.max(1, plan.meals.length) / 50) * 50
+            : 0;
+          const missionPct = plan
+            ? Math.min(100, (Number(m.protein_g ?? 0) / Math.max(1, plan.protein_target_g)) * 100)
+            : 0;
+          return (
+            <article key={`${m.name}-${i}`} className="overflow-hidden border border-gold/20 bg-deluxe-forest/15">
+              <div className="relative aspect-[4/3] w-full overflow-hidden">
+                <img
+                  src={mealImage(m.name, m.slot, m.ingredients)}
+                  alt={m.name}
+                  loading="lazy"
+                  width={1024}
+                  height={768}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-deluxe-black via-deluxe-black/20 to-transparent" />
+                <div className="absolute bottom-3 left-4 right-4">
+                  <div className="text-[9px] uppercase tracking-[0.24em] text-gold">{m.slot}</div>
+                  <h2 className="mt-1 font-display text-xl text-foreground">{m.name}</h2>
                 </div>
-              </div>
-              {m.logged && (
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold text-deluxe-black">
-                  <Check className="h-4 w-4" />
-                </span>
-              )}
-            </header>
-
-            <ul className="mt-3 space-y-1">
-              {(m.ingredients ?? []).map((ing, k) => (
-                <li key={k} className="flex items-baseline justify-between gap-3 text-sm text-foreground">
-                  <span>{ing.item}</span>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {ing.amount}
-                    {ing.basis && ing.basis !== "n/a" ? ` (${ing.basis})` : ""}
+                {m.logged && (
+                  <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-gold text-deluxe-black">
+                    <Check className="h-4 w-4" />
                   </span>
-                </li>
-              ))}
-            </ul>
+                )}
+              </div>
 
-            <div className="mt-4 flex flex-wrap gap-2 border-t border-gold/10 pt-3">
-              <button
-                onClick={() => { haptic("selection"); setOpenCook(openCook === i ? null : i); }}
-                aria-expanded={openCook === i}
-                className="inline-flex min-h-11 items-center gap-1.5 border border-gold/40 px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-gold hover:bg-gold/10"
-              >
-                <ChefHat className="h-3.5 w-3.5" /> Cook this meal
-              </button>
-              <button
-                onClick={() => swapMeal(i)}
-                disabled={swapping === i}
-                className="inline-flex min-h-11 items-center gap-1.5 border border-gold/20 px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-foreground hover:border-gold/50 hover:text-gold"
-              >
-                {swapping === i ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Repeat className="h-3.5 w-3.5" />}
-                Swap meal
-              </button>
-              <button
-                onClick={() => logMeal(i)}
-                disabled={m.logged}
-                className="inline-flex min-h-11 items-center gap-1.5 border border-gold/20 px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-foreground hover:border-gold/50 hover:text-gold disabled:opacity-40"
-              >
-                <Check className="h-3.5 w-3.5" /> {m.logged ? "Logged" : "Mark eaten"}
-              </button>
-            </div>
+              <div className="p-4">
+                <div className="flex flex-wrap gap-2">
+                  <Chip icon={<Flame className="h-3 w-3" />} label={`${Math.round(m.kcal)} kcal`} />
+                  <Chip icon={<Beef className="h-3 w-3" />} label={`${m.protein_g}g protein`} />
+                  <Chip icon={<Wheat className="h-3 w-3" />} label={`${m.carbs_g}g carbs`} />
+                  <Chip icon={<Droplets className="h-3 w-3" />} label={`${m.fat_g}g fat`} />
+                  <Chip icon={<Clock className="h-3 w-3" />} label={`${m.prep_minutes} min`} />
+                </div>
 
-            {openCook === i && (
-              <ol className="mt-3 space-y-2 border-t border-gold/10 pt-3">
-                {(m.steps ?? []).map((s, k) => (
-                  <li key={k} className="flex gap-3 text-sm text-foreground">
-                    <span className="font-display text-gold">{k + 1}</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </article>
-        ))}
+                <div className="mt-4 border border-gold/15 bg-deluxe-black/50">
+                  <div className="border-b border-gold/10 px-3 py-2 text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
+                    Ingredients
+                  </div>
+                  <ul>
+                    {(m.ingredients ?? []).map((ing, k) => (
+                      <li
+                        key={k}
+                        className="flex items-baseline justify-between gap-3 border-b border-gold/5 px-3 py-2 text-sm text-foreground last:border-0"
+                      >
+                        <span>{ing.item}</span>
+                        <span className="shrink-0 text-xs text-muted-foreground">
+                          {ing.amount}
+                          {ing.basis && ing.basis !== "n/a" ? (
+                            <span className="ml-1 text-[9px] uppercase tracking-[0.16em] text-gold">{ing.basis}</span>
+                          ) : null}
+                        </span>
+                      </li>
+                    ))}
+                    {waterPerMeal > 0 && (
+                      <li className="flex items-baseline justify-between gap-3 border-t border-gold/10 px-3 py-2 text-sm text-foreground">
+                        <span className="flex items-center gap-2">
+                          <Droplets className="h-3.5 w-3.5 text-gold" /> Water with meal
+                        </span>
+                        <span className="shrink-0 text-xs text-muted-foreground">{waterPerMeal} ml</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+
+                <div className="mt-4 flex items-center gap-3 border border-gold/20 bg-deluxe-black/40 px-3 py-2">
+                  <Star className="h-4 w-4 shrink-0 text-gold" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                      Protein mission +20 XP
+                    </div>
+                    <div className="mt-1 h-1 w-full bg-gold/10">
+                      <div className="h-full bg-gold-gradient transition-all" style={{ width: `${missionPct}%` }} />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => { haptic("selection"); setOpenCook(openCook === i ? null : i); }}
+                  aria-expanded={openCook === i}
+                  className="mt-4 flex min-h-12 w-full items-center justify-center gap-2 bg-gold-gradient text-[10px] font-semibold uppercase tracking-[0.24em] text-deluxe-black"
+                >
+                  <ChefHat className="h-4 w-4" /> {openCook === i ? "Hide instructions" : "Cook this meal"}
+                </button>
+
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => swapMeal(i)}
+                    disabled={swapping === i}
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 border border-gold/30 px-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
+                  >
+                    {swapping === i ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Repeat className="h-3.5 w-3.5" />}
+                    Swap meal
+                  </button>
+                  <button
+                    onClick={() => askAbout(m)}
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 border border-gold/30 px-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" /> Ask nutritionist
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => logMeal(i)}
+                  disabled={m.logged}
+                  className="mt-2 inline-flex min-h-11 w-full items-center justify-center gap-1.5 border border-gold/20 px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-foreground hover:border-gold/50 hover:text-gold disabled:opacity-40"
+                >
+                  <Check className="h-3.5 w-3.5" /> {m.logged ? "Logged" : "Mark eaten"}
+                </button>
+
+                <div className="mt-2 flex items-center justify-center gap-2 border border-dashed border-gold/15 px-3 py-2 text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                  <Truck className="h-3.5 w-3.5 text-gold/60" /> Deliver this meal · coming soon
+                </div>
+
+                {openCook === i && (
+                  <ol className="mt-4 space-y-2 border-t border-gold/10 pt-3">
+                    {(m.steps ?? []).map((s, k) => (
+                      <li key={k} className="flex gap-3 text-sm text-foreground">
+                        <span className="font-display text-gold">{k + 1}</span>
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </div>
+            </article>
+          );
+        })}
       </div>
+
 
       {plan && (
         <div className="mt-5 flex flex-wrap gap-2">
