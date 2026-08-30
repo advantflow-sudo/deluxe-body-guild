@@ -100,6 +100,10 @@ function NutritionTab() {
   const [saved, setSaved] = useState<any[]>([]);
   const [savingPlan, setSavingPlan] = useState(false);
   const [logTick, setLogTick] = useState(0);
+  const [apiError, setApiError] = useState<{ kind: NutritionistFailure; detail: string } | null>(null);
+  const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
+  const [retrying, setRetrying] = useState(false);
+  const [fallbackAnswer, setFallbackAnswer] = useState("");
 
   const load = useCallback(async () => {
     if (!user) return;
