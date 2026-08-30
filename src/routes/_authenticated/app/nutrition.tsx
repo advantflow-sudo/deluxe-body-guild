@@ -15,6 +15,7 @@ import { mealImage } from "@/config/meal-images";
 import { haptic } from "@/hooks/useHaptics";
 import { NutritionistErrorBanner } from "@/components/deluxe/NutritionistErrorBanner";
 import { TodayNutritionRings } from "@/components/deluxe/TodayNutritionRings";
+import { MealPrepGuide } from "@/components/deluxe/MealPrepGuide";
 import {
   askNutritionist,
   fallbackGuidance,
