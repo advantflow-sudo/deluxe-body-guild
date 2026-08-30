@@ -6,6 +6,8 @@ import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui"
 import { haptic } from "@/hooks/useHaptics";
 import { usePremium } from "@/hooks/usePremium";
 import { WorkoutSessionPlayer } from "@/components/deluxe/WorkoutSessionPlayer";
+import { exerciseClip, formReference } from "@/config/exercise-media";
+
 
 export interface Workout {
   id: string;
@@ -22,11 +24,13 @@ export interface Workout {
 interface Exercise {
   id: string;
   name: string;
+  slug?: string | null;
   muscle_group: string;
   equipment: string;
   cues: string | null;
   is_premium: boolean;
 }
+
 
 interface BlockExercise {
   id: string;
@@ -147,17 +151,45 @@ export function WorkoutDetail({ workout, userId, onClose }: { workout: Workout; 
                       {b.sets} sets · {b.reps} reps · {b.rest_sec}s rest
                     </div>
                     <ul className="mt-3 space-y-2">
-                      {b.workout_block_exercises.map((be) => (
-                        <li key={be.id} className="flex items-center gap-2 text-sm text-foreground">
-                          <Dumbbell className="h-3.5 w-3.5 shrink-0 text-gold" />
-                          <span>{be.exercises?.name ?? "Exercise"}</span>
-                          {be.exercises?.is_premium && !isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
-                          {be.exercises?.equipment && (
-                            <span className="ml-auto text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{be.exercises.equipment}</span>
-                          )}
-                        </li>
-                      ))}
+                      {b.workout_block_exercises.map((be) => {
+                        const ex = be.exercises;
+                        const clip = exerciseClip(ex?.slug ?? ex?.name);
+                        const form = formReference(ex?.name, ex?.muscle_group, b.compartment, b.label);
+                        return (
+                          <li key={be.id} className="flex items-center gap-3 text-sm text-foreground">
+                            {clip ? (
+                              <video
+                                src={clip}
+                                poster={form.image}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                preload="metadata"
+                                aria-label={`${ex?.name ?? "Exercise"} demonstration clip`}
+                                className="h-12 w-16 shrink-0 border border-gold/20 object-cover"
+                              />
+                            ) : (
+                              <img
+                                src={form.image}
+                                alt={`${form.label} form reference`}
+                                loading="lazy"
+                                width={1024}
+                                height={768}
+                                className="h-12 w-16 shrink-0 border border-gold/20 object-cover"
+                              />
+                            )}
+                            <Dumbbell className="h-3.5 w-3.5 shrink-0 text-gold" />
+                            <span>{ex?.name ?? "Exercise"}</span>
+                            {ex?.is_premium && !isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+                            {ex?.equipment && (
+                              <span className="ml-auto text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{ex.equipment}</span>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
+
                   </div>
                 ))}
               </div>
