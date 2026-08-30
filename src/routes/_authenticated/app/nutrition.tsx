@@ -124,6 +124,19 @@ function NutritionTab() {
 
   const targets = ext ? computeTargets(ext) : null;
 
+  const handleFailure = (e: unknown, retry: () => void) => {
+    const kind: NutritionistFailure = e instanceof NutritionistError ? e.kind : "unavailable";
+    const detail =
+      e instanceof NutritionistError ? e.message : e instanceof Error ? e.message : "Unknown failure.";
+    setApiError({ kind, detail });
+    setRetryAction(() => retry);
+    toast.error(kind === "rate_limited" ? "Nutritionist rate limited" : "Nutritionist unavailable");
+  };
+
+  const onRetryNotice = (attempt: number, waitMs: number) => {
+    toast.message(`Nutritionist busy — retrying in ${Math.round(waitMs / 100) / 10}s (attempt ${attempt + 1}/3)`);
+  };
+
   const generate = async () => {
     if (!user || !targets) return;
     setGenerating(true);
