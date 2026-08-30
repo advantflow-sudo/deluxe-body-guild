@@ -541,14 +541,12 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
                 </div>
 
                 {openCook === i && (
-                  <ol className="mt-4 space-y-2 border-t border-gold/10 pt-3">
-                    {(m.steps ?? []).map((s, k) => (
-                      <li key={k} className="flex gap-3 text-sm text-foreground">
-                        <span className="font-display text-gold">{k + 1}</span>
-                        <span>{s}</span>
-                      </li>
-                    ))}
-                  </ol>
+                  <MealPrepGuide
+                    meal={m}
+                    waterMl={waterPerMeal}
+                    weightBasis={plan?.weight_basis}
+                    allMeals={plan?.meals ?? [m]}
+                  />
                 )}
               </div>
             </article>
