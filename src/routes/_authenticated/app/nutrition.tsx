@@ -323,6 +323,13 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
     }
   };
 
+  const askAbout = (meal: Meal) => {
+    haptic("selection");
+    setQuestion(`About "${meal.name}": `);
+    document.getElementById("ask-nutritionist")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+
   const eaten = (plan?.meals ?? []).filter((m) => m.logged);
   const loggedCount = eaten.length;
   const proteinSoFar = eaten.reduce((s, m) => s + Number(m.protein_g ?? 0), 0);
