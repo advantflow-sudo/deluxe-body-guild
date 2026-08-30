@@ -372,6 +372,16 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
         Exact portions with raw or cooked weights stated, so your macros are never off.
       </p>
 
+      {apiError && (
+        <NutritionistErrorBanner
+          kind={apiError.kind}
+          detail={apiError.detail}
+          retrying={retrying || generating || asking || swapping !== null}
+          onRetry={retryAction ? () => void runRetry() : undefined}
+          onDismiss={() => setApiError(null)}
+        />
+      )}
+
 
       {targets && (
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
