@@ -13,6 +13,13 @@ import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSumma
 import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
 import { mealImage } from "@/config/meal-images";
 import { haptic } from "@/hooks/useHaptics";
+import { NutritionistErrorBanner } from "@/components/deluxe/NutritionistErrorBanner";
+import {
+  askNutritionist,
+  fallbackGuidance,
+  NutritionistError,
+  type NutritionistFailure,
+} from "@/lib/nutritionist";
 
 
 export const Route = createFileRoute("/_authenticated/app/nutrition")({
@@ -53,52 +60,10 @@ interface Plan {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-async function streamChat(prompt: string) {
-  const { data: sessionData } = await supabase.auth.getSession();
-  const token = sessionData.session?.access_token;
-  if (!token) throw new Error("Your session expired. Please sign in again.");
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
-  });
-  if (!res.ok || !res.body) {
-    if (res.status === 429) throw new Error("Too many requests. Try again in a moment.");
-    if (res.status === 402) throw new Error("AI credits exhausted.");
-    if (res.status === 401) throw new Error("Your session expired. Please sign in again.");
-    throw new Error("The nutritionist is unavailable right now.");
-  }
-
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let acc = "";
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    let nl: number;
-    while ((nl = buffer.indexOf("\n")) !== -1) {
-      let line = buffer.slice(0, nl);
-      buffer = buffer.slice(nl + 1);
-      if (line.endsWith("\r")) line = line.slice(0, -1);
-      if (!line.startsWith("data: ")) continue;
-      const json = line.slice(6).trim();
-      if (json === "[DONE]") return acc;
-      try {
-        const c = JSON.parse(json).choices?.[0]?.delta?.content as string | undefined;
-        if (c) acc += c;
-      } catch {
-        buffer = line + "\n" + buffer;
-        break;
-      }
-    }
-  }
-  return acc;
+async function streamChat(prompt: string, onRetry?: (attempt: number, waitMs: number) => void) {
+  return askNutritionist(prompt, { attempts: 3, onRetry });
 }
+
 
 function extractJson<T>(raw: string): T {
   const start = raw.indexOf("{");
@@ -135,6 +100,10 @@ function NutritionTab() {
   const [saved, setSaved] = useState<any[]>([]);
   const [savingPlan, setSavingPlan] = useState(false);
   const [logTick, setLogTick] = useState(0);
+  const [apiError, setApiError] = useState<{ kind: NutritionistFailure; detail: string } | null>(null);
+  const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
+  const [retrying, setRetrying] = useState(false);
+  const [fallbackAnswer, setFallbackAnswer] = useState("");
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -155,9 +124,23 @@ function NutritionTab() {
 
   const targets = ext ? computeTargets(ext) : null;
 
+  const handleFailure = (e: unknown, retry: () => void) => {
+    const kind: NutritionistFailure = e instanceof NutritionistError ? e.kind : "unavailable";
+    const detail =
+      e instanceof NutritionistError ? e.message : e instanceof Error ? e.message : "Unknown failure.";
+    setApiError({ kind, detail });
+    setRetryAction(() => retry);
+    toast.error(kind === "rate_limited" ? "Nutritionist rate limited" : "Nutritionist unavailable");
+  };
+
+  const onRetryNotice = (attempt: number, waitMs: number) => {
+    toast.message(`Nutritionist busy — retrying in ${Math.round(waitMs / 100) / 10}s (attempt ${attempt + 1}/3)`);
+  };
+
   const generate = async () => {
     if (!user || !targets) return;
     setGenerating(true);
+    setApiError(null);
     try {
       const raw = await streamChat(
         `You are an elite sports nutritionist. Build TODAY's meal plan for a ${ext.age ?? 30}yo ${ext.weight_kg ?? 75}kg ${ext.height_cm ?? 175}cm ${ext.training_level ?? "intermediate"} athlete whose goal is "${ext.fitness_goal ?? "lean muscle"}".
@@ -165,6 +148,7 @@ Targets: ${targets.kcal} kcal, ${targets.protein}g protein, ${targets.carbs}g ca
 Return ONLY minified JSON, no markdown, matching:
 {"weight_basis":"raw","notes":"short coaching note","meals":[{"name":"","slot":"Breakfast","kcal":0,"protein_g":0,"carbs_g":0,"fat_g":0,"prep_minutes":0,"ingredients":[{"item":"","amount":"120g","basis":"raw"}],"steps":["numbered instruction"]}]}
 Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether the weight is raw or cooked; meal macros must sum within 5% of the targets; steps must be timed and numbered; simple UK supermarket ingredients.`,
+        onRetryNotice,
       );
       const parsed = extractJson<{ weight_basis: string; notes: string; meals: Meal[] }>(raw);
       const row = {
@@ -189,7 +173,7 @@ Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether th
       haptic("success");
       toast.success("Today's meal plan is ready");
     } catch (e: any) {
-      toast.error(e.message ?? "Could not build your plan");
+      handleFailure(e, () => void generate());
     } finally {
       setGenerating(false);
     }
@@ -205,11 +189,13 @@ Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether th
     if (!plan) return;
     const meal = plan.meals[index];
     setSwapping(index);
+    setApiError(null);
     try {
       const raw = await streamChat(
         `Replace this meal with a different one that keeps the SAME macro targets (±5%) and the same slot. Preserve exclusions and preferences for goal "${ext?.fitness_goal ?? "lean muscle"}".
 Current meal JSON: ${JSON.stringify(meal)}
 Return ONLY minified JSON for the single replacement meal in the identical shape, with ingredient amounts stating units and raw/cooked basis.`,
+        onRetryNotice,
       );
       const next = extractJson<Meal>(raw);
       const meals = plan.meals.map((m, i) => (i === index ? { ...next, logged: false } : m));
@@ -217,7 +203,7 @@ Return ONLY minified JSON for the single replacement meal in the identical shape
       haptic("success");
       toast.success("Meal swapped — targets preserved");
     } catch (e: any) {
-      toast.error(e.message ?? "Could not swap that meal");
+      handleFailure(e, () => void swapMeal(index));
     } finally {
       setSwapping(null);
     }
@@ -321,19 +307,44 @@ Return ONLY minified JSON for the single replacement meal in the identical shape
     if (!question.trim()) return;
     setAsking(true);
     setAnswer("");
+    setFallbackAnswer("");
+    setApiError(null);
     try {
       const raw = await streamChat(
         `You are the Deluxe Fitness nutritionist. Member goal: ${ext?.fitness_goal ?? "lean muscle"}. Today's plan: ${JSON.stringify(plan?.meals ?? [])}.
 Question: ${question}
 Answer in under 120 words. Always state whether weights are raw or cooked. Never give medical advice; suggest a professional where relevant.`,
+        onRetryNotice,
       );
       setAnswer(raw.trim());
     } catch (e: any) {
-      toast.error(e.message ?? "Could not reach the nutritionist");
+      handleFailure(e, () => void ask());
+      setFallbackAnswer(
+        fallbackGuidance(question, {
+          goal: ext?.fitness_goal ?? null,
+          kcal: plan?.kcal_target ?? targets?.kcal ?? 2200,
+          protein: plan?.protein_target_g ?? targets?.protein ?? 150,
+          carbs: plan?.carbs_target_g ?? targets?.carbs ?? 220,
+          fat: plan?.fat_target_g ?? targets?.fat ?? 70,
+          water: plan?.water_target_ml ?? targets?.water ?? 2500,
+          meals: plan?.meals ?? [],
+        }),
+      );
     } finally {
       setAsking(false);
     }
   };
+
+  const runRetry = async () => {
+    if (!retryAction) return;
+    setRetrying(true);
+    try {
+      await Promise.resolve(retryAction());
+    } finally {
+      setRetrying(false);
+    }
+  };
+
 
   const askAbout = (meal: Meal) => {
     haptic("selection");
@@ -360,6 +371,16 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
       <p className="mt-1 text-xs text-muted-foreground">
         Exact portions with raw or cooked weights stated, so your macros are never off.
       </p>
+
+      {apiError && (
+        <NutritionistErrorBanner
+          kind={apiError.kind}
+          detail={apiError.detail}
+          retrying={retrying || generating || asking || swapping !== null}
+          onRetry={retryAction ? () => void runRetry() : undefined}
+          onDismiss={() => setApiError(null)}
+        />
+      )}
 
 
       {targets && (
@@ -612,6 +633,12 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           {asking ? "Thinking…" : "Ask"}
         </GoldButton>
         {answer && <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{answer}</p>}
+        {!answer && fallbackAnswer && (
+          <div className="mt-3 border border-gold/25 bg-deluxe-black/50 p-3">
+            <div className="text-[9px] uppercase tracking-[0.22em] text-gold">Deluxe offline guidance</div>
+            <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-foreground">{fallbackAnswer}</p>
+          </div>
+        )}
       </section>
     </div>
   );

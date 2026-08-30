@@ -142,27 +142,47 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
   }
 }
 
+function logChat(
+  level: "info" | "warn" | "error",
+  event: string,
+  fields: Record<string, unknown>,
+) {
+  const line = `[api/chat] ${event} ${JSON.stringify(fields)}`;
+  if (level === "error") console.error(line);
+  else if (level === "warn") console.warn(line);
+  else console.log(line);
+}
+
+function jsonError(status: number, error: string, code: string, extraHeaders?: Record<string, string>) {
+  return new Response(JSON.stringify({ error, code }), {
+    status,
+    headers: { "Content-Type": "application/json", ...(extraHeaders ?? {}) },
+  });
+}
+
 export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const startedAt = Date.now();
+        const client = request.headers.get("x-deluxe-client") ?? "unknown";
         try {
           // Require authentication — prevents anonymous use of paid AI credits
           const authHeader = request.headers.get("authorization");
           if (!authHeader?.startsWith("Bearer ")) {
-            return new Response(JSON.stringify({ error: "Unauthorized" }), {
-              status: 401,
-              headers: { "Content-Type": "application/json" },
+            logChat("warn", "missing_auth_token", {
+              client,
+              hasHeader: !!authHeader,
+              referer: request.headers.get("referer") ?? null,
             });
+            return jsonError(401, "Unauthorized", "missing_auth_token");
           }
           const token = authHeader.slice(7);
           const SUPABASE_URL = process.env.SUPABASE_URL;
           const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
           if (!SUPABASE_URL || !SUPABASE_KEY) {
-            return new Response(JSON.stringify({ error: "Server misconfigured" }), {
-              status: 500,
-              headers: { "Content-Type": "application/json" },
-            });
+            logChat("error", "server_misconfigured", { client, missing: "supabase_env" });
+            return jsonError(500, "Server misconfigured", "server_misconfigured");
           }
           const authClient = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
             global: { headers: { Authorization: `Bearer ${token}` } },
@@ -170,19 +190,17 @@ export const Route = createFileRoute("/api/chat")({
           });
           const { data: claimsData, error: claimsErr } = await authClient.auth.getClaims(token);
           if (claimsErr || !claimsData?.claims?.sub) {
-            return new Response(JSON.stringify({ error: "Unauthorized" }), {
-              status: 401,
-              headers: { "Content-Type": "application/json" },
-            });
+            logChat("warn", "invalid_token", { client, reason: claimsErr?.message ?? "no_sub" });
+            return jsonError(401, "Session expired. Please sign in again.", "invalid_token");
           }
 
-          const { messages } = (await request.json()) as { messages: Msg[] };
+          const body = (await request.json()) as { messages: Msg[]; client?: string };
+          const messages = body.messages;
+          const source = body.client ?? client;
           const apiKey = process.env.LOVABLE_API_KEY;
           if (!apiKey) {
-            return new Response(
-              JSON.stringify({ error: "LOVABLE_API_KEY is not configured" }),
-              { status: 500, headers: { "Content-Type": "application/json" } },
-            );
+            logChat("error", "server_misconfigured", { client: source, missing: "LOVABLE_API_KEY" });
+            return jsonError(500, "LOVABLE_API_KEY is not configured", "server_misconfigured");
           }
 
           const memberProfile = await buildMemberProfile(authHeader);
@@ -202,37 +220,44 @@ export const Route = createFileRoute("/api/chat")({
           });
 
           if (!res.ok) {
+            const retryAfter = res.headers.get("retry-after");
+            logChat("error", "gateway_failure", {
+              client: source,
+              status: res.status,
+              retryAfter,
+              ms: Date.now() - startedAt,
+            });
             if (res.status === 429) {
-              return new Response(
-                JSON.stringify({ error: "Too many requests. Please try again shortly." }),
-                { status: 429, headers: { "Content-Type": "application/json" } },
-              );
+              return jsonError(429, "Too many requests. Please try again shortly.", "rate_limited", {
+                "Retry-After": retryAfter ?? "5",
+              });
             }
-            if (res.status === 402) {
-              return new Response(
-                JSON.stringify({ error: "AI credits exhausted. Add credits in Settings → Workspace → Usage." }),
-                { status: 402, headers: { "Content-Type": "application/json" } },
+            if (res.status === 402 || res.status === 403) {
+              return jsonError(
+                res.status,
+                "AI credits exhausted or blocked by workspace policy.",
+                "out_of_credits",
               );
             }
             const t = await res.text();
-            console.error("AI gateway error:", res.status, t);
-            return new Response(JSON.stringify({ error: "AI gateway error" }), {
-              status: 500,
-              headers: { "Content-Type": "application/json" },
-            });
+            logChat("error", "gateway_body", { client: source, status: res.status, body: t.slice(0, 500) });
+            return jsonError(502, "The AI service is temporarily unavailable.", "unavailable");
           }
 
+          logChat("info", "gateway_ok", { client: source, ms: Date.now() - startedAt, messages: messages.length });
           return new Response(res.body, {
             headers: { "Content-Type": "text/event-stream" },
           });
         } catch (e) {
-          console.error("chat route error:", e);
-          return new Response(
-            JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-            { status: 500, headers: { "Content-Type": "application/json" } },
-          );
+          logChat("error", "unhandled", {
+            client,
+            ms: Date.now() - startedAt,
+            message: e instanceof Error ? e.message : String(e),
+          });
+          return jsonError(500, e instanceof Error ? e.message : "Unknown error", "unavailable");
         }
       },
     },
   },
 });
+
