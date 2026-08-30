@@ -189,11 +189,13 @@ Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether th
     if (!plan) return;
     const meal = plan.meals[index];
     setSwapping(index);
+    setApiError(null);
     try {
       const raw = await streamChat(
         `Replace this meal with a different one that keeps the SAME macro targets (±5%) and the same slot. Preserve exclusions and preferences for goal "${ext?.fitness_goal ?? "lean muscle"}".
 Current meal JSON: ${JSON.stringify(meal)}
 Return ONLY minified JSON for the single replacement meal in the identical shape, with ingredient amounts stating units and raw/cooked basis.`,
+        onRetryNotice,
       );
       const next = extractJson<Meal>(raw);
       const meals = plan.meals.map((m, i) => (i === index ? { ...next, logged: false } : m));
@@ -201,7 +203,7 @@ Return ONLY minified JSON for the single replacement meal in the identical shape
       haptic("success");
       toast.success("Meal swapped — targets preserved");
     } catch (e: any) {
-      toast.error(e.message ?? "Could not swap that meal");
+      handleFailure(e, () => void swapMeal(index));
     } finally {
       setSwapping(null);
     }
