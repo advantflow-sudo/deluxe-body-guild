@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import {
   Sparkles, Sunrise, Apple, Camera, Calendar, Images, TrendingDown,
   Trophy, Stethoscope, Flame, Users, Loader2, Upload, ChevronRight,
+  AlertTriangle, RotateCw,
 } from "lucide-react";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { usePremium } from "@/hooks/usePremium";
@@ -14,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { fileToScaledDataUrl } from "@/lib/imageUtils";
 import { reportError } from "@/lib/monitoring";
 import { TodayNutritionRings } from "@/components/deluxe/TodayNutritionRings";
+import { MealScanError, SCAN_FAILURE_COPY, withScanRetry, type ScanFailure } from "@/lib/mealScan";
 
 import {
   dailyBriefing, analyzeMeal, analyzeForm, adaptProgram, comparePhotos,
