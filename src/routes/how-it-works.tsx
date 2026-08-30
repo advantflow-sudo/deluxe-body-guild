@@ -9,9 +9,9 @@ export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
       { title: "How It Works — Deluxe Fitness" },
-      { name: "description", content: "Five steps from download to transformation. Assessment, AI-powered plan, tracking, rewards, and community." },
+      { name: "description", content: "Five steps from sign-up to transformation. Assessment, AI-powered plan, tracking, rewards, and community." },
       { property: "og:title", content: "How Deluxe Fitness Works" },
-      { property: "og:description", content: "From download to transformation in five steps." },
+      { property: "og:description", content: "From sign-up to transformation in five steps." },
       { property: "og:url", content: "https://deluxefitness.app/how-it-works" },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/how-it-works" }],

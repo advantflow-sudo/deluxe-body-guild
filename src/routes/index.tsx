@@ -898,7 +898,7 @@ function DeluxeLifestyle() {
         </h2>
         <div className="mt-6 flex justify-center"><GoldDivider /></div>
         <p className="mx-auto mt-8 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
-          You're not downloading another workout tracker. You're joining a movement built around
+          You're not signing up for another workout tracker. You're joining a movement built around
           six pillars that compound into the deluxe version of you.
         </p>
         <div className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
