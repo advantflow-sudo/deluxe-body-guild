@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   Apple, Beef, Wheat, Droplets, Sparkles, ChefHat, Repeat, MessageCircle,
-  Check, Clock, Loader2, BookmarkPlus, Bookmark, Trash2,
+  Check, Clock, Loader2, BookmarkPlus, Bookmark, Trash2, Flame, Star, Truck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,9 @@ import { PremiumGate } from "@/components/deluxe/PremiumGate";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSummary";
 import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
+import { mealImage } from "@/config/meal-images";
 import { haptic } from "@/hooks/useHaptics";
+
 
 export const Route = createFileRoute("/_authenticated/app/nutrition")({
   component: () => (
