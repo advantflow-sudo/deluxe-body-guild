@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   Apple, Beef, Wheat, Droplets, Sparkles, ChefHat, Repeat, MessageCircle,
@@ -570,6 +570,19 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           </OutlineButton>
         </div>
       )}
+
+      <Link
+        to="/app/ai"
+        className="mt-8 flex items-center justify-between border border-gold/20 bg-deluxe-forest/20 p-4"
+      >
+        <span>
+          <span className="block text-[10px] uppercase tracking-[0.22em] text-gold">Food scanner</span>
+          <span className="mt-1 block text-sm text-muted-foreground">
+            Snap a meal and log its macros in seconds — it counts toward today's totals.
+          </span>
+        </span>
+        <Sparkles className="h-4 w-4 shrink-0 text-gold" />
+      </Link>
 
       <NutritionQuickLog onLogged={() => setLogTick((t) => t + 1)} />
 

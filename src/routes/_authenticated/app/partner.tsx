@@ -33,6 +33,7 @@ function PartnerPage() {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [nudgeBusy, setNudgeBusy] = useState(false);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -109,12 +110,14 @@ function PartnerPage() {
   };
 
   const sendNudge = async (kind: "cheer" | "callout" | "challenge") => {
-    if (!partnership || !user) return;
+    if (!partnership || !user || nudgeBusy) return;
+    setNudgeBusy(true);
     const otherId = partnership.user_a === user.id ? partnership.user_b : partnership.user_a;
     const { error } = await supabase.from("partner_nudges").insert({
       partnership_id: partnership.id, from_user: user.id, to_user: otherId,
       kind, message: message.trim() || null,
     });
+    setNudgeBusy(false);
     if (error) return toast.error(error.message);
     setMessage("");
     toast.success(`${kind === "cheer" ? "Cheer" : kind === "callout" ? "Callout" : "Challenge"} sent`);
@@ -176,9 +179,9 @@ function PartnerPage() {
               className="w-full border border-gold/20 bg-deluxe-black/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/30 focus:border-gold/50 focus:outline-none"
             />
             <div className="grid grid-cols-3 gap-2">
-              <OutlineButton onClick={() => sendNudge("cheer")} className="!px-2 !py-2 !text-[10px]"><Heart className="h-3 w-3" />Cheer</OutlineButton>
-              <OutlineButton onClick={() => sendNudge("callout")} className="!px-2 !py-2 !text-[10px]"><Send className="h-3 w-3" />Callout</OutlineButton>
-              <OutlineButton onClick={() => sendNudge("challenge")} className="!px-2 !py-2 !text-[10px]"><Sparkles className="h-3 w-3" />Challenge</OutlineButton>
+              <OutlineButton disabled={nudgeBusy} onClick={() => sendNudge("cheer")} className="!px-2 !py-2 !text-[10px]"><Heart className="h-3 w-3" />Cheer</OutlineButton>
+              <OutlineButton disabled={nudgeBusy} onClick={() => sendNudge("callout")} className="!px-2 !py-2 !text-[10px]"><Send className="h-3 w-3" />Callout</OutlineButton>
+              <OutlineButton disabled={nudgeBusy} onClick={() => sendNudge("challenge")} className="!px-2 !py-2 !text-[10px]"><Sparkles className="h-3 w-3" />Challenge</OutlineButton>
             </div>
           </div>
 

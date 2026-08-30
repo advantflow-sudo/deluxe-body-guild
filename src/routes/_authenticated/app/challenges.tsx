@@ -36,6 +36,8 @@ function ChallengesPage() {
   const [teamsByChallenge, setTeamsByChallenge] = useState<Record<string, Team[]>>({});
   const [newTeamName, setNewTeamName] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [busyTeamId, setBusyTeamId] = useState<string | null>(null);
+  const [busyCreate, setBusyCreate] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -93,25 +95,33 @@ function ChallengesPage() {
   useEffect(() => { void load(); }, [load]);
 
   const join = async (teamId: string) => {
-    if (!user) return;
+    if (!user || busyTeamId) return;
+    setBusyTeamId(teamId);
     const { error } = await supabase.from("team_challenge_members").insert({ team_id: teamId, user_id: user.id });
+    setBusyTeamId(null);
     if (error) return toast.error(error.message);
     toast.success("Joined team");
     void load();
   };
   const leave = async (teamId: string) => {
-    if (!user) return;
+    if (!user || busyTeamId) return;
+    setBusyTeamId(teamId);
     const { error } = await supabase.from("team_challenge_members").delete().eq("team_id", teamId).eq("user_id", user.id);
+    setBusyTeamId(null);
     if (error) return toast.error(error.message);
+    toast.success("Left team");
     void load();
   };
   const createTeam = async (challengeId: string) => {
-    if (!user) return;
+    if (!user || busyCreate) return;
     const name = (newTeamName[challengeId] ?? "").trim();
     if (!name) return toast.error("Team name required");
+    setBusyCreate(challengeId);
     const { data: t, error } = await supabase.from("team_challenge_teams").insert({ challenge_id: challengeId, name }).select().single();
-    if (error || !t) return toast.error(error?.message ?? "Failed");
-    await supabase.from("team_challenge_members").insert({ team_id: t.id, user_id: user.id });
+    if (error || !t) { setBusyCreate(null); return toast.error(error?.message ?? "Failed"); }
+    const { error: joinErr } = await supabase.from("team_challenge_members").insert({ team_id: t.id, user_id: user.id });
+    setBusyCreate(null);
+    if (joinErr) return toast.error(joinErr.message);
     setNewTeamName((s) => ({ ...s, [challengeId]: "" }));
     toast.success("Team created");
     void load();
@@ -169,9 +179,9 @@ function ChallengesPage() {
                         <div className="text-[9px] uppercase tracking-[0.2em] text-foreground/40">pts</div>
                       </div>
                       {t.iAmIn ? (
-                        <button onClick={() => leave(t.id)} className="text-[10px] uppercase tracking-[0.2em] text-foreground/40 hover:text-red-400">Leave</button>
+                        <button disabled={busyTeamId === t.id} onClick={() => leave(t.id)} className="text-[10px] uppercase tracking-[0.2em] text-foreground/40 hover:text-red-400 disabled:opacity-50">Leave</button>
                       ) : t.members.length < c.team_size && !iAmInAny ? (
-                        <button onClick={() => join(t.id)} className="border border-gold/40 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:bg-gold/10">Join</button>
+                        <button disabled={busyTeamId === t.id} onClick={() => join(t.id)} className="border border-gold/40 px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-gold hover:bg-gold/10 disabled:opacity-50">Join</button>
                       ) : null}
                     </div>
                   </div>
@@ -188,7 +198,7 @@ function ChallengesPage() {
                   maxLength={40}
                   className="flex-1 border border-gold/20 bg-deluxe-black/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/30 focus:border-gold/50 focus:outline-none"
                 />
-                <OutlineButton onClick={() => createTeam(c.id)} className="!px-3 !py-2 !text-[10px]"><Plus className="h-3 w-3" />New</OutlineButton>
+                <OutlineButton disabled={busyCreate === c.id} onClick={() => createTeam(c.id)} className="!px-3 !py-2 !text-[10px]"><Plus className="h-3 w-3" />New</OutlineButton>
               </div>
             )}
           </article>
