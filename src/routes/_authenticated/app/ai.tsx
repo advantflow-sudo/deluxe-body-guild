@@ -13,6 +13,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { fileToScaledDataUrl } from "@/lib/imageUtils";
 import { reportError } from "@/lib/monitoring";
+import { TodayNutritionRings } from "@/components/deluxe/TodayNutritionRings";
+
 import {
   dailyBriefing, analyzeMeal, analyzeForm, adaptProgram, comparePhotos,
   detectPlateau, weeklyRecap, injuryTriage, streakRecovery, matchBuddy,
