@@ -140,6 +140,7 @@ function NutritionTab() {
   const generate = async () => {
     if (!user || !targets) return;
     setGenerating(true);
+    setApiError(null);
     try {
       const raw = await streamChat(
         `You are an elite sports nutritionist. Build TODAY's meal plan for a ${ext.age ?? 30}yo ${ext.weight_kg ?? 75}kg ${ext.height_cm ?? 175}cm ${ext.training_level ?? "intermediate"} athlete whose goal is "${ext.fitness_goal ?? "lean muscle"}".
