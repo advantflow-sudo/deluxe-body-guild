@@ -31,6 +31,7 @@ const LIVE = [
 ];
 
 const SOON = [
+  { q: "Q2 2026", title: "Native iOS & Android Apps", body: "Deluxe is a web app today — dedicated App Store and Google Play apps are in development." },
   { q: "Q3 2026", title: "Wearable Integrations", body: "Whoop, Garmin, Oura — full ring-style integration." },
   { q: "Q3 2026", title: "Voice & Form Analysis", body: "Voice coach mode plus form-check video analysis." },
   { q: "Q4 2026", title: "Local Events & Meet-ups", body: "City-by-city Deluxe gatherings, training days, dinners." },

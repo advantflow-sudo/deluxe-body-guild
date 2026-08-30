@@ -37,7 +37,7 @@ const chapters = [
     Icon: Flag,
     label: "Where We Are",
     title: "A MOVEMENT, NOT AN APP.",
-    body: "Today, members across the UK and beyond train, eat, recover and connect through Deluxe. We partner with gyms, coaches, and brands who share our standard — premium, unapologetic, results-led.",
+    body: "Today, our founding members train, eat, recover and connect through Deluxe every day. We're building partnerships with gyms, coaches and brands who share our standard — premium, unapologetic, results-led.",
   },
   {
     Icon: Users,

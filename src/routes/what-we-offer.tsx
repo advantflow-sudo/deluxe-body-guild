@@ -61,8 +61,8 @@ const services = [
   },
   {
     Icon: Trophy,
-    title: "Rewards & Booking",
-    body: "Earn streaks, badges and partner perks. Book classes, sessions and PTs straight from the app.",
+    title: "Rewards",
+    body: "Earn points for streaks and challenges, then redeem them for merch, sessions and perks.",
   },
 ];
 

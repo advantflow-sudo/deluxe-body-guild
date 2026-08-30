@@ -27,12 +27,12 @@ const EARN = [
 ];
 
 const REWARDS = [
-  { Icon: Dumbbell, name: "Gym Discounts", body: "Up to 30% off partner gyms across the UK.", cost: "500 pts" },
-  { Icon: Sparkles, name: "Supplement Discounts", body: "Premium protein, creatine, hydration mixes.", cost: "300 pts" },
-  { Icon: Shirt, name: "Deluxe Apparel", body: "Members-only training gear, drops monthly.", cost: "1,000 pts" },
-  { Icon: Ticket, name: "Prize Draws", body: "Apple Watch, Whoop, Theragun, weekend retreats.", cost: "100 pts / entry" },
-  { Icon: Crown, name: "Exclusive Experiences", body: "Private coaching weekends. Founders dinners.", cost: "5,000 pts" },
-  { Icon: Trophy, name: "Lifetime Tier Upgrades", body: "Unlock Deluxe-tier perks forever.", cost: "10,000 pts" },
+  { Icon: Dumbbell, name: "Free PT Session", body: "A 60-minute 1:1 session with a coach.", cost: "1,500 pts" },
+  { Icon: Sparkles, name: "Spa Day Pass", body: "Full access to a recovery spa day.", cost: "2,500 pts" },
+  { Icon: Shirt, name: "Deluxe Hoodie", body: "Limited-drop members-only hoodie.", cost: "2,000 pts" },
+  { Icon: Ticket, name: "Pro Shop Credit", body: "Credit towards any in-house merch.", cost: "500 pts" },
+  { Icon: Crown, name: "Premium Upgrade", body: "One month of Premium, on us.", cost: "3,000 pts" },
+  { Icon: Trophy, name: "Massage Voucher", body: "A 30-minute sports massage.", cost: "1,800 pts" },
 ];
 
 function RewardsPage() {

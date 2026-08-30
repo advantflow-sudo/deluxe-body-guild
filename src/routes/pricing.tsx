@@ -35,7 +35,7 @@ export const Route = createFileRoute("/pricing")({
             { "@type": "Question", name: "Can I cancel anytime?", acceptedAnswer: { "@type": "Answer", text: "Absolutely. Memberships are month-to-month or annual. Cancel from your dashboard in two clicks — no questions, no friction." } },
             { "@type": "Question", name: "Is there a free trial?", acceptedAnswer: { "@type": "Answer", text: "Every new member gets a 7-day complimentary trial on Essential and Signature. Cancel before day seven and you won't be charged." } },
             { "@type": "Question", name: "How is Private different?", acceptedAnswer: { "@type": "Answer", text: "Private is an invitation-only tier capped each quarter. You work directly with a senior coach with full bespoke programming and concierge support." } },
-            { "@type": "Question", name: "Do you offer corporate or team plans?", acceptedAnswer: { "@type": "Answer", text: "Yes — bespoke packages for teams of 5+ with shared dashboards and consolidated billing. Reach out via the contact page." } },
+            { "@type": "Question", name: "Do you offer corporate or team plans?", acceptedAnswer: { "@type": "Answer", text: "We're happy to discuss bespoke arrangements for teams of 5+, including consolidated billing. Reach out via the contact page and we'll scope it with you." } },
           ],
         }),
       },
@@ -114,7 +114,7 @@ const FAQS = [
   },
   {
     q: "Do you offer corporate or team plans?",
-    a: "Yes — bespoke packages for teams of 5+ with shared dashboards and consolidated billing. Reach out via the contact page.",
+    a: "We're happy to discuss bespoke arrangements for teams of 5+, including consolidated billing. Reach out via the contact page and we'll scope it with you.",
   },
 ];
 
@@ -204,7 +204,7 @@ function PricingPage() {
                   </div>
                   <div className="mt-0.5 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.22em] text-gold sm:justify-start">
                     <Clock className="h-3 w-3" />
-                    Founding-member pricing ends this month
+                    Founding-member pricing, locked in for as long as you stay subscribed
                   </div>
                 </div>
               </div>
@@ -371,8 +371,8 @@ function PricingPage() {
           <div className="mx-auto mt-16 max-w-2xl border border-gold/20 bg-deluxe-forest/20 p-8 text-center">
             <SectionLabel>The Deluxe Guarantee</SectionLabel>
             <p className="mt-4 font-serif text-lg italic text-foreground/90">
-              Train with us for 30 days. If you don't feel transformed in body, mind, and standard
-              — we'll refund every penny.
+              Try any paid plan. If it's not for you within your first 14 days, we'll refund it in full —
+              no questions asked.
             </p>
           </div>
         </div>
@@ -387,9 +387,9 @@ function PricingPage() {
           </h2>
           <div className="mt-12 grid gap-8 sm:grid-cols-3">
             {[
-              { k: "12wk", v: "Average member transformation timeline" },
-              { k: "98%", v: "Member satisfaction rating" },
-              { k: "24/7", v: "AI Coach + community on demand" },
+              { k: "3", v: "Membership tiers built around your goals" },
+              { k: "24/7", v: "AI Coach on demand" },
+              { k: "14 day", v: "Money-back guarantee" },
             ].map((s) => (
               <div key={s.k} className="border border-gold/15 bg-deluxe-forest/20 p-6">
                 <div className="text-gold-gradient font-display text-4xl">{s.k}</div>
