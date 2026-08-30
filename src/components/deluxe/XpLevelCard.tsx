@@ -18,7 +18,7 @@ type Summary = {
 };
 
 // Unified XP values + rank ladder from the shared calculation engine (audit M2).
-const RANKS = XP_RANKS.map((r) => r.name);
+const RANKS: string[] = XP_RANKS.map((r) => r.name);
 
 const DAILY = DAILY_XP_AWARDS.map((a) => ({ label: a.label.replace(" or planned recovery", ""), xp: a.xp, reason: a.reason }));
 
