@@ -176,7 +176,8 @@ export function WorkoutSessionPlayer({
                         const isDone = completed.has(be.id);
                         const ex = be.exercises;
                         const open = openDemo === be.id;
-                        const clip = exerciseClip(ex?.slug ?? ex?.name);
+                        const media = exerciseMedia(ex?.slug ?? ex?.name);
+                        const clip = media.clip;
                         const form = formReference(ex?.name, ex?.muscle_group, b.compartment, b.label);
                         return (
                           <li key={be.id}>
