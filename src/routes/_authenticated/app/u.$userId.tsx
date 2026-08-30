@@ -23,6 +23,7 @@ function ProfileView() {
   const [ext, setExt] = useState<any>(null);
   const [counts, setCounts] = useState({ followers: 0, following: 0, posts: 0 });
   const [following, setFollowing] = useState(false);
+  const [followBusy, setFollowBusy] = useState(false);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
 
@@ -89,17 +90,29 @@ function ProfileView() {
   useEffect(() => { load(); }, [userId, user]);
 
   const toggleFollow = async () => {
-    if (!user || isSelf) return;
+    if (!user || isSelf || followBusy) return;
+    setFollowBusy(true);
     if (following) {
-      await supabase.from("user_followers").delete().eq("follower_id", user.id).eq("followed_id", userId);
+      // Optimistic unfollow, roll back on failure.
       setFollowing(false);
       setCounts((c) => ({ ...c, followers: Math.max(0, c.followers - 1) }));
+      const { error } = await supabase.from("user_followers").delete().eq("follower_id", user.id).eq("followed_id", userId);
+      if (error) {
+        setFollowing(true);
+        setCounts((c) => ({ ...c, followers: c.followers + 1 }));
+        toast.error(error.message);
+      }
     } else {
-      const { error } = await supabase.from("user_followers").insert({ follower_id: user.id, followed_id: userId });
-      if (error) return toast.error(error.message);
       setFollowing(true);
       setCounts((c) => ({ ...c, followers: c.followers + 1 }));
+      const { error } = await supabase.from("user_followers").insert({ follower_id: user.id, followed_id: userId });
+      if (error) {
+        setFollowing(false);
+        setCounts((c) => ({ ...c, followers: Math.max(0, c.followers - 1) }));
+        toast.error(error.message);
+      }
     }
+    setFollowBusy(false);
   };
 
   const IconFor = ({ k }: { k: Achievement["icon"] }) =>
@@ -143,8 +156,8 @@ function ProfileView() {
       </div>
 
       {!isSelf && (
-        <button onClick={() => { haptic(following ? "light" : "success"); toggleFollow(); }}
-          className={`mt-4 flex w-full items-center justify-center gap-2 border px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] transition ${
+        <button disabled={followBusy} onClick={() => { haptic(following ? "light" : "success"); toggleFollow(); }}
+          className={`mt-4 flex w-full items-center justify-center gap-2 border px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] transition disabled:opacity-60 ${
             following ? "border-gold/30 bg-gold/5 text-gold" : "border-gold bg-gold-gradient text-deluxe-black"
           }`}>
           {following ? <><UserCheck className="h-3.5 w-3.5" /> Following</> : <><UserPlus className="h-3.5 w-3.5" /> Follow</>}

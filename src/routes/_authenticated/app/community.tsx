@@ -334,18 +334,29 @@ function CommunityTab() {
     load();
   };
 
+  const likeInFlight = useRef<Set<string>>(new Set());
   const toggleLike = async (post: Post) => {
-    if (!user) return;
-    if (post.liked) {
-      await supabase.from("post_likes").delete().eq("post_id", post.id).eq("user_id", user.id);
-    } else {
-      await supabase.from("post_likes").insert({ post_id: post.id, user_id: user.id });
-    }
+    if (!user || likeInFlight.current.has(post.id)) return;
+    likeInFlight.current.add(post.id);
+    const wasLiked = post.liked;
+    // Optimistic update first, roll back on failure.
     setPosts((prev) =>
       prev.map((p) =>
-        p.id === post.id ? { ...p, liked: !p.liked, likes: p.likes + (p.liked ? -1 : 1) } : p,
+        p.id === post.id ? { ...p, liked: !wasLiked, likes: p.likes + (wasLiked ? -1 : 1) } : p,
       ),
     );
+    const { error } = wasLiked
+      ? await supabase.from("post_likes").delete().eq("post_id", post.id).eq("user_id", user.id)
+      : await supabase.from("post_likes").insert({ post_id: post.id, user_id: user.id });
+    if (error) {
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === post.id ? { ...p, liked: wasLiked, likes: p.likes + (wasLiked ? 1 : -1) } : p,
+        ),
+      );
+      toast.error(error.message);
+    }
+    likeInFlight.current.delete(post.id);
   };
 
   const deletePost = async (id: string) => {
@@ -357,7 +368,8 @@ function CommunityTab() {
       icon: <Trash2 className="h-5 w-5" />,
     });
     if (!ok) return;
-    await supabase.from("community_posts").delete().eq("id", id);
+    const { error } = await supabase.from("community_posts").delete().eq("id", id);
+    if (error) return toast.error(error.message);
     setPosts((p) => p.filter((x) => x.id !== id));
   };
 
