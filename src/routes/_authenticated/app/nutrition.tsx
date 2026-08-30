@@ -14,6 +14,7 @@ import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
 import { mealImage } from "@/config/meal-images";
 import { haptic } from "@/hooks/useHaptics";
 import { NutritionistErrorBanner } from "@/components/deluxe/NutritionistErrorBanner";
+import { TodayNutritionRings } from "@/components/deluxe/TodayNutritionRings";
 import {
   askNutritionist,
   fallbackGuidance,
@@ -372,9 +373,11 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
       )}
 
 
+      <TodayNutritionRings className="mt-5" />
+
       {targets && (
-        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <MacroCard icon={<Sparkles className="h-4 w-4" />} label="kcal" value={targets.kcal} />
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <MacroCard icon={<Sparkles className="h-4 w-4" />} label="kcal target" value={targets.kcal} />
           <MacroCard icon={<Beef className="h-4 w-4" />} label="Protein" value={`${targets.protein}g`} />
           <MacroCard icon={<Wheat className="h-4 w-4" />} label="Carbs" value={`${targets.carbs}g`} />
           <MacroCard icon={<Droplets className="h-4 w-4" />} label="Fat" value={`${targets.fat}g`} />
