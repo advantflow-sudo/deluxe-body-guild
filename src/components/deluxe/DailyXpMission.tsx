@@ -8,6 +8,7 @@ import { SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { useConfirm } from "@/components/deluxe/ConfirmDialog";
 import { StreakBadges } from "@/components/deluxe/StreakBadges";
+import { proteinTargetG, waterTargetMl as waterTargetFor } from "@/lib/targets";
 
 type Reason = "mission_workout" | "mission_water" | "mission_protein" | "mission_mindset";
 
@@ -43,6 +44,7 @@ export function DailyXpMission() {
     mission_mindset: false,
   });
   const [proteinTarget, setProteinTarget] = useState(120);
+  const [waterTarget, setWaterTargetMl] = useState(2000);
   const [waterMl, setWaterMl] = useState(0);
   const [proteinG, setProteinG] = useState(0);
   const [busy, setBusy] = useState<Reason | null>(null);
@@ -71,7 +73,7 @@ export function DailyXpMission() {
     const weight = Number(ext.data?.weight_kg ?? 75);
     // Unified targets — same formulas the nutrition plan uses (audit M2).
     const target = proteinTargetG(weight);
-    const waterTarget = waterTargetMl(weight);
+    const waterTarget = waterTargetFor(weight);
     setProteinTarget(target);
     setWaterTargetMl(waterTarget);
 
