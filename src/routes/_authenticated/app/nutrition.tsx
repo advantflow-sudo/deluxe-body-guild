@@ -148,6 +148,7 @@ Targets: ${targets.kcal} kcal, ${targets.protein}g protein, ${targets.carbs}g ca
 Return ONLY minified JSON, no markdown, matching:
 {"weight_basis":"raw","notes":"short coaching note","meals":[{"name":"","slot":"Breakfast","kcal":0,"protein_g":0,"carbs_g":0,"fat_g":0,"prep_minutes":0,"ingredients":[{"item":"","amount":"120g","basis":"raw"}],"steps":["numbered instruction"]}]}
 Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether the weight is raw or cooked; meal macros must sum within 5% of the targets; steps must be timed and numbered; simple UK supermarket ingredients.`,
+        onRetryNotice,
       );
       const parsed = extractJson<{ weight_basis: string; notes: string; meals: Meal[] }>(raw);
       const row = {
