@@ -53,52 +53,10 @@ interface Plan {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-async function streamChat(prompt: string) {
-  const { data: sessionData } = await supabase.auth.getSession();
-  const token = sessionData.session?.access_token;
-  if (!token) throw new Error("Your session expired. Please sign in again.");
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ messages: [{ role: "user", content: prompt }] }),
-  });
-  if (!res.ok || !res.body) {
-    if (res.status === 429) throw new Error("Too many requests. Try again in a moment.");
-    if (res.status === 402) throw new Error("AI credits exhausted.");
-    if (res.status === 401) throw new Error("Your session expired. Please sign in again.");
-    throw new Error("The nutritionist is unavailable right now.");
-  }
-
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let acc = "";
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    let nl: number;
-    while ((nl = buffer.indexOf("\n")) !== -1) {
-      let line = buffer.slice(0, nl);
-      buffer = buffer.slice(nl + 1);
-      if (line.endsWith("\r")) line = line.slice(0, -1);
-      if (!line.startsWith("data: ")) continue;
-      const json = line.slice(6).trim();
-      if (json === "[DONE]") return acc;
-      try {
-        const c = JSON.parse(json).choices?.[0]?.delta?.content as string | undefined;
-        if (c) acc += c;
-      } catch {
-        buffer = line + "\n" + buffer;
-        break;
-      }
-    }
-  }
-  return acc;
+async function streamChat(prompt: string, onRetry?: (attempt: number, waitMs: number) => void) {
+  return askNutritionist(prompt, { attempts: 3, onRetry });
 }
+
 
 function extractJson<T>(raw: string): T {
   const start = raw.indexOf("{");
