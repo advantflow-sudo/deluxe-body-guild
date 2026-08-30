@@ -21,6 +21,7 @@ import { DeluxeScoreBreakdown } from "@/components/deluxe/DeluxeScoreBreakdown";
 import { WaterTracker } from "@/components/deluxe/WaterTracker";
 import { SleepLogger } from "@/components/deluxe/SleepLogger";
 import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
+import { TodayNutritionRings } from "@/components/deluxe/TodayNutritionRings";
 import { DailyGoalsList } from "@/components/deluxe/DailyGoalsList";
 import { RecoveryCheckin } from "@/components/deluxe/RecoveryCheckin";
 import { XpLevelCard } from "@/components/deluxe/XpLevelCard";
@@ -141,6 +142,8 @@ function HomeTab() {
       <DailyGoalsList />
       <WaterTracker />
       <SleepLogger />
+      <TodayNutritionRings className="mt-8" />
+
       <NutritionQuickLog />
 
       <DailyBriefingCard />
