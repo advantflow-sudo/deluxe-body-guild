@@ -22,10 +22,10 @@ export const Route = createFileRoute("/how-it-works")({
 const STEPS = [
   {
     Icon: Download,
-    title: "Download Deluxe Fitness",
+    title: "Create your account",
     body:
-      "Start on iOS or Android. Sign up takes under a minute. No card required for your first 24 hours.",
-    detail: ["iOS + Android native", "Apple Health & Google Fit sync", "Optional wearable pairing"],
+      "Deluxe runs in your browser and installs to your home screen as an app. Sign up takes under a minute — no card needed to create an account.",
+    detail: ["Installable web app", "Google Fit sync", "Optional wearable pairing"],
   },
   {
     Icon: ClipboardCheck,
