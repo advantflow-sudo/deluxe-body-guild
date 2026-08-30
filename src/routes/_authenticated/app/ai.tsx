@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
@@ -9,6 +9,10 @@ import {
 } from "lucide-react";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { usePremium } from "@/hooks/usePremium";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { fileToScaledDataUrl } from "@/lib/imageUtils";
+import { reportError } from "@/lib/monitoring";
 import {
   dailyBriefing, analyzeMeal, analyzeForm, adaptProgram, comparePhotos,
   detectPlateau, weeklyRecap, injuryTriage, streakRecovery, matchBuddy,
