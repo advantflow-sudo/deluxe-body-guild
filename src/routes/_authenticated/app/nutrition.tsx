@@ -72,19 +72,8 @@ function extractJson<T>(raw: string): T {
   return JSON.parse(raw.slice(start, end + 1)) as T;
 }
 
-function computeTargets(ext: any) {
-  const w = Number(ext?.weight_kg ?? 75);
-  const h = Number(ext?.height_cm ?? 175);
-  const a = Number(ext?.age ?? 30);
-  const bmr = 10 * w + 6.25 * h - 5 * a + 5;
-  const goal = String(ext?.fitness_goal ?? "").toLowerCase();
-  const factor = goal.includes("lose") || goal.includes("lean") ? 1.35 : goal.includes("muscle") ? 1.65 : 1.5;
-  const kcal = Math.round((bmr * factor) / 10) * 10;
-  const protein = Math.max(80, Math.round(w * 1.8));
-  const fat = Math.round((kcal * 0.28) / 9);
-  const carbs = Math.max(60, Math.round((kcal - protein * 4 - fat * 9) / 4));
-  return { kcal, protein, carbs, fat, water: Math.round((w * 35) / 100) * 100 };
-}
+// Unified daily targets — single source of truth lives in src/lib/targets.ts (audit M2).
+import { computeTargets } from "@/lib/targets";
 
 function NutritionTab() {
   const { user } = useAuth();
