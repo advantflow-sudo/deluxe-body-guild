@@ -601,6 +601,16 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
   );
 }
 
+function Chip({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 border border-gold/20 bg-deluxe-black/50 px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+      <span className="text-gold">{icon}</span>
+      {label}
+    </span>
+  );
+}
+
+
 function MacroCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: React.ReactNode }) {
   return (
     <div className="border border-gold/15 bg-deluxe-black/40 p-3">
