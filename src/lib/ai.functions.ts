@@ -85,42 +85,60 @@ Recent device metrics (steps/hr/sleep/hrv): ${(metrics ?? []).slice(0, 15).map((
 export const analyzeMeal = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { imageDataUrl: string; note?: string }) =>
-    z.object({ imageDataUrl: z.string().min(20).max(8_000_000), note: z.string().max(500).optional() }).parse(d),
+    z.object({ imageDataUrl: z.string().min(20).max(4_000_000), note: z.string().max(500).optional() }).parse(d),
   )
-  .handler(async ({ data }) => {
-    const result = await callAI({
-      model: "google/gemini-2.5-flash",
-      messages: [
-        { role: "system", content: "You are a precise nutrition estimator. Inspect the meal photo and return realistic macro estimates. If unsure, give a sensible range midpoint." },
-        {
-          role: "user",
-          content: [
-            { type: "text", text: `Estimate this meal. Note: ${data.note ?? "n/a"}` },
-            { type: "image_url", image_url: { url: data.imageDataUrl } },
-          ],
-        },
-      ],
-      tool: {
-        name: "log_meal",
-        description: "Return structured meal estimate",
-        parameters: {
-          type: "object",
-          properties: {
-            name: { type: "string" },
-            calories: { type: "number" },
-            protein_g: { type: "number" },
-            carbs_g: { type: "number" },
-            fat_g: { type: "number" },
-            confidence: { type: "string", enum: ["low", "medium", "high"] },
-            items: { type: "array", items: { type: "string" } },
-            notes: { type: "string" },
+  .handler(async ({ data, context }) => {
+    try {
+      const result = await callAI({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a precise nutrition estimator. Inspect the meal photo and return realistic macro estimates. " +
+              "Never pretend certainty you don't have: if the food or portion is ambiguous, set confidence to 'low' " +
+              "and explain what to double-check in notes. Estimate portion sizes from visual cues (plate size, utensils).",
           },
-          required: ["name", "calories", "protein_g", "carbs_g", "fat_g", "confidence", "items"],
-          additionalProperties: false,
+          {
+            role: "user",
+            content: [
+              { type: "text", text: `Estimate this meal. Note from user: ${data.note ?? "n/a"}` },
+              { type: "image_url", image_url: { url: data.imageDataUrl } },
+            ],
+          },
+        ],
+        tool: {
+          name: "log_meal",
+          description: "Return structured meal estimate",
+          parameters: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+              calories: { type: "number" },
+              protein_g: { type: "number" },
+              carbs_g: { type: "number" },
+              fat_g: { type: "number" },
+              portion_estimate: { type: "string", description: "e.g. '~350g plate, 1 medium chicken breast, 1 cup rice'" },
+              confidence: { type: "string", enum: ["low", "medium", "high"] },
+              items: { type: "array", items: { type: "string" } },
+              suggestions: { type: "array", items: { type: "string" }, description: "Corrections or healthier swaps" },
+              notes: { type: "string" },
+            },
+            required: ["name", "calories", "protein_g", "carbs_g", "fat_g", "confidence", "items"],
+            additionalProperties: false,
+          },
         },
-      },
-    });
-    return result as any;
+      });
+      return result as any;
+    } catch (e) {
+      // Server-side trace for scanner failures (audit M1: log at each stage).
+      console.error("[analyzeMeal] analysis failed", {
+        userId: context.userId,
+        payloadBytes: data.imageDataUrl.length,
+        error: e instanceof Error ? e.message : String(e),
+      });
+      throw e;
+    }
   });
 
 /* ============================================================
