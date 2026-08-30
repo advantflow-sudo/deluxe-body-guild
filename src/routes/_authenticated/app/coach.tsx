@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Send, Sparkles, User, Crown, Lock } from "lucide-react";
+import { Send, Sparkles, User, Crown, Lock, RotateCw, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -12,12 +12,45 @@ import { useServerFn } from "@tanstack/react-start";
 import { rememberFromChat } from "@/lib/coach-memory.functions";
 import { CoachMemoryPanel } from "@/components/deluxe/CoachMemoryPanel";
 import { AdaptiveWeekCard } from "@/components/deluxe/AdaptiveWeekCard";
+import { CoachConversations } from "@/components/deluxe/CoachConversations";
 
 export const Route = createFileRoute("/_authenticated/app/coach")({
   component: CoachTab,
 });
 
 type Msg = { role: "user" | "assistant"; content: string };
+
+type CoachFailure = "rate_limited" | "out_of_credits" | "session_expired" | "unavailable";
+
+const FAILURE_COPY: Record<CoachFailure, { title: string; detail: string; retryable: boolean }> = {
+  rate_limited: {
+    title: "Coach is rate limited",
+    detail: "Too many requests in a short window. Retry in a moment.",
+    retryable: true,
+  },
+  out_of_credits: {
+    title: "AI credits exhausted",
+    detail: "The workspace has run out of AI credits. Top up to bring the coach back online.",
+    retryable: false,
+  },
+  session_expired: {
+    title: "Your session expired",
+    detail: "Sign in again so your requests can be authorised.",
+    retryable: false,
+  },
+  unavailable: {
+    title: "Coach is temporarily unavailable",
+    detail: "The AI service didn't respond. Try again in a few seconds.",
+    retryable: true,
+  },
+};
+
+function classifyStatus(status: number): CoachFailure {
+  if (status === 429) return "rate_limited";
+  if (status === 402 || status === 403) return "out_of_credits";
+  if (status === 401) return "session_expired";
+  return "unavailable";
+}
 
 const SUGGESTIONS = [
   "Build me a 4-day strength split",
@@ -33,9 +66,12 @@ function CoachTab() {
   const locked = !premLoading && !isPremium;
   const [messages, setMessages] = useState<Msg[]>([]);
   const conversationId = useRef<string | null>(null);
+  const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [memoryKey, setMemoryKey] = useState(0);
+  const [convRefreshKey, setConvRefreshKey] = useState(0);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<{ kind: CoachFailure; lastText: string } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,6 +92,7 @@ function CoachTab() {
         .maybeSingle();
       if (cancelled || !conv) return;
       conversationId.current = conv.id;
+      setActiveConvId(conv.id);
       const { data: msgs } = await supabase
         .from("ai_messages")
         .select("role,content")
@@ -66,6 +103,27 @@ function CoachTab() {
     })();
     return () => { cancelled = true; };
   }, [user]);
+
+  const loadConversation = async (id: string) => {
+    conversationId.current = id;
+    setActiveConvId(id);
+    setError(null);
+    const { data: msgs } = await supabase
+      .from("ai_messages")
+      .select("role,content")
+      .eq("conversation_id", id)
+      .order("created_at")
+      .limit(40);
+    setMessages((msgs as Msg[]) ?? []);
+  };
+
+  const startNewChat = () => {
+    conversationId.current = null;
+    setActiveConvId(null);
+    setMessages([]);
+    setError(null);
+    setInput("");
+  };
 
   /** Persist the exchange and distil durable facts into coach memory. */
   const persist = async (userText: string, assistantText: string) => {
@@ -78,11 +136,14 @@ function CoachTab() {
           .select("id")
           .single();
         conversationId.current = data?.id ?? null;
+        setActiveConvId(conversationId.current);
+        setConvRefreshKey((k) => k + 1);
       } else {
         await supabase
           .from("ai_conversations")
           .update({ updated_at: new Date().toISOString() })
           .eq("id", conversationId.current);
+        setConvRefreshKey((k) => k + 1);
       }
       if (!conversationId.current) return;
       await supabase.from("ai_messages").insert([
@@ -104,6 +165,7 @@ function CoachTab() {
       toast.error("Upgrade to Premium to chat with the Coach.");
       return;
     }
+    setError(null);
     const userMsg: Msg = { role: "user", content: text.trim() };
     const next = [...messages, userMsg];
     setMessages(next);
@@ -122,9 +184,9 @@ function CoachTab() {
         body: JSON.stringify({ messages: next }),
       });
       if (!res.ok || !res.body) {
-        if (res.status === 429) toast.error("Too many requests. Slow down a moment.");
-        else if (res.status === 402) toast.error("AI credits exhausted.");
-        else toast.error("Coach is unavailable right now.");
+        const kind = classifyStatus(res.status);
+        setError({ kind, lastText: userMsg.content });
+        setMessages((prev) => prev.slice(0, -1));
         setLoading(false);
         return;
       }
@@ -167,10 +229,16 @@ function CoachTab() {
           }
         }
       }
-      void persist(userMsg.content, assistant);
+      if (!assistant.trim()) {
+        setError({ kind: "unavailable", lastText: userMsg.content });
+        setMessages((prev) => prev.slice(0, -2));
+      } else {
+        void persist(userMsg.content, assistant);
+      }
     } catch (e) {
       console.error(e);
-      toast.error("Connection lost. Try again.");
+      setError({ kind: "unavailable", lastText: userMsg.content });
+      setMessages((prev) => prev.slice(0, -1));
     } finally {
       setLoading(false);
     }
@@ -178,11 +246,20 @@ function CoachTab() {
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-7rem)] w-full max-w-2xl flex-col px-4 pt-6 sm:px-5">
-      <div>
-        <SectionLabel>Deluxe Coach</SectionLabel>
-        <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">
-          Your private <span className="text-gold-gradient italic">AI coach</span>
-        </h1>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <SectionLabel>Deluxe Coach</SectionLabel>
+          <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">
+            Your private <span className="text-gold-gradient italic">AI coach</span>
+          </h1>
+        </div>
+        <CoachConversations
+          userId={user?.id}
+          activeId={activeConvId}
+          refreshKey={convRefreshKey}
+          onSelect={loadConversation}
+          onNew={startNewChat}
+        />
       </div>
 
       {locked && (
@@ -195,6 +272,25 @@ function CoachTab() {
           <Link to="/pricing" className="inline-flex items-center gap-1 bg-gold-gradient px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-deluxe-black">
             <Lock className="h-3 w-3" /> Upgrade
           </Link>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-4 flex items-start gap-3 border border-red-500/30 bg-red-950/20 p-3.5">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+          <div className="flex-1 text-xs text-muted-foreground">
+            <span className="block font-display text-sm text-foreground">{FAILURE_COPY[error.kind].title}</span>
+            {FAILURE_COPY[error.kind].detail}
+          </div>
+          {FAILURE_COPY[error.kind].retryable && (
+            <button
+              onClick={() => send(error.lastText)}
+              disabled={loading}
+              className="inline-flex shrink-0 items-center gap-1.5 border border-gold/30 bg-deluxe-black/40 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-gold transition hover:border-gold/60 disabled:opacity-50"
+            >
+              <RotateCw className="h-3 w-3" /> Retry
+            </button>
+          )}
         </div>
       )}
 

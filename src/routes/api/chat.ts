@@ -52,7 +52,7 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
     const today = new Date().toISOString().slice(0, 10);
     const since = new Date(Date.now() - 14 * 864e5).toISOString();
 
-    const [{ data: profile }, { data: ext }, { data: stats }, { data: sessions }, { data: lastWorkout }, { data: memory }, { data: recovery }, { data: xp }] = await Promise.all([
+    const [{ data: profile }, { data: ext }, { data: stats }, { data: sessions }, { data: lastWorkout }, { data: memory }, { data: recovery }, { data: xp }, { data: nutritionToday }, { data: streak }, { data: habits }, { data: habitLogsToday }, { data: latestPlan }] = await Promise.all([
       supabase.from("profiles").select("display_name,fitness_goal,bio").eq("id", userId).maybeSingle(),
       supabase.from("user_profiles_ext").select("fitness_goal,training_level,preferred_type,weight_kg,height_cm,age,subscription_tier").eq("user_id", userId).maybeSingle(),
       supabase.from("daily_stats").select("steps,calories,water_ml,streak").eq("user_id", userId).eq("stat_date", today).maybeSingle(),
@@ -61,6 +61,11 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
       supabase.from("ai_coach_memory").select("category,key,value").eq("user_id", userId).limit(40),
       supabase.from("recovery_logs").select("log_date,sleep_quality,soreness,fatigue,energy,readiness,note").eq("user_id", userId).order("log_date", { ascending: false }).limit(3),
       supabase.rpc("get_xp_summary"),
+      supabase.from("nutrition_logs").select("calories,protein_g,carbs_g,fat_g,meal_label").eq("user_id", userId).eq("log_date", today),
+      supabase.from("streaks").select("current_len,longest_len,last_active_date").eq("user_id", userId).maybeSingle(),
+      supabase.from("habits").select("id,name,target_value,unit").eq("user_id", userId).eq("active", true).limit(10),
+      supabase.from("habit_logs").select("habit_id,value").eq("user_id", userId).eq("log_date", today),
+      supabase.from("meal_plans").select("kcal_target,protein_target_g,carbs_target_g,fat_target_g").eq("user_id", userId).order("plan_date", { ascending: false }).limit(1).maybeSingle(),
     ]);
 
 
@@ -107,6 +112,28 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
     const xpSummary = xp as { total_xp?: number; today_xp?: number; rank?: string } | null;
     if (xpSummary?.rank) {
       lines.push(`- Rank: ${xpSummary.rank} (${xpSummary.total_xp ?? 0} XP total, ${xpSummary.today_xp ?? 0}/100 today)`);
+    }
+
+    if (latestPlan) {
+      lines.push(`- Nutrition targets: ${latestPlan.kcal_target} kcal, ${latestPlan.protein_target_g}g protein, ${latestPlan.carbs_target_g}g carbs, ${latestPlan.fat_target_g}g fat`);
+    }
+    const nutritionLogged = (nutritionToday ?? []).reduce(
+      (a, n) => ({ kcal: a.kcal + Number(n.calories ?? 0), protein: a.protein + Number(n.protein_g ?? 0) }),
+      { kcal: 0, protein: 0 },
+    );
+    if ((nutritionToday ?? []).length) {
+      lines.push(`- Logged today: ${Math.round(nutritionLogged.kcal)} kcal, ${Math.round(nutritionLogged.protein)}g protein across ${nutritionToday!.length} entr${nutritionToday!.length === 1 ? "y" : "ies"}`);
+    } else {
+      lines.push("- Nutrition: nothing logged yet today.");
+    }
+
+    if (streak) {
+      lines.push(`- Streak: ${streak.current_len} day${streak.current_len === 1 ? "" : "s"} current, ${streak.longest_len} longest.`);
+    }
+    if ((habits ?? []).length) {
+      const doneIds = new Set((habitLogsToday ?? []).map((h) => h.habit_id));
+      const habitLines = (habits ?? []).map((h) => `${h.name}${doneIds.has(h.id) ? " ✓" : ""}`);
+      lines.push(`- Habits today: ${habitLines.join(", ")}`);
     }
 
     const latestRecovery = (recovery ?? [])[0];

@@ -13,7 +13,6 @@ import {
   Play,
   ArrowRight,
   Flame,
-  Star,
   Quote,
   Apple as AppleIcon,
   Trophy,
@@ -53,7 +52,6 @@ import { Reveal } from "@/components/deluxe/Reveal";
 import { Magnetic } from "@/components/deluxe/Magnetic";
 import { TiltCard } from "@/components/deluxe/TiltCard";
 import { AnimatedGrid } from "@/components/deluxe/AnimatedGrid";
-import { AppStoreBadges } from "@/components/deluxe/AppStoreBadges";
 import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -678,11 +676,19 @@ function FinalCta() {
           <GoldDivider />
         </div>
         <p className="mt-8 text-base text-muted-foreground md:text-lg">
-          Join 50,000+ members already on their journey.
+          Join the founding cohort building the Deluxe standard.
         </p>
-        <AppStoreBadges className="mt-10" />
+        <div className="mt-10 flex justify-center">
+          <Magnetic>
+            <Link to="/login">
+              <GoldButton>
+                Start Your Journey <ArrowRight className="h-4 w-4" />
+              </GoldButton>
+            </Link>
+          </Magnetic>
+        </div>
         <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-          Free to download · Premium plans available
+          Free to start · Premium plans available
         </p>
       </div>
     </section>
@@ -691,55 +697,42 @@ function FinalCta() {
 
 /* ---------------- Reviews ---------------- */
 function Reviews() {
-  const reviews = [
+  const promises = [
     {
-      name: "Alexandra J.",
-      role: "Member · 14 months",
-      body: "I've tried every fitness app out there. Nothing has made me show up like Deluxe. The community alone is worth it.",
+      title: "Built with real training conversations",
+      body: "Every programme, prompt and challenge on Deluxe comes from real gym-floor conversations — not guesswork.",
     },
     {
-      name: "James O.",
-      role: "Member · 8 months",
-      body: "Down 12kg, up two suit sizes in the shoulders. The AI coach actually feels like a real PT.",
+      title: "An AI Coach that remembers you",
+      body: "Your coach tracks your goals, streaks and check-ins over time, so guidance gets sharper the longer you train.",
     },
     {
-      name: "Maya R.",
-      role: "Member · 2 years",
-      body: "It stopped feeling like an app and started feeling like a lifestyle. Genuinely changed how I move through my day.",
+      title: "A founding cohort, not a crowd",
+      body: "We're onboarding our first 100 founding members deliberately — so the community stays close and accountable.",
     },
   ];
   return (
     <section className="bg-deluxe-black py-28">
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center">
-          <SectionLabel>Reviews &amp; Referrals</SectionLabel>
+          <SectionLabel>Why Founding Members Join</SectionLabel>
           <h2 className="mt-6 font-display text-4xl leading-[1.05] sm:text-5xl md:text-6xl">
-            STORIES FROM <span className="text-gold">THE FLOOR.</span>
+            BUILT FOR <span className="text-gold">THE LONG GAME.</span>
           </h2>
           <div className="mt-6 flex justify-center">
             <GoldDivider />
           </div>
         </div>
         <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {reviews.map((r) => (
-            <figure key={r.name} className="luxury-card p-8">
+          {promises.map((r) => (
+            <figure key={r.title} className="luxury-card p-8">
               <Quote className="h-6 w-6 text-gold" strokeWidth={1.5} />
-              <blockquote className="mt-5 text-base leading-relaxed text-foreground/90">
-                "{r.body}"
+              <figcaption className="mt-5 font-display text-lg tracking-wide text-foreground">
+                {r.title}
+              </figcaption>
+              <blockquote className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {r.body}
               </blockquote>
-              <div className="mt-6 flex items-center justify-between border-t border-gold/10 pt-5">
-                <figcaption>
-                  <div className="font-display text-lg tracking-wide text-foreground">
-                    {r.name.toUpperCase()}
-                  </div>
-                  <div className="text-xs text-muted-foreground">{r.role}</div>
-                </figcaption>
-                <div className="flex gap-0.5 text-gold">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-gold" />
-                  ))}
-                </div>
-              </div>
             </figure>
           ))}
         </div>
@@ -757,8 +750,8 @@ function HowItWorks() {
       body: "Grab Deluxe Fitness on iOS or Android. Sign up in under a minute.",
       details: [
         "Free account — no card required to start.",
-        "iOS 15+ and Android 9+ supported.",
-        "Import data from Apple Health or Google Fit on day one.",
+        "Works on any modern mobile or desktop browser.",
+        "Sync Apple Health or Google Fit on day one.",
       ],
     },
     {

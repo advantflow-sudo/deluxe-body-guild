@@ -91,8 +91,8 @@ function FounderPage() {
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             <div className="luxury-card p-8 text-center">
-              <div className="font-display text-4xl text-gold-gradient">50,000+</div>
-              <div className="mt-3 text-sm uppercase tracking-[0.22em] text-foreground">Members Worldwide</div>
+              <div className="font-display text-2xl text-gold-gradient">Founding Cohort</div>
+              <div className="mt-3 text-sm uppercase tracking-[0.22em] text-foreground">Onboarding now</div>
             </div>
             <div className="luxury-card p-8 text-center">
               <div className="font-display text-2xl text-foreground">Built in the UK</div>

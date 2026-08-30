@@ -55,18 +55,27 @@ export function SuggestedMembers() {
     })();
   }, [user]);
 
+  const [pending, setPending] = useState<Set<string>>(new Set());
   const toggle = async (m: Member) => {
-    if (!user) return;
-    if (m.following) {
-      await supabase.from("user_followers").delete().eq("follower_id", user.id).eq("followed_id", m.id);
-    } else {
-      await supabase.from("user_followers").insert({ follower_id: user.id, followed_id: m.id });
-    }
+    if (!user || pending.has(m.id)) return;
+    setPending((p) => new Set(p).add(m.id));
+    // Optimistic toggle, rolled back if the mutation fails.
     setMembers((prev) =>
       prev.map((x) =>
         x.id === m.id ? { ...x, following: !x.following, followers: x.followers + (x.following ? -1 : 1) } : x,
       ),
     );
+    const { error } = m.following
+      ? await supabase.from("user_followers").delete().eq("follower_id", user.id).eq("followed_id", m.id)
+      : await supabase.from("user_followers").insert({ follower_id: user.id, followed_id: m.id });
+    if (error) {
+      setMembers((prev) =>
+        prev.map((x) =>
+          x.id === m.id ? { ...x, following: m.following, followers: m.followers } : x,
+        ),
+      );
+    }
+    setPending((p) => { const n = new Set(p); n.delete(m.id); return n; });
   };
 
   if (loading || members.length === 0) return null;
@@ -101,8 +110,9 @@ export function SuggestedMembers() {
                 {m.followers} followers
               </div>
               <button
+                disabled={pending.has(m.id)}
                 onClick={() => { haptic(m.following ? "light" : "success"); toggle(m); }}
-                className={`mt-2 flex w-full items-center justify-center gap-1 border px-2 py-1.5 text-[10px] uppercase tracking-[0.2em] transition ${
+                className={`mt-2 flex w-full items-center justify-center gap-1 border px-2 py-1.5 text-[10px] uppercase tracking-[0.2em] transition disabled:opacity-60 ${
                   m.following
                     ? "border-gold/30 bg-gold/5 text-gold"
                     : "border-gold bg-gold-gradient text-deluxe-black"
