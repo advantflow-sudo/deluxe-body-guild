@@ -120,7 +120,7 @@ export function MealPrepGuide({
   const steps = meal.steps ?? [];
   const ingredients = meal.ingredients ?? [];
   const timings = useMemo(() => steps.map(stepMinutes), [steps]);
-  const timedTotal = timings.reduce((a, t) => a + (t ?? 0), 0);
+  const timedTotal = timings.reduce<number>((a, t) => a + (t ?? 0), 0);
   const activeMinutes = timedTotal || meal.prep_minutes || 0;
   const list = useMemo(() => buildShoppingList(allMeals ?? [meal]), [allMeals, meal]);
 
