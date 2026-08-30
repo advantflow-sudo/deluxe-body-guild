@@ -126,14 +126,6 @@ function Card({ children }: { children: React.ReactNode }) {
   return <div className="mt-3 border border-gold/15 bg-deluxe-black/50 p-3 text-sm text-foreground"><div className="prose-deluxe">{children}</div></div>;
 }
 
-function useFileToDataUrl() {
-  return (file: File) => new Promise<string>((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result as string);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
 
 /* ---------- 1. Briefing ---------- */
 function BriefingPanel() {
@@ -301,7 +293,7 @@ function Macro({ label, v }: { label: string; v: number }) {
 
 /* ---------- 3. Form ---------- */
 function FormPanel() {
-  const fn = useServerFn(analyzeForm); const toDataUrl = useFileToDataUrl();
+  const fn = useServerFn(analyzeForm); const toDataUrl = fileToScaledDataUrl;
   const [exercise, setExercise] = useState("Back Squat");
   const [img, setImg] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
@@ -373,7 +365,7 @@ function ProgramPanel() {
 
 /* ---------- 5. Photos ---------- */
 function PhotosPanel() {
-  const fn = useServerFn(comparePhotos); const toDataUrl = useFileToDataUrl();
+  const fn = useServerFn(comparePhotos); const toDataUrl = fileToScaledDataUrl;
   const [a, setA] = useState<string | null>(null); const [b, setB] = useState<string | null>(null);
   const [r, setR] = useState<any>(null); const [loading, setLoading] = useState(false);
   async function go() {
