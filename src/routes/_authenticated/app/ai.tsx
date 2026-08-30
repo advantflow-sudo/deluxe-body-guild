@@ -144,35 +144,148 @@ function BriefingPanel() {
 }
 
 /* ---------- 2. Meal ---------- */
+type MealScan = {
+  name: string;
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  portion_estimate?: string;
+  confidence: "low" | "medium" | "high";
+  items?: string[];
+  suggestions?: string[];
+  notes?: string;
+};
+
 function MealPanel() {
-  const fn = useServerFn(analyzeMeal); const toDataUrl = useFileToDataUrl();
+  const fn = useServerFn(analyzeMeal);
+  const { user } = useAuth();
   const [img, setImg] = useState<string | null>(null);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<MealScan | null>(null);
+  const [edit, setEdit] = useState<MealScan | null>(null);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [note, setNote] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+
   async function onFile(f: File) {
-    const url = await toDataUrl(f); setImg(url); setResult(null); setLoading(true);
-    try { const r = await fn({ data: { imageDataUrl: url } }); setResult(r); }
-    catch (e: any) { toast.error(e.message); } finally { setLoading(false); }
+    setResult(null); setEdit(null); setSaved(false);
+    setLoading(true);
+    try {
+      const url = await fileToScaledDataUrl(f);
+      setImg(url);
+      const r = (await fn({ data: { imageDataUrl: url, note: note || undefined } })) as MealScan;
+      setResult(r);
+      setEdit({ ...r });
+      if (r.confidence === "low") {
+        toast("I'm not completely sure what this is — please check the foods and portions before saving.");
+      }
+    } catch (e: any) {
+      reportError({
+        message: `meal-scan failed: ${e?.message ?? "unknown"}`,
+        severity: "error",
+        extra: { area: "meal-scan", fileKb: Math.round(f.size / 1024), type: f.type },
+      });
+      toast.error(e?.message ?? "Couldn't analyze that photo. Try a clearer, well-lit shot.");
+    } finally {
+      setLoading(false);
+    }
   }
+
+  async function confirmAndSave() {
+    if (!user || !edit) return;
+    setSaving(true);
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      const { error } = await supabase.from("nutrition_logs").insert({
+        user_id: user.id,
+        log_date: today,
+        meal_label: edit.name,
+        calories: Math.round(edit.calories),
+        protein_g: Math.round(edit.protein_g),
+        carbs_g: Math.round(edit.carbs_g),
+        fat_g: Math.round(edit.fat_g),
+      });
+      if (error) throw error;
+      setSaved(true);
+      toast.success("Meal saved to today's nutrition log.");
+    } catch (e: any) {
+      reportError({ message: `meal-scan save failed: ${e?.message ?? "unknown"}`, severity: "error", extra: { area: "meal-scan" } });
+      toast.error("Couldn't save the meal — try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const num = (v: string) => Math.max(0, Number(v.replace(/[^\d.]/g, "")) || 0);
+
   return (
     <div>
       <input ref={inputRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
-      <button onClick={() => inputRef.current?.click()} className="inline-flex items-center gap-2 border border-gold/40 bg-deluxe-black/60 px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-foreground">
-        <Upload className="h-3.5 w-3.5" /> Snap meal photo
-      </button>
+      <div className="flex flex-wrap items-center gap-2">
+        <button onClick={() => inputRef.current?.click()} className="inline-flex items-center gap-2 border border-gold/40 bg-deluxe-black/60 px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-foreground">
+          <Upload className="h-3.5 w-3.5" /> {img ? "Retake photo" : "Snap meal photo"}
+        </button>
+        <input
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="Optional note (e.g. 'large portion')"
+          className="min-w-40 flex-1 border border-gold/20 bg-deluxe-black/60 px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground"
+        />
+      </div>
       {img && <img src={img} alt="meal" className="mt-3 max-h-56 border border-gold/20" />}
-      {loading && <div className="mt-3 text-xs text-muted-foreground"><Loader2 className="inline h-3 w-3 animate-spin" /> Analyzing…</div>}
-      {result && (
+      {loading && (
+        <div className="mt-3 space-y-2" aria-live="polite">
+          <div className="text-xs text-muted-foreground"><Loader2 className="inline h-3 w-3 animate-spin" /> Analyzing your plate…</div>
+          <div className="h-2 w-full animate-pulse bg-gold/10" />
+        </div>
+      )}
+      {edit && !loading && (
         <Card>
-          <div className="font-display text-base text-gold">{result.name}</div>
-          <div className="mt-2 grid grid-cols-4 gap-2 text-center text-xs">
-            <Macro label="kcal" v={result.calories} />
-            <Macro label="P" v={result.protein_g} />
-            <Macro label="C" v={result.carbs_g} />
-            <Macro label="F" v={result.fat_g} />
+          {edit.confidence === "low" && (
+            <div className="mb-3 border border-amber-400/40 bg-amber-400/10 p-2 text-[11px] text-amber-200">
+              Low confidence — review and edit the foods and portions below before saving.
+            </div>
+          )}
+          <label className="block text-[10px] uppercase tracking-[0.2em] text-gold">Meal name</label>
+          <input
+            value={edit.name}
+            onChange={(e) => setEdit({ ...edit, name: e.target.value })}
+            className="mt-1 w-full border border-gold/20 bg-deluxe-black/60 px-3 py-2 font-display text-base text-gold"
+          />
+          <div className="mt-3 grid grid-cols-4 gap-2 text-center text-xs">
+            {([["kcal", "calories"], ["P (g)", "protein_g"], ["C (g)", "carbs_g"], ["F (g)", "fat_g"]] as const).map(([label, key]) => (
+              <div key={key} className="border border-gold/20 p-2">
+                <input
+                  value={Math.round(edit[key])}
+                  onChange={(e) => setEdit({ ...edit, [key]: num(e.target.value) })}
+                  inputMode="numeric"
+                  className="w-full bg-transparent text-center font-display text-foreground focus:outline-none"
+                  aria-label={label}
+                />
+                <div className="text-[10px] uppercase text-muted-foreground">{label}</div>
+              </div>
+            ))}
           </div>
-          <div className="mt-2 text-[11px] text-muted-foreground">Confidence: {result.confidence} · {result.items?.join(", ")}</div>
+          {edit.portion_estimate && <div className="mt-2 text-[11px] text-muted-foreground">Portion: {edit.portion_estimate}</div>}
+          <div className="mt-1 text-[11px] text-muted-foreground">
+            Confidence: {edit.confidence}{edit.items?.length ? ` · ${edit.items.join(", ")}` : ""}
+          </div>
+          {edit.suggestions?.length ? <List label="Suggestions" items={edit.suggestions} /> : null}
+          {edit.notes && <p className="mt-2 text-[11px] text-muted-foreground">{edit.notes}</p>}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {saved ? (
+              <Link to="/app/nutrition" className="inline-flex items-center gap-2 bg-gold-gradient px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-deluxe-black">
+                View in Nutrition <ChevronRight className="h-3 w-3" />
+              </Link>
+            ) : (
+              <Btn onClick={confirmAndSave} loading={saving}>Confirm & log meal</Btn>
+            )}
+            <button onClick={() => { setResult(null); setEdit(null); setImg(null); setSaved(false); }} className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-gold">
+              Discard
+            </button>
+          </div>
         </Card>
       )}
     </div>
