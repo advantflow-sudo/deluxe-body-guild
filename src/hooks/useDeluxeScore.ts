@@ -29,24 +29,24 @@ export interface DeluxeScoreBreakdown {
   details: ScoreDetails;
 }
 
-const TARGETS = {
-  waterMl: 3000,
+// Static parts of the score rubric. Water/calorie targets come from the
+// unified engine (src/lib/targets.ts) per user — no more hardcoded 3000 ml.
+const SCORE = {
   sleepHours: 7.5,
-  calorieMin: 1600,
-  calorieMax: 2800,
   goalSlots: 5,
 };
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 const todayStart = () => `${todayIso()}T00:00:00`;
 
+const FALLBACK = computeTargets(null);
 const EMPTY_DETAILS: ScoreDetails = {
   workoutCount: 0,
-  waterMl: 0, waterTargetMl: TARGETS.waterMl,
-  sleepHours: 0, sleepTargetHours: TARGETS.sleepHours,
+  waterMl: 0, waterTargetMl: FALLBACK.waterMl,
+  sleepHours: 0, sleepTargetHours: SCORE.sleepHours,
   mealCount: 0, totalCalories: 0,
-  calorieMin: TARGETS.calorieMin, calorieMax: TARGETS.calorieMax,
-  goalsCompleted: 0, goalsTotal: 0, goalSlots: TARGETS.goalSlots,
+  calorieMin: Math.round(FALLBACK.kcal * 0.85), calorieMax: Math.round(FALLBACK.kcal * 1.15),
+  goalsCompleted: 0, goalsTotal: 0, goalSlots: SCORE.goalSlots,
 };
 
 export function useDeluxeScore(): DeluxeScoreBreakdown {
