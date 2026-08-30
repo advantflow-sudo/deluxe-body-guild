@@ -173,7 +173,7 @@ Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether th
       haptic("success");
       toast.success("Today's meal plan is ready");
     } catch (e: any) {
-      toast.error(e.message ?? "Could not build your plan");
+      handleFailure(e, () => void generate());
     } finally {
       setGenerating(false);
     }
