@@ -133,7 +133,7 @@ function NutritionTab() {
     try {
       const raw = await streamChat(
         `You are an elite sports nutritionist. Build TODAY's meal plan for a ${ext.age ?? 30}yo ${ext.weight_kg ?? 75}kg ${ext.height_cm ?? 175}cm ${ext.training_level ?? "intermediate"} athlete whose goal is "${ext.fitness_goal ?? "lean muscle"}".
-Targets: ${targets.kcal} kcal, ${targets.protein}g protein, ${targets.carbs}g carbs, ${targets.fat}g fat, ${targets.water}ml water.
+Targets: ${targets.kcal} kcal, ${targets.protein}g protein, ${targets.carbs}g carbs, ${targets.fat}g fat, ${targets.waterMl}ml water.
 Return ONLY minified JSON, no markdown, matching:
 {"weight_basis":"raw","notes":"short coaching note","meals":[{"name":"","slot":"Breakfast","kcal":0,"protein_g":0,"carbs_g":0,"fat_g":0,"prep_minutes":0,"ingredients":[{"item":"","amount":"120g","basis":"raw"}],"steps":["numbered instruction"]}]}
 Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether the weight is raw or cooked; meal macros must sum within 5% of the targets; steps must be timed and numbered; simple UK supermarket ingredients.`,
@@ -147,7 +147,7 @@ Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether th
         protein_target_g: targets.protein,
         carbs_target_g: targets.carbs,
         fat_target_g: targets.fat,
-        water_target_ml: targets.water,
+        water_target_ml: targets.waterMl,
         weight_basis: parsed.weight_basis ?? "raw",
         meals: parsed.meals as any,
         notes: parsed.notes ?? null,
@@ -315,7 +315,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           protein: plan?.protein_target_g ?? targets?.protein ?? 150,
           carbs: plan?.carbs_target_g ?? targets?.carbs ?? 220,
           fat: plan?.fat_target_g ?? targets?.fat ?? 70,
-          water: plan?.water_target_ml ?? targets?.water ?? 2500,
+          water: plan?.water_target_ml ?? targets?.waterMl ?? 2500,
           meals: plan?.meals ?? [],
         }),
       );
