@@ -52,6 +52,8 @@ export function WorkoutSessionPlayer({
   const [finishing, setFinishing] = useState(false);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [rest, setRest] = useState<{ sec: number; label: string } | null>(null);
+  const [openDemo, setOpenDemo] = useState<string | null>(null);
+
   const timerRef = useRef<number | null>(null);
   const restRef = useRef<number | null>(null);
 
