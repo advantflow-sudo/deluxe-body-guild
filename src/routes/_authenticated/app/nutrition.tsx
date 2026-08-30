@@ -307,19 +307,44 @@ Return ONLY minified JSON for the single replacement meal in the identical shape
     if (!question.trim()) return;
     setAsking(true);
     setAnswer("");
+    setFallbackAnswer("");
+    setApiError(null);
     try {
       const raw = await streamChat(
         `You are the Deluxe Fitness nutritionist. Member goal: ${ext?.fitness_goal ?? "lean muscle"}. Today's plan: ${JSON.stringify(plan?.meals ?? [])}.
 Question: ${question}
 Answer in under 120 words. Always state whether weights are raw or cooked. Never give medical advice; suggest a professional where relevant.`,
+        onRetryNotice,
       );
       setAnswer(raw.trim());
     } catch (e: any) {
-      toast.error(e.message ?? "Could not reach the nutritionist");
+      handleFailure(e, () => void ask());
+      setFallbackAnswer(
+        fallbackGuidance(question, {
+          goal: ext?.fitness_goal ?? null,
+          kcal: plan?.kcal_target ?? targets?.kcal ?? 2200,
+          protein: plan?.protein_target_g ?? targets?.protein ?? 150,
+          carbs: plan?.carbs_target_g ?? targets?.carbs ?? 220,
+          fat: plan?.fat_target_g ?? targets?.fat ?? 70,
+          water: plan?.water_target_ml ?? targets?.water ?? 2500,
+          meals: plan?.meals ?? [],
+        }),
+      );
     } finally {
       setAsking(false);
     }
   };
+
+  const runRetry = async () => {
+    if (!retryAction) return;
+    setRetrying(true);
+    try {
+      await Promise.resolve(retryAction());
+    } finally {
+      setRetrying(false);
+    }
+  };
+
 
   const askAbout = (meal: Meal) => {
     haptic("selection");
