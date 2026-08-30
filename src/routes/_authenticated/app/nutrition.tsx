@@ -13,6 +13,13 @@ import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSumma
 import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
 import { mealImage } from "@/config/meal-images";
 import { haptic } from "@/hooks/useHaptics";
+import { NutritionistErrorBanner } from "@/components/deluxe/NutritionistErrorBanner";
+import {
+  askNutritionist,
+  fallbackGuidance,
+  NutritionistError,
+  type NutritionistFailure,
+} from "@/lib/nutritionist";
 
 
 export const Route = createFileRoute("/_authenticated/app/nutrition")({
