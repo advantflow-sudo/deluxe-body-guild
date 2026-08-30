@@ -81,7 +81,11 @@ async function once(prompt: string): Promise<string> {
   try {
     res = await fetch("/api/chat", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "x-deluxe-client": "nutrition",
+      },
       body: JSON.stringify({ messages: [{ role: "user", content: prompt }], client: "nutrition" }),
     });
   } catch (e) {
