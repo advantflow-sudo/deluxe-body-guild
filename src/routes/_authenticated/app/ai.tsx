@@ -13,6 +13,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { fileToScaledDataUrl } from "@/lib/imageUtils";
 import { reportError } from "@/lib/monitoring";
+import { TodayNutritionRings } from "@/components/deluxe/TodayNutritionRings";
+
 import {
   dailyBriefing, analyzeMeal, analyzeForm, adaptProgram, comparePhotos,
   detectPlateau, weeklyRecap, injuryTriage, streakRecovery, matchBuddy,
@@ -284,7 +286,14 @@ function MealPanel() {
           </div>
         </Card>
       )}
+      <div className="mt-5 border-t border-gold/10 pt-5">
+        <TodayNutritionRings />
+        <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          Every scanned meal lands here instantly
+        </p>
+      </div>
     </div>
+
   );
 }
 function Macro({ label, v }: { label: string; v: number }) {

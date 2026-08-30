@@ -9,9 +9,9 @@ export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
       { title: "How It Works — Deluxe Fitness" },
-      { name: "description", content: "Five steps from download to transformation. Assessment, AI-powered plan, tracking, rewards, and community." },
+      { name: "description", content: "Five steps from sign-up to transformation. Assessment, AI-powered plan, tracking, rewards, and community." },
       { property: "og:title", content: "How Deluxe Fitness Works" },
-      { property: "og:description", content: "From download to transformation in five steps." },
+      { property: "og:description", content: "From sign-up to transformation in five steps." },
       { property: "og:url", content: "https://deluxefitness.app/how-it-works" },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/how-it-works" }],
@@ -22,10 +22,10 @@ export const Route = createFileRoute("/how-it-works")({
 const STEPS = [
   {
     Icon: Download,
-    title: "Download Deluxe Fitness",
+    title: "Create your account",
     body:
-      "Start on iOS or Android. Sign up takes under a minute. No card required for your first 24 hours.",
-    detail: ["iOS + Android native", "Apple Health & Google Fit sync", "Optional wearable pairing"],
+      "Deluxe runs in your browser and installs to your home screen as an app. Sign up takes under a minute — no card needed to create an account.",
+    detail: ["Installable web app", "Google Fit sync", "Optional wearable pairing"],
   },
   {
     Icon: ClipboardCheck,
@@ -64,7 +64,7 @@ function HowItWorksPage() {
         eyebrow="The Journey"
         title="Five steps."
         highlight="One transformation."
-        body="From download to deluxe — exactly how Deluxe Fitness becomes the operating system for your life."
+        body="From sign-up to deluxe — exactly how Deluxe Fitness becomes the operating system for your life."
       />
 
       <section className="bg-deluxe-black py-20">

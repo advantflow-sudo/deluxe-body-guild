@@ -746,12 +746,12 @@ function HowItWorks() {
   const steps = [
     {
       Icon: Download,
-      title: "Download",
-      body: "Grab Deluxe Fitness on iOS or Android. Sign up in under a minute.",
+      title: "Sign up",
+      body: "Create your Deluxe account in under a minute, then install it to your home screen.",
       details: [
         "Free account — no card required to start.",
         "Works on any modern mobile or desktop browser.",
-        "Sync Apple Health or Google Fit on day one.",
+        "Connect Google Fit whenever you're ready.",
       ],
     },
     {
@@ -898,7 +898,7 @@ function DeluxeLifestyle() {
         </h2>
         <div className="mt-6 flex justify-center"><GoldDivider /></div>
         <p className="mx-auto mt-8 max-w-3xl text-base leading-relaxed text-muted-foreground md:text-lg">
-          You're not downloading another workout tracker. You're joining a movement built around
+          You're not signing up for another workout tracker. You're joining a movement built around
           six pillars that compound into the deluxe version of you.
         </p>
         <div className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
