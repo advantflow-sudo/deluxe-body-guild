@@ -16,6 +16,7 @@ interface MealRow {
   protein_g: number | null;
   carbs_g: number | null;
   fat_g: number | null;
+  photo_path?: string | null;
   pending?: boolean;
 }
 
