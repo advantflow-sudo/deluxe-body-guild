@@ -59,6 +59,8 @@ import { Route as AuthenticatedAdminErrorsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/public/webhooks/stripe-health'
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
 import { Route as ApiPublicMonitoringReportRouteImport } from './routes/api/public/monitoring/report'
@@ -339,6 +341,16 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicWebhooksStripeHealthRoute =
   ApiPublicWebhooksStripeHealthRouteImport.update({
     id: '/api/public/webhooks/stripe-health',
@@ -505,6 +517,8 @@ export interface FileRoutesByFullPath {
   '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
@@ -572,6 +586,8 @@ export interface FileRoutesByTo {
   '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
@@ -642,6 +658,8 @@ export interface FileRoutesById {
   '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
   '/api/public/webhooks/stripe-health': typeof ApiPublicWebhooksStripeHealthRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
@@ -712,6 +730,8 @@ export interface FileRouteTypes {
     | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
     | '/api/public/webhooks/stripe-health'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
     | '/api/public/oauth/$provider/callback'
   fileRoutesByTo: FileRoutesByTo
@@ -779,6 +799,8 @@ export interface FileRouteTypes {
     | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
     | '/api/public/webhooks/stripe-health'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
     | '/api/public/oauth/$provider/callback'
   id:
@@ -848,6 +870,8 @@ export interface FileRouteTypes {
     | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
     | '/api/public/webhooks/stripe-health'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
     | '/api/public/oauth/$provider/callback'
   fileRoutesById: FileRoutesById
@@ -891,6 +915,8 @@ export interface RootRouteChildren {
   ApiPublicMonitoringReportRoute: typeof ApiPublicMonitoringReportRoute
   ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
   ApiPublicWebhooksStripeHealthRoute: typeof ApiPublicWebhooksStripeHealthRoute
+  LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
+  LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
   ApiPublicOauthProviderCallbackRoute: typeof ApiPublicOauthProviderCallbackRoute
 }
@@ -1247,6 +1273,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/webhooks/stripe-health': {
       id: '/api/public/webhooks/stripe-health'
       path: '/api/public/webhooks/stripe-health'
@@ -1492,6 +1532,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicMonitoringReportRoute: ApiPublicMonitoringReportRoute,
   ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,
   ApiPublicWebhooksStripeHealthRoute: ApiPublicWebhooksStripeHealthRoute,
+  LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
+  LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
   ApiPublicOauthProviderCallbackRoute: ApiPublicOauthProviderCallbackRoute,
 }
