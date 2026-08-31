@@ -337,11 +337,11 @@ function MealPanel() {
             onChange={(e) => setEdit({ ...edit, name: e.target.value })}
             className="mt-1 w-full border border-gold/20 bg-deluxe-black/60 px-3 py-2 font-display text-base text-gold"
           />
-          <div className="mt-3 grid grid-cols-4 gap-2 text-center text-xs">
-            {([["kcal", "calories"], ["P (g)", "protein_g"], ["C (g)", "carbs_g"], ["F (g)", "fat_g"]] as const).map(([label, key]) => (
+          <div className="mt-3 grid grid-cols-5 gap-2 text-center text-xs">
+            {([["kcal", "calories"], ["P (g)", "protein_g"], ["C (g)", "carbs_g"], ["F (g)", "fat_g"], ["Fibre", "fibre_g"]] as const).map(([label, key]) => (
               <div key={key} className="border border-gold/20 p-2">
                 <input
-                  value={Math.round(edit[key])}
+                  value={Math.round(Number(edit[key] ?? 0))}
                   onChange={(e) => setEdit({ ...edit, [key]: num(e.target.value) })}
                   inputMode="numeric"
                   className="w-full bg-transparent text-center font-display text-foreground focus:outline-none"
@@ -355,8 +355,19 @@ function MealPanel() {
           <div className="mt-1 text-[11px] text-muted-foreground">
             Confidence: {edit.confidence}{edit.items?.length ? ` · ${edit.items.join(", ")}` : ""}
           </div>
+          {edit.possible_allergens?.length ? (
+            <p className="mt-2 border border-amber-400/30 bg-amber-400/5 p-2 text-[11px] text-amber-200">
+              Possible allergens: {edit.possible_allergens.join(", ")}. Photo-based guesswork only — always check the
+              actual ingredients if you have an allergy.
+            </p>
+          ) : null}
+          {edit.uncertainty && <p className="mt-2 text-[11px] text-muted-foreground">Hard to judge: {edit.uncertainty}</p>}
           {edit.suggestions?.length ? <List label="Suggestions" items={edit.suggestions} /> : null}
           {edit.notes && <p className="mt-2 text-[11px] text-muted-foreground">{edit.notes}</p>}
+          <p className="mt-2 text-[10px] text-muted-foreground">
+            Estimates from one photo — edit anything that looks off before logging. Your photo is stored privately and
+            only you can see it.
+          </p>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {saved ? (
               <Link to="/app/nutrition" className="inline-flex items-center gap-2 bg-gold-gradient px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-deluxe-black">
