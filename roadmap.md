@@ -20,7 +20,11 @@ Status key: [x] done · [ ] open
 - [ ] Email reminder delivery verified from a verified sending domain
 - [ ] Resolve remaining backend security-linter warnings (RLS/function hardening)
 - [ ] Reminder claim/quiet-hour edge semantics (hour boundary, DST) confirmed with test rows
-- [ ] Cron/scheduler wired for reminder dispatch (pg_cron → public API route)
+- [x] Cron/scheduler wired for reminder dispatch (pg_cron → public API route); duplicate cron jobs removed (was double-sending)
+- [x] Scanner resilience: HEIC/decode fallback, one automatic retry, honest error classification
+- [x] Weekly team challenge auto-rollover (board never stale)
+- [x] Borrowed exercise clips labelled as pattern references everywhere
+- [x] Placeholder phone number removed from Contact
 
 ## Open — polish (est. 1 session)
 - [ ] Meal image accuracy: confirm each photo matches its ingredient list (currently keyword-matched)

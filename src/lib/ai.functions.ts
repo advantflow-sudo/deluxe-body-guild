@@ -45,8 +45,18 @@ async function callAI(opts: {
   const choice = json.choices?.[0]?.message;
   if (opts.tool) {
     const args = choice?.tool_calls?.[0]?.function?.arguments;
-    if (!args) throw new Error("AI returned no structured output");
-    return JSON.parse(args);
+    if (args) return JSON.parse(args);
+    // Some models answer with JSON in the message body instead of a tool call.
+    const raw = typeof choice?.content === "string" ? choice.content : "";
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch {
+        /* fall through to the error below */
+      }
+    }
+    throw new Error("AI returned no structured output");
   }
   return (choice?.content ?? "") as string;
 }
@@ -88,8 +98,8 @@ export const analyzeMeal = createServerFn({ method: "POST" })
     z.object({ imageDataUrl: z.string().min(20).max(4_000_000), note: z.string().max(500).optional() }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    try {
-      const result = await callAI({
+    const attempt = () =>
+      callAI({
         model: "google/gemini-2.5-flash",
         messages: [
           {
@@ -139,15 +149,27 @@ export const analyzeMeal = createServerFn({ method: "POST" })
           },
         },
       });
-      return result as any;
-    } catch (e) {
-      // Server-side trace for scanner failures (audit M1: log at each stage).
-      console.error("[analyzeMeal] analysis failed", {
+
+    try {
+      return (await attempt()) as any;
+    } catch (first) {
+      // One immediate retry: the vision model occasionally answers without the
+      // tool call, which used to surface as "that photo couldn't be read".
+      console.error("[analyzeMeal] first attempt failed, retrying", {
         userId: context.userId,
         payloadBytes: data.imageDataUrl.length,
-        error: e instanceof Error ? e.message : String(e),
+        error: first instanceof Error ? first.message : String(first),
       });
-      throw e;
+      try {
+        return (await attempt()) as any;
+      } catch (e) {
+        console.error("[analyzeMeal] analysis failed", {
+          userId: context.userId,
+          payloadBytes: data.imageDataUrl.length,
+          error: e instanceof Error ? e.message : String(e),
+        });
+        throw e;
+      }
     }
   });
 

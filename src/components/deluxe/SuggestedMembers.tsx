@@ -40,7 +40,17 @@ export function SuggestedMembers() {
       const counts = new Map<string, number>();
       (followsRows ?? []).forEach((f: any) => counts.set(f.followed_id, (counts.get(f.followed_id) ?? 0) + 1));
       const mine = new Set((myFollows ?? []).map((f: any) => f.followed_id));
+      const seenNames = new Set<string>();
       const list: Member[] = (profiles ?? [])
+        .filter((p) => {
+          // Skip nameless profiles and collapse identical display names so the
+          // list never looks like the same member repeated.
+          const name = (p.display_name ?? "").trim().toLowerCase();
+          if (!name) return false;
+          if (seenNames.has(name)) return false;
+          seenNames.add(name);
+          return true;
+        })
         .map((p) => ({
           id: p.id,
           display_name: p.display_name,
