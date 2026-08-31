@@ -365,7 +365,11 @@ function PricingPage() {
                   </ul>
 
                   <div className="mt-8 block w-full">
-                    {tier.featured && !isCurrent ? (
+                    {tier.inviteOnly ? (
+                      <Link to="/contact" className="block w-full">
+                        <OutlineButton className="w-full">{ctaLabel}</OutlineButton>
+                      </Link>
+                    ) : tier.featured && !isCurrent ? (
                       <GoldButton
                         className="w-full"
                         onClick={() => subscribe(tier.name)}
@@ -383,6 +387,7 @@ function PricingPage() {
                       </OutlineButton>
                     )}
                   </div>
+
 
                 </div>
               );
