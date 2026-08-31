@@ -48,5 +48,5 @@ Status key: [x] done · [ ] open
 ## Realistic timeline
 - Launch-blocking items: ~1 session (push/email delivery verification on your device)
 - Everything above including polish: ~3 sessions
-- Blocked on you: sign in on the preview (for signed-in checks + push test), Stripe pricing decisions, email sending domain
+- Blocked on you: sign in on the preview (for signed-in checks + push test), email sending domain
 
