@@ -571,7 +571,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
       )}
 
       <Link
-        to="/app/ai"
+        to="/app/scan-verify"
         className="mt-8 flex items-center justify-between border border-gold/20 bg-deluxe-forest/20 p-4"
       >
         <span>
