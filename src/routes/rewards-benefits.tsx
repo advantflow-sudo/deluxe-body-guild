@@ -8,7 +8,7 @@ export const Route = createFileRoute("/rewards-benefits")({
   head: () => ({
     meta: [
       { title: "Rewards & Benefits — Deluxe Fitness" },
-      { name: "description", content: "Earn 50 points for every guided workout you finish, then redeem them for partner discounts, Deluxe kit, coaching calls or Premium months." },
+      { name: "description", content: "Earn 50 points for every guided workout you finish, then redeem them for a month of Signature access today — with kit, partner discounts, coaching calls and events arriving as the rewards store rolls out." },
       { property: "og:title", content: "Deluxe Fitness Rewards" },
       { property: "og:description", content: "Discipline pays. Tangible rewards for showing up." },
       { property: "og:url", content: "https://deluxefitness.app/rewards-benefits" },
@@ -27,13 +27,13 @@ const EARN = [
   { what: "Complete a guided workout session", pts: 50 },
 ];
 
-/** Live catalogue items members can redeem today. */
+/** Rewards catalogue. Only items without `soon` can be redeemed today. */
 const REWARDS = [
-  { Icon: Ticket, name: "£10 Gymshark Discount", body: "Partner discount code.", cost: "500 pts" },
-  { Icon: Sparkles, name: "20% Off Supplement Stack", body: "Partner supplement discount.", cost: "700 pts" },
-  { Icon: Shirt, name: "Deluxe Training Tee", body: "Members-only training tee.", cost: "1,500 pts" },
-  { Icon: Dumbbell, name: "Free 1:1 Coaching Call", body: "Redeem points and our team books your call by email.", cost: "2,000 pts" },
-  { Icon: Trophy, name: "Members Night Invitation", body: "Invite to a Deluxe members event.", cost: "2,500 pts" },
+  { Icon: Ticket, name: "£10 Gymshark Discount", body: "Partner discount code. Coming soon — not yet redeemable.", cost: "500 pts", soon: true },
+  { Icon: Sparkles, name: "20% Off Supplement Stack", body: "Partner supplement discount. Coming soon — not yet redeemable.", cost: "700 pts", soon: true },
+  { Icon: Shirt, name: "Deluxe Training Tee", body: "Members-only training tee. Coming soon — not yet redeemable.", cost: "1,500 pts", soon: true },
+  { Icon: Dumbbell, name: "Free 1:1 Coaching Call", body: "Human coaching calls are not live yet. Coming soon.", cost: "2,000 pts", soon: true },
+  { Icon: Trophy, name: "Members Night Invitation", body: "Member events are planned, not scheduled yet. Coming soon.", cost: "2,500 pts", soon: true },
   { Icon: Crown, name: "Signature Membership — 1 Month", body: "One month of Signature access, on points. No subscription is created.", cost: "3,500 pts" },
 ];
 
