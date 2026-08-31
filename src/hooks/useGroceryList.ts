@@ -94,5 +94,12 @@ export function useGroceryList() {
     if (error) await refresh();
   }, [items, user, refresh]);
 
-  return { items, loading, syncing, refresh, addMany, toggle, remove, clearChecked };
+  const clearAll = useCallback(async () => {
+    if (!user || items.length === 0) return;
+    setItems([]);
+    const { error } = await supabase.from("grocery_items").delete().eq("user_id", user.id);
+    if (error) await refresh();
+  }, [items, user, refresh]);
+
+  return { items, loading, syncing, refresh, addMany, toggle, remove, clearChecked, clearAll };
 }
