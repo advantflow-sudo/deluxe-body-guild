@@ -112,6 +112,7 @@ export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) 
   const remove = async (id: string) => {
     if (!user || id.startsWith("temp-")) return;
     const snapshot = meals;
+    const photoPath = meals.find((r) => r.id === id)?.photo_path ?? null;
     setMeals((m) => m.filter((r) => r.id !== id));
     setDeletingId(id);
     const result = await enqueueOrApply({ kind: "nutritionDelete", id, userId: user.id });
@@ -120,6 +121,15 @@ export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) 
       setMeals(snapshot);
       toast.error(`Couldn't remove meal: ${result.error}`);
     } else {
+      // The meal photo is deleted with the meal — nothing is retained.
+      if (photoPath && !result.queued) {
+        await supabase.storage.from("meal-photos").remove([photoPath]);
+        setThumbs((prev) => {
+          const next = { ...prev };
+          delete next[photoPath];
+          return next;
+        });
+      }
       onLogged?.();
       if (result.queued) {
         toast("Removed offline — will sync when reconnected", { icon: <CloudOff className="h-4 w-4" /> });
