@@ -10,13 +10,13 @@ export const Route = createFileRoute("/wellbeing")({
       {
         name: "description",
         content:
-          "Yoga, pilates, mobility, recovery, sleep and mindset. Educational content that elevates how you move, rest and think.",
+          "Recovery check-ins, sleep logging, mobility routines and mindset prompts — with filmed classes on the roadmap.",
       },
       { property: "og:title", content: "Wellbeing & Education — Deluxe Fitness" },
       {
         property: "og:description",
         content:
-          "Yoga, pilates, mobility, mindset and recovery — premium wellbeing content.",
+          "Recovery, sleep and mindset tools that are live today, plus what is coming next.",
       },
       { property: "og:url", content: "https://deluxefitness.app/wellbeing" },
       { property: "og:type", content: "website" },
@@ -38,7 +38,7 @@ const pillars = [
   {
     Icon: Wind,
     title: "Breathwork",
-    body: "Box breathing, Wim Hof, performance protocols. Train the system that drives everything.",
+    body: "Written box-breathing and performance protocols. Guided audio sessions are on the roadmap.",
   },
   {
     Icon: Moon,
@@ -53,12 +53,12 @@ const pillars = [
   {
     Icon: Heart,
     title: "Zumba & Movement",
-    body: "Movement sessions built for enjoyment rather than performance. Filmed classes are on the roadmap.",
+    body: "Dance-led movement ideas written as follow-along routines. Filmed classes are on the roadmap.",
   },
   {
     Icon: BookOpen,
     title: "Education",
-    body: "Articles, deep dives and protocols from coaches, nutritionists and therapists.",
+    body: "Written guides and protocols from the Deluxe team. Contributions from external practitioners are on the roadmap.",
   },
 ];
 
