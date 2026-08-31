@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 /**
  * Sends the signed-in member a test mission reminder through every channel they
  * have enabled: in-app notification, Web Push (real browser subscriptions only)
- * and email when they opted in and Resend is configured.
+ * and email when they opted in.
  */
 export const sendTestMissionReminder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
