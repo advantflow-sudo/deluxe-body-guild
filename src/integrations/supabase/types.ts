@@ -743,6 +743,7 @@ export type Database = {
         Row: {
           calories: number
           carbs_g: number
+          confidence: string | null
           created_at: string
           fat_g: number
           fibre_g: number
@@ -751,13 +752,16 @@ export type Database = {
           logged_at: string
           meal_label: string | null
           photo_path: string | null
+          possible_allergens: string[]
           protein_g: number
           source: string
+          uncertainty: string | null
           user_id: string
         }
         Insert: {
           calories?: number
           carbs_g?: number
+          confidence?: string | null
           created_at?: string
           fat_g?: number
           fibre_g?: number
@@ -766,13 +770,16 @@ export type Database = {
           logged_at?: string
           meal_label?: string | null
           photo_path?: string | null
+          possible_allergens?: string[]
           protein_g?: number
           source?: string
+          uncertainty?: string | null
           user_id: string
         }
         Update: {
           calories?: number
           carbs_g?: number
+          confidence?: string | null
           created_at?: string
           fat_g?: number
           fibre_g?: number
@@ -781,8 +788,10 @@ export type Database = {
           logged_at?: string
           meal_label?: string | null
           photo_path?: string | null
+          possible_allergens?: string[]
           protein_g?: number
           source?: string
+          uncertainty?: string | null
           user_id?: string
         }
         Relationships: []
