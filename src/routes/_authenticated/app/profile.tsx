@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Crown, Bell, HelpCircle, FileText, Shield, ChevronRight, Fingerprint } from "lucide-react";
+import { LogOut, Crown, Bell, HelpCircle, FileText, Shield, ChevronRight, Fingerprint, Trash2 } from "lucide-react";
+import { exportMyData, deleteMyAccount } from "@/lib/account.functions";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
