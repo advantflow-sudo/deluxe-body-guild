@@ -73,7 +73,7 @@ export const dailyBriefing = createServerFn({ method: "POST" })
     const [{ data: ext }, { data: stats }, { data: sessions }, { data: metrics }] = await Promise.all([
       supabase.from("user_profiles_ext").select("fitness_goal,training_level,preferred_type").eq("user_id", userId).maybeSingle(),
       supabase.from("daily_stats").select("*").eq("user_id", userId).gte("stat_date", today).maybeSingle(),
-      supabase.from("workout_sessions").select("completed_at,duration_min,calories").eq("user_id", userId).gte("completed_at", since).order("completed_at", { ascending: false }),
+      supabase.from("workout_sessions").select("completed_at,duration_min,calories").eq("user_id", userId).not("completed_at", "is", null).gte("completed_at", since).order("completed_at", { ascending: false }),
       supabase.from("device_metrics").select("metric_type,value,unit,recorded_at").eq("user_id", userId).gte("recorded_at", since).order("recorded_at", { ascending: false }).limit(50),
     ]);
     const prompt = `Goal: ${ext?.fitness_goal ?? "general fitness"} | Level: ${ext?.training_level ?? "intermediate"}.
@@ -224,7 +224,7 @@ export const adaptProgram = createServerFn({ method: "POST" })
     const since = new Date(Date.now() - 14 * 864e5).toISOString();
     const [{ data: ext }, { data: sessions }] = await Promise.all([
       supabase.from("user_profiles_ext").select("fitness_goal,training_level,preferred_type").eq("user_id", userId).maybeSingle(),
-      supabase.from("workout_sessions").select("completed_at,duration_min,calories,notes").eq("user_id", userId).gte("completed_at", since).order("completed_at"),
+      supabase.from("workout_sessions").select("completed_at,duration_min,calories,notes").eq("user_id", userId).not("completed_at", "is", null).gte("completed_at", since).order("completed_at"),
     ]);
     const result = await callAI({
       messages: [
@@ -311,12 +311,12 @@ export const detectPlateau = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const since = new Date(Date.now() - 60 * 864e5).toISOString();
     const { data: sessions } = await supabase
-      .from("workout_sessions").select("completed_at,duration_min,calories").eq("user_id", userId)
+      .from("workout_sessions").select("completed_at,duration_min,calories").eq("user_id", userId).not("completed_at", "is", null)
       .gte("completed_at", since).order("completed_at");
     const result = await callAI({
       messages: [
         { role: "system", content: "You detect training plateaus from session volume/calorie trends. Be quantitative." },
-        { role: "user", content: `60 days of sessions: ${JSON.stringify((sessions ?? []).map((s) => ({ d: s.completed_at.slice(0, 10), m: s.duration_min, k: s.calories })))}` },
+        { role: "user", content: `60 days of sessions: ${JSON.stringify((sessions ?? []).map((s) => ({ d: (s.completed_at ?? "").slice(0, 10), m: s.duration_min, k: s.calories })))}` },
       ],
       tool: {
         name: "plateau",
@@ -346,7 +346,7 @@ export const weeklyRecap = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const since = new Date(Date.now() - 7 * 864e5).toISOString();
     const [{ data: sessions }, { data: stats }] = await Promise.all([
-      supabase.from("workout_sessions").select("completed_at,duration_min,calories").eq("user_id", userId).gte("completed_at", since),
+      supabase.from("workout_sessions").select("completed_at,duration_min,calories").eq("user_id", userId).not("completed_at", "is", null).gte("completed_at", since),
       supabase.from("daily_stats").select("steps,calories,water_ml,streak,stat_date").eq("user_id", userId).gte("stat_date", since.slice(0, 10)),
     ]);
     const totalMin = (sessions ?? []).reduce((a, s) => a + (s.duration_min ?? 0), 0);

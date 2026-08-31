@@ -86,7 +86,7 @@ export function WorkoutDetail({ workout, userId, onClose }: { workout: Workout; 
     setStarting(true);
     const { data, error: err } = await supabase
       .from("workout_sessions")
-      .insert({ user_id: userId, workout_id: workout.id, duration_min: 0, calories: null })
+      .insert({ user_id: userId, workout_id: workout.id, duration_min: 0, calories: null, completed_at: null })
       .select("id")
       .single();
     setStarting(false);

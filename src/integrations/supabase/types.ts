@@ -1937,28 +1937,31 @@ export type Database = {
       workout_sessions: {
         Row: {
           calories: number | null
-          completed_at: string
+          completed_at: string | null
           duration_min: number
           id: string
           notes: string | null
+          started_at: string
           user_id: string
           workout_id: string | null
         }
         Insert: {
           calories?: number | null
-          completed_at?: string
+          completed_at?: string | null
           duration_min: number
           id?: string
           notes?: string | null
+          started_at?: string
           user_id: string
           workout_id?: string | null
         }
         Update: {
           calories?: number | null
-          completed_at?: string
+          completed_at?: string | null
           duration_min?: number
           id?: string
           notes?: string | null
+          started_at?: string
           user_id?: string
           workout_id?: string | null
         }

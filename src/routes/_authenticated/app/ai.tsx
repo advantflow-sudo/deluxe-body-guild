@@ -35,12 +35,12 @@ type FeatureKey =
   | "briefing" | "meal" | "form" | "program" | "photos"
   | "plateau" | "recap" | "injury" | "streak" | "buddy";
 
-const FEATURES: { key: FeatureKey; title: string; sub: string; icon: typeof Sparkles; premium?: boolean }[] = [
+const FEATURES: { key: FeatureKey; title: string; sub: string; icon: typeof Sparkles; premium?: boolean; tier?: "essential" | "signature" }[] = [
   { key: "briefing", title: "Daily Briefing", sub: "Morning read on energy, training & nutrition", icon: Sunrise },
-  { key: "meal", title: "Meal Scan", sub: "Snap your plate — get macros in seconds", icon: Apple, premium: true },
-  { key: "form", title: "Form Check", sub: "Upload a lift photo for AI form analysis", icon: Camera, premium: true },
+  { key: "meal", title: "Meal Scan", sub: "Snap your plate — get macros in seconds", icon: Apple, premium: true, tier: "essential" },
+  { key: "form", title: "Form Check", sub: "Upload a lift photo for AI form analysis", icon: Camera, premium: true, tier: "signature" },
   { key: "program", title: "Adaptive Plan", sub: "Next week, rewritten to match your recovery", icon: Calendar },
-  { key: "photos", title: "Progress Compare", sub: "Side-by-side AI body composition read", icon: Images, premium: true },
+  { key: "photos", title: "Progress Compare", sub: "Side-by-side AI body composition read", icon: Images, premium: true, tier: "signature" },
   { key: "plateau", title: "Plateau Detector", sub: "Spot stagnation before it kills momentum", icon: TrendingDown },
   { key: "recap", title: "Weekly Recap", sub: "Shareable highlight reel of your week", icon: Trophy },
   { key: "injury", title: "Injury Triage", sub: "Smart modifications & when to see a pro", icon: Stethoscope },
@@ -49,7 +49,7 @@ const FEATURES: { key: FeatureKey; title: string; sub: string; icon: typeof Spar
 ];
 
 function AIStudio() {
-  const { isPremium } = usePremium();
+  const { hasTier } = usePremium();
   const [active, setActive] = useState<FeatureKey | null>(null);
 
   return (
@@ -64,12 +64,13 @@ function AIStudio() {
 
       <div className="mt-5 grid gap-2 sm:grid-cols-2">
         {FEATURES.map((f) => {
-          const locked = f.premium && !isPremium;
+          const requiredTier = f.tier ?? "essential";
+          const locked = Boolean(f.premium) && !hasTier(requiredTier);
           return (
             <button
               key={f.key}
               onClick={() => {
-                if (locked) { toast.error("Upgrade to Premium to unlock."); return; }
+                if (locked) { toast.error(`${requiredTier === "signature" ? "Signature" : "Essential"} membership required to unlock.`); return; }
                 setActive(f.key);
               }}
               className="group flex items-start gap-3 border border-gold/15 bg-deluxe-black/40 p-3.5 text-left transition hover:border-gold/60"
@@ -80,7 +81,7 @@ function AIStudio() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
                   <span className="font-display text-sm text-foreground">{f.title}</span>
-                  {f.premium && <span className="rounded-sm bg-gold-gradient px-1 py-0.5 text-[8px] font-bold uppercase text-deluxe-black">Pro</span>}
+                  {f.premium && <span className="rounded-sm bg-gold-gradient px-1 py-0.5 text-[8px] font-bold uppercase text-deluxe-black">{requiredTier === "signature" ? "Signature" : "Essential"}</span>}
                 </div>
                 <div className="mt-0.5 text-[11px] text-muted-foreground">{f.sub}</div>
               </div>

@@ -50,6 +50,7 @@ function ProfileView() {
       supabase
         .from("workout_sessions")
         .select("id,completed_at,workouts(title)")
+        .not("completed_at", "is", null)
         .eq("user_id", userId)
         .order("completed_at", { ascending: false })
         .limit(3),

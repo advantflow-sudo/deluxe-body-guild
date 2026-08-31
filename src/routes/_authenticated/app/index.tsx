@@ -90,7 +90,7 @@ function HomeTab() {
         supabase.from("workouts").select("id,title,category,duration_min,level,calories").limit(20),
         supabase.from("daily_stats").select("*").eq("user_id", user.id).eq("stat_date", new Date().toISOString().slice(0, 10)).maybeSingle(),
         supabase.from("reward_points").select("balance_after").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
-        supabase.from("workout_sessions").select("id,completed_at,duration_min,calories,workout_id").eq("user_id", user.id).gte("completed_at", sevenDaysAgo).order("completed_at", { ascending: false }),
+        supabase.from("workout_sessions").select("id,completed_at,duration_min,calories,workout_id").eq("user_id", user.id).not("completed_at", "is", null).gte("completed_at", sevenDaysAgo).order("completed_at", { ascending: false }),
         supabase.from("challenges").select("id,title,goal_metric,goal_target,ends_on,points_reward").gte("ends_on", new Date().toISOString().slice(0, 10)).order("ends_on", { ascending: true }).limit(3),
       ]);
 
@@ -111,7 +111,7 @@ function HomeTab() {
       }
       let totalSessions = 0, totalMin = 0, totalCal = 0;
       (sessions ?? []).forEach((s) => {
-        const k = s.completed_at.slice(0, 10);
+        const k = (s.completed_at ?? "").slice(0, 10);
         if (buckets[k]) {
           buckets[k].workouts += 1;
           buckets[k].minutes += s.duration_min ?? 0;

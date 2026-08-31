@@ -37,7 +37,7 @@ function ProgressTab() {
     if (!user) return;
     const [{ data: m }, { data: s }] = await Promise.all([
       supabase.from("body_measurements").select("id,measured_on,weight_kg,waist_cm").eq("user_id", user.id).order("measured_on"),
-      supabase.from("workout_sessions").select("id,completed_at,duration_min,workouts(title)").eq("user_id", user.id).order("completed_at", { ascending: false }).limit(10),
+      supabase.from("workout_sessions").select("id,completed_at,duration_min,workouts(title)").eq("user_id", user.id).not("completed_at", "is", null).order("completed_at", { ascending: false }).limit(10),
     ]);
     if (m) setMeas(m as Measurement[]);
     if (s) setSessions(s as unknown as Session[]);

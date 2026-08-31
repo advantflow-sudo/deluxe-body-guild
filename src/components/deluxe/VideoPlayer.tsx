@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Volume2, VolumeX, Maximize2, Captions } from "lucide-react";
+import { Volume2, VolumeX, Maximize2, Captions, Play, Pause } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { track, type AnalyticsProps } from "@/lib/analytics";
 
@@ -312,9 +312,17 @@ export function VideoPlayer({
           />
         )}
 
-        {/* Bottom control bar (no play/pause — videos autoplay) */}
+        {/* Bottom control bar */}
         {!chromeless && started && (
           <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 px-4 pb-3 pt-8">
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); toggle(); }}
+              aria-label={playing ? "Pause video" : "Play video"}
+              className="text-gold transition hover:scale-110"
+            >
+              {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+            </button>
             <div
               onClick={seek}
               role="slider"
@@ -326,6 +334,7 @@ export function VideoPlayer({
             >
               <div className="absolute inset-y-0 left-0 bg-gold transition-[width]" style={{ width: `${progress}%` }} />
             </div>
+
             {captionsUrl && (
               <button
                 type="button"
