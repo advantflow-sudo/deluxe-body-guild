@@ -14,7 +14,6 @@ import { SectionLabel } from "@/components/deluxe/ui";
 import { formatGoal } from "@/lib/format";
 import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
-import { DailyMissionCard } from "@/components/deluxe/DailyMissionCard";
 import { MissionHistory } from "@/components/deluxe/MissionHistory";
 import { DailyXpMission } from "@/components/deluxe/DailyXpMission";
 import { DeluxeScoreBreakdown } from "@/components/deluxe/DeluxeScoreBreakdown";
@@ -132,8 +131,13 @@ function HomeTab() {
       <SectionLabel>Dashboard</SectionLabel>
       <h1 className="mt-2 font-display text-2xl text-foreground sm:text-3xl">Good day, {name}.</h1>
       <p className="mt-1 text-xs italic text-muted-foreground">"{quote}"</p>
-      <DailyMissionCard />
       <DailyXpMission />
+      {/* One progress system, three layers — spelled out so Mission XP, Deluxe
+          Score and reward points never read as competing scores. */}
+      <p className="mt-2 border border-gold/15 bg-deluxe-black/40 px-3 py-2 text-[11px] leading-relaxed text-muted-foreground">
+        <span className="text-gold">How progress works:</span> claim today's mission actions to earn <span className="text-foreground">Mission XP</span> (100 XP = a complete day, and XP builds your rank).
+        The same actions feed your <span className="text-foreground">Deluxe Score</span> out of 100 for the day, and completed workouts and challenges pay <span className="text-foreground">reward points</span> you can spend.
+      </p>
       <MissionHistory />
 
       {/* Target Your Body — signature feature */}
