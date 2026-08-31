@@ -150,12 +150,25 @@ type MealScan = {
   protein_g: number;
   carbs_g: number;
   fat_g: number;
+  fibre_g?: number;
   portion_estimate?: string;
   confidence: "low" | "medium" | "high";
   items?: string[];
+  possible_allergens?: string[];
+  uncertainty?: string;
   suggestions?: string[];
   notes?: string;
 };
+
+/** Turn a scaled data URL back into a JPEG blob for private storage upload. */
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [head, b64] = dataUrl.split(",");
+  const mime = /:(.*?);/.exec(head ?? "")?.[1] ?? "image/jpeg";
+  const bin = atob(b64 ?? "");
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
 
 function MealPanel() {
   const fn = useServerFn(analyzeMeal);
