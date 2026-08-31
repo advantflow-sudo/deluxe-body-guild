@@ -10,7 +10,6 @@ import {
 import { SectionLabel } from "@/components/deluxe/ui";
 import { usePremium } from "@/hooks/usePremium";
 import { fileToScaledDataUrl } from "@/lib/imageUtils";
-import { reportError } from "@/lib/monitoring";
 import { MealScanPanel } from "@/components/deluxe/MealScanPanel";
 
 import {
