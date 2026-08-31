@@ -284,7 +284,24 @@ export function MealPrepGuide({
                 </li>
               ))}
             </ul>
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <button
+              onClick={async () => {
+                haptic("selection");
+                try {
+                  const n = await grocery.addMany(
+                    list.map((row) => ({ item: row.item, amount: row.amounts.join(" + ") })),
+                  );
+                  toast.success(`${n} items synced to your grocery list`);
+                } catch {
+                  toast.error("Couldn't sync your grocery list");
+                }
+              }}
+              disabled={grocery.syncing || list.length === 0}
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-1.5 bg-gold-gradient text-[9px] font-semibold uppercase tracking-[0.2em] text-deluxe-black disabled:opacity-50"
+            >
+              <Plus className="h-3 w-3" /> {grocery.syncing ? "Syncing…" : "Add to my grocery list"}
+            </button>
+            <div className="mt-2 grid grid-cols-2 gap-2">
               <button
                 onClick={() => void copyList()}
                 className="inline-flex min-h-10 items-center justify-center gap-1.5 border border-gold/30 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10"
@@ -303,7 +320,47 @@ export function MealPrepGuide({
                 Covers every meal in today's plan.
               </p>
             ) : null}
+
+            {/* Saved grocery list */}
+            {grocery.items.length > 0 && (
+              <div className="mt-4 border-t border-gold/10 pt-3">
+                <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
+                  <span>My grocery list · {grocery.items.filter((i) => !i.checked).length} to buy</span>
+                  {grocery.items.some((i) => i.checked) && (
+                    <button onClick={() => void grocery.clearChecked()} className="text-gold hover:underline">
+                      Clear done
+                    </button>
+                  )}
+                </div>
+                <ul className="mt-2 space-y-1">
+                  {grocery.items.map((g) => (
+                    <li key={g.id} className="flex items-center gap-2 text-sm">
+                      <button
+                        onClick={() => void grocery.toggle(g.id, !g.checked)}
+                        aria-pressed={g.checked}
+                        aria-label={`Mark ${g.item} ${g.checked ? "not bought" : "bought"}`}
+                        className={`inline-flex h-4 w-4 shrink-0 items-center justify-center border ${g.checked ? "border-gold bg-gold/20 text-gold" : "border-gold/30"}`}
+                      >
+                        {g.checked && <Check className="h-2.5 w-2.5" />}
+                      </button>
+                      <span className={`min-w-0 flex-1 truncate ${g.checked ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                        {g.item}
+                      </span>
+                      <span className="shrink-0 text-xs text-muted-foreground">{g.amount}</span>
+                      <button
+                        onClick={() => void grocery.remove(g.id)}
+                        aria-label={`Remove ${g.item}`}
+                        className="text-muted-foreground transition hover:text-destructive"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
+
         )}
       </div>
     </div>
