@@ -17,10 +17,9 @@ export const Route = createFileRoute("/rewards-benefits")({
   component: RewardsPage,
 });
 
-/** Live earning rules — these mirror what the app actually awards today. */
+/** Live earning rule — this mirrors what the app actually awards today. */
 const EARN = [
   { what: "Complete a guided workout session", pts: 50 },
-  { what: "Complete a challenge you joined", pts: 25 },
 ];
 
 /** Live catalogue items members can redeem today. */
