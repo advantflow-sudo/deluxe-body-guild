@@ -50,7 +50,10 @@ export function classifyScanError(e: unknown): ScanFailure {
   if (/429|rate limit|too many/.test(msg)) return "rate_limited";
   if (/402|403|credit|quota|policy/.test(msg)) return "out_of_credits";
   if (/401|unauthor|session|sign in|token/.test(msg)) return "session_expired";
-  if (/too large|image|decode|4mb|unsupported/.test(msg)) return "bad_image";
+  // Only treat it as an unreadable photo when the failure is genuinely about the
+  // file itself — never for gateway/server errors that merely mention "image".
+  if (/gateway error|no structured output|500|502|503|504|timeout|fetch failed/.test(msg)) return "unavailable";
+  if (/too large|payload|4mb|couldn't read that (image|file)|unsupported (image|format)|decode/.test(msg)) return "bad_image";
   return "unavailable";
 }
 

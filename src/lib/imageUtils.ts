@@ -23,7 +23,16 @@ export async function fileToScaledDataUrl(file: File, opts: DownscaleOptions = {
   const maxBytes = opts.maxBytes ?? 900_000;
 
   const bitmap = await createImageBitmap(file).catch(() => null);
-  const img = bitmap ?? (await loadImage(file));
+  let img: ImageBitmap | HTMLImageElement;
+  try {
+    img = bitmap ?? (await loadImage(file));
+  } catch (e) {
+    // Some phone formats (e.g. HEIC on non-Safari browsers) can't be decoded to a
+    // canvas. Send the original bytes instead of failing the scan outright.
+    const raw = await fileToDataUrl(file);
+    if (raw.length * 0.75 <= 3_500_000) return raw;
+    throw e;
+  }
 
   const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
   const w = Math.max(1, Math.round(img.width * scale));
@@ -59,6 +68,16 @@ function loadImage(file: File): Promise<HTMLImageElement> {
       rej(new Error("Couldn't read that image — try another photo."));
     };
     img.src = url;
+  });
+}
+
+/** Read a file straight to a data URL, no re-encode. */
+export function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result));
+    r.onerror = () => rej(new Error("Couldn't read that file."));
+    r.readAsDataURL(file);
   });
 }
 
