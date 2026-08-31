@@ -60,7 +60,7 @@ export async function sendPush(row: PushRow, content: PushContent): Promise<Push
       keys,
     );
 
-    const res = await fetch(row.endpoint, payload);
+    const res = await fetch(row.endpoint, payload as unknown as RequestInit);
     if (res.status === 404 || res.status === 410) return "gone";
     return res.ok ? "sent" : "failed";
   } catch {
