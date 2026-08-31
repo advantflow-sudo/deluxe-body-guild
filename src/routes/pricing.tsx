@@ -167,6 +167,12 @@ function PricingPage() {
 
   async function subscribe(tierName: string) {
     const tierKey = tierName.toLowerCase() as "essential" | "signature" | "private";
+    // Private is invitation-only: no public checkout until human coaching,
+    // direct coach access and concierge services are operational.
+    if (tierKey === "private") {
+      navigate({ to: "/contact" });
+      return;
+    }
     if (!user) {
       navigate({ to: "/login", search: { redirect: "/pricing" } as never });
       return;
@@ -238,7 +244,7 @@ function PricingPage() {
                 >
                   {c === "monthly" ? "Monthly" : "Yearly"}
                   {c === "yearly" && cycle === "yearly" && (
-                    <span className="ml-2 text-[9px] opacity-80">— save 20%</span>
+                    <span className="ml-2 text-[9px] opacity-80">— 2 months free</span>
                   )}
                 </button>
               ))}
