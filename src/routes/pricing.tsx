@@ -82,7 +82,7 @@ const TIERS = [
       "Personalized 12-week programming",
       "Unlimited AI Coach conversations",
       "Nutrition & macro planner",
-      "Monthly form-check video review",
+      "AI form check on your uploaded lift photos",
       "Priority community & live events",
     ],
     cta: "Join Signature",
@@ -216,7 +216,7 @@ function PricingPage() {
                 <Flame className="h-6 w-6 shrink-0 text-gold" />
                 <div>
                   <div className="font-display text-lg text-foreground">
-                    7-day free trial — no card required for the first 24 hours.
+                    7-day free trial on Essential and Signature. Cancel before day seven and you are not charged.
                   </div>
                   <div className="mt-0.5 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.22em] text-gold sm:justify-start">
                     <Clock className="h-3 w-3" />

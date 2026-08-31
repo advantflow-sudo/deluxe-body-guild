@@ -32,7 +32,7 @@ const REWARDS = [
   { Icon: Ticket, name: "£10 Gymshark Discount", body: "Partner discount code.", cost: "500 pts" },
   { Icon: Sparkles, name: "20% Off Supplement Stack", body: "Partner supplement discount.", cost: "700 pts" },
   { Icon: Shirt, name: "Deluxe Training Tee", body: "Members-only training tee.", cost: "1,500 pts" },
-  { Icon: Dumbbell, name: "Free 1:1 Coaching Call", body: "A live call with a Deluxe coach.", cost: "2,000 pts" },
+  { Icon: Dumbbell, name: "Free 1:1 Coaching Call", body: "Redeem points and our team books your call by email.", cost: "2,000 pts" },
   { Icon: Trophy, name: "Members Night Invitation", body: "Invite to a Deluxe members event.", cost: "2,500 pts" },
   { Icon: Crown, name: "Signature Membership — 1 Month", body: "One month of Signature access, on points. No subscription is created.", cost: "3,500 pts" },
 ];
@@ -92,7 +92,7 @@ function RewardsPage() {
           <Gift className="mx-auto h-8 w-8 text-gold" strokeWidth={1.5} />
           <h2 className="mt-6 font-display text-3xl sm:text-4xl">Start earning today.</h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            Every member starts with 100 welcome points. Your first workout adds 50.
+            Points start at zero. Your first completed guided workout adds 50.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/login"><GoldButton>Join Deluxe <ArrowRight className="h-4 w-4" /></GoldButton></Link>
