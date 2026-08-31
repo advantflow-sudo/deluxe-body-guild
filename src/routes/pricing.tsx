@@ -272,7 +272,9 @@ function PricingPage() {
           <div className="grid gap-6 lg:grid-cols-3">
             {TIERS.map((tier) => {
               const Icon = tier.icon;
-              const price = cycle === "monthly" ? tier.monthly : tier.yearly;
+              const annualAvailable = !tier.inviteOnly && tier.yearlyTotal !== null;
+              const showYearly = cycle === "yearly" && annualAvailable;
+              const perMonth = showYearly ? tier.yearlyTotal! / 12 : tier.monthly;
               const tierKey = tier.name.toLowerCase();
               const isCurrent = currentTier === tierKey;
               const currentRank = currentTier ? tierRank[currentTier] ?? 0 : 0;
@@ -281,8 +283,10 @@ function PricingPage() {
               const isDowngrade = currentTier && thisRank < currentRank;
               let ctaLabel: string = tier.cta;
               if (isCurrent) ctaLabel = "Current plan";
+              else if (tier.inviteOnly) ctaLabel = "Apply for invitation";
               else if (isUpgrade) ctaLabel = "Upgrade";
               else if (isDowngrade) ctaLabel = "Downgrade";
+
 
               return (
                 <div
