@@ -31,7 +31,7 @@ export function PremiumGate({ children, feature, description }: Props) {
           <SectionLabel>Premium feature</SectionLabel>
           <h2 className="mt-3 font-display text-3xl text-foreground">{feature}</h2>
           <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
-            {description ?? "Unlock the full Deluxe experience with a Premium or Deluxe membership."}
+            {description ?? "Unlock the full Deluxe experience with an Essential or Signature membership."}
           </p>
           <Link to="/pricing" className="mt-6 inline-block">
             <GoldButton>Upgrade now</GoldButton>
