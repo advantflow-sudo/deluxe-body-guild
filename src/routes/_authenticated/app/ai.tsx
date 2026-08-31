@@ -1,24 +1,20 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import {
   Sparkles, Sunrise, Apple, Camera, Calendar, Images, TrendingDown,
-  Trophy, Stethoscope, Flame, Users, Loader2, Upload, ChevronRight,
-  AlertTriangle, RotateCw,
+  Trophy, Stethoscope, Flame, Users, Loader2, ChevronRight,
 } from "lucide-react";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { usePremium } from "@/hooks/usePremium";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { fileToScaledDataUrl } from "@/lib/imageUtils";
 import { reportError } from "@/lib/monitoring";
-import { TodayNutritionRings } from "@/components/deluxe/TodayNutritionRings";
 import { MealScanPanel } from "@/components/deluxe/MealScanPanel";
 
 import {
-  dailyBriefing, analyzeMeal, analyzeForm, adaptProgram, comparePhotos,
+  dailyBriefing, analyzeForm, adaptProgram, comparePhotos,
   detectPlateau, weeklyRecap, injuryTriage, streakRecovery, matchBuddy,
 } from "@/lib/ai.functions";
 
