@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { z } from "zod";
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { Mail, MapPin, MessageSquare, Send } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton } from "@/components/deluxe/ui";
 
