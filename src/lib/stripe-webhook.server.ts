@@ -81,10 +81,11 @@ export async function sendWebhookAlert(alert: {
 
 function tierFromAmount(amount: number | null | undefined): string | null {
   if (!amount) return null;
+  // GBP pence — monthly and annual list prices per tier.
   const map: Record<number, string> = {
-    2900: "essential", 27600: "essential",
-    7900: "signature", 75600: "signature",
-    24900: "private", 238800: "private",
+    1499: "essential", 14999: "essential",
+    3999: "signature", 39999: "signature",
+    11999: "private",
   };
   return map[amount] ?? null;
 }
@@ -175,7 +176,7 @@ export async function processStripeEvent(
           if (tierLog) {
             await supabaseAdmin
               .from("user_profiles_ext")
-              .update({ subscription_tier: tierLog === "essential" ? "premium" : "deluxe" })
+              .update({ subscription_tier: tierLog })
               .eq("user_id", userId);
           }
         }
@@ -217,9 +218,7 @@ export async function processStripeEvent(
             .eq("user_id", row.user_id);
 
           const profileTier =
-            status === "active" || status === "trialing"
-              ? tier === "essential" ? "premium" : "deluxe"
-              : "free";
+            (status === "active" || status === "trialing") && tier ? tier : "free";
           await supabaseAdmin
             .from("user_profiles_ext")
             .update({ subscription_tier: profileTier })

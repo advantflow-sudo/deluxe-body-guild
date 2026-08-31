@@ -57,7 +57,9 @@ const TIERS = [
     icon: Star,
     tagline: "Begin the discipline.",
     monthly: 14.99,
-    yearly: 11.99,
+    /** Annual total — roughly two months free. */
+    yearlyTotal: 149.99,
+    inviteOnly: false,
     features: [
       "Full library of guided workouts",
       "Weekly fitness & wellbeing plan",
@@ -73,7 +75,8 @@ const TIERS = [
     icon: Crown,
     tagline: "The Deluxe standard.",
     monthly: 39.99,
-    yearly: 31.99,
+    yearlyTotal: 399.99,
+    inviteOnly: false,
     features: [
       "Everything in Essential",
       "Personalized 12-week programming",
@@ -90,7 +93,8 @@ const TIERS = [
     icon: Sparkles,
     tagline: "By invitation. Limitless.",
     monthly: 119.99,
-    yearly: 95.99,
+    yearlyTotal: null,
+    inviteOnly: true,
     features: [
       "Everything in Signature",
       "1:1 coaching — 2 sessions / month",
@@ -103,6 +107,7 @@ const TIERS = [
     featured: false,
   },
 ] as const;
+
 
 const FAQS = [
   {
@@ -162,6 +167,12 @@ function PricingPage() {
 
   async function subscribe(tierName: string) {
     const tierKey = tierName.toLowerCase() as "essential" | "signature" | "private";
+    // Private is invitation-only: no public checkout until human coaching,
+    // direct coach access and concierge services are operational.
+    if (tierKey === "private") {
+      navigate({ to: "/contact" });
+      return;
+    }
     if (!user) {
       navigate({ to: "/login", search: { redirect: "/pricing" } as never });
       return;
@@ -233,7 +244,7 @@ function PricingPage() {
                 >
                   {c === "monthly" ? "Monthly" : "Yearly"}
                   {c === "yearly" && cycle === "yearly" && (
-                    <span className="ml-2 text-[9px] opacity-80">— save 20%</span>
+                    <span className="ml-2 text-[9px] opacity-80">— 2 months free</span>
                   )}
                 </button>
               ))}
@@ -267,7 +278,9 @@ function PricingPage() {
           <div className="grid gap-6 lg:grid-cols-3">
             {TIERS.map((tier) => {
               const Icon = tier.icon;
-              const price = cycle === "monthly" ? tier.monthly : tier.yearly;
+              const annualAvailable = !tier.inviteOnly && tier.yearlyTotal !== null;
+              const showYearly = cycle === "yearly" && annualAvailable;
+              const perMonth = showYearly ? tier.yearlyTotal! / 12 : tier.monthly;
               const tierKey = tier.name.toLowerCase();
               const isCurrent = currentTier === tierKey;
               const currentRank = currentTier ? tierRank[currentTier] ?? 0 : 0;
@@ -276,8 +289,10 @@ function PricingPage() {
               const isDowngrade = currentTier && thisRank < currentRank;
               let ctaLabel: string = tier.cta;
               if (isCurrent) ctaLabel = "Current plan";
+              else if (tier.inviteOnly) ctaLabel = "Apply for invitation";
               else if (isUpgrade) ctaLabel = "Upgrade";
               else if (isDowngrade) ctaLabel = "Downgrade";
+
 
               return (
                 <div
@@ -312,25 +327,35 @@ function PricingPage() {
                   <p className="mt-1 font-serif italic text-muted-foreground">{tier.tagline}</p>
 
                   <div className="mt-6 flex items-baseline gap-2">
-                    <span className="text-gold-gradient font-display text-5xl">£{price.toFixed(2)}</span>
+                    <span className="text-gold-gradient font-display text-5xl">£{perMonth.toFixed(2)}</span>
                     <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                       / month
                     </span>
                   </div>
-                  {cycle === "yearly" && (
+                  {showYearly ? (
                     <p className="mt-1 text-[11px] text-muted-foreground">
-                      Billed annually — £{(price * 12).toFixed(2)}
+                      Billed annually — £{tier.yearlyTotal!.toFixed(2)} (about two months free)
                     </p>
-                  )}
+                  ) : cycle === "yearly" && tier.inviteOnly ? (
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      Billed monthly — annual terms arranged privately
+                    </p>
+                  ) : null}
 
-                  {currentTier && !isCurrent && (
+
+                  {tier.inviteOnly ? (
+                    <p className="mt-3 text-[11px] uppercase tracking-[0.18em] text-gold">
+                      Invitation only — places confirmed after a call
+                    </p>
+                  ) : currentTier && !isCurrent ? (
                     <p className="mt-3 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-gold">
                       {isUpgrade ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                       {isUpgrade
                         ? "Prorated instantly via portal"
                         : "Applies at end of period"}
                     </p>
-                  )}
+                  ) : null}
+
 
                   <div className="my-6">
                     <GoldDivider />
@@ -346,7 +371,11 @@ function PricingPage() {
                   </ul>
 
                   <div className="mt-8 block w-full">
-                    {tier.featured && !isCurrent ? (
+                    {tier.inviteOnly ? (
+                      <Link to="/contact" className="block w-full">
+                        <OutlineButton className="w-full">{ctaLabel}</OutlineButton>
+                      </Link>
+                    ) : tier.featured && !isCurrent ? (
                       <GoldButton
                         className="w-full"
                         onClick={() => subscribe(tier.name)}
@@ -364,6 +393,7 @@ function PricingPage() {
                       </OutlineButton>
                     )}
                   </div>
+
 
                 </div>
               );

@@ -35,7 +35,8 @@ Status key: [x] done · [ ] open
 - [ ] Accessibility: keyboard + screen-reader pass on dialogs, tabs, players
 
 ## Open — commercial (est. 1 session, needs your input)
-- [ ] Stripe plans/prices finalised + checkout & billing portal tested live
+- [x] Tier prices finalised (Essential £14.99/£149.99, Signature £39.99/£399.99, Private £119.99 invitation-only — no public checkout)
+- [ ] Stripe checkout & billing portal tested live end to end
 - [x] Premium gating rules implemented (nutrition suite gated; 5 free AI scans/month; points-redeemed premium month honoured)
 - [x] Rewards page shows premium status and unlocks 30 days on membership redemption
 - [x] Grocery delivery: partner hand-off (Tesco/Sainsbury's/Ocado/Instacart) + saved pickup/drop-off windows
@@ -47,5 +48,5 @@ Status key: [x] done · [ ] open
 ## Realistic timeline
 - Launch-blocking items: ~1 session (push/email delivery verification on your device)
 - Everything above including polish: ~3 sessions
-- Blocked on you: sign in on the preview (for signed-in checks + push test), Stripe pricing decisions, email sending domain
+- Blocked on you: sign in on the preview (for signed-in checks + push test), email sending domain
 

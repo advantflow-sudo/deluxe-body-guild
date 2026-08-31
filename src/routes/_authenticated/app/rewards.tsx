@@ -19,7 +19,7 @@ interface Participation { challenge_id: string; progress: number }
 
 function RewardsTab() {
   const { user } = useAuth();
-  const { isPremium, source, premiumUntil, refresh: refreshPremium } = usePremium();
+  const { isPremium, tier, source, premiumUntil, refresh: refreshPremium } = usePremium();
   const [balance, setBalance] = useState(0);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -55,7 +55,7 @@ function RewardsTab() {
     if (error) return toast.error(error.message);
     toast.success(
       r.type === "membership" || /premium membership/i.test(r.title)
-        ? "Premium unlocked for 30 days — enjoy."
+        ? "Signature access unlocked for 30 days — no subscription created."
         : `Claimed ${r.title}`,
     );
     setBalance(balance - r.cost_points);
@@ -79,11 +79,11 @@ function RewardsTab() {
           <Crown className={`h-5 w-5 ${isPremium ? "text-gold" : "text-muted-foreground"}`} />
           <div>
             <div className="text-sm text-foreground">
-              {isPremium ? "Premium active" : "Free membership"}
+              {isPremium ? `${tier.charAt(0).toUpperCase() + tier.slice(1)} active` : "Free membership"}
             </div>
             <div className="text-[11px] text-muted-foreground">
               {source === "points" && premiumUntil
-                ? `Unlocked with points until ${new Date(premiumUntil).toLocaleDateString()}`
+                ? `Signature access unlocked with points until ${new Date(premiumUntil).toLocaleDateString()} — no subscription is created.`
                 : isPremium
                   ? "Every gated feature is unlocked on your plan."
                   : "Redeem a membership reward below, or upgrade any time."}

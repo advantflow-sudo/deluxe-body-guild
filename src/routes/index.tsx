@@ -459,7 +459,7 @@ function Rewards() {
       Icon: Crown,
       name: "Deluxe",
       threshold: "12,000 points",
-      perk: "Top Transformation Level, plus Premium membership months redeemable with points.",
+      perk: "Top Transformation Level, plus Signature membership months redeemable with points.",
     },
   ];
   return (

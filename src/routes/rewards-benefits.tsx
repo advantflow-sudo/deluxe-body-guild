@@ -34,7 +34,7 @@ const REWARDS = [
   { Icon: Shirt, name: "Deluxe Training Tee", body: "Members-only training tee.", cost: "1,500 pts" },
   { Icon: Dumbbell, name: "Free 1:1 Coaching Call", body: "A live call with a Deluxe coach.", cost: "2,000 pts" },
   { Icon: Trophy, name: "Members Night Invitation", body: "Invite to a Deluxe members event.", cost: "2,500 pts" },
-  { Icon: Crown, name: "Premium Membership — 1 Month", body: "One month of Premium, on points.", cost: "3,500 pts" },
+  { Icon: Crown, name: "Signature Membership — 1 Month", body: "One month of Signature access, on points. No subscription is created.", cost: "3,500 pts" },
 ];
 
 function RewardsPage() {
