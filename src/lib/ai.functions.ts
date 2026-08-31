@@ -149,15 +149,27 @@ export const analyzeMeal = createServerFn({ method: "POST" })
           },
         },
       });
-      return result as any;
-    } catch (e) {
-      // Server-side trace for scanner failures (audit M1: log at each stage).
-      console.error("[analyzeMeal] analysis failed", {
+
+    try {
+      return (await attempt()) as any;
+    } catch (first) {
+      // One immediate retry: the vision model occasionally answers without the
+      // tool call, which used to surface as "that photo couldn't be read".
+      console.error("[analyzeMeal] first attempt failed, retrying", {
         userId: context.userId,
         payloadBytes: data.imageDataUrl.length,
-        error: e instanceof Error ? e.message : String(e),
+        error: first instanceof Error ? first.message : String(first),
       });
-      throw e;
+      try {
+        return (await attempt()) as any;
+      } catch (e) {
+        console.error("[analyzeMeal] analysis failed", {
+          userId: context.userId,
+          payloadBytes: data.imageDataUrl.length,
+          error: e instanceof Error ? e.message : String(e),
+        });
+        throw e;
+      }
     }
   });
 
