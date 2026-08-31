@@ -32,7 +32,7 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
         let notified = 0;
         let pushed = 0;
         let emailed = 0;
-        const resendKey = process.env["RESEND_API_KEY"]?.trim();
+        
 
         for (const row of due) {
           const remaining = Math.max(0, 100 - Number(row.claimed_xp ?? 0));
