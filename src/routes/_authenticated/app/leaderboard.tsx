@@ -6,6 +6,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 
 export const Route = createFileRoute("/_authenticated/app/leaderboard")({
+  head: () => ({
+    meta: [
+      { title: "Leaderboard | Deluxe Fitness" },
+      { name: "description", content: "See how your XP and streaks rank against the Deluxe membership." },
+      { property: "og:title", content: "Leaderboard | Deluxe Fitness" },
+      { property: "og:description", content: "See how your XP and streaks rank against the Deluxe membership." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: LeaderboardPage,
 });
 

@@ -10,6 +10,16 @@ import { Link } from "@tanstack/react-router";
 import { Crown } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/rewards")({
+  head: () => ({
+    meta: [
+      { title: "Rewards | Deluxe Fitness" },
+      { name: "description", content: "Redeem Deluxe reward points and track your membership benefits." },
+      { property: "og:title", content: "Rewards | Deluxe Fitness" },
+      { property: "og:description", content: "Redeem Deluxe reward points and track your membership benefits." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: RewardsTab,
 });
 

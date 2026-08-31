@@ -15,6 +15,16 @@ import { CoachConversations } from "@/components/deluxe/CoachConversations";
 import { COACH_FAILURE_COPY, useCoachChat } from "@/hooks/useCoachChat";
 
 export const Route = createFileRoute("/_authenticated/app/coach")({
+  head: () => ({
+    meta: [
+      { title: "Coach Chat | Deluxe Fitness" },
+      { name: "description", content: "Ask your Deluxe coach about training, nutrition and recovery with full context of your data." },
+      { property: "og:title", content: "Coach Chat | Deluxe Fitness" },
+      { property: "og:description", content: "Ask your Deluxe coach about training, nutrition and recovery with full context of your data." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: CoachTab,
 });
 

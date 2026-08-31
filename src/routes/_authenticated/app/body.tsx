@@ -27,6 +27,16 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/_authenticated/app/body")({
+  head: () => ({
+    meta: [
+      { title: "Body Map | Deluxe Fitness" },
+      { name: "description", content: "Track muscle-group focus, recovery and body measurements across your transformation." },
+      { property: "og:title", content: "Body Map | Deluxe Fitness" },
+      { property: "og:description", content: "Track muscle-group focus, recovery and body measurements across your transformation." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   validateSearch: (s) => searchSchema.parse(s),
   component: BodyMapTab,
 });

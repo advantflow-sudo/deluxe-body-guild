@@ -29,6 +29,16 @@ function writeSet(key: string, s: Set<string>) {
 }
 
 export const Route = createFileRoute("/_authenticated/app/community")({
+  head: () => ({
+    meta: [
+      { title: "Community | Deluxe Fitness" },
+      { name: "description", content: "Follow members, share milestones and keep your Deluxe circle accountable." },
+      { property: "og:title", content: "Community | Deluxe Fitness" },
+      { property: "og:description", content: "Follow members, share milestones and keep your Deluxe circle accountable." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: CommunityTab,
 });
 

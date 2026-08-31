@@ -11,6 +11,16 @@ import { WorkoutDetail, type Workout } from "@/components/deluxe/WorkoutDetail";
 import { WorkoutHistory } from "@/components/deluxe/WorkoutHistory";
 
 export const Route = createFileRoute("/_authenticated/app/workouts")({
+  head: () => ({
+    meta: [
+      { title: "Workouts | Deluxe Fitness" },
+      { name: "description", content: "Browse Deluxe sessions, follow guided players and log every set." },
+      { property: "og:title", content: "Workouts | Deluxe Fitness" },
+      { property: "og:description", content: "Browse Deluxe sessions, follow guided players and log every set." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: WorkoutsTab,
 });
 

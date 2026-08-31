@@ -27,6 +27,16 @@ import { RecoveryCheckin } from "@/components/deluxe/RecoveryCheckin";
 import { XpLevelCard } from "@/components/deluxe/XpLevelCard";
 
 export const Route = createFileRoute("/_authenticated/app/")({
+  head: () => ({
+    meta: [
+      { title: "Dashboard | Deluxe Fitness" },
+      { name: "description", content: "Your Deluxe score, daily 100 XP mission, streaks and today's training at a glance." },
+      { property: "og:title", content: "Dashboard | Deluxe Fitness" },
+      { property: "og:description", content: "Your Deluxe score, daily 100 XP mission, streaks and today's training at a glance." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: HomeTab,
   validateSearch: (search: Record<string, unknown>): { mission?: "1" } =>
     search["mission"] === "1" || search["mission"] === 1 ? { mission: "1" } : {},

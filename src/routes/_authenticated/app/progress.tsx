@@ -9,6 +9,16 @@ import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
 import { BodyTimeline } from "@/components/deluxe/BodyTimeline";
 
 export const Route = createFileRoute("/_authenticated/app/progress")({
+  head: () => ({
+    meta: [
+      { title: "Progress | Deluxe Fitness" },
+      { name: "description", content: "Review your XP, streak, workout and nutrition trends over time." },
+      { property: "og:title", content: "Progress | Deluxe Fitness" },
+      { property: "og:description", content: "Review your XP, streak, workout and nutrition trends over time." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ProgressTab,
 });
 
