@@ -7,10 +7,12 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import {
-  Check, ChefHat, Clock, Copy, Download, ListChecks, Pause, Play, ShoppingBasket, TimerReset,
+  Check, ChefHat, Clock, Copy, Download, ListChecks, Pause, Play, Plus, ShoppingBasket, Trash2, TimerReset,
 } from "lucide-react";
 import { toast } from "sonner";
 import { haptic } from "@/hooks/useHaptics";
+import { useGroceryList } from "@/hooks/useGroceryList";
+
 
 export interface PrepIngredient {
   item: string;
