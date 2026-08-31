@@ -4,6 +4,7 @@ import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton } from "@/components/deluxe/ui";
 import { AnimatedMedia } from "@/components/deluxe/AnimatedMedia";
 import { MEDIA, type MediaKey } from "@/config/animated-media";
+import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/fitness")({
   head: () => ({
@@ -21,6 +22,10 @@ export const Route = createFileRoute("/fitness")({
           "AI-personalised workouts and full body breakdown. Train smarter at every level.",
       },
       { property: "og:url", content: "https://deluxefitness.app/fitness" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/fitness" }],
   }),

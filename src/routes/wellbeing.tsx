@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Heart, Leaf, Brain, Moon, Wind, BookOpen } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
+import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/wellbeing")({
   head: () => ({
@@ -18,6 +19,10 @@ export const Route = createFileRoute("/wellbeing")({
           "Yoga, pilates, mobility, mindset and recovery — premium wellbeing content.",
       },
       { property: "og:url", content: "https://deluxefitness.app/wellbeing" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/wellbeing" }],
   }),

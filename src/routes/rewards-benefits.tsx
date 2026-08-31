@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Gift, Trophy, Sparkles, Dumbbell, Shirt, Ticket, Crown, ArrowRight } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton, SectionLabel, GoldDivider } from "@/components/deluxe/ui";
+import ogImage from "@/assets/og-membership.jpg";
 
 export const Route = createFileRoute("/rewards-benefits")({
   head: () => ({
@@ -11,6 +12,10 @@ export const Route = createFileRoute("/rewards-benefits")({
       { property: "og:title", content: "Deluxe Fitness Rewards" },
       { property: "og:description", content: "Discipline pays. Tangible rewards for showing up." },
       { property: "og:url", content: "https://deluxefitness.app/rewards-benefits" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/rewards-benefits" }],
   }),

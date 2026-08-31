@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton } from "@/components/deluxe/ui";
+import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/what-we-offer")({
   head: () => ({
@@ -27,6 +28,10 @@ export const Route = createFileRoute("/what-we-offer")({
           "Workouts, AI coach, nutrition, wellbeing, community, rewards. Built for those who demand more.",
       },
       { property: "og:url", content: "https://deluxefitness.app/what-we-offer" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/what-we-offer" }],
   }),

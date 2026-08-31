@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Flame, Calendar, Trophy, Target, ArrowRight } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton, SectionLabel, GoldDivider } from "@/components/deluxe/ui";
+import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/challenges")({
   head: () => ({
@@ -11,6 +12,10 @@ export const Route = createFileRoute("/challenges")({
       { property: "og:title", content: "Deluxe Fitness Challenges" },
       { property: "og:description", content: "7, 30, 75 days. Pick your battle." },
       { property: "og:url", content: "https://deluxefitness.app/challenges" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/challenges" }],
   }),

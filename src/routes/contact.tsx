@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Mail, MapPin, MessageSquare, Send } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton } from "@/components/deluxe/ui";
+import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -21,6 +22,10 @@ export const Route = createFileRoute("/contact")({
           "Reach the Deluxe Fitness team — partnerships, press, gym contracts and member support.",
       },
       { property: "og:url", content: "https://deluxefitness.app/contact" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/contact" }],
     scripts: [

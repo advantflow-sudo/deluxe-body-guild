@@ -10,6 +10,7 @@ import { SectionLabel } from "@/components/deluxe/ui";
 import { useAuth } from "@/hooks/useAuth";
 import { usePremium } from "@/hooks/usePremium";
 import { COACH_FAILURE_COPY, useCoachChat } from "@/hooks/useCoachChat";
+import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/coach")({
   head: () => ({
@@ -27,6 +28,10 @@ export const Route = createFileRoute("/coach")({
           "Private AI coach for training, nutrition, recovery, and mindset — built for Deluxe Fitness members.",
       },
       { property: "og:url", content: "https://deluxefitness.app/coach" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/coach" }],
   }),
