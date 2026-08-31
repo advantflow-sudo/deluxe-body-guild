@@ -745,11 +745,14 @@ export type Database = {
           carbs_g: number
           created_at: string
           fat_g: number
+          fibre_g: number
           id: string
           log_date: string
           logged_at: string
           meal_label: string | null
+          photo_path: string | null
           protein_g: number
+          source: string
           user_id: string
         }
         Insert: {
@@ -757,11 +760,14 @@ export type Database = {
           carbs_g?: number
           created_at?: string
           fat_g?: number
+          fibre_g?: number
           id?: string
           log_date?: string
           logged_at?: string
           meal_label?: string | null
+          photo_path?: string | null
           protein_g?: number
+          source?: string
           user_id: string
         }
         Update: {
@@ -769,11 +775,14 @@ export type Database = {
           carbs_g?: number
           created_at?: string
           fat_g?: number
+          fibre_g?: number
           id?: string
           log_date?: string
           logged_at?: string
           meal_label?: string | null
+          photo_path?: string | null
           protein_g?: number
+          source?: string
           user_id?: string
         }
         Relationships: []
