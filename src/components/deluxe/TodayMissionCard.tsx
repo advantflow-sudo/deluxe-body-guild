@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Dumbbell, Flame, Droplet, Footprints, Activity, Gift, ChevronRight, Target } from "lucide-react";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { useTargets } from "@/hooks/useTargets";
 
 interface Workout {
   id: string;
@@ -21,11 +22,13 @@ interface Props {
 
 // Targets
 const STEP_GOAL = 10_000;
-const WATER_GOAL_ML = 2_500;
 const CAL_GOAL = 600; // calories burned/day target
 const SESSIONS_PER_REWARD = 3;
 
 export function TodayMissionCard({ workout, steps, caloriesBurned, waterMl, streak, weekSessions }: Props) {
+  // Hydration target must come from the single source of truth (useTargets), never a local constant.
+  const { targets } = useTargets();
+  const WATER_GOAL_ML = targets.waterMl;
   const sessionsToReward = Math.max(0, SESSIONS_PER_REWARD - (weekSessions % SESSIONS_PER_REWARD));
   const stepsRemaining = Math.max(0, STEP_GOAL - steps);
   const waterRemaining = Math.max(0, WATER_GOAL_ML - waterMl);
