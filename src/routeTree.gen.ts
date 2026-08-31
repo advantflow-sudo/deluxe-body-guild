@@ -38,6 +38,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
 import { Route as ApiPublicMarketingChatRouteImport } from './routes/api/public/marketing-chat'
 import { Route as AuthenticatedAppWorkoutsRouteImport } from './routes/_authenticated/app/workouts'
+import { Route as AuthenticatedAppScanVerifyRouteImport } from './routes/_authenticated/app/scan-verify'
 import { Route as AuthenticatedAppRewardsRouteImport } from './routes/_authenticated/app/rewards'
 import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/app/progress'
 import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authenticated/app/profile'
@@ -216,6 +217,12 @@ const AuthenticatedAppWorkoutsRoute =
   AuthenticatedAppWorkoutsRouteImport.update({
     id: '/workouts',
     path: '/workouts',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppScanVerifyRoute =
+  AuthenticatedAppScanVerifyRouteImport.update({
+    id: '/scan-verify',
+    path: '/scan-verify',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const AuthenticatedAppRewardsRoute = AuthenticatedAppRewardsRouteImport.update({
@@ -457,6 +464,7 @@ export interface FileRoutesByFullPath {
   '/app/profile': typeof AuthenticatedAppProfileRoute
   '/app/progress': typeof AuthenticatedAppProgressRoute
   '/app/rewards': typeof AuthenticatedAppRewardsRoute
+  '/app/scan-verify': typeof AuthenticatedAppScanVerifyRoute
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/app/': typeof AuthenticatedAppIndexRoute
@@ -520,6 +528,7 @@ export interface FileRoutesByTo {
   '/app/profile': typeof AuthenticatedAppProfileRoute
   '/app/progress': typeof AuthenticatedAppProgressRoute
   '/app/rewards': typeof AuthenticatedAppRewardsRoute
+  '/app/scan-verify': typeof AuthenticatedAppScanVerifyRoute
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/app': typeof AuthenticatedAppIndexRoute
@@ -586,6 +595,7 @@ export interface FileRoutesById {
   '/_authenticated/app/profile': typeof AuthenticatedAppProfileRoute
   '/_authenticated/app/progress': typeof AuthenticatedAppProgressRoute
   '/_authenticated/app/rewards': typeof AuthenticatedAppRewardsRoute
+  '/_authenticated/app/scan-verify': typeof AuthenticatedAppScanVerifyRoute
   '/_authenticated/app/workouts': typeof AuthenticatedAppWorkoutsRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
@@ -652,6 +662,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/progress'
     | '/app/rewards'
+    | '/app/scan-verify'
     | '/app/workouts'
     | '/api/public/marketing-chat'
     | '/app/'
@@ -715,6 +726,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/progress'
     | '/app/rewards'
+    | '/app/scan-verify'
     | '/app/workouts'
     | '/api/public/marketing-chat'
     | '/app'
@@ -780,6 +792,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/profile'
     | '/_authenticated/app/progress'
     | '/_authenticated/app/rewards'
+    | '/_authenticated/app/scan-verify'
     | '/_authenticated/app/workouts'
     | '/api/public/marketing-chat'
     | '/_authenticated/app/'
@@ -1045,6 +1058,13 @@ declare module '@tanstack/react-router' {
       path: '/workouts'
       fullPath: '/app/workouts'
       preLoaderRoute: typeof AuthenticatedAppWorkoutsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/scan-verify': {
+      id: '/_authenticated/app/scan-verify'
+      path: '/scan-verify'
+      fullPath: '/app/scan-verify'
+      preLoaderRoute: typeof AuthenticatedAppScanVerifyRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/rewards': {
@@ -1318,6 +1338,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppProfileRoute: typeof AuthenticatedAppProfileRoute
   AuthenticatedAppProgressRoute: typeof AuthenticatedAppProgressRoute
   AuthenticatedAppRewardsRoute: typeof AuthenticatedAppRewardsRoute
+  AuthenticatedAppScanVerifyRoute: typeof AuthenticatedAppScanVerifyRoute
   AuthenticatedAppWorkoutsRoute: typeof AuthenticatedAppWorkoutsRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppUUserIdRoute: typeof AuthenticatedAppUUserIdRoute
@@ -1338,6 +1359,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppProfileRoute: AuthenticatedAppProfileRoute,
   AuthenticatedAppProgressRoute: AuthenticatedAppProgressRoute,
   AuthenticatedAppRewardsRoute: AuthenticatedAppRewardsRoute,
+  AuthenticatedAppScanVerifyRoute: AuthenticatedAppScanVerifyRoute,
   AuthenticatedAppWorkoutsRoute: AuthenticatedAppWorkoutsRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppUUserIdRoute: AuthenticatedAppUUserIdRoute,
