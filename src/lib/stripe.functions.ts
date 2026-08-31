@@ -15,6 +15,15 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const { getStripe, TIER_CONFIG } = await import("./stripe.server");
     const stripe = getStripe();
     const cfg = TIER_CONFIG[data.tier];
+    if (!cfg.checkoutEnabled) {
+      throw new Error(
+        "Private membership is invitation-only. Please apply via the contact page and a senior coach will be in touch.",
+      );
+    }
+    const unitAmount = data.cycle === "yearly" ? cfg.yearly : cfg.monthly;
+    if (typeof unitAmount !== "number") {
+      throw new Error("That billing cycle is not available for this membership.");
+    }
     const email = context.claims?.email as string | undefined;
 
     // Reuse existing customer if we have one
@@ -36,7 +45,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
             currency: "gbp",
             recurring: { interval: data.cycle === "yearly" ? "year" : "month" },
             product_data: { name: `Deluxe Fitness — ${cfg.name} (${data.cycle})` },
-            unit_amount: data.cycle === "yearly" ? cfg.yearly : cfg.monthly,
+            unit_amount: unitAmount,
           },
           quantity: 1,
         },
