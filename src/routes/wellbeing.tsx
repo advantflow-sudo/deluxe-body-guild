@@ -33,7 +33,7 @@ const pillars = [
   {
     Icon: Leaf,
     title: "Yoga & Pilates",
-    body: "Guided flows from beginner to advanced. Build flexibility, control and calm.",
+    body: "Written mobility and flow routines you can follow session by session. Filmed classes are on the roadmap.",
   },
   {
     Icon: Wind,
@@ -53,7 +53,7 @@ const pillars = [
   {
     Icon: Heart,
     title: "Zumba & Movement",
-    body: "Fun, expressive, sweat-soaked classes. Move because you enjoy it.",
+    body: "Movement sessions built for enjoyment rather than performance. Filmed classes are on the roadmap.",
   },
   {
     Icon: BookOpen,
@@ -69,7 +69,7 @@ function Page() {
         eyebrow="Wellbeing & Education"
         title="STRONG BODY."
         highlight="CALM MIND."
-        body="Fitness without recovery isn't elite — it's burnout. Wellbeing is built into Deluxe from day one."
+        body="Fitness without recovery isn't elite — it's burnout. Recovery check-ins, sleep logging and mindset prompts are live today."
       />
       <section className="bg-deluxe-black py-24">
         <div className="mx-auto grid max-w-7xl gap-6 px-6 md:grid-cols-2 lg:grid-cols-3">

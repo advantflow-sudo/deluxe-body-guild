@@ -162,12 +162,22 @@ function CommunityTab() {
       .from("workout_sessions")
       .select("id,workouts(title)")
       .eq("user_id", user.id)
+      .not("completed_at", "is", null)
       .order("completed_at", { ascending: false })
-      .limit(5)
+      .limit(10)
       .then(({ data }) => {
-        setRecentSessions(
-          (data ?? []).map((s: any) => ({ id: s.id, title: s.workouts?.title ?? "Workout" })),
-        );
+        // One entry per workout — repeat sessions of the same workout used to
+        // show as identical duplicate attachment options.
+        const seen = new Set<string>();
+        const unique: { id: string; title: string }[] = [];
+        for (const s of (data ?? []) as any[]) {
+          const title = s.workouts?.title ?? "Workout";
+          if (seen.has(title)) continue;
+          seen.add(title);
+          unique.push({ id: s.id, title });
+          if (unique.length === 5) break;
+        }
+        setRecentSessions(unique);
       });
   }, [user]);
 

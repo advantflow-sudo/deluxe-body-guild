@@ -59,7 +59,7 @@ export function DailyXpMission() {
     const [xpRes, streakRes, sessions, recovery, stats, nutrition, ext, mission] = await Promise.all([
       supabase.rpc("get_mission_xp_today"),
       supabase.rpc("get_xp_streak"),
-      supabase.from("workout_sessions").select("id").eq("user_id", user.id).gte("completed_at", `${d}T00:00:00Z`),
+      supabase.from("workout_sessions").select("id").eq("user_id", user.id).not("completed_at", "is", null).gte("completed_at", `${d}T00:00:00Z`),
       supabase.from("recovery_logs").select("id,readiness").eq("user_id", user.id).eq("log_date", d).maybeSingle(),
       supabase.from("daily_stats").select("water_ml").eq("user_id", user.id).eq("stat_date", d).maybeSingle(),
       supabase.from("nutrition_logs").select("protein_g").eq("user_id", user.id).eq("log_date", d),

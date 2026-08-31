@@ -100,7 +100,7 @@ export function DeluxeScoreBreakdown() {
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Sparkles className="h-3.5 w-3.5 text-gold" aria-hidden />
-            <SectionLabel id="deluxe-score-heading">Deluxe Score</SectionLabel>
+            <SectionLabel id="deluxe-score-heading">Deluxe Score · today</SectionLabel>
           </div>
           <button
             type="button"
@@ -116,6 +116,10 @@ export function DeluxeScoreBreakdown() {
             {perfect ? "Share Perfect" : "Share"}
           </button>
         </div>
+
+        <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          Same actions as your mission, scored out of 100
+        </p>
 
         <div className="mt-4 flex items-center gap-5 sm:gap-6">
           <div className="relative h-28 w-28 shrink-0 sm:h-32 sm:w-32">

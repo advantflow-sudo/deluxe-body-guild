@@ -79,6 +79,19 @@ function PartnerPage() {
 
   useEffect(() => { void load(); }, [load]);
 
+  // System streak warnings used to stack identically (one row per cron run).
+  // Collapse repeats of the same automated message to the most recent one.
+  const visibleNudges = (() => {
+    const seenSystem = new Set<string>();
+    return nudges.filter((n) => {
+      if (!n.kind.startsWith("system_")) return true;
+      const key = `${n.kind}|${n.message ?? ""}|${n.created_at.slice(0, 10)}`;
+      if (seenSystem.has(key)) return false;
+      seenSystem.add(key);
+      return true;
+    });
+  })();
+
   // Realtime nudges
   useEffect(() => {
     if (!partnership) return;
@@ -198,14 +211,14 @@ function PartnerPage() {
           <div>
             <SectionLabel>Recent nudges</SectionLabel>
             <ul className="mt-3 space-y-2">
-              {nudges.length === 0 ? (
+              {visibleNudges.length === 0 ? (
                 <li className="text-sm text-foreground/40">No nudges yet — send the first one.</li>
-              ) : nudges.map((n) => {
+              ) : visibleNudges.map((n) => {
                 const me = n.from_user === user?.id;
                 return (
                   <li key={n.id} className={`border ${me ? "border-gold/15 bg-deluxe-black/40" : "border-gold/30 bg-gold/5"} px-3 py-2 text-sm`}>
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] uppercase tracking-[0.2em] text-gold">{me ? "You" : "Partner"} · {n.kind}</span>
+                      <span className="text-[10px] uppercase tracking-[0.2em] text-gold">{n.kind.startsWith("system_") ? "Deluxe" : me ? "You" : "Partner"} · {n.kind.replace("system_", "").replace(/_/g, " ")}</span>
                       <span className="text-[10px] text-foreground/40">{new Date(n.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                     </div>
                     {n.message && <div className="mt-1 text-foreground/80">{n.message}</div>}

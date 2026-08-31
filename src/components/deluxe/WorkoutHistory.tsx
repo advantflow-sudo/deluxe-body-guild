@@ -24,6 +24,7 @@ export function WorkoutHistory({ userId, refreshKey = 0 }: { userId: string; ref
     supabase
       .from("workout_sessions")
       .select("id, duration_min, calories, completed_at, workout_id, workouts(title, category)")
+      .not("completed_at", "is", null)
       .eq("user_id", userId)
       .gt("duration_min", 0)
       .order("completed_at", { ascending: false })

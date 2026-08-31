@@ -253,16 +253,9 @@ export function exerciseMedia(nameOrSlug: string | null | undefined): ExerciseMe
     return { clip: EXERCISE_CLIPS[pattern], exact: false, clipOf: titleize(pattern) };
   }
 
-  const tokens = slug.split("-").filter((t) => t.length > 2);
-  let best: { key: string; score: number } | null = null;
-  for (const key of Object.keys(EXERCISE_CLIPS)) {
-    const keyTokens = key.split("-");
-    const score = tokens.filter((t) => keyTokens.includes(t)).length;
-    if (score > 0 && (!best || score > best.score)) best = { key, score };
-  }
-  if (best) {
-    return { clip: EXERCISE_CLIPS[best.key], exact: best.score >= tokens.length, clipOf: titleize(best.key) };
-  }
+  // Deliberately no loose token matching: a single shared word ("cable", "leg")
+  // used to attach a completely different exercise's clip. Anything without an
+  // explicit exact alias or pattern alias falls back to the form-check photo.
   return { exact: false };
 }
 

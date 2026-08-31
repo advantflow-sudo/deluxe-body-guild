@@ -31,6 +31,7 @@ export async function buildAdaptivePlan(
     supabase
       .from("workout_sessions")
       .select("completed_at,duration_min,calories,notes")
+      .not("completed_at", "is", null)
       .eq("user_id", userId)
       .gte("completed_at", since)
       .order("completed_at"),

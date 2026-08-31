@@ -15,6 +15,7 @@ import { useReduceMotion } from "@/hooks/useReduceMotion";
 import { useAuth } from "@/hooks/useAuth";
 import { BodyExportCard } from "@/components/deluxe/BodyExportCard";
 import { MuscleRecommendationBox } from "@/components/deluxe/MuscleRecommendationBox";
+import { PremiumGate } from "@/components/deluxe/PremiumGate";
 import bodyFront from "@/assets/body-front.jpg";
 import bodyBack from "@/assets/body-back.jpg";
 
@@ -83,6 +84,18 @@ const MUSCLES: Record<string, MuscleDef> = {
 const STORAGE_KEY = "deluxe.body.selection.v1";
 
 function BodyMapTab() {
+  return (
+    <PremiumGate
+      minTier="signature"
+      feature="Target Your Body"
+      description="Body Targeting — tap a muscle, get the matched session — is part of Signature membership."
+    >
+      <BodyMapInner />
+    </PremiumGate>
+  );
+}
+
+function BodyMapInner() {
   const search = Route.useSearch();
   const { muscles, view = "front" } = search;
   const navigate = useNavigate();

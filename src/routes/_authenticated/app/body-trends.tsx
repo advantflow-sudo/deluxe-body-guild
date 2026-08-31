@@ -33,7 +33,7 @@ function BodyTrends() {
       const [{ data: logRows }, { data: sessRows }] = await Promise.all([
         supabase.from("body_map_selection_logs").select("id,muscles,view,multi,matched_count,created_at")
           .eq("user_id", user.id).gte("created_at", since).order("created_at", { ascending: true }),
-        supabase.from("workout_sessions").select("id,workout_id,duration_min,calories,completed_at")
+        supabase.from("workout_sessions").select("id,workout_id,duration_min,calories,completed_at").not("completed_at", "is", null)
           .eq("user_id", user.id).gte("completed_at", since).order("completed_at", { ascending: true }),
       ]);
       setLogs((logRows ?? []) as Log[]);

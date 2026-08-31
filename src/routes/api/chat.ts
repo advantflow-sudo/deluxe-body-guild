@@ -56,8 +56,8 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
       supabase.from("profiles").select("display_name,fitness_goal,bio").eq("id", userId).maybeSingle(),
       supabase.from("user_profiles_ext").select("fitness_goal,training_level,preferred_type,weight_kg,height_cm,age,subscription_tier").eq("user_id", userId).maybeSingle(),
       supabase.from("daily_stats").select("steps,calories,water_ml,streak").eq("user_id", userId).eq("stat_date", today).maybeSingle(),
-      supabase.from("workout_sessions").select("completed_at,duration_min,calories,notes,workout_id").eq("user_id", userId).gte("completed_at", since).order("completed_at", { ascending: false }).limit(7),
-      supabase.from("workout_sessions").select("completed_at,workout_id").eq("user_id", userId).order("completed_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("workout_sessions").select("completed_at,duration_min,calories,notes,workout_id").eq("user_id", userId).not("completed_at", "is", null).gte("completed_at", since).order("completed_at", { ascending: false }).limit(7),
+      supabase.from("workout_sessions").select("completed_at,workout_id").eq("user_id", userId).not("completed_at", "is", null).order("completed_at", { ascending: false }).limit(1).maybeSingle(),
       supabase.from("ai_coach_memory").select("category,key,value").eq("user_id", userId).limit(40),
       supabase.from("recovery_logs").select("log_date,sleep_quality,soreness,fatigue,energy,readiness,note").eq("user_id", userId).order("log_date", { ascending: false }).limit(3),
       supabase.rpc("get_xp_summary"),
@@ -77,7 +77,7 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
         const { data: w } = await supabase.from("workouts").select("title").eq("id", lastWorkout.workout_id).maybeSingle();
         lastWorkoutTitle = w?.title ?? null;
       }
-      daysSinceLast = Math.floor((Date.now() - new Date(lastWorkout.completed_at).getTime()) / 864e5);
+      daysSinceLast = Math.floor((Date.now() - new Date(lastWorkout.completed_at ?? Date.now()).getTime()) / 864e5);
     }
 
     const name = profile?.display_name?.split(" ")[0] ?? "Athlete";

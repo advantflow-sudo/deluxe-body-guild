@@ -30,7 +30,7 @@ const STEPS = [
     title: "Create your account",
     body:
       "Deluxe runs in your browser and installs to your home screen as an app. Sign up takes under a minute — no card needed to create an account.",
-    detail: ["Installable web app", "Google Fit sync", "Optional wearable pairing"],
+    detail: ["Installable web app", "Google Fit sync", "More wearables on the roadmap"],
   },
   {
     Icon: ClipboardCheck,
