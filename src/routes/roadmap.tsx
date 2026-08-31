@@ -27,7 +27,9 @@ const LIVE = [
   "XP, levels & ranks progression",
   "Accountability partner matching",
   "Streak system + weekly freezes",
-  "Apple Health & Google Fit sync",
+  "Google Fit sync (Apple Health & wearables on the roadmap)",
+  "AI food-photo scanner with macro logging",
+  "Meal-prep guides & grocery list handoff",
 ];
 
 const SOON = [
