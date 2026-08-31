@@ -19,7 +19,7 @@ interface Participation { challenge_id: string; progress: number }
 
 function RewardsTab() {
   const { user } = useAuth();
-  const { isPremium, source, premiumUntil, refresh: refreshPremium } = usePremium();
+  const { isPremium, tier, source, premiumUntil, refresh: refreshPremium } = usePremium();
   const [balance, setBalance] = useState(0);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
