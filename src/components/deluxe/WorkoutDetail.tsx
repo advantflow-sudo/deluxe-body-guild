@@ -6,7 +6,7 @@ import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui"
 import { haptic } from "@/hooks/useHaptics";
 import { usePremium } from "@/hooks/usePremium";
 import { WorkoutSessionPlayer } from "@/components/deluxe/WorkoutSessionPlayer";
-import { exerciseClip, formReference } from "@/config/exercise-media";
+import { exerciseMedia, formReference } from "@/config/exercise-media";
 
 
 export interface Workout {
@@ -153,7 +153,8 @@ export function WorkoutDetail({ workout, userId, onClose }: { workout: Workout; 
                     <ul className="mt-3 space-y-2">
                       {b.workout_block_exercises.map((be) => {
                         const ex = be.exercises;
-                        const clip = exerciseClip(ex?.slug ?? ex?.name);
+                        const media = exerciseMedia(ex?.slug ?? ex?.name);
+                        const clip = media.exact ? media.clip : undefined;
                         const form = formReference(ex?.name, ex?.muscle_group, b.compartment, b.label);
                         return (
                           <li key={be.id} className="flex items-center gap-3 text-sm text-foreground">
@@ -182,6 +183,11 @@ export function WorkoutDetail({ workout, userId, onClose }: { workout: Workout; 
                             <Dumbbell className="h-3.5 w-3.5 shrink-0 text-gold" />
                             <span>{ex?.name ?? "Exercise"}</span>
                             {ex?.is_premium && !isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+                            {!media.exact && media.clip && media.clipOf && (
+                              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                                Pattern ref · {media.clipOf}
+                              </span>
+                            )}
                             {ex?.equipment && (
                               <span className="ml-auto text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{ex.equipment}</span>
                             )}
