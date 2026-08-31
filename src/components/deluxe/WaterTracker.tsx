@@ -35,7 +35,7 @@ export function WaterTracker() {
     const val = (data?.water_ml as number | undefined) ?? lastSaved.current;
     setMl(val);
     lastSaved.current = val;
-    setLoading(false);
+    setStatsLoading(false);
   }, [user, online]);
 
   useEffect(() => { void load(); }, [load]);
