@@ -337,14 +337,19 @@ function PricingPage() {
                   ) : null}
 
 
-                  {currentTier && !isCurrent && (
+                  {tier.inviteOnly ? (
+                    <p className="mt-3 text-[11px] uppercase tracking-[0.18em] text-gold">
+                      Invitation only — places confirmed after a call
+                    </p>
+                  ) : currentTier && !isCurrent ? (
                     <p className="mt-3 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-gold">
                       {isUpgrade ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                       {isUpgrade
                         ? "Prorated instantly via portal"
                         : "Applies at end of period"}
                     </p>
-                  )}
+                  ) : null}
+
 
                   <div className="my-6">
                     <GoldDivider />
