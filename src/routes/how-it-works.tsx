@@ -4,6 +4,7 @@ import {
 } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton, SectionLabel, GoldDivider } from "@/components/deluxe/ui";
+import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
@@ -13,6 +14,10 @@ export const Route = createFileRoute("/how-it-works")({
       { property: "og:title", content: "How Deluxe Fitness Works" },
       { property: "og:description", content: "From sign-up to transformation in five steps." },
       { property: "og:url", content: "https://deluxefitness.app/how-it-works" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/how-it-works" }],
   }),

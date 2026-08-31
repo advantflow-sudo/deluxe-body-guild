@@ -4,7 +4,10 @@ import { Sparkles, Gift, Target } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
+import { SectionLabel } from "@/components/deluxe/ui";
+import { usePremium } from "@/hooks/usePremium";
+import { Link } from "@tanstack/react-router";
+import { Crown } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/rewards")({
   component: RewardsTab,
@@ -16,6 +19,7 @@ interface Participation { challenge_id: string; progress: number }
 
 function RewardsTab() {
   const { user } = useAuth();
+  const { isPremium, source, premiumUntil, refresh: refreshPremium } = usePremium();
   const [balance, setBalance] = useState(0);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -49,9 +53,14 @@ function RewardsTab() {
     if (balance < r.cost_points) return toast.error("Not enough points");
     const { error } = await supabase.rpc("claim_reward", { _reward_id: r.id });
     if (error) return toast.error(error.message);
-    toast.success(`Claimed ${r.title}`);
+    toast.success(
+      r.type === "membership" || /premium membership/i.test(r.title)
+        ? "Premium unlocked for 30 days — enjoy."
+        : `Claimed ${r.title}`,
+    );
     setBalance(balance - r.cost_points);
     load();
+    void refreshPremium();
   };
 
   return (
@@ -63,6 +72,29 @@ function RewardsTab() {
         <Sparkles className="mx-auto h-6 w-6 text-gold" />
         <div className="mt-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Points Balance</div>
         <div className="mt-1 font-display text-5xl text-gold">{balance.toLocaleString()}</div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between gap-3 border border-gold/20 bg-deluxe-forest/20 p-4">
+        <div className="flex items-center gap-3">
+          <Crown className={`h-5 w-5 ${isPremium ? "text-gold" : "text-muted-foreground"}`} />
+          <div>
+            <div className="text-sm text-foreground">
+              {isPremium ? "Premium active" : "Free membership"}
+            </div>
+            <div className="text-[11px] text-muted-foreground">
+              {source === "points" && premiumUntil
+                ? `Unlocked with points until ${new Date(premiumUntil).toLocaleDateString()}`
+                : isPremium
+                  ? "Every gated feature is unlocked on your plan."
+                  : "Redeem a membership reward below, or upgrade any time."}
+            </div>
+          </div>
+        </div>
+        {!isPremium && (
+          <Link to="/pricing" className="shrink-0 border border-gold/40 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-gold transition hover:bg-gold/10">
+            Upgrade
+          </Link>
+        )}
       </div>
 
       <div className="mt-6">

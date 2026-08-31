@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Lock, Crown, Flame, ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton, SectionLabel, GoldDivider } from "@/components/deluxe/ui";
+import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/transformations")({
   head: () => ({
@@ -11,6 +12,10 @@ export const Route = createFileRoute("/transformations")({
       { property: "og:title", content: "Founding Members Transformations" },
       { property: "og:description", content: "Become one of the first 100. Your transformation, featured." },
       { property: "og:url", content: "https://deluxefitness.app/transformations" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/transformations" }],
   }),

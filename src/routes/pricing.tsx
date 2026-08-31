@@ -5,6 +5,7 @@ import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { GoldButton, OutlineButton, GoldDivider, SectionLabel } from "@/components/deluxe/ui";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import ogImage from "@/assets/og-membership.jpg";
 
 
 export const Route = createFileRoute("/pricing")({
@@ -23,6 +24,10 @@ export const Route = createFileRoute("/pricing")({
           "Three tiers of transformation. Essential, Signature, and Private memberships built for serious results.",
       },
       { property: "og:url", content: "https://deluxefitness.app/pricing" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/pricing" }],
     scripts: [

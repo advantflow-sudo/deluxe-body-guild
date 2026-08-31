@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { AlertTriangle, ChevronRight, Loader2, RotateCw, Sparkles, Upload } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useScanQuota } from "@/hooks/useScanQuota";
 import { supabase } from "@/integrations/supabase/client";
 import { fileToScaledDataUrl } from "@/lib/imageUtils";
 import { reportError } from "@/lib/monitoring";
@@ -65,6 +66,7 @@ function List({ label, items }: { label: string; items?: string[] }) {
 export function MealScanPanel({ showRings = true, onSaved }: { showRings?: boolean; onSaved?: () => void } = {}) {
   const fn = useServerFn(analyzeMeal);
   const { user } = useAuth();
+  const quota = useScanQuota();
   const [img, setImg] = useState<string | null>(null);
   const [edit, setEdit] = useState<MealScan | null>(null);
   const [loading, setLoading] = useState(false);
@@ -105,6 +107,10 @@ export function MealScanPanel({ showRings = true, onSaved }: { showRings?: boole
   }
 
   async function onFile(f: File) {
+    if (!quota.loading && !quota.canScan) {
+      toast.error(`You've used all ${quota.limit} free scans this month — upgrade for unlimited scanning.`);
+      return;
+    }
     setLoading(true);
     try {
       const url = await fileToScaledDataUrl(f);
@@ -164,6 +170,7 @@ export function MealScanPanel({ showRings = true, onSaved }: { showRings?: boole
       }
       setSaved(true);
       setRingsKey((k) => k + 1);
+      void quota.refresh();
       onSaved?.();
       toast.success("Meal saved to today's nutrition log.");
     } catch (e: any) {
@@ -190,6 +197,21 @@ export function MealScanPanel({ showRings = true, onSaved }: { showRings?: boole
           className="min-w-40 flex-1 border border-gold/20 bg-deluxe-black/60 px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground"
         />
       </div>
+      {!quota.loading && !quota.unlimited && (
+        <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          {quota.remaining > 0 ? (
+            <>
+              {quota.remaining} of {quota.limit} free scans left this month ·{" "}
+              <Link to="/pricing" className="text-gold">Go unlimited</Link>
+            </>
+          ) : (
+            <>
+              Free scans used up ·{" "}
+              <Link to="/pricing" className="text-gold">Upgrade for unlimited</Link>
+            </>
+          )}
+        </p>
+      )}
       {img && <img src={img} alt="Meal you just photographed" className="mt-3 max-h-56 border border-gold/20" />}
 
       {scanError && (

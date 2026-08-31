@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useGroceryList } from "@/hooks/useGroceryList";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
+import { GroceryDelivery } from "@/components/deluxe/GroceryDelivery";
 
 export const Route = createFileRoute("/_authenticated/app/grocery")({
   component: GroceryPage,
@@ -157,6 +158,8 @@ function GroceryPage() {
           </section>
         ))}
       </div>
+
+      {items.length > 0 && <GroceryDelivery items={items} />}
     </div>
   );
 }

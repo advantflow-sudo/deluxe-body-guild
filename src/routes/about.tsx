@@ -3,6 +3,7 @@ import { Compass, Flag, Users } from "lucide-react";
 import { PageShell, PageHero } from "@/components/deluxe/PageShell";
 import { AnimatedMedia } from "@/components/deluxe/AnimatedMedia";
 import { MEDIA } from "@/config/animated-media";
+import ogImage from "@/assets/og-deluxe-gold.jpg.asset.json";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -20,6 +21,10 @@ export const Route = createFileRoute("/about")({
           "Our history, where we are, where we're going, and the Deluxe community.",
       },
       { property: "og:url", content: "https://deluxefitness.app/about" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: `https://deluxefitness.app${ogImage.url}` },
+      { name: "twitter:image", content: `https://deluxefitness.app${ogImage.url}` },
     ],
     links: [{ rel: "canonical", href: "https://deluxefitness.app/about" }],
   }),

@@ -578,6 +578,51 @@ export type Database = {
         }
         Relationships: []
       }
+      grocery_deliveries: {
+        Row: {
+          address_note: string | null
+          created_at: string
+          fulfilment: string
+          id: string
+          item_count: number
+          partner: string
+          status: string
+          updated_at: string
+          user_id: string
+          window_date: string
+          window_end_hour: number
+          window_start_hour: number
+        }
+        Insert: {
+          address_note?: string | null
+          created_at?: string
+          fulfilment?: string
+          id?: string
+          item_count?: number
+          partner: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          window_date: string
+          window_end_hour: number
+          window_start_hour: number
+        }
+        Update: {
+          address_note?: string | null
+          created_at?: string
+          fulfilment?: string
+          id?: string
+          item_count?: number
+          partner?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          window_date?: string
+          window_end_hour?: number
+          window_start_hour?: number
+        }
+        Relationships: []
+      }
       grocery_items: {
         Row: {
           amount: string | null
@@ -1593,6 +1638,7 @@ export type Database = {
           notifications_enabled: boolean
           onboarded_at: string | null
           preferred_type: string | null
+          premium_until: string | null
           quiet_end_hour: number
           quiet_hours_enabled: boolean
           quiet_start_hour: number
@@ -1628,6 +1674,7 @@ export type Database = {
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
+          premium_until?: string | null
           quiet_end_hour?: number
           quiet_hours_enabled?: boolean
           quiet_start_hour?: number
@@ -1663,6 +1710,7 @@ export type Database = {
           notifications_enabled?: boolean
           onboarded_at?: string | null
           preferred_type?: string | null
+          premium_until?: string | null
           quiet_end_hour?: number
           quiet_hours_enabled?: boolean
           quiet_start_hour?: number
