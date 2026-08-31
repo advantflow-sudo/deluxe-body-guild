@@ -115,11 +115,13 @@ export function WorkoutSessionPlayer({
 
     const { data: xp } = await supabase.rpc("award_xp", { _reason: "workout" });
     await supabase.rpc("touch_streak");
+    // Reward points are what the rewards catalogue spends — earn them here too.
+    await supabase.rpc("award_points", { _reason: "Workout completed", _delta: 50 });
 
     setFinishing(false);
     setDone(true);
     haptic("success");
-    toast.success(xp ? `+${xp} XP earned` : "Session logged");
+    toast.success(xp ? `+${xp} XP · +50 points earned` : "Session logged");
   };
 
   return (

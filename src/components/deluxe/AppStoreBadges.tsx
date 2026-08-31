@@ -1,49 +1,38 @@
-import { Apple, Play } from "lucide-react";
+import { Apple, Play, Smartphone } from "lucide-react";
 
 /**
- * App Store + Google Play badge-style buttons.
- * Open in a new tab. Replace hrefs once the apps are listed.
+ * Store availability notice.
+ *
+ * Deluxe Fitness ships today as an installable web app (PWA) — there are no
+ * native App Store / Google Play listings yet, so these are deliberately NOT
+ * links. Wire real hrefs only once the listings exist.
  */
-const APP_STORE_URL = "https://apps.apple.com/app/deluxe-fitness/id000000000";
-const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=app.deluxefitness";
-
 export function AppStoreBadges({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex flex-col items-center justify-center gap-3 sm:flex-row ${className}`}>
-      <a
-        href={APP_STORE_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Download on the App Store"
-        className="group inline-flex items-center gap-3 rounded-xl border border-gold/40 bg-deluxe-black px-5 py-3 text-left transition hover:border-gold hover:bg-gold/10 hover:shadow-[0_0_24px_-8px_rgba(201,168,76,0.55)]"
-      >
-        <Apple className="h-7 w-7 text-gold" strokeWidth={1.5} />
-        <span>
-          <span className="block text-[9px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-            Download on the
-          </span>
-          <span className="block font-display text-lg leading-none text-foreground">
-            App Store
-          </span>
-        </span>
-      </a>
-      <a
-        href={PLAY_STORE_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Get it on Google Play"
-        className="group inline-flex items-center gap-3 rounded-xl border border-gold/40 bg-deluxe-black px-5 py-3 text-left transition hover:border-gold hover:bg-gold/10 hover:shadow-[0_0_24px_-8px_rgba(201,168,76,0.55)]"
-      >
-        <Play className="h-7 w-7 text-gold" strokeWidth={1.5} />
-        <span>
-          <span className="block text-[9px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-            Get it on
-          </span>
-          <span className="block font-display text-lg leading-none text-foreground">
-            Google Play
-          </span>
-        </span>
-      </a>
+    <div className={`flex flex-col items-center gap-3 ${className}`}>
+      <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+        {[
+          { icon: Apple, label: "App Store" },
+          { icon: Play, label: "Google Play" },
+        ].map(({ icon: Icon, label }) => (
+          <div
+            key={label}
+            className="inline-flex items-center gap-3 rounded-xl border border-gold/20 bg-deluxe-black px-5 py-3 text-left opacity-70"
+          >
+            <Icon className="h-7 w-7 text-gold/70" strokeWidth={1.5} />
+            <span>
+              <span className="block text-[9px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                Coming soon to
+              </span>
+              <span className="block font-display text-lg leading-none text-foreground/80">{label}</span>
+            </span>
+          </div>
+        ))}
+      </div>
+      <p className="inline-flex items-center gap-2 text-[11px] text-muted-foreground">
+        <Smartphone className="h-3.5 w-3.5 text-gold" />
+        Available today as an installable web app — add it to your home screen.
+      </p>
     </div>
   );
 }

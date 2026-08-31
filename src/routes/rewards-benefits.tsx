@@ -7,7 +7,7 @@ export const Route = createFileRoute("/rewards-benefits")({
   head: () => ({
     meta: [
       { title: "Rewards & Benefits — Deluxe Fitness" },
-      { name: "description", content: "Earn points for every workout, streak and challenge. Redeem for gym discounts, supplements, gear, prize draws and exclusive experiences." },
+      { name: "description", content: "Earn 50 points for every guided workout you finish, then redeem them for partner discounts, Deluxe kit, coaching calls or Premium months." },
       { property: "og:title", content: "Deluxe Fitness Rewards" },
       { property: "og:description", content: "Discipline pays. Tangible rewards for showing up." },
       { property: "og:url", content: "https://deluxefitness.app/rewards-benefits" },
@@ -17,22 +17,19 @@ export const Route = createFileRoute("/rewards-benefits")({
   component: RewardsPage,
 });
 
+/** Live earning rule — this mirrors what the app actually awards today. */
 const EARN = [
-  { what: "Complete a workout", pts: 50 },
-  { what: "Hit your daily Deluxe Score (80+)", pts: 30 },
-  { what: "7-day streak", pts: 100 },
-  { what: "30-day challenge complete", pts: 500 },
-  { what: "75-day discipline challenge", pts: 1500 },
-  { what: "Refer a friend who joins", pts: 250 },
+  { what: "Complete a guided workout session", pts: 50 },
 ];
 
+/** Live catalogue items members can redeem today. */
 const REWARDS = [
-  { Icon: Dumbbell, name: "Free PT Session", body: "A 60-minute 1:1 session with a coach.", cost: "1,500 pts" },
-  { Icon: Sparkles, name: "Spa Day Pass", body: "Full access to a recovery spa day.", cost: "2,500 pts" },
-  { Icon: Shirt, name: "Deluxe Hoodie", body: "Limited-drop members-only hoodie.", cost: "2,000 pts" },
-  { Icon: Ticket, name: "Pro Shop Credit", body: "Credit towards any in-house merch.", cost: "500 pts" },
-  { Icon: Crown, name: "Premium Upgrade", body: "One month of Premium, on us.", cost: "3,000 pts" },
-  { Icon: Trophy, name: "Massage Voucher", body: "A 30-minute sports massage.", cost: "1,800 pts" },
+  { Icon: Ticket, name: "£10 Gymshark Discount", body: "Partner discount code.", cost: "500 pts" },
+  { Icon: Sparkles, name: "20% Off Supplement Stack", body: "Partner supplement discount.", cost: "700 pts" },
+  { Icon: Shirt, name: "Deluxe Training Tee", body: "Members-only training tee.", cost: "1,500 pts" },
+  { Icon: Dumbbell, name: "Free 1:1 Coaching Call", body: "A live call with a Deluxe coach.", cost: "2,000 pts" },
+  { Icon: Trophy, name: "Members Night Invitation", body: "Invite to a Deluxe members event.", cost: "2,500 pts" },
+  { Icon: Crown, name: "Premium Membership — 1 Month", body: "One month of Premium, on points.", cost: "3,500 pts" },
 ];
 
 function RewardsPage() {

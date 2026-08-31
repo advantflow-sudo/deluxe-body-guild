@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Crown, Bell, HelpCircle, FileText, Shield, ChevronRight, Fingerprint } from "lucide-react";
+import { LogOut, Crown, Bell, HelpCircle, FileText, Shield, ChevronRight, Fingerprint, Trash2 } from "lucide-react";
+import { exportMyData, deleteMyAccount } from "@/lib/account.functions";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -313,14 +314,88 @@ function ProfileTab() {
             />
           )}
           <Row icon={HelpCircle} label="Help & Support" to="/contact" />
-          <Row icon={FileText} label="Terms of Service" to="/about" />
-          <Row icon={Shield} label="Privacy Policy" to="/about" />
+          <Row icon={FileText} label="Terms of Service" to="/terms" />
+          <Row icon={Shield} label="Privacy Policy" to="/privacy" />
         </div>
       </div>
+
+      <AccountDataSection onSignedOut={signOut} />
 
       <button onClick={signOut}
         className="mt-4 flex w-full items-center justify-center gap-2 border border-gold/30 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold hover:bg-gold/10">
         <LogOut className="h-3.5 w-3.5" /> Sign out
+      </button>
+    </div>
+  );
+}
+
+/** GDPR-style self-service: download everything, or delete the account for good. */
+function AccountDataSection({ onSignedOut }: { onSignedOut: () => void }) {
+  const doExport = useServerFn(exportMyData);
+  const doDelete = useServerFn(deleteMyAccount);
+  const [busy, setBusy] = useState<"export" | "delete" | null>(null);
+  const [confirmText, setConfirmText] = useState("");
+
+  const runExport = async () => {
+    setBusy("export");
+    try {
+      const { json } = await doExport({ data: undefined as never });
+      const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `deluxe-fitness-data-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Your data export has downloaded.");
+    } catch (e) {
+      toast.error((e as Error).message || "Export failed — try again.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const runDelete = async () => {
+    if (confirmText.trim().toUpperCase() !== "DELETE") {
+      toast.error('Type DELETE to confirm.');
+      return;
+    }
+    setBusy("delete");
+    try {
+      await doDelete({ data: undefined as never });
+      toast.success("Your account and data have been deleted.");
+      onSignedOut();
+    } catch (e) {
+      toast.error((e as Error).message || "Couldn't delete the account — contact support.");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5">
+      <SectionLabel>Your data</SectionLabel>
+      <p className="mt-2 text-[11px] text-muted-foreground">
+        Download everything we hold about you, or delete your account permanently. Deleting removes your profile, logs,
+        meal photos and progress photos — it can't be undone.
+      </p>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <OutlineButton onClick={runExport} disabled={busy !== null}>
+          {busy === "export" ? "Preparing…" : "Download my data"}
+        </OutlineButton>
+        <input
+          value={confirmText}
+          onChange={(e) => setConfirmText(e.target.value)}
+          placeholder="Type DELETE to confirm"
+          aria-label="Type DELETE to confirm account deletion"
+          className="border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none"
+        />
+      </div>
+      <button
+        onClick={runDelete}
+        disabled={busy !== null || confirmText.trim().toUpperCase() !== "DELETE"}
+        className="mt-2 flex w-full items-center justify-center gap-2 border border-rose-500/40 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-rose-300 transition hover:bg-rose-500/10 disabled:opacity-40"
+      >
+        <Trash2 className="h-3.5 w-3.5" /> {busy === "delete" ? "Deleting…" : "Delete my account"}
       </button>
     </div>
   );

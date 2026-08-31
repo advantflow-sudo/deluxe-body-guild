@@ -16,6 +16,7 @@ interface MealRow {
   protein_g: number | null;
   carbs_g: number | null;
   fat_g: number | null;
+  photo_path?: string | null;
   pending?: boolean;
 }
 
@@ -28,6 +29,7 @@ export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) 
   const [fat, setFat] = useState("");
   const [meals, setMeals] = useState<MealRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [thumbs, setThumbs] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const online = useOnline();
@@ -37,15 +39,28 @@ export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) 
     if (!user) return;
     const { data, error } = await supabase
       .from("nutrition_logs")
-      .select("id,meal_label,calories,protein_g,carbs_g,fat_g")
+      .select("id,meal_label,calories,protein_g,carbs_g,fat_g,photo_path")
       .eq("user_id", user.id)
       .eq("log_date", todayIso())
       .order("logged_at", { ascending: false });
     if (error && online) toast.error(error.message);
+    const rows = (data as MealRow[]) ?? [];
     setMeals((current) => {
       const pending = current.filter((r) => r.pending);
-      return [...pending, ...((data as MealRow[]) ?? [])];
+      return [...pending, ...rows];
     });
+    // Private bucket: thumbnails need short-lived signed URLs.
+    const paths = rows.map((r) => r.photo_path).filter((p): p is string => !!p);
+    if (paths.length) {
+      const { data: signed } = await supabase.storage.from("meal-photos").createSignedUrls(paths, 3600);
+      if (signed) {
+        setThumbs((prev) => {
+          const next = { ...prev };
+          signed.forEach((s) => { if (s.path && s.signedUrl) next[s.path] = s.signedUrl; });
+          return next;
+        });
+      }
+    }
     setLoading(false);
   }, [user, online]);
 
@@ -97,6 +112,7 @@ export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) 
   const remove = async (id: string) => {
     if (!user || id.startsWith("temp-")) return;
     const snapshot = meals;
+    const photoPath = meals.find((r) => r.id === id)?.photo_path ?? null;
     setMeals((m) => m.filter((r) => r.id !== id));
     setDeletingId(id);
     const result = await enqueueOrApply({ kind: "nutritionDelete", id, userId: user.id });
@@ -105,6 +121,15 @@ export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) 
       setMeals(snapshot);
       toast.error(`Couldn't remove meal: ${result.error}`);
     } else {
+      // The meal photo is deleted with the meal — nothing is retained.
+      if (photoPath && !result.queued) {
+        await supabase.storage.from("meal-photos").remove([photoPath]);
+        setThumbs((prev) => {
+          const next = { ...prev };
+          delete next[photoPath];
+          return next;
+        });
+      }
       onLogged?.();
       if (result.queued) {
         toast("Removed offline — will sync when reconnected", { icon: <CloudOff className="h-4 w-4" /> });
@@ -206,10 +231,20 @@ export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) 
                 key={m.id}
                 className={`flex items-center justify-between gap-2 border border-gold/10 bg-deluxe-black/30 px-3 py-2 text-xs ${m.pending || m.id.startsWith("temp-") ? "opacity-60" : ""}`}
               >
-                <div className="min-w-0">
-                  <div className="truncate text-foreground">{m.meal_label || "Meal"}</div>
-                  <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground tabular-nums">
-                    P {Math.round(Number(m.protein_g ?? 0))}g · C {Math.round(Number(m.carbs_g ?? 0))}g · F {Math.round(Number(m.fat_g ?? 0))}g
+                <div className="flex min-w-0 items-center gap-2">
+                  {m.photo_path && thumbs[m.photo_path] ? (
+                    <img
+                      src={thumbs[m.photo_path]}
+                      alt={`Photo of ${m.meal_label ?? "meal"}`}
+                      loading="lazy"
+                      className="h-9 w-9 shrink-0 border border-gold/20 object-cover"
+                    />
+                  ) : null}
+                  <div className="min-w-0">
+                    <div className="truncate text-foreground">{m.meal_label || "Meal"}</div>
+                    <div className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground tabular-nums">
+                      P {Math.round(Number(m.protein_g ?? 0))}g · C {Math.round(Number(m.carbs_g ?? 0))}g · F {Math.round(Number(m.fat_g ?? 0))}g
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

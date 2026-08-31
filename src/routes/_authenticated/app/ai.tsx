@@ -150,12 +150,25 @@ type MealScan = {
   protein_g: number;
   carbs_g: number;
   fat_g: number;
+  fibre_g?: number;
   portion_estimate?: string;
   confidence: "low" | "medium" | "high";
   items?: string[];
+  possible_allergens?: string[];
+  uncertainty?: string;
   suggestions?: string[];
   notes?: string;
 };
+
+/** Turn a scaled data URL back into a JPEG blob for private storage upload. */
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [head, b64] = dataUrl.split(",");
+  const mime = /:(.*?);/.exec(head ?? "")?.[1] ?? "image/jpeg";
+  const bin = atob(b64 ?? "");
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
 
 function MealPanel() {
   const fn = useServerFn(analyzeMeal);
@@ -220,11 +233,27 @@ function MealPanel() {
   }
 
   async function confirmAndSave() {
-    if (!user || !edit) return;
+    if (!user || !edit || saving || saved) return; // never write the same scan twice
     setSaving(true);
     try {
       const d = new Date();
       const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+      // Store the photo in the member's own private folder (RLS: uid = folder).
+      let photoPath: string | null = null;
+      if (img) {
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+        const up = await supabase.storage
+          .from("meal-photos")
+          .upload(path, dataUrlToBlob(img), { contentType: "image/jpeg", upsert: false });
+        if (up.error) {
+          reportError({ message: `meal-photo upload failed: ${up.error.message}`, severity: "warning", extra: { area: "meal-scan" } });
+          toast.message("Photo couldn't be stored — saving the macros only.");
+        } else {
+          photoPath = path;
+        }
+      }
+
       const { error } = await supabase.from("nutrition_logs").insert({
         user_id: user.id,
         log_date: today,
@@ -233,8 +262,14 @@ function MealPanel() {
         protein_g: Math.round(edit.protein_g),
         carbs_g: Math.round(edit.carbs_g),
         fat_g: Math.round(edit.fat_g),
+        fibre_g: Math.round(Number(edit.fibre_g ?? 0)),
+        source: "scan",
+        photo_path: photoPath,
       });
-      if (error) throw error;
+      if (error) {
+        if (photoPath) await supabase.storage.from("meal-photos").remove([photoPath]);
+        throw error;
+      }
       setSaved(true);
       setRingsKey((k) => k + 1);
       toast.success("Meal saved to today's nutrition log.");
@@ -302,11 +337,11 @@ function MealPanel() {
             onChange={(e) => setEdit({ ...edit, name: e.target.value })}
             className="mt-1 w-full border border-gold/20 bg-deluxe-black/60 px-3 py-2 font-display text-base text-gold"
           />
-          <div className="mt-3 grid grid-cols-4 gap-2 text-center text-xs">
-            {([["kcal", "calories"], ["P (g)", "protein_g"], ["C (g)", "carbs_g"], ["F (g)", "fat_g"]] as const).map(([label, key]) => (
+          <div className="mt-3 grid grid-cols-5 gap-2 text-center text-xs">
+            {([["kcal", "calories"], ["P (g)", "protein_g"], ["C (g)", "carbs_g"], ["F (g)", "fat_g"], ["Fibre", "fibre_g"]] as const).map(([label, key]) => (
               <div key={key} className="border border-gold/20 p-2">
                 <input
-                  value={Math.round(edit[key])}
+                  value={Math.round(Number(edit[key] ?? 0))}
                   onChange={(e) => setEdit({ ...edit, [key]: num(e.target.value) })}
                   inputMode="numeric"
                   className="w-full bg-transparent text-center font-display text-foreground focus:outline-none"
@@ -320,8 +355,19 @@ function MealPanel() {
           <div className="mt-1 text-[11px] text-muted-foreground">
             Confidence: {edit.confidence}{edit.items?.length ? ` · ${edit.items.join(", ")}` : ""}
           </div>
+          {edit.possible_allergens?.length ? (
+            <p className="mt-2 border border-amber-400/30 bg-amber-400/5 p-2 text-[11px] text-amber-200">
+              Possible allergens: {edit.possible_allergens.join(", ")}. Photo-based guesswork only — always check the
+              actual ingredients if you have an allergy.
+            </p>
+          ) : null}
+          {edit.uncertainty && <p className="mt-2 text-[11px] text-muted-foreground">Hard to judge: {edit.uncertainty}</p>}
           {edit.suggestions?.length ? <List label="Suggestions" items={edit.suggestions} /> : null}
           {edit.notes && <p className="mt-2 text-[11px] text-muted-foreground">{edit.notes}</p>}
+          <p className="mt-2 text-[10px] text-muted-foreground">
+            Estimates from one photo — edit anything that looks off before logging. Your photo is stored privately and
+            only you can see it.
+          </p>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             {saved ? (
               <Link to="/app/nutrition" className="inline-flex items-center gap-2 bg-gold-gradient px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-deluxe-black">
