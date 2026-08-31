@@ -7,7 +7,7 @@ export const Route = createFileRoute("/rewards-benefits")({
   head: () => ({
     meta: [
       { title: "Rewards & Benefits — Deluxe Fitness" },
-      { name: "description", content: "Earn points for every workout, streak and challenge. Redeem for gym discounts, supplements, gear, prize draws and exclusive experiences." },
+      { name: "description", content: "Earn 50 points for every guided workout you finish, then redeem them for partner discounts, Deluxe kit, coaching calls or Premium months." },
       { property: "og:title", content: "Deluxe Fitness Rewards" },
       { property: "og:description", content: "Discipline pays. Tangible rewards for showing up." },
       { property: "og:url", content: "https://deluxefitness.app/rewards-benefits" },
