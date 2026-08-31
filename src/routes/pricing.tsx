@@ -321,16 +321,21 @@ function PricingPage() {
                   <p className="mt-1 font-serif italic text-muted-foreground">{tier.tagline}</p>
 
                   <div className="mt-6 flex items-baseline gap-2">
-                    <span className="text-gold-gradient font-display text-5xl">£{price.toFixed(2)}</span>
+                    <span className="text-gold-gradient font-display text-5xl">£{perMonth.toFixed(2)}</span>
                     <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                       / month
                     </span>
                   </div>
-                  {cycle === "yearly" && (
+                  {showYearly ? (
                     <p className="mt-1 text-[11px] text-muted-foreground">
-                      Billed annually — £{(price * 12).toFixed(2)}
+                      Billed annually — £{tier.yearlyTotal!.toFixed(2)} (about two months free)
                     </p>
-                  )}
+                  ) : cycle === "yearly" && tier.inviteOnly ? (
+                    <p className="mt-1 text-[11px] text-muted-foreground">
+                      Billed monthly — annual terms arranged privately
+                    </p>
+                  ) : null}
+
 
                   {currentTier && !isCurrent && (
                     <p className="mt-3 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-gold">
