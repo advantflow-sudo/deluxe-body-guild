@@ -52,3 +52,14 @@ Status key: [x] done · [ ] open
 - Everything above including polish: ~3 sessions
 - Blocked on you: tap Enable on the reminders card on your installed app (so a real push subscription exists), a meal photo for the scan test, email sending domain + Resend key
 
+
+## Audit corrections (this session)
+- [x] Signature gating enforced on Body Targeting, Form Check, Progress Compare
+- [x] Zero-minute sessions no longer count for Deluxe Score, XP, Coach context, history, adaptive plans (legacy rows reset)
+- [x] Exercise video fuzzy matching tightened; player has play/pause, seek, volume, replay, captions
+- [x] Partner streak-warning spam collapsed; duplicates purged
+- [x] Weekly challenge targets fixed (300 pts per member)
+- [x] Unified targets no longer flash fallback values (water + nutrition rings wait for load)
+- [x] Public claims: no false free trial, wellbeing/wearable/roadmap claims match reality
+- [x] Rewards catalogue: only Signature membership months redeemable; unfulfillable rewards deactivated
+- [ ] Awaiting user: push notification enable on installed app, email sending domain, scanner photo upload test, Stripe live checkout run
