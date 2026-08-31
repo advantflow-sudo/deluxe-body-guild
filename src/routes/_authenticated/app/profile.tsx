@@ -313,10 +313,12 @@ function ProfileTab() {
             />
           )}
           <Row icon={HelpCircle} label="Help & Support" to="/contact" />
-          <Row icon={FileText} label="Terms of Service" to="/about" />
-          <Row icon={Shield} label="Privacy Policy" to="/about" />
+          <Row icon={FileText} label="Terms of Service" to="/terms" />
+          <Row icon={Shield} label="Privacy Policy" to="/privacy" />
         </div>
       </div>
+
+      <AccountDataSection onSignedOut={signOut} />
 
       <button onClick={signOut}
         className="mt-4 flex w-full items-center justify-center gap-2 border border-gold/30 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold hover:bg-gold/10">
