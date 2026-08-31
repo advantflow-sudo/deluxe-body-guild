@@ -47,9 +47,8 @@ function CoachPage() {
   const { isPremium, loading: premLoading } = usePremium();
   const locked = !!session && !premLoading && !isPremium;
   const needsLogin = !session;
-  const [messages, setMessages] = useState<Msg[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const chat = useCoachChat();
+  const { messages, input, setInput, loading, error } = chat;
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,7 +56,6 @@ function CoachPage() {
   }, [messages, loading]);
 
   async function send(text: string) {
-    if (!text.trim() || loading) return;
     if (needsLogin) {
       toast.error("Sign in to chat with the Coach.");
       return;
@@ -66,82 +64,7 @@ function CoachPage() {
       toast.error("Upgrade to Premium to chat with the Coach.");
       return;
     }
-    const userMsg: Msg = { role: "user", content: text.trim() };
-    const next = [...messages, userMsg];
-    setMessages(next);
-    setInput("");
-    setLoading(true);
-
-    try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData.session?.access_token;
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ messages: next }),
-      });
-      if (!res.ok || !res.body) {
-        if (res.status === 401) toast.error("Sign in to chat with the Coach.");
-        else if (res.status === 429) toast.error("Too many requests. Slow down a moment.");
-        else if (res.status === 402) toast.error("AI credits exhausted.");
-        else toast.error("Coach is unavailable right now.");
-        setMessages((prev) => prev.slice(0, -1));
-        setLoading(false);
-        return;
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let assistant = "";
-      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
-
-      const pushDelta = (delta: string) => {
-        assistant += delta;
-        setMessages((prev) => {
-          const copy = [...prev];
-          copy[copy.length - 1] = { role: "assistant", content: assistant };
-          return copy;
-        });
-      };
-
-      let done = false;
-      while (!done) {
-        const { done: d, value } = await reader.read();
-        if (d) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        let nl: number;
-        while ((nl = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, nl);
-          buffer = buffer.slice(nl + 1);
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
-          if (!line.startsWith("data: ")) continue;
-          const json = line.slice(6).trim();
-          if (json === "[DONE]") {
-            done = true;
-            break;
-          }
-          try {
-            const parsed = JSON.parse(json);
-            const c = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (c) pushDelta(c);
-          } catch {
-            buffer = line + "\n" + buffer;
-            break;
-          }
-        }
-      }
-    } catch (e) {
-      console.error(e);
-      toast.error("Connection lost. Try again.");
-    } finally {
-      setLoading(false);
-    }
+    await chat.send(text);
   }
 
   return (
