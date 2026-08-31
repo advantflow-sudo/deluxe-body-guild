@@ -26,32 +26,29 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
 
     const { data: subs } = await supabaseAdmin
       .from("push_subscriptions")
-      .select("id,endpoint")
+      .select("id,endpoint,p256dh,auth_key")
       .eq("user_id", userId);
 
+    const { sendPush, pushConfigured } = await import("@/lib/webpush.server");
     let pushed = 0;
     let pushPending = 0;
     for (const sub of subs ?? []) {
-      if (!sub.endpoint.startsWith("http")) {
+      const outcome = await sendPush(sub, {
+        title: "Deluxe Fitness",
+        body,
+        url: "/app?mission=1",
+        tag: "df-mission",
+      });
+      if (outcome === "sent") {
+        pushed += 1;
+        await supabaseAdmin
+          .from("push_subscriptions")
+          .update({ last_used_at: new Date().toISOString() })
+          .eq("id", sub.id);
+      } else if (outcome === "gone") {
+        await supabaseAdmin.from("push_subscriptions").delete().eq("id", sub.id);
+      } else {
         pushPending += 1;
-        continue;
-      }
-      try {
-        const res = await fetch(sub.endpoint, {
-          method: "POST",
-          headers: { TTL: "3600", "Content-Type": "application/octet-stream" },
-        });
-        if (res.status === 404 || res.status === 410) {
-          await supabaseAdmin.from("push_subscriptions").delete().eq("id", sub.id);
-        } else if (res.ok) {
-          pushed += 1;
-          await supabaseAdmin
-            .from("push_subscriptions")
-            .update({ last_used_at: new Date().toISOString() })
-            .eq("id", sub.id);
-        }
-      } catch {
-        // Delivery failures must never break the test.
       }
     }
 
@@ -93,6 +90,7 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
       pushed,
       pushPending,
       emailed,
+      pushConfigured: pushConfigured(),
       emailRequested: Boolean(ext?.mission_reminder_email),
       emailConfigured: Boolean(resendKey),
     };

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { verifyCronSecret } from "@/lib/cron-auth.server";
+import { sendPush } from "@/lib/webpush.server";
 import type { Database } from "@/integrations/supabase/types";
 
 // Hourly — nudges members whose local reminder hour is now and whose daily
@@ -54,31 +55,28 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
           // Web Push — only rows created by a real browser subscription.
           const { data: subs } = row.push_opt_in === false ? { data: [] } : await admin
             .from("push_subscriptions")
-            .select("id,endpoint")
+            .select("id,endpoint,p256dh,auth_key")
             .eq("user_id", row.user_id);
           for (const sub of subs ?? []) {
-            if (!sub.endpoint.startsWith("http")) continue;
-            try {
-              const res = await fetch(sub.endpoint, {
-                method: "POST",
-                headers: { TTL: "3600", "Content-Type": "application/octet-stream" },
+            const outcome = await sendPush(sub, {
+              title: "Deluxe Fitness",
+              body,
+              url: "/app?mission=1",
+              tag: "df-mission",
+            });
+            if (outcome === "gone") {
+              await admin.from("push_subscriptions").delete().eq("id", sub.id);
+            } else if (outcome === "sent") {
+              pushed += 1;
+              await admin
+                .from("push_subscriptions")
+                .update({ last_used_at: new Date().toISOString() })
+                .eq("id", sub.id);
+              await admin.from("reminder_deliveries").insert({
+                user_id: row.user_id,
+                channel: "push",
+                claimed_xp_at_send: Number(row.claimed_xp ?? 0),
               });
-              if (res.status === 404 || res.status === 410) {
-                await admin.from("push_subscriptions").delete().eq("id", sub.id);
-              } else if (res.ok) {
-                pushed += 1;
-                await admin
-                  .from("push_subscriptions")
-                  .update({ last_used_at: new Date().toISOString() })
-                  .eq("id", sub.id);
-                await admin.from("reminder_deliveries").insert({
-                  user_id: row.user_id,
-                  channel: "push",
-                  claimed_xp_at_send: Number(row.claimed_xp ?? 0),
-                });
-              }
-            } catch {
-              // Delivery failures must never break the batch.
             }
           }
 
