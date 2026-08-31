@@ -578,6 +578,42 @@ export type Database = {
         }
         Relationships: []
       }
+      grocery_items: {
+        Row: {
+          amount: string | null
+          checked: boolean
+          created_at: string
+          id: string
+          item: string
+          plan_date: string
+          source_meal: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: string | null
+          checked?: boolean
+          created_at?: string
+          id?: string
+          item: string
+          plan_date?: string
+          source_meal?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: string | null
+          checked?: boolean
+          created_at?: string
+          id?: string
+          item?: string
+          plan_date?: string
+          source_meal?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       habit_logs: {
         Row: {
           created_at: string
