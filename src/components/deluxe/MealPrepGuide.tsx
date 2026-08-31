@@ -118,6 +118,8 @@ export function MealPrepGuide({
   const [checkedIng, setCheckedIng] = useState<Set<string>>(new Set());
   const [doneSteps, setDoneSteps] = useState<Set<number>>(new Set());
   const [showList, setShowList] = useState(false);
+  const grocery = useGroceryList();
+
 
   const steps = meal.steps ?? [];
   const ingredients = meal.ingredients ?? [];
