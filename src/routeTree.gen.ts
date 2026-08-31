@@ -62,6 +62,7 @@ import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/
 import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
 import { Route as ApiPublicMonitoringReportRouteImport } from './routes/api/public/monitoring/report'
 import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
+import { Route as ApiPublicHooksWeeklyChallengeRolloverRouteImport } from './routes/api/public/hooks/weekly-challenge-rollover'
 import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
 import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
 import { Route as ApiPublicHooksStripeWebhookTestRouteImport } from './routes/api/public/hooks/stripe-webhook-test'
@@ -354,6 +355,12 @@ const ApiPublicHooksWeeklyRecapRoute =
     path: '/api/public/hooks/weekly-recap',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksWeeklyChallengeRolloverRoute =
+  ApiPublicHooksWeeklyChallengeRolloverRouteImport.update({
+    id: '/api/public/hooks/weekly-challenge-rollover',
+    path: '/api/public/hooks/weekly-challenge-rollover',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSyncOauthDevicesRoute =
   ApiPublicHooksSyncOauthDevicesRouteImport.update({
     id: '/api/public/hooks/sync-oauth-devices',
@@ -486,6 +493,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/stripe-webhook-test': typeof ApiPublicHooksStripeWebhookTestRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
+  '/api/public/hooks/weekly-challenge-rollover': typeof ApiPublicHooksWeeklyChallengeRolloverRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
   '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
@@ -551,6 +559,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/stripe-webhook-test': typeof ApiPublicHooksStripeWebhookTestRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
+  '/api/public/hooks/weekly-challenge-rollover': typeof ApiPublicHooksWeeklyChallengeRolloverRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
   '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
@@ -619,6 +628,7 @@ export interface FileRoutesById {
   '/api/public/hooks/stripe-webhook-test': typeof ApiPublicHooksStripeWebhookTestRoute
   '/api/public/hooks/sync-google-fit': typeof ApiPublicHooksSyncGoogleFitRoute
   '/api/public/hooks/sync-oauth-devices': typeof ApiPublicHooksSyncOauthDevicesRoute
+  '/api/public/hooks/weekly-challenge-rollover': typeof ApiPublicHooksWeeklyChallengeRolloverRoute
   '/api/public/hooks/weekly-recap': typeof ApiPublicHooksWeeklyRecapRoute
   '/api/public/monitoring/report': typeof ApiPublicMonitoringReportRoute
   '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
@@ -687,6 +697,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/stripe-webhook-test'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
+    | '/api/public/hooks/weekly-challenge-rollover'
     | '/api/public/hooks/weekly-recap'
     | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
@@ -752,6 +763,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/stripe-webhook-test'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
+    | '/api/public/hooks/weekly-challenge-rollover'
     | '/api/public/hooks/weekly-recap'
     | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
@@ -819,6 +831,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/stripe-webhook-test'
     | '/api/public/hooks/sync-google-fit'
     | '/api/public/hooks/sync-oauth-devices'
+    | '/api/public/hooks/weekly-challenge-rollover'
     | '/api/public/hooks/weekly-recap'
     | '/api/public/monitoring/report'
     | '/api/public/webhooks/stripe'
@@ -860,6 +873,7 @@ export interface RootRouteChildren {
   ApiPublicHooksStripeWebhookTestRoute: typeof ApiPublicHooksStripeWebhookTestRoute
   ApiPublicHooksSyncGoogleFitRoute: typeof ApiPublicHooksSyncGoogleFitRoute
   ApiPublicHooksSyncOauthDevicesRoute: typeof ApiPublicHooksSyncOauthDevicesRoute
+  ApiPublicHooksWeeklyChallengeRolloverRoute: typeof ApiPublicHooksWeeklyChallengeRolloverRoute
   ApiPublicHooksWeeklyRecapRoute: typeof ApiPublicHooksWeeklyRecapRoute
   ApiPublicMonitoringReportRoute: typeof ApiPublicMonitoringReportRoute
   ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
@@ -1240,6 +1254,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksWeeklyRecapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/weekly-challenge-rollover': {
+      id: '/api/public/hooks/weekly-challenge-rollover'
+      path: '/api/public/hooks/weekly-challenge-rollover'
+      fullPath: '/api/public/hooks/weekly-challenge-rollover'
+      preLoaderRoute: typeof ApiPublicHooksWeeklyChallengeRolloverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sync-oauth-devices': {
       id: '/api/public/hooks/sync-oauth-devices'
       path: '/api/public/hooks/sync-oauth-devices'
@@ -1444,6 +1465,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksStripeWebhookTestRoute: ApiPublicHooksStripeWebhookTestRoute,
   ApiPublicHooksSyncGoogleFitRoute: ApiPublicHooksSyncGoogleFitRoute,
   ApiPublicHooksSyncOauthDevicesRoute: ApiPublicHooksSyncOauthDevicesRoute,
+  ApiPublicHooksWeeklyChallengeRolloverRoute:
+    ApiPublicHooksWeeklyChallengeRolloverRoute,
   ApiPublicHooksWeeklyRecapRoute: ApiPublicHooksWeeklyRecapRoute,
   ApiPublicMonitoringReportRoute: ApiPublicMonitoringReportRoute,
   ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,

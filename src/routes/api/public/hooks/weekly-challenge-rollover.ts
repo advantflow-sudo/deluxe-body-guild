@@ -47,9 +47,11 @@ export const Route = createFileRoute("/api/public/hooks/weekly-challenge-rollove
         let created = false;
         if ((existing?.length ?? 0) === 0) {
           const weekIndex = Math.floor(Date.parse(week) / (7 * 86_400_000));
+          const weekEnd = new Date(Date.parse(week) + 6 * 86_400_000).toISOString().slice(0, 10);
           const { error: insErr } = await admin.from("weekly_team_challenges").insert({
             title: TITLES[weekIndex % TITLES.length],
             week_start: week,
+            week_end: weekEnd,
             is_active: true,
           });
           if (insErr) return Response.json({ ok: false, error: insErr.message }, { status: 500 });
