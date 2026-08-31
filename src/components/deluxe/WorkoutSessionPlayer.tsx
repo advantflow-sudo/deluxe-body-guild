@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
-import { exerciseClip, formReference } from "@/config/exercise-media";
+import { exerciseMedia, formReference } from "@/config/exercise-media";
 import type { Workout } from "@/components/deluxe/WorkoutDetail";
 
 interface Exercise {
@@ -176,7 +176,8 @@ export function WorkoutSessionPlayer({
                         const isDone = completed.has(be.id);
                         const ex = be.exercises;
                         const open = openDemo === be.id;
-                        const clip = exerciseClip(ex?.slug ?? ex?.name);
+                        const media = exerciseMedia(ex?.slug ?? ex?.name);
+                        const clip = media.clip;
                         const form = formReference(ex?.name, ex?.muscle_group, b.compartment, b.label);
                         return (
                           <li key={be.id}>
@@ -205,17 +206,30 @@ export function WorkoutSessionPlayer({
                             {open && (
                               <div className="border border-t-0 border-gold/15 bg-deluxe-black/50 p-3">
                                 {clip ? (
-                                  <video
-                                    src={clip}
-                                    poster={form.image}
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    preload="metadata"
-                                    aria-label={`${ex?.name ?? "Exercise"} demonstration clip`}
-                                    className="h-44 w-full border border-gold/20 object-cover"
-                                  />
+                                  <>
+                                    <video
+                                      src={clip}
+                                      poster={form.image}
+                                      autoPlay
+                                      loop
+                                      muted
+                                      controls
+                                      playsInline
+                                      preload="metadata"
+                                      aria-label={`${media.exact ? ex?.name ?? "Exercise" : media.clipOf} demonstration video`}
+                                      className="h-52 w-full border border-gold/20 bg-black object-cover"
+                                    />
+                                    <div className="mt-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                                      {media.exact ? (
+                                        <>Video · {ex?.name ?? "Exercise"} demo</>
+                                      ) : (
+                                        <>
+                                          Pattern video · <span className="text-gold">{media.clipOf}</span> — same
+                                          mechanics as {ex?.name}
+                                        </>
+                                      )}
+                                    </div>
+                                  </>
                                 ) : (
                                   <img
                                     src={form.image}

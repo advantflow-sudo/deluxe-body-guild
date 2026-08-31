@@ -106,8 +106,11 @@ const slugify = (s: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-/** Loose name → slug aliases for DB exercises that don't match a filename exactly. */
-const ALIASES: Record<string, string> = {
+/**
+ * Exercise-library slugs that are the SAME movement as one of our filmed clips
+ * (naming variations only) — the clip is an exact demo of that exercise.
+ */
+const EXACT_ALIASES: Record<string, string> = {
   squat: "back-squat",
   "barbell-squat": "back-squat",
   "bench-press": "barbell-bench-press",
@@ -115,13 +118,12 @@ const ALIASES: Record<string, string> = {
   pushup: "push-ups",
   pushups: "push-ups",
   "overhead-press": "standing-overhead-press",
+  "ohp-barbell": "standing-overhead-press",
   "shoulder-press": "standing-overhead-press",
-  deadlift: "romanian-deadlift",
   "barbell-row": "bent-over-row",
-  row: "bent-over-row",
+  "bent-over-barbell-row": "bent-over-row",
   "pull-ups": "pull-up",
   pullup: "pull-up",
-  chinup: "pull-up",
   "tricep-pushdown": "rope-pushdown",
   "triceps-pushdown": "rope-pushdown",
   "calf-raise": "standing-calf-raise",
@@ -129,18 +131,127 @@ const ALIASES: Record<string, string> = {
   "hip-thrust": "barbell-hip-thrust",
   "forearm-plank": "plank",
   skipping: "jump-rope",
+  "db-shrug": "dumbbell-shrug",
+  "incline-db-press": "incline-dumbbell-press",
+  "close-grip-bench": "close-grip-bench-press",
+  "farmer-carry": "farmers-carry",
+  "suitcase-carry": "farmers-carry",
+  "overhead-tricep-extension": "overhead-triceps-extension",
+  woodchopper: "cable-woodchopper",
+  "hanging-knee-raise": "hanging-leg-raise",
+  "toes-to-bar": "hanging-leg-raise",
+  "db-lateral-raise": "lateral-raise",
+  "cable-lateral-raise": "lateral-raise",
+  "machine-lateral-raise": "lateral-raise",
+  "stiff-leg-deadlift": "romanian-deadlift",
+  "good-morning": "romanian-deadlift",
 };
 
 /**
- * Resolve a demo clip URL for an exercise, matching on slug, alias, then a
- * best-effort token overlap so DB naming variations still get a real video.
+ * Slugs with no filmed clip of their own: mapped to the clip of the closest
+ * movement pattern. Surfaced in the UI as a pattern reference, never claimed
+ * to be a demo of that exact exercise.
  */
-export function exerciseClip(nameOrSlug: string | null | undefined): string | undefined {
-  if (!nameOrSlug) return undefined;
+const PATTERN_ALIASES: Record<string, string> = {
+  // Push
+  "db-bench-press": "barbell-bench-press",
+  "machine-chest-press": "barbell-bench-press",
+  "incline-bb-press": "incline-dumbbell-press",
+  "incline-machine-press": "incline-dumbbell-press",
+  "decline-push-up": "push-ups",
+  "plank-jack": "plank",
+  "db-fly": "reverse-pec-deck",
+  "cable-fly": "reverse-pec-deck",
+  "pec-deck": "reverse-pec-deck",
+  "svend-press": "reverse-pec-deck",
+  "arnold-press": "standing-overhead-press",
+  "db-shoulder-press": "standing-overhead-press",
+  "seated-machine-press": "standing-overhead-press",
+  "upright-row": "lateral-raise",
+  dip: "close-grip-bench-press",
+  skullcrusher: "overhead-triceps-extension",
+  // Pull
+  "assisted-pull-up": "pull-up",
+  "chin-up": "pull-up",
+  "inverted-row": "bent-over-row",
+  "seated-cable-row": "bent-over-row",
+  "chest-supported-row": "bent-over-row",
+  "single-arm-db-row": "bent-over-row",
+  "straight-arm-pulldown": "lat-pulldown",
+  "back-extension": "romanian-deadlift",
+  "reverse-hyper": "glute-bridge",
+  "sumo-deadlift": "romanian-deadlift",
+  // Arms
+  "db-curl": "barbell-curl",
+  "cable-curl": "barbell-curl",
+  "ez-bar-curl": "barbell-curl",
+  "preacher-curl": "incline-dumbbell-curl",
+  // Legs
+  "front-squat": "back-squat",
+  "goblet-squat": "back-squat",
+  "hack-squat": "back-squat",
+  "leg-press": "leg-extension",
+  "step-up": "bulgarian-split-squat",
+  "walking-lunge": "bulgarian-split-squat",
+  "lunge-jump": "bulgarian-split-squat",
+  "squat-jump": "back-squat",
+  "box-jump": "back-squat",
+  "cable-kickback": "glute-bridge",
+  "glute-medius-band": "glute-bridge",
+  "seated-leg-curl": "lying-leg-curl",
+  "kettlebell-swing": "romanian-deadlift",
+  // Core
+  "ab-wheel": "plank",
+  "dead-bug": "plank",
+  "hollow-hold": "plank",
+  "pallof-press": "cable-woodchopper",
+  "seated-twist": "russian-twist",
+  "v-up": "hanging-leg-raise",
+  // Conditioning
+  "high-knees": "jump-rope",
+  burpee: "push-ups",
+  "mountain-climber": "plank",
+  "battle-rope": "jump-rope",
+  "shadow-boxing": "jump-rope",
+  "assault-bike": "jump-rope",
+  "spin-bike": "jump-rope",
+  "spin-intervals": "jump-rope",
+  "rower-intervals": "bent-over-row",
+  "rower-steady": "bent-over-row",
+  "ski-erg": "rope-pushdown",
+  "stair-climber": "bulgarian-split-squat",
+  "treadmill-intervals": "jump-rope",
+  "treadmill-steady": "jump-rope",
+  "treadmill-incline-walk": "jump-rope",
+  "sled-push": "bulgarian-split-squat",
+};
+
+export interface ExerciseMedia {
+  /** Video URL for a real filmed clip, when we have one. */
+  clip?: string;
+  /** True when the clip shows this exact exercise. */
+  exact: boolean;
+  /** The clip's own exercise name, for honest labelling when not exact. */
+  clipOf?: string;
+}
+
+const titleize = (slug: string) =>
+  slug.split("-").map((t) => t.charAt(0).toUpperCase() + t.slice(1)).join(" ");
+
+/** Resolve which filmed clip (if any) represents an exercise, and how closely. */
+export function exerciseMedia(nameOrSlug: string | null | undefined): ExerciseMedia {
+  if (!nameOrSlug) return { exact: false };
   const slug = slugify(nameOrSlug);
-  if (EXERCISE_CLIPS[slug]) return EXERCISE_CLIPS[slug];
-  const alias = ALIASES[slug];
-  if (alias && EXERCISE_CLIPS[alias]) return EXERCISE_CLIPS[alias];
+
+  if (EXERCISE_CLIPS[slug]) return { clip: EXERCISE_CLIPS[slug], exact: true, clipOf: titleize(slug) };
+
+  const exact = EXACT_ALIASES[slug];
+  if (exact && EXERCISE_CLIPS[exact]) return { clip: EXERCISE_CLIPS[exact], exact: true, clipOf: titleize(exact) };
+
+  const pattern = PATTERN_ALIASES[slug];
+  if (pattern && EXERCISE_CLIPS[pattern]) {
+    return { clip: EXERCISE_CLIPS[pattern], exact: false, clipOf: titleize(pattern) };
+  }
 
   const tokens = slug.split("-").filter((t) => t.length > 2);
   let best: { key: string; score: number } | null = null;
@@ -149,7 +260,15 @@ export function exerciseClip(nameOrSlug: string | null | undefined): string | un
     const score = tokens.filter((t) => keyTokens.includes(t)).length;
     if (score > 0 && (!best || score > best.score)) best = { key, score };
   }
-  return best ? EXERCISE_CLIPS[best.key] : undefined;
+  if (best) {
+    return { clip: EXERCISE_CLIPS[best.key], exact: best.score >= tokens.length, clipOf: titleize(best.key) };
+  }
+  return { exact: false };
+}
+
+/** Back-compat helper: just the clip URL. */
+export function exerciseClip(nameOrSlug: string | null | undefined): string | undefined {
+  return exerciseMedia(nameOrSlug).clip;
 }
 
 export interface FormReference {
