@@ -4,7 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 /**
  * Sends the signed-in member a test mission reminder through every channel they
  * have enabled: in-app notification, Web Push (real browser subscriptions only)
- * and email when they opted in and Resend is configured.
+ * and email when they opted in.
  */
 export const sendTestMissionReminder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -53,31 +53,28 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
     }
 
     let emailed = false;
-    const resendKey = process.env["RESEND_API_KEY"]?.trim();
-    if (ext?.mission_reminder_email && resendKey) {
+    if (ext?.mission_reminder_email) {
       const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
       const email = authUser?.user?.email;
       if (email) {
         try {
-          const res = await fetch("https://api.resend.com/emails", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${resendKey}`,
-              "Content-Type": "application/json",
+          const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+          const res = await sendTemplateEmail("mission-reminder", email, {
+            templateData: {
+              remainingXp: 100,
+              claimUrl: "https://deluxefitness.app/app?mission=1",
+              isTest: true,
             },
-            body: JSON.stringify({
-              from: "Deluxe Fitness <missions@deluxefitness.app>",
-              to: [email],
-              subject: "Test mission reminder",
-              html: `<p>${body}</p><p><a href="https://deluxefitness.app/app?mission=1">Claim your XP</a></p>`,
-            }),
+            idempotencyKey: `mission-reminder-test-${userId}-${Date.now()}`,
           });
-          emailed = res.ok;
-        } catch {
+          emailed = res.sent;
+        } catch (err) {
+          console.error("[reminders] test email failed", err);
           emailed = false;
         }
       }
     }
+
 
     const logs: { user_id: string; channel: string; is_test: boolean }[] = [];
     if (!nErr) logs.push({ user_id: userId, channel: "in_app", is_test: true });
@@ -92,6 +89,6 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
       emailed,
       pushConfigured: pushConfigured(),
       emailRequested: Boolean(ext?.mission_reminder_email),
-      emailConfigured: Boolean(resendKey),
+      emailConfigured: true,
     };
   });

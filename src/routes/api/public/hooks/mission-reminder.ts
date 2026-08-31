@@ -32,7 +32,7 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
         let notified = 0;
         let pushed = 0;
         let emailed = 0;
-        const resendKey = process.env["RESEND_API_KEY"]?.trim();
+        
 
         for (const row of due) {
           const remaining = Math.max(0, 100 - Number(row.claimed_xp ?? 0));
@@ -80,25 +80,22 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
             }
           }
 
-          if (row.email_opt_in && resendKey) {
+          if (row.email_opt_in) {
             const { data: authUser } = await admin.auth.admin.getUserById(row.user_id);
             const email = authUser?.user?.email;
             if (email) {
               try {
-                const res = await fetch("https://api.resend.com/emails", {
-                  method: "POST",
-                  headers: {
-                    Authorization: `Bearer ${resendKey}`,
-                    "Content-Type": "application/json",
+                const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+                const res = await sendTemplateEmail("mission-reminder", email, {
+                  templateData: {
+                    remainingXp: remaining,
+                    claimUrl: "https://deluxefitness.app/app?mission=1",
                   },
-                  body: JSON.stringify({
-                    from: "Deluxe Fitness <missions@deluxefitness.app>",
-                    to: [email],
-                    subject: `${remaining} XP left on today's mission`,
-                    html: `<p>${body}</p><p><a href="https://deluxefitness.app/app?mission=1">Claim your XP</a></p>`,
-                  }),
+                  idempotencyKey: `mission-reminder-${row.user_id}-${new Date()
+                    .toISOString()
+                    .slice(0, 13)}`,
                 });
-                if (res.ok) {
+                if (res.sent) {
                   emailed += 1;
                   await admin.from("reminder_deliveries").insert({
                     user_id: row.user_id,
@@ -106,11 +103,12 @@ export const Route = createFileRoute("/api/public/hooks/mission-reminder")({
                     claimed_xp_at_send: Number(row.claimed_xp ?? 0),
                   });
                 }
-              } catch {
-                // Email is a best-effort channel.
+              } catch (err) {
+                console.error("[mission-reminder] email failed", err);
               }
             }
           }
+
         }
 
         return Response.json({ ok: true, due: due.length, notified, pushed, emailed });

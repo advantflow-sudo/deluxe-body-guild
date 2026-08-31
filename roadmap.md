@@ -19,7 +19,7 @@ Status key: [x] done · [ ] open
 - [x] Fixed silent bug: notification alert types were restricted to likes/comments, so mission reminders, partner cheers and streak alerts were being rejected by the database — now accepted (test reminder verified end to end)
 - [ ] Scan → save → rescan → rings run with a real meal photo (needs a photo from you)
 - [x] Production Web Push: VAPID keys configured, real browser subscriptions stored, encrypted delivery wired (verify on your installed app)
-- [ ] Email reminder delivery: needs a Resend API key + verified sending domain (push delivery is configured and in-app delivery verified)
+- [x] Email delivery moved to the built-in email service on notify.deluxefitness.app (auth + mission reminder emails); sending activates once DNS verification completes
 - [x] Backend hardening: reward-point amounts now server-decided with a daily cap (remaining linter warnings are advisory: pg_net lives in public for scheduling, and the flagged functions are user-scoped by design)
 - [ ] Reminder claim/quiet-hour edge semantics (hour boundary, DST) confirmed with test rows
 - [x] Cron/scheduler wired for reminder dispatch (pg_cron → public API route); duplicate cron jobs removed (was double-sending)
