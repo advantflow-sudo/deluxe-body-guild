@@ -29,6 +29,7 @@ export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) 
   const [fat, setFat] = useState("");
   const [meals, setMeals] = useState<MealRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [thumbs, setThumbs] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const online = useOnline();
