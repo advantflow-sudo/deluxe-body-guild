@@ -445,21 +445,21 @@ function Rewards() {
     {
       Icon: Medal,
       name: "Bronze",
-      threshold: "10 workouts",
-      perk: "Members-only workout drops & badge.",
+      threshold: "500 points",
+      perk: "Transformation Level badge plus partner discounts in the rewards catalogue.",
     },
     {
       Icon: Trophy,
       name: "Gold",
-      threshold: "50 workouts",
-      perk: "AI Coach priority, gear discounts, leaderboard placement.",
+      threshold: "5,000 points",
+      perk: "Deluxe kit, a 1:1 coaching call and members-night invitations.",
       featured: true,
     },
     {
       Icon: Crown,
       name: "Deluxe",
-      threshold: "200 workouts",
-      perk: "1:1 quarterly review, exclusive retreats, lifetime status.",
+      threshold: "12,000 points",
+      perk: "Top Transformation Level, plus Premium membership months redeemable with points.",
     },
   ];
   return (
