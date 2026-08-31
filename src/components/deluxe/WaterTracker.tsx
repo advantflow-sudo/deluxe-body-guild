@@ -15,10 +15,12 @@ const todayIso = () => new Date().toISOString().slice(0, 10);
 export function WaterTracker() {
   const { user } = useAuth();
   // Unified hydration target (35 ml/kg or the saved plan's target) — audit M2.
-  const { targets } = useTargets();
+  const { targets, loading: targetsLoading } = useTargets();
   const targetMl = targets.waterMl;
   const [ml, setMl] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
+  // Treat "loading" as the union so the fallback target never flashes.
+  const loading = statsLoading || targetsLoading;
   const [saving, setSaving] = useState(false);
   const lastSaved = useRef(0);
   const online = useOnline();
@@ -33,7 +35,7 @@ export function WaterTracker() {
     const val = (data?.water_ml as number | undefined) ?? lastSaved.current;
     setMl(val);
     lastSaved.current = val;
-    setLoading(false);
+    setStatsLoading(false);
   }, [user, online]);
 
   useEffect(() => { void load(); }, [load]);

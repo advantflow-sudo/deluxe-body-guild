@@ -38,7 +38,7 @@ export const Route = createFileRoute("/pricing")({
           "@type": "FAQPage",
           mainEntity: [
             { "@type": "Question", name: "Can I cancel anytime?", acceptedAnswer: { "@type": "Answer", text: "Absolutely. Memberships are month-to-month or annual. Cancel from your dashboard in two clicks — no questions, no friction." } },
-            { "@type": "Question", name: "Is there a free trial?", acceptedAnswer: { "@type": "Answer", text: "Every new member gets a 7-day complimentary trial on Essential and Signature. Cancel before day seven and you won't be charged." } },
+            { "@type": "Question", name: "Is there a free trial?", acceptedAnswer: { "@type": "Answer", text: "There is no free trial today. Creating a Deluxe account is free and needs no card — you only pay when you start an Essential or Signature membership, and you can cancel any time before the next renewal." } },
             { "@type": "Question", name: "How is Private different?", acceptedAnswer: { "@type": "Answer", text: "Private is an invitation-only tier capped each quarter. You work directly with a senior coach with full bespoke programming and concierge support." } },
             { "@type": "Question", name: "Do you offer corporate or team plans?", acceptedAnswer: { "@type": "Answer", text: "We're happy to discuss bespoke arrangements for teams of 5+, including consolidated billing. Reach out via the contact page and we'll scope it with you." } },
           ],
@@ -116,7 +116,7 @@ const FAQS = [
   },
   {
     q: "Is there a free trial?",
-    a: "Every new member gets a 7-day complimentary trial on Essential and Signature. Cancel before day seven and you won't be charged.",
+    a: "There is no free trial today. Creating an account is free and needs no card — you only pay when you start Essential or Signature, and you can cancel any time before the next renewal.",
   },
   {
     q: "How is Private different?",
@@ -209,14 +209,14 @@ function PricingPage() {
 
       <section className="relative bg-deluxe-black py-20">
         <div className="mx-auto max-w-7xl px-6">
-          {/* Trial urgency banner */}
+          {/* Free-account banner (no trial is configured, so we do not claim one) */}
           <div className="mb-10 overflow-hidden border border-gold/40 bg-gold-gradient/10">
             <div className="flex flex-col items-center gap-4 px-6 py-5 text-center sm:flex-row sm:justify-between sm:text-left">
               <div className="flex items-center gap-3">
                 <Flame className="h-6 w-6 shrink-0 text-gold" />
                 <div>
                   <div className="font-display text-lg text-foreground">
-                    7-day free trial on Essential and Signature. Cancel before day seven and you are not charged.
+                    Create your free account with no card. Pay only when you start Essential or Signature.
                   </div>
                   <div className="mt-0.5 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.22em] text-gold sm:justify-start">
                     <Clock className="h-3 w-3" />
@@ -225,7 +225,7 @@ function PricingPage() {
                 </div>
               </div>
               <Link to="/login">
-                <GoldButton>Start free trial</GoldButton>
+                <GoldButton>Create free account</GoldButton>
               </Link>
             </div>
           </div>

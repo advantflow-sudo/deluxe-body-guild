@@ -64,7 +64,7 @@ export function useDeluxeScore(): DeluxeScoreBreakdown {
     const today = todayIso();
     const [dailyRes, workoutsRes, nutritionRes, habitsRes, habitLogsRes, extRes] = await Promise.all([
       supabase.from("daily_stats").select("water_ml,sleep_hours").eq("user_id", user.id).eq("stat_date", today).maybeSingle(),
-      supabase.from("workout_sessions").select("id").eq("user_id", user.id).not("completed_at", "is", null).gte("completed_at", todayStart()),
+      supabase.from("workout_sessions").select("id").eq("user_id", user.id).not("completed_at", "is", null).gt("duration_min", 0).gte("completed_at", todayStart()),
       supabase.from("nutrition_logs").select("calories").eq("user_id", user.id).eq("log_date", today),
       supabase.from("habits").select("id").eq("user_id", user.id).eq("active", true),
       supabase.from("habit_logs").select("habit_id").eq("user_id", user.id).eq("log_date", today),

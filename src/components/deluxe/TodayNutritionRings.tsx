@@ -42,10 +42,11 @@ function Bar({
  * Counts every logged meal: plan meals, quick log and food scanner.
  */
 export function TodayNutritionRings({ className = "" }: { className?: string }) {
-  const { targets } = useTargets();
+  const { targets, loading: targetsLoading } = useTargets();
   const { totals, loading } = useNutritionToday();
 
-  if (loading || !targets) {
+  // Wait for the unified targets too, otherwise the fallback numbers flash first.
+  if (loading || targetsLoading || !targets) {
     return <div className={`h-32 animate-pulse border border-gold/15 bg-deluxe-forest/10 ${className}`} />;
   }
 
