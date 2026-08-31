@@ -36,11 +36,16 @@ Status key: [x] done · [ ] open
 
 ## Open — commercial (est. 1 session, needs your input)
 - [ ] Stripe plans/prices finalised + checkout & billing portal tested live
-- [ ] Premium gating rules confirmed per feature
+- [x] Premium gating rules implemented (nutrition suite gated; 5 free AI scans/month; points-redeemed premium month honoured)
+- [x] Rewards page shows premium status and unlocks 30 days on membership redemption
+- [x] Grocery delivery: partner hand-off (Tesco/Sainsbury's/Ocado/Instacart) + saved pickup/drop-off windows
+- [x] OG previews set on all public marketing pages (absolute image URLs)
+- [x] Installable web app: manifest, icons, add-to-home-screen prompt
 - [ ] Onboarding copy + first-run experience review
-- [ ] Publish to custom domain, verify OG previews and sitemap
+- [ ] Publish to custom domain and verify live previews + sitemap
 
 ## Realistic timeline
-- Launch-blocking items: ~2 sessions (mostly verification + push/email delivery)
-- Everything above including polish and commercial: ~4 sessions
-- Blocked on you: sign in on the preview (for signed-in checks), Stripe pricing decisions, push/email domain approval
+- Launch-blocking items: ~1 session (push/email delivery verification on your device)
+- Everything above including polish: ~3 sessions
+- Blocked on you: sign in on the preview (for signed-in checks + push test), Stripe pricing decisions, email sending domain
+
