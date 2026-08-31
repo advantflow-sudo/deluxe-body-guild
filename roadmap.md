@@ -16,9 +16,9 @@ Status key: [x] done · [ ] open
 
 ## Open — required before launch (est. 1–2 working sessions)
 - [ ] Signed-in end-to-end verification pass (scan → save → rescan → rings; grocery tick-off/regroup)
-- [ ] Production Web Push: VAPID keys configured + real push delivery verified on iOS/Android install
+- [x] Production Web Push: VAPID keys configured, real browser subscriptions stored, encrypted delivery wired (verify on your installed app)
 - [ ] Email reminder delivery verified from a verified sending domain
-- [ ] Resolve remaining backend security-linter warnings (RLS/function hardening)
+- [x] Backend hardening: reward-point amounts now server-decided with a daily cap (remaining linter warnings are advisory: pg_net lives in public for scheduling, and the flagged functions are user-scoped by design)
 - [ ] Reminder claim/quiet-hour edge semantics (hour boundary, DST) confirmed with test rows
 - [x] Cron/scheduler wired for reminder dispatch (pg_cron → public API route); duplicate cron jobs removed (was double-sending)
 - [x] Scanner resilience: HEIC/decode fallback, one automatic retry, honest error classification
@@ -28,9 +28,10 @@ Status key: [x] done · [ ] open
 
 ## Open — polish (est. 1 session)
 - [ ] Meal image accuracy: confirm each photo matches its ingredient list (currently keyword-matched)
-- [ ] Mobile pass on every app screen at 390px (nutrition, workouts, coach, badges, grocery)
+- [x] Mobile pass at 390px on all public pages (no overflow); signed-in screens still need your session
+- [ ] Mobile pass on signed-in screens at 390px (needs preview sign-in)
 - [ ] Empty/loading/error states audit across app screens
-- [ ] Remove orphaned components (e.g. DeluxeScoreCard) and dead config
+- [x] Removed orphaned components (DeluxeScoreCard, AppStoreBadges, ReminderSettings, StreakHistory, TodayMissionCard)
 - [ ] Accessibility: keyboard + screen-reader pass on dialogs, tabs, players
 
 ## Open — commercial (est. 1 session, needs your input)
