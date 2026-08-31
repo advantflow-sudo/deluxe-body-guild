@@ -7,6 +7,16 @@ import { Logo } from "@/components/deluxe/Logo";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
+  head: () => ({
+    meta: [
+      { title: "Get Started | Deluxe Fitness" },
+      { name: "description", content: "Set your goals, targets and preferences to personalise your Deluxe plan." },
+      { property: "og:title", content: "Get Started | Deluxe Fitness" },
+      { property: "og:description", content: "Set your goals, targets and preferences to personalise your Deluxe plan." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Onboarding,
 });
 

@@ -18,6 +18,16 @@ import {
 } from "@/lib/ai.functions";
 
 export const Route = createFileRoute("/_authenticated/app/ai")({
+  head: () => ({
+    meta: [
+      { title: "AI Studio | Deluxe Fitness" },
+      { name: "description", content: "Generate transformation visuals and AI insights from your own training and nutrition data." },
+      { property: "og:title", content: "AI Studio | Deluxe Fitness" },
+      { property: "og:description", content: "Generate transformation visuals and AI insights from your own training and nutrition data." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: AIStudio,
 });
 

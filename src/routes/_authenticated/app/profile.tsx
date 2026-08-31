@@ -17,6 +17,16 @@ import { ReminderHistory } from "@/components/deluxe/ReminderHistory";
 
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
+  head: () => ({
+    meta: [
+      { title: "My Profile | Deluxe Fitness" },
+      { name: "description", content: "Manage your goals, reminder schedule, quiet hours, devices and membership." },
+      { property: "og:title", content: "My Profile | Deluxe Fitness" },
+      { property: "og:description", content: "Manage your goals, reminder schedule, quiet hours, devices and membership." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ProfileTab,
 });
 

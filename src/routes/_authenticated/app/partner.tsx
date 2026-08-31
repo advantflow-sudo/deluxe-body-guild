@@ -7,6 +7,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 
 export const Route = createFileRoute("/_authenticated/app/partner")({
+  head: () => ({
+    meta: [
+      { title: "Accountability Partner | Deluxe Fitness" },
+      { name: "description", content: "Match with a Deluxe accountability partner and keep each other on streak." },
+      { property: "og:title", content: "Accountability Partner | Deluxe Fitness" },
+      { property: "og:description", content: "Match with a Deluxe accountability partner and keep each other on streak." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: PartnerPage,
 });
 

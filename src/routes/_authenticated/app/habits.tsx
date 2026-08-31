@@ -9,6 +9,16 @@ import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
 import { haptic } from "@/hooks/useHaptics";
 
 export const Route = createFileRoute("/_authenticated/app/habits")({
+  head: () => ({
+    meta: [
+      { title: "Daily Habits | Deluxe Fitness" },
+      { name: "description", content: "Log your Deluxe daily habits and build the streak behind your score." },
+      { property: "og:title", content: "Daily Habits | Deluxe Fitness" },
+      { property: "og:description", content: "Log your Deluxe daily habits and build the streak behind your score." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: HabitsTab,
 });
 

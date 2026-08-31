@@ -8,6 +8,16 @@ import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui"
 import { formatGoal } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/challenges")({
+  head: () => ({
+    meta: [
+      { title: "Challenges | Deluxe Fitness" },
+      { name: "description", content: "Join weekly Deluxe challenges and compete with your training circle." },
+      { property: "og:title", content: "Challenges | Deluxe Fitness" },
+      { property: "og:description", content: "Join weekly Deluxe challenges and compete with your training circle." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: ChallengesPage,
 });
 

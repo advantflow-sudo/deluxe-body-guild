@@ -25,6 +25,16 @@ import {
 
 
 export const Route = createFileRoute("/_authenticated/app/nutrition")({
+  head: () => ({
+    meta: [
+      { title: "Nutrition | Deluxe Fitness" },
+      { name: "description", content: "Today's meal plan, macro targets, meal scanning and weekly nutrition totals." },
+      { property: "og:title", content: "Nutrition | Deluxe Fitness" },
+      { property: "og:description", content: "Today's meal plan, macro targets, meal scanning and weekly nutrition totals." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: () => (
     <PremiumGate
       feature="AI Nutritionist"
