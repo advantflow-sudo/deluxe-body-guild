@@ -107,6 +107,24 @@ function CoachPage() {
           </div>
         )}
 
+        {error && (
+          <div className="mt-6 flex items-start gap-3 border border-red-500/30 bg-red-950/20 p-4" role="alert">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+            <div className="flex-1 text-xs text-muted-foreground">
+              <span className="block font-display text-sm text-foreground">{COACH_FAILURE_COPY[error.kind].title}</span>
+              {COACH_FAILURE_COPY[error.kind].detail}
+            </div>
+            {COACH_FAILURE_COPY[error.kind].retryable && (
+              <button
+                onClick={() => void chat.retry(error.lastText)}
+                disabled={loading}
+                className="inline-flex shrink-0 items-center gap-1.5 border border-gold/30 bg-deluxe-black/40 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.15em] text-gold transition hover:border-gold/60 disabled:opacity-50"
+              >
+                <RotateCw className="h-3 w-3" /> Retry
+              </button>
+            )}
+          </div>
+        )}
 
 
         <div
