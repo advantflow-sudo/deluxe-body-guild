@@ -6,6 +6,7 @@
  * shopping list the member can copy or download for the whole day.
  */
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   Check, ChefHat, Clock, Copy, Download, ListChecks, Pause, Play, Plus, ShoppingBasket, Trash2, TimerReset,
 } from "lucide-react";
