@@ -46,7 +46,8 @@ export const exportMyData = createServerFn({ method: "POST" })
         .eq(key, context.userId);
       out[table] = error ? { error: error.message } : (data ?? []);
     }
-    return out;
+    // Returned as a JSON string so the payload stays a plain serializable value.
+    return { json: JSON.stringify(out, null, 2) };
   });
 
 export const deleteMyAccount = createServerFn({ method: "POST" })
