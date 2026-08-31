@@ -30,6 +30,16 @@ export const Route = createFileRoute("/api/public/hooks/streak-at-risk-alert")({
             .maybeSingle();
           if (!p) continue;
           const partner = p.user_a === u.user_id ? p.user_b : p.user_a;
+          // One streak-risk nudge per member per day — the hourly cron used to
+          // stack an identical message every hour of the window.
+          const { data: recent } = await admin
+            .from("partner_nudges")
+            .select("id")
+            .eq("to_user", u.user_id)
+            .eq("kind", "system_streak_risk")
+            .gte("created_at", new Date(Date.now() - 20 * 3600_000).toISOString())
+            .limit(1);
+          if ((recent?.length ?? 0) > 0) continue;
           await admin.from("partner_nudges").insert({
             partnership_id: p.id,
             from_user: partner,
