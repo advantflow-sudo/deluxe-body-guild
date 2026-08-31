@@ -46,6 +46,7 @@ import { Route as AuthenticatedAppPartnerRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAppNutritionRouteImport } from './routes/_authenticated/app/nutrition'
 import { Route as AuthenticatedAppLeaderboardRouteImport } from './routes/_authenticated/app/leaderboard'
 import { Route as AuthenticatedAppHabitsRouteImport } from './routes/_authenticated/app/habits'
+import { Route as AuthenticatedAppGroceryRouteImport } from './routes/_authenticated/app/grocery'
 import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authenticated/app/community'
 import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/app/coach'
 import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authenticated/app/challenges'
@@ -263,6 +264,11 @@ const AuthenticatedAppHabitsRoute = AuthenticatedAppHabitsRouteImport.update({
   path: '/habits',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppGroceryRoute = AuthenticatedAppGroceryRouteImport.update({
+  id: '/grocery',
+  path: '/grocery',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const AuthenticatedAppCommunityRoute =
   AuthenticatedAppCommunityRouteImport.update({
     id: '/community',
@@ -457,6 +463,7 @@ export interface FileRoutesByFullPath {
   '/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
+  '/app/grocery': typeof AuthenticatedAppGroceryRoute
   '/app/habits': typeof AuthenticatedAppHabitsRoute
   '/app/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/app/nutrition': typeof AuthenticatedAppNutritionRoute
@@ -521,6 +528,7 @@ export interface FileRoutesByTo {
   '/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/app/coach': typeof AuthenticatedAppCoachRoute
   '/app/community': typeof AuthenticatedAppCommunityRoute
+  '/app/grocery': typeof AuthenticatedAppGroceryRoute
   '/app/habits': typeof AuthenticatedAppHabitsRoute
   '/app/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/app/nutrition': typeof AuthenticatedAppNutritionRoute
@@ -588,6 +596,7 @@ export interface FileRoutesById {
   '/_authenticated/app/challenges': typeof AuthenticatedAppChallengesRoute
   '/_authenticated/app/coach': typeof AuthenticatedAppCoachRoute
   '/_authenticated/app/community': typeof AuthenticatedAppCommunityRoute
+  '/_authenticated/app/grocery': typeof AuthenticatedAppGroceryRoute
   '/_authenticated/app/habits': typeof AuthenticatedAppHabitsRoute
   '/_authenticated/app/leaderboard': typeof AuthenticatedAppLeaderboardRoute
   '/_authenticated/app/nutrition': typeof AuthenticatedAppNutritionRoute
@@ -655,6 +664,7 @@ export interface FileRouteTypes {
     | '/app/challenges'
     | '/app/coach'
     | '/app/community'
+    | '/app/grocery'
     | '/app/habits'
     | '/app/leaderboard'
     | '/app/nutrition'
@@ -719,6 +729,7 @@ export interface FileRouteTypes {
     | '/app/challenges'
     | '/app/coach'
     | '/app/community'
+    | '/app/grocery'
     | '/app/habits'
     | '/app/leaderboard'
     | '/app/nutrition'
@@ -785,6 +796,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/challenges'
     | '/_authenticated/app/coach'
     | '/_authenticated/app/community'
+    | '/_authenticated/app/grocery'
     | '/_authenticated/app/habits'
     | '/_authenticated/app/leaderboard'
     | '/_authenticated/app/nutrition'
@@ -1116,6 +1128,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppHabitsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/grocery': {
+      id: '/_authenticated/app/grocery'
+      path: '/grocery'
+      fullPath: '/app/grocery'
+      preLoaderRoute: typeof AuthenticatedAppGroceryRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/community': {
       id: '/_authenticated/app/community'
       path: '/community'
@@ -1331,6 +1350,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppChallengesRoute: typeof AuthenticatedAppChallengesRoute
   AuthenticatedAppCoachRoute: typeof AuthenticatedAppCoachRoute
   AuthenticatedAppCommunityRoute: typeof AuthenticatedAppCommunityRoute
+  AuthenticatedAppGroceryRoute: typeof AuthenticatedAppGroceryRoute
   AuthenticatedAppHabitsRoute: typeof AuthenticatedAppHabitsRoute
   AuthenticatedAppLeaderboardRoute: typeof AuthenticatedAppLeaderboardRoute
   AuthenticatedAppNutritionRoute: typeof AuthenticatedAppNutritionRoute
@@ -1352,6 +1372,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppChallengesRoute: AuthenticatedAppChallengesRoute,
   AuthenticatedAppCoachRoute: AuthenticatedAppCoachRoute,
   AuthenticatedAppCommunityRoute: AuthenticatedAppCommunityRoute,
+  AuthenticatedAppGroceryRoute: AuthenticatedAppGroceryRoute,
   AuthenticatedAppHabitsRoute: AuthenticatedAppHabitsRoute,
   AuthenticatedAppLeaderboardRoute: AuthenticatedAppLeaderboardRoute,
   AuthenticatedAppNutritionRoute: AuthenticatedAppNutritionRoute,

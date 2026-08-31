@@ -326,11 +326,16 @@ export function MealPrepGuide({
               <div className="mt-4 border-t border-gold/10 pt-3">
                 <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
                   <span>My grocery list · {grocery.items.filter((i) => !i.checked).length} to buy</span>
-                  {grocery.items.some((i) => i.checked) && (
-                    <button onClick={() => void grocery.clearChecked()} className="text-gold hover:underline">
-                      Clear done
-                    </button>
-                  )}
+                  <span className="flex items-center gap-3">
+                    {grocery.items.some((i) => i.checked) && (
+                      <button onClick={() => void grocery.clearChecked()} className="text-gold hover:underline">
+                        Clear done
+                      </button>
+                    )}
+                    <Link to="/app/grocery" className="text-gold hover:underline">
+                      View full list
+                    </Link>
+                  </span>
                 </div>
                 <ul className="mt-2 space-y-1">
                   {grocery.items.map((g) => (
