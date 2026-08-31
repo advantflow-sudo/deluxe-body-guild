@@ -57,7 +57,9 @@ const TIERS = [
     icon: Star,
     tagline: "Begin the discipline.",
     monthly: 14.99,
-    yearly: 11.99,
+    /** Annual total — roughly two months free. */
+    yearlyTotal: 149.99,
+    inviteOnly: false,
     features: [
       "Full library of guided workouts",
       "Weekly fitness & wellbeing plan",
@@ -73,7 +75,8 @@ const TIERS = [
     icon: Crown,
     tagline: "The Deluxe standard.",
     monthly: 39.99,
-    yearly: 31.99,
+    yearlyTotal: 399.99,
+    inviteOnly: false,
     features: [
       "Everything in Essential",
       "Personalized 12-week programming",
@@ -90,7 +93,8 @@ const TIERS = [
     icon: Sparkles,
     tagline: "By invitation. Limitless.",
     monthly: 119.99,
-    yearly: 95.99,
+    yearlyTotal: null,
+    inviteOnly: true,
     features: [
       "Everything in Signature",
       "1:1 coaching — 2 sessions / month",
@@ -103,6 +107,7 @@ const TIERS = [
     featured: false,
   },
 ] as const;
+
 
 const FAQS = [
   {
