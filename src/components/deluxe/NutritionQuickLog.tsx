@@ -38,15 +38,28 @@ export function NutritionQuickLog({ onLogged }: { onLogged?: () => void } = {}) 
     if (!user) return;
     const { data, error } = await supabase
       .from("nutrition_logs")
-      .select("id,meal_label,calories,protein_g,carbs_g,fat_g")
+      .select("id,meal_label,calories,protein_g,carbs_g,fat_g,photo_path")
       .eq("user_id", user.id)
       .eq("log_date", todayIso())
       .order("logged_at", { ascending: false });
     if (error && online) toast.error(error.message);
+    const rows = (data as MealRow[]) ?? [];
     setMeals((current) => {
       const pending = current.filter((r) => r.pending);
-      return [...pending, ...((data as MealRow[]) ?? [])];
+      return [...pending, ...rows];
     });
+    // Private bucket: thumbnails need short-lived signed URLs.
+    const paths = rows.map((r) => r.photo_path).filter((p): p is string => !!p);
+    if (paths.length) {
+      const { data: signed } = await supabase.storage.from("meal-photos").createSignedUrls(paths, 3600);
+      if (signed) {
+        setThumbs((prev) => {
+          const next = { ...prev };
+          signed.forEach((s) => { if (s.path && s.signedUrl) next[s.path] = s.signedUrl; });
+          return next;
+        });
+      }
+    }
     setLoading(false);
   }, [user, online]);
 
