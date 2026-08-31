@@ -233,11 +233,27 @@ function MealPanel() {
   }
 
   async function confirmAndSave() {
-    if (!user || !edit) return;
+    if (!user || !edit || saving || saved) return; // never write the same scan twice
     setSaving(true);
     try {
       const d = new Date();
       const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+      // Store the photo in the member's own private folder (RLS: uid = folder).
+      let photoPath: string | null = null;
+      if (img) {
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+        const up = await supabase.storage
+          .from("meal-photos")
+          .upload(path, dataUrlToBlob(img), { contentType: "image/jpeg", upsert: false });
+        if (up.error) {
+          reportError({ message: `meal-photo upload failed: ${up.error.message}`, severity: "warning", extra: { area: "meal-scan" } });
+          toast.message("Photo couldn't be stored — saving the macros only.");
+        } else {
+          photoPath = path;
+        }
+      }
+
       const { error } = await supabase.from("nutrition_logs").insert({
         user_id: user.id,
         log_date: today,
@@ -246,8 +262,14 @@ function MealPanel() {
         protein_g: Math.round(edit.protein_g),
         carbs_g: Math.round(edit.carbs_g),
         fat_g: Math.round(edit.fat_g),
+        fibre_g: Math.round(Number(edit.fibre_g ?? 0)),
+        source: "scan",
+        photo_path: photoPath,
       });
-      if (error) throw error;
+      if (error) {
+        if (photoPath) await supabase.storage.from("meal-photos").remove([photoPath]);
+        throw error;
+      }
       setSaved(true);
       setRingsKey((k) => k + 1);
       toast.success("Meal saved to today's nutrition log.");
