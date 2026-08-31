@@ -45,8 +45,18 @@ async function callAI(opts: {
   const choice = json.choices?.[0]?.message;
   if (opts.tool) {
     const args = choice?.tool_calls?.[0]?.function?.arguments;
-    if (!args) throw new Error("AI returned no structured output");
-    return JSON.parse(args);
+    if (args) return JSON.parse(args);
+    // Some models answer with JSON in the message body instead of a tool call.
+    const raw = typeof choice?.content === "string" ? choice.content : "";
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch {
+        /* fall through to the error below */
+      }
+    }
+    throw new Error("AI returned no structured output");
   }
   return (choice?.content ?? "") as string;
 }
@@ -88,8 +98,8 @@ export const analyzeMeal = createServerFn({ method: "POST" })
     z.object({ imageDataUrl: z.string().min(20).max(4_000_000), note: z.string().max(500).optional() }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    try {
-      const result = await callAI({
+    const attempt = () =>
+      callAI({
         model: "google/gemini-2.5-flash",
         messages: [
           {
