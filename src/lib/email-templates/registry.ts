@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { template as missionReminderTemplate } from './mission-reminder'
 
 export interface TemplateEntry {
   component: ComponentType<any>
