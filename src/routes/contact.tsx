@@ -31,7 +31,6 @@ export const Route = createFileRoute("/contact")({
           "@type": "LocalBusiness",
           name: "Deluxe Fitness",
           url: "https://deluxefitness.app",
-          telephone: "+44 20 0000 0000",
           email: "hello@deluxefitness.app",
           address: {
             "@type": "PostalAddress",
@@ -86,7 +85,7 @@ function Page() {
           <aside className="space-y-6">
             {[
               { Icon: Mail, label: "Email", value: "hello@deluxefitness.app" },
-              { Icon: Phone, label: "Phone", value: "+44 (0) 20 0000 0000" },
+              { Icon: MessageSquare, label: "Support", value: "Email support — replies within 1 business day" },
               { Icon: MapPin, label: "Studio", value: "London · United Kingdom" },
             ].map(({ Icon, label, value }) => (
               <div
