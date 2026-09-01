@@ -413,11 +413,19 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
         <div className="mt-6 border border-gold/20 bg-deluxe-forest/20 p-5 text-center">
           <Apple className="mx-auto h-6 w-6 text-gold" />
           <p className="mt-3 text-sm text-muted-foreground">
-            Generate a personalised plan with exact portions, macros and cook instructions.
+            {isPremium
+              ? "Generate a personalised plan with exact portions, macros and cook instructions."
+              : "Personalised AI meal plans are part of Essential membership. You can still log meals, scan a plate and track macros below."}
           </p>
-          <GoldButton onClick={generate} disabled={generating} className="mt-4">
-            {generating ? "Building your plan…" : "Build today's plan"}
-          </GoldButton>
+          {isPremium ? (
+            <GoldButton onClick={generate} disabled={generating} className="mt-4">
+              {generating ? "Building your plan…" : "Build today's plan"}
+            </GoldButton>
+          ) : (
+            <Link to="/pricing" className="mt-4 inline-block">
+              <GoldButton>View Essential</GoldButton>
+            </Link>
+          )}
         </div>
       )}
 
