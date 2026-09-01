@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Check, Dumbbell, Droplet, Beef, Sparkles, Flame, Trophy, Moon, Undo2, ChevronRight, Wand2,
 } from "lucide-react";
@@ -36,6 +36,7 @@ interface Summary { total_xp: number; rank: string; next_rank_at: number; progre
 
 export function HomeMissionHub() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [awarded, setAwarded] = useState<Partial<Record<Reason, number>>>({});
   const [evidence, setEvidence] = useState<Record<Reason, boolean>>({
     mission_workout: false, mission_water: false, mission_protein: false, mission_mindset: false,
@@ -311,7 +312,7 @@ export function HomeMissionHub() {
                 if (ready) return claim([a.reason], a.reason);
                 if (a.reason === "mission_water") return addWater(250);
                 if (a.reason === "mission_mindset") return checkInMindset();
-                window.location.assign(a.to);
+                void navigate({ to: a.to });
               }}
               disabled={busy === a.reason}
               className={`flex flex-col items-center gap-1 border px-1 py-2.5 text-[8px] uppercase tracking-[0.14em] transition ${
