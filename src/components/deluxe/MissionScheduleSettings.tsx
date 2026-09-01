@@ -98,6 +98,10 @@ export function MissionScheduleSettings() {
 
   const load = useCallback(async () => {
     if (!user) return;
+    // Placeholder zones stored by older signups (UTC / Etc-GMT aliases) make reminders
+    // fire at the wrong local hour — adopt the device zone instead.
+    const isPlaceholderZone = (tz: string | null | undefined) =>
+      !tz || /^(UTC|GMT|Etc\/(UTC|GMT|Greenwich)|Africa\/Abidjan)$/i.test(tz);
     const { data } = await supabase
       .from("user_profiles_ext")
       .select(
