@@ -144,15 +144,18 @@ export function DeluxeScoreBreakdown() {
               </defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
+              {/* The count-up number is decorative: screen readers get the settled
+                  total below so the announced score never disagrees with the ring label. */}
               <div
                 className={`font-display text-3xl sm:text-4xl tabular-nums ${
                   glow ? "text-gold [text-shadow:0_0_20px_rgba(245,217,122,0.7)]" : "text-foreground"
                 }`}
-                aria-live="polite"
+                aria-hidden
               >
                 {animated}
               </div>
-              <div className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground">/ 100</div>
+              <span className="sr-only" aria-live="polite">{`${s.total} of 100 Deluxe Score`}</span>
+              <div className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground" aria-hidden>/ 100</div>
             </div>
             <Confetti fire={confetti && !reduceMotion} onDone={() => setConfetti(false)} />
           </div>
