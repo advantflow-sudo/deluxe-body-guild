@@ -35,14 +35,9 @@ export const Route = createFileRoute("/_authenticated/app/nutrition")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: () => (
-    <PremiumGate
-      feature="AI Nutritionist"
-      description="Exact portions, macros, cook instructions and swaps — personalised to your goal."
-    >
-      <NutritionTab />
-    </PremiumGate>
-  ),
+  // Tracking (rings, quick log, meal scan, weekly totals) is open to every client.
+  // Only the AI-generated plan and the nutritionist Q&A require a membership.
+  component: NutritionTab,
 });
 
 interface Ingredient { item: string; amount: string; basis: "raw" | "cooked" | "n/a" }
