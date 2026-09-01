@@ -104,17 +104,24 @@ function NutritionTab() {
 
   const load = useCallback(async () => {
     if (!user) return;
-    const [extRes, planRes, savedRes] = await Promise.all([
+    // Today's plan + profile gate the first paint; saved-plan history is loaded
+    // separately so the Plan screen isn't blank while that list resolves.
+    const [extRes, planRes] = await Promise.all([
       supabase.from("user_profiles_ext").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("meal_plans").select("*").eq("user_id", user.id).eq("plan_date", today()).maybeSingle(),
-      supabase.from("saved_meal_plans").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     ]);
     setExt(extRes.data);
-    setSaved(savedRes.data ?? []);
     if (planRes.data) {
       setPlan({ ...(planRes.data as any), meals: (planRes.data as any).meals ?? [] });
     }
     setLoading(false);
+
+    const savedRes = await supabase
+      .from("saved_meal_plans")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    setSaved(savedRes.data ?? []);
   }, [user]);
 
   useEffect(() => { void load(); }, [load]);
