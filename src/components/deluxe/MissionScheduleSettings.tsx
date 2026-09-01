@@ -110,6 +110,13 @@ export function MissionScheduleSettings() {
       .eq("user_id", user.id)
       .maybeSingle();
     if (data) {
+      const resolvedZone =
+        isPlaceholderZone(data.timezone) && !isPlaceholderZone(browserZone)
+          ? browserZone
+          : data.timezone || browserZone;
+      if (resolvedZone !== data.timezone) {
+        void supabase.from("user_profiles_ext").update({ timezone: resolvedZone }).eq("user_id", user.id);
+      }
       setSched({
         mission_reminder_enabled: data.mission_reminder_enabled ?? true,
         mission_reminder_hour: data.mission_reminder_hour ?? 18,
