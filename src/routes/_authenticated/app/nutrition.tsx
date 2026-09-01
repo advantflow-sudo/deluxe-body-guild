@@ -84,6 +84,7 @@ import { computeTargets } from "@/lib/targets";
 
 function NutritionTab() {
   const { user } = useAuth();
+  const { isPremium } = usePremium();
   const [ext, setExt] = useState<any>(null);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loading, setLoading] = useState(true);
