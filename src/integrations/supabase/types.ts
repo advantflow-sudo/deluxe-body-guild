@@ -2336,6 +2336,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      user_local_date: { Args: { _user_id: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "coach" | "member"
