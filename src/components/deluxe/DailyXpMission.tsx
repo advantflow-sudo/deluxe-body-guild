@@ -115,6 +115,46 @@ export function DailyXpMission() {
     await load();
   };
 
+  // Inline hydration logging so the mission card is actionable without leaving the dashboard.
+  const addWater = async (amount: number) => {
+    if (!user) return;
+    setBusy("mission_water");
+    const next = Math.max(0, Math.min(8000, waterMl + amount));
+    const result = await enqueueOrApply({
+      kind: "dailyStats",
+      userId: user.id,
+      date: today(),
+      patch: { water_ml: next },
+    });
+    setBusy(null);
+    if (!result.ok) return toast.error(`Couldn't save hydration: ${result.error}`);
+    haptic("light");
+    setWaterMl(next);
+    if (!result.queued && next >= waterTarget) await supabase.rpc("award_xp", { _reason: "water" });
+    await load();
+  };
+
+  // Inline mindset check-in for today.
+  const checkInMindset = async () => {
+    if (!user) return;
+    setBusy("mission_mindset");
+    const d = today();
+    const existing = await supabase
+      .from("daily_missions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("mission_date", d)
+      .maybeSingle();
+    const { error } = existing.data?.id
+      ? await supabase.from("daily_missions").update({ completed_at: new Date().toISOString() }).eq("id", existing.data.id)
+      : await supabase.from("daily_missions").insert({ user_id: user.id, mission_date: d, completed_at: new Date().toISOString() });
+    setBusy(null);
+    if (error) return toast.error(error.message);
+    haptic("success");
+    toast.success("Mindset check-in logged");
+    await load();
+  };
+
   const claimAll = async () => {
     const pending = ACTIONS.filter((a) => evidence[a.reason] && !awarded[a.reason]);
     if (pending.length === 0) return;
