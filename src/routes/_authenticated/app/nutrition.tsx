@@ -7,7 +7,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { PremiumGate } from "@/components/deluxe/PremiumGate";
+import { usePremium } from "@/hooks/usePremium";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSummary";
 import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
@@ -35,14 +35,9 @@ export const Route = createFileRoute("/_authenticated/app/nutrition")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: () => (
-    <PremiumGate
-      feature="AI Nutritionist"
-      description="Exact portions, macros, cook instructions and swaps — personalised to your goal."
-    >
-      <NutritionTab />
-    </PremiumGate>
-  ),
+  // Tracking (rings, quick log, meal scan, weekly totals) is open to every client.
+  // Only the AI-generated plan and the nutritionist Q&A require a membership.
+  component: NutritionTab,
 });
 
 interface Ingredient { item: string; amount: string; basis: "raw" | "cooked" | "n/a" }
@@ -89,6 +84,7 @@ import { computeTargets } from "@/lib/targets";
 
 function NutritionTab() {
   const { user } = useAuth();
+  const { isPremium } = usePremium();
   const [ext, setExt] = useState<any>(null);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loading, setLoading] = useState(true);
@@ -364,7 +360,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
 
   return (
     <div className="mx-auto max-w-2xl px-5 pt-8 pb-28">
-      <SectionLabel>Premium • AI Nutritionist</SectionLabel>
+      <SectionLabel>{isPremium ? "Premium • AI Nutritionist" : "Nutrition • Track today"}</SectionLabel>
       <h1 className="mt-2 font-display text-3xl text-foreground">Today's meal plan</h1>
       <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-gold">
         {ext?.fitness_goal ?? "Lean muscle"} plan{plan ? ` · ${plan.weight_basis} weights` : ""}
@@ -418,11 +414,19 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
         <div className="mt-6 border border-gold/20 bg-deluxe-forest/20 p-5 text-center">
           <Apple className="mx-auto h-6 w-6 text-gold" />
           <p className="mt-3 text-sm text-muted-foreground">
-            Generate a personalised plan with exact portions, macros and cook instructions.
+            {isPremium
+              ? "Generate a personalised plan with exact portions, macros and cook instructions."
+              : "Personalised AI meal plans are part of Essential membership. You can still log meals, scan a plate and track macros below."}
           </p>
-          <GoldButton onClick={generate} disabled={generating} className="mt-4">
-            {generating ? "Building your plan…" : "Build today's plan"}
-          </GoldButton>
+          {isPremium ? (
+            <GoldButton onClick={generate} disabled={generating} className="mt-4">
+              {generating ? "Building your plan…" : "Build today's plan"}
+            </GoldButton>
+          ) : (
+            <Link to="/pricing" className="mt-4 inline-block">
+              <GoldButton>View Essential</GoldButton>
+            </Link>
+          )}
         </div>
       )}
 
@@ -643,9 +647,20 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           placeholder="Swap the rice for something lower carb? Is 150g chicken raw or cooked?"
           className="mt-3 w-full resize-none border border-gold/20 bg-deluxe-black p-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none"
         />
-        <GoldButton onClick={ask} disabled={asking || !question.trim()} className="mt-3 !px-5 !py-2 !text-[10px]">
-          {asking ? "Thinking…" : "Ask"}
-        </GoldButton>
+        {isPremium ? (
+          <GoldButton onClick={ask} disabled={asking || !question.trim()} className="mt-3 !px-5 !py-2 !text-[10px]">
+            {asking ? "Thinking…" : "Ask"}
+          </GoldButton>
+        ) : (
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <Link to="/pricing">
+              <GoldButton className="!px-5 !py-2 !text-[10px]">Unlock with Essential</GoldButton>
+            </Link>
+            <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              Tracking stays free
+            </span>
+          </div>
+        )}
         {answer && <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{answer}</p>}
         {!answer && fallbackAnswer && (
           <div className="mt-3 border border-gold/25 bg-deluxe-black/50 p-3">
