@@ -124,11 +124,11 @@ function ProfileTab() {
             <Crown className="h-6 w-6 text-gold" />
             <div>
               <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Membership</div>
-              <div className="font-display text-xl text-foreground capitalize">
-                {sub?.tier ?? ext?.subscription_tier ?? "Free"}
+              <div className="flex flex-wrap items-baseline gap-x-2 font-display text-xl text-foreground">
+                <span>{titleCase(sub?.tier ?? ext?.subscription_tier ?? "Free")}</span>
                 {sub?.status && (
-                  <span className="ml-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">
-                    {sub.status}
+                  <span className="text-[10px] uppercase tracking-[0.22em] text-gold/80">
+                    · {titleCase(sub.status)}
                   </span>
                 )}
               </div>
