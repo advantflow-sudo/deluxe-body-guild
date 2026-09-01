@@ -123,7 +123,7 @@ export function MissionScheduleSettings() {
         mission_reminder_days: ((data.mission_reminder_days as Days | null) ?? "all"),
         mission_reminder_push: data.mission_reminder_push ?? true,
         mission_reminder_email: data.mission_reminder_email ?? false,
-        timezone: data.timezone || browserZone,
+        timezone: resolvedZone,
         quiet_hours_enabled: data.quiet_hours_enabled ?? false,
         quiet_start_hour: data.quiet_start_hour ?? 22,
         quiet_end_hour: data.quiet_end_hour ?? 7,
