@@ -362,7 +362,19 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
   const proteinSoFar = eaten.reduce((s, m) => s + Number(m.protein_g ?? 0), 0);
 
   if (loading) {
-    return <div className="mx-auto max-w-2xl px-5 pt-8"><div className="h-64 animate-pulse border border-gold/15 bg-deluxe-forest/10" /></div>;
+    return (
+      <div className="mx-auto max-w-2xl px-5 pt-8 pb-28" aria-busy="true" aria-label="Loading today's plan">
+        <div className="h-3 w-40 animate-pulse bg-gold/20" />
+        <div className="mt-3 h-8 w-64 animate-pulse bg-deluxe-forest/20" />
+        <div className="mt-2 h-3 w-32 animate-pulse bg-gold/15" />
+        <div className="mt-6 h-28 animate-pulse border border-gold/15 bg-deluxe-forest/10" />
+        <div className="mt-4 space-y-4">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-40 animate-pulse border border-gold/15 bg-deluxe-forest/10" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
