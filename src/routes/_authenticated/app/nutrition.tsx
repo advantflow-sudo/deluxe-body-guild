@@ -7,7 +7,7 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { PremiumGate } from "@/components/deluxe/PremiumGate";
+import { usePremium } from "@/hooks/usePremium";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSummary";
 import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
