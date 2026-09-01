@@ -9,6 +9,7 @@ import { haptic } from "@/hooks/useHaptics";
 import { useConfirm } from "@/components/deluxe/ConfirmDialog";
 import { StreakBadges } from "@/components/deluxe/StreakBadges";
 import { proteinTargetG, waterTargetMl as waterTargetFor } from "@/lib/targets";
+import { enqueueOrApply } from "@/lib/offlineQueue";
 
 type Reason = "mission_workout" | "mission_water" | "mission_protein" | "mission_mindset";
 
@@ -115,6 +116,46 @@ export function DailyXpMission() {
     await load();
   };
 
+  // Inline hydration logging so the mission card is actionable without leaving the dashboard.
+  const addWater = async (amount: number) => {
+    if (!user) return;
+    setBusy("mission_water");
+    const next = Math.max(0, Math.min(8000, waterMl + amount));
+    const result = await enqueueOrApply({
+      kind: "dailyStats",
+      userId: user.id,
+      date: today(),
+      patch: { water_ml: next },
+    });
+    setBusy(null);
+    if (!result.ok) return toast.error(`Couldn't save hydration: ${result.error}`);
+    haptic("light");
+    setWaterMl(next);
+    if (!result.queued && next >= waterTarget) await supabase.rpc("award_xp", { _reason: "water" });
+    await load();
+  };
+
+  // Inline mindset check-in for today.
+  const checkInMindset = async () => {
+    if (!user) return;
+    setBusy("mission_mindset");
+    const d = today();
+    const existing = await supabase
+      .from("daily_missions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("mission_date", d)
+      .maybeSingle();
+    const { error } = existing.data?.id
+      ? await supabase.from("daily_missions").update({ completed_at: new Date().toISOString() }).eq("id", existing.data.id)
+      : await supabase.from("daily_missions").insert({ user_id: user.id, mission_date: d, completed_at: new Date().toISOString() });
+    setBusy(null);
+    if (error) return toast.error(error.message);
+    haptic("success");
+    toast.success("Mindset check-in logged");
+    await load();
+  };
+
   const claimAll = async () => {
     const pending = ACTIONS.filter((a) => evidence[a.reason] && !awarded[a.reason]);
     if (pending.length === 0) return;
@@ -189,14 +230,14 @@ export function DailyXpMission() {
           const ready = evidence[a.reason];
           const detail =
             a.reason === "mission_water"
-              ? `${waterMl} / 2000 ml`
+              ? `${waterMl} / ${waterTarget} ml`
               : a.reason === "mission_protein"
                 ? `${Math.round(proteinG)} / ${proteinTarget} g`
                 : null;
           return (
             <li
               key={a.reason}
-              className={`flex items-center gap-3 border p-3 ${
+              className={`flex flex-wrap items-center gap-3 border p-3 ${
                 done ? "border-gold/40 bg-gold/5" : "border-gold/15 bg-deluxe-black/40"
               }`}
             >
@@ -230,12 +271,37 @@ export function DailyXpMission() {
                 >
                   Claim
                 </button>
+              ) : a.reason === "mission_water" ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => addWater(250)}
+                    disabled={busy === a.reason}
+                    className="min-h-11 border border-gold/40 px-2.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
+                  >
+                    +250 ml
+                  </button>
+                  <button
+                    onClick={() => addWater(500)}
+                    disabled={busy === a.reason}
+                    className="min-h-11 border border-gold/40 px-2.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
+                  >
+                    +500 ml
+                  </button>
+                </div>
+              ) : a.reason === "mission_mindset" ? (
+                <button
+                  onClick={checkInMindset}
+                  disabled={busy === a.reason}
+                  className="min-h-11 border border-gold/40 px-3 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
+                >
+                  Check in
+                </button>
               ) : (
                 <Link
                   to={a.to}
-                  className="min-h-11 px-2 pt-3 text-[9px] uppercase tracking-[0.2em] text-muted-foreground hover:text-gold"
+                  className="flex min-h-11 items-center gap-1 border border-gold/25 px-3 text-[9px] uppercase tracking-[0.2em] text-muted-foreground hover:border-gold/60 hover:text-gold"
                 >
-                  Go
+                  {a.reason === "mission_workout" ? "Start" : "Log food"}
                 </Link>
               )}
             </li>
