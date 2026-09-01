@@ -647,9 +647,20 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           placeholder="Swap the rice for something lower carb? Is 150g chicken raw or cooked?"
           className="mt-3 w-full resize-none border border-gold/20 bg-deluxe-black p-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-gold focus:outline-none"
         />
-        <GoldButton onClick={ask} disabled={asking || !question.trim()} className="mt-3 !px-5 !py-2 !text-[10px]">
-          {asking ? "Thinking…" : "Ask"}
-        </GoldButton>
+        {isPremium ? (
+          <GoldButton onClick={ask} disabled={asking || !question.trim()} className="mt-3 !px-5 !py-2 !text-[10px]">
+            {asking ? "Thinking…" : "Ask"}
+          </GoldButton>
+        ) : (
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <Link to="/pricing">
+              <GoldButton className="!px-5 !py-2 !text-[10px]">Unlock with Essential</GoldButton>
+            </Link>
+            <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              Tracking stays free
+            </span>
+          </div>
+        )}
         {answer && <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">{answer}</p>}
         {!answer && fallbackAnswer && (
           <div className="mt-3 border border-gold/25 bg-deluxe-black/50 p-3">
