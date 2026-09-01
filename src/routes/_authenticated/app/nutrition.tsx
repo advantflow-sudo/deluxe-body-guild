@@ -360,7 +360,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
 
   return (
     <div className="mx-auto max-w-2xl px-5 pt-8 pb-28">
-      <SectionLabel>Premium • AI Nutritionist</SectionLabel>
+      <SectionLabel>{isPremium ? "Premium • AI Nutritionist" : "Nutrition • Track today"}</SectionLabel>
       <h1 className="mt-2 font-display text-3xl text-foreground">Today's meal plan</h1>
       <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-gold">
         {ext?.fitness_goal ?? "Lean muscle"} plan{plan ? ` · ${plan.weight_basis} weights` : ""}
