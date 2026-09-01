@@ -104,17 +104,24 @@ function NutritionTab() {
 
   const load = useCallback(async () => {
     if (!user) return;
-    const [extRes, planRes, savedRes] = await Promise.all([
+    // Today's plan + profile gate the first paint; saved-plan history is loaded
+    // separately so the Plan screen isn't blank while that list resolves.
+    const [extRes, planRes] = await Promise.all([
       supabase.from("user_profiles_ext").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("meal_plans").select("*").eq("user_id", user.id).eq("plan_date", today()).maybeSingle(),
-      supabase.from("saved_meal_plans").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     ]);
     setExt(extRes.data);
-    setSaved(savedRes.data ?? []);
     if (planRes.data) {
       setPlan({ ...(planRes.data as any), meals: (planRes.data as any).meals ?? [] });
     }
     setLoading(false);
+
+    const savedRes = await supabase
+      .from("saved_meal_plans")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+    setSaved(savedRes.data ?? []);
   }, [user]);
 
   useEffect(() => { void load(); }, [load]);
@@ -355,7 +362,19 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
   const proteinSoFar = eaten.reduce((s, m) => s + Number(m.protein_g ?? 0), 0);
 
   if (loading) {
-    return <div className="mx-auto max-w-2xl px-5 pt-8"><div className="h-64 animate-pulse border border-gold/15 bg-deluxe-forest/10" /></div>;
+    return (
+      <div className="mx-auto max-w-2xl px-5 pt-8 pb-28" aria-busy="true" aria-label="Loading today's plan">
+        <div className="h-3 w-40 animate-pulse bg-gold/20" />
+        <div className="mt-3 h-8 w-64 animate-pulse bg-deluxe-forest/20" />
+        <div className="mt-2 h-3 w-32 animate-pulse bg-gold/15" />
+        <div className="mt-6 h-28 animate-pulse border border-gold/15 bg-deluxe-forest/10" />
+        <div className="mt-4 space-y-4">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-40 animate-pulse border border-gold/15 bg-deluxe-forest/10" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (

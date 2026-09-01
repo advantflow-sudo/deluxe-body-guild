@@ -16,6 +16,9 @@ import { sendTestMissionReminder } from "@/lib/reminders.functions";
 import { MissionScheduleSettings } from "@/components/deluxe/MissionScheduleSettings";
 import { ReminderHistory } from "@/components/deluxe/ReminderHistory";
 
+/** "essential" -> "Essential", "active" -> "Active" for membership display. */
+const titleCase = (value: string) => value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
   head: () => ({
@@ -124,11 +127,11 @@ function ProfileTab() {
             <Crown className="h-6 w-6 text-gold" />
             <div>
               <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Membership</div>
-              <div className="font-display text-xl text-foreground capitalize">
-                {sub?.tier ?? ext?.subscription_tier ?? "Free"}
+              <div className="flex flex-wrap items-baseline gap-x-2 font-display text-xl text-foreground">
+                <span>{titleCase(sub?.tier ?? ext?.subscription_tier ?? "Free")}</span>
                 {sub?.status && (
-                  <span className="ml-2 text-[10px] uppercase tracking-[0.22em] text-gold/80">
-                    {sub.status}
+                  <span className="text-[10px] uppercase tracking-[0.22em] text-gold/80">
+                    · {titleCase(sub.status)}
                   </span>
                 )}
               </div>

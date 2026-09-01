@@ -66,12 +66,61 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   return brandedErrorResponse();
 }
 
+// Baseline browser hardening: clickjacking, MIME sniffing, referrer leakage,
+// powerful-feature access and a CSP loose enough for Vite/Supabase/Stripe.
+const CSP = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'self'",
+  "form-action 'self' https://checkout.stripe.com https://billing.stripe.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com blob:",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com data:",
+  "img-src 'self' data: blob: https:",
+  "media-src 'self' data: blob: https:",
+  "worker-src 'self' blob:",
+  "connect-src 'self' https: wss: blob: data:",
+  "frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://billing.stripe.com",
+  "upgrade-insecure-requests",
+].join("; ");
+
+const PERMISSIONS_POLICY = [
+  "camera=(self)",
+  "microphone=()",
+  "geolocation=(self)",
+  "payment=(self)",
+  "usb=()",
+  "magnetometer=()",
+  "accelerometer=()",
+].join(", ");
+
+function withSecurityHeaders(response: Response): Response {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!contentType.includes("text/html")) return response;
+
+  const headers = new Headers(response.headers);
+  if (!headers.has("content-security-policy")) headers.set("content-security-policy", CSP);
+  headers.set("x-frame-options", "SAMEORIGIN");
+  headers.set("x-content-type-options", "nosniff");
+  headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  headers.set("permissions-policy", PERMISSIONS_POLICY);
+  headers.set("cross-origin-opener-policy", "same-origin-allow-popups");
+  headers.set("strict-transport-security", "max-age=31536000; includeSubDomains");
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return withSecurityHeaders(await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
       return brandedErrorResponse();

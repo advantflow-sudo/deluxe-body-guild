@@ -98,6 +98,10 @@ export function MissionScheduleSettings() {
 
   const load = useCallback(async () => {
     if (!user) return;
+    // Placeholder zones stored by older signups (UTC / Etc-GMT aliases) make reminders
+    // fire at the wrong local hour — adopt the device zone instead.
+    const isPlaceholderZone = (tz: string | null | undefined) =>
+      !tz || /^(UTC|GMT|Etc\/(UTC|GMT|Greenwich)|Africa\/Abidjan)$/i.test(tz);
     const { data } = await supabase
       .from("user_profiles_ext")
       .select(
@@ -106,13 +110,20 @@ export function MissionScheduleSettings() {
       .eq("user_id", user.id)
       .maybeSingle();
     if (data) {
+      const resolvedZone =
+        isPlaceholderZone(data.timezone) && !isPlaceholderZone(browserZone)
+          ? browserZone
+          : data.timezone || browserZone;
+      if (resolvedZone !== data.timezone) {
+        void supabase.from("user_profiles_ext").update({ timezone: resolvedZone }).eq("user_id", user.id);
+      }
       setSched({
         mission_reminder_enabled: data.mission_reminder_enabled ?? true,
         mission_reminder_hour: data.mission_reminder_hour ?? 18,
         mission_reminder_days: ((data.mission_reminder_days as Days | null) ?? "all"),
         mission_reminder_push: data.mission_reminder_push ?? true,
         mission_reminder_email: data.mission_reminder_email ?? false,
-        timezone: data.timezone || browserZone,
+        timezone: resolvedZone,
         quiet_hours_enabled: data.quiet_hours_enabled ?? false,
         quiet_start_hour: data.quiet_start_hour ?? 22,
         quiet_end_hour: data.quiet_end_hour ?? 7,
