@@ -16,6 +16,9 @@ import { sendTestMissionReminder } from "@/lib/reminders.functions";
 import { MissionScheduleSettings } from "@/components/deluxe/MissionScheduleSettings";
 import { ReminderHistory } from "@/components/deluxe/ReminderHistory";
 
+/** "essential" -> "Essential", "active" -> "Active" for membership display. */
+const titleCase = (value: string) => value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+
 
 export const Route = createFileRoute("/_authenticated/app/profile")({
   head: () => ({
