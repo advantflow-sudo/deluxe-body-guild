@@ -230,14 +230,14 @@ export function DailyXpMission() {
           const ready = evidence[a.reason];
           const detail =
             a.reason === "mission_water"
-              ? `${waterMl} / 2000 ml`
+              ? `${waterMl} / ${waterTarget} ml`
               : a.reason === "mission_protein"
                 ? `${Math.round(proteinG)} / ${proteinTarget} g`
                 : null;
           return (
             <li
               key={a.reason}
-              className={`flex items-center gap-3 border p-3 ${
+              className={`flex flex-wrap items-center gap-3 border p-3 ${
                 done ? "border-gold/40 bg-gold/5" : "border-gold/15 bg-deluxe-black/40"
               }`}
             >
@@ -271,12 +271,37 @@ export function DailyXpMission() {
                 >
                   Claim
                 </button>
+              ) : a.reason === "mission_water" ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => addWater(250)}
+                    disabled={busy === a.reason}
+                    className="min-h-11 border border-gold/40 px-2.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
+                  >
+                    +250 ml
+                  </button>
+                  <button
+                    onClick={() => addWater(500)}
+                    disabled={busy === a.reason}
+                    className="min-h-11 border border-gold/40 px-2.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
+                  >
+                    +500 ml
+                  </button>
+                </div>
+              ) : a.reason === "mission_mindset" ? (
+                <button
+                  onClick={checkInMindset}
+                  disabled={busy === a.reason}
+                  className="min-h-11 border border-gold/40 px-3 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
+                >
+                  Check in
+                </button>
               ) : (
                 <Link
                   to={a.to}
-                  className="min-h-11 px-2 pt-3 text-[9px] uppercase tracking-[0.2em] text-muted-foreground hover:text-gold"
+                  className="flex min-h-11 items-center gap-1 border border-gold/25 px-3 text-[9px] uppercase tracking-[0.2em] text-muted-foreground hover:border-gold/60 hover:text-gold"
                 >
-                  Go
+                  {a.reason === "mission_workout" ? "Start" : "Log food"}
                 </Link>
               )}
             </li>
