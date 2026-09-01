@@ -7,6 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, SectionLabel } from "@/components/deluxe/ui";
 import { BodyTimeline } from "@/components/deluxe/BodyTimeline";
+import { XpLevelCard } from "@/components/deluxe/XpLevelCard";
+import { DailyGoalsList } from "@/components/deluxe/DailyGoalsList";
+import { SleepLogger } from "@/components/deluxe/SleepLogger";
+import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
+import { MissionHistory } from "@/components/deluxe/MissionHistory";
+import { DeluxeScoreBreakdown } from "@/components/deluxe/DeluxeScoreBreakdown";
+import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSummary";
 
 export const Route = createFileRoute("/_authenticated/app/progress")({
   head: () => ({
@@ -82,6 +89,15 @@ function ProgressTab() {
     <div className="mx-auto max-w-2xl px-5 pt-8 pb-28">
       <SectionLabel>Progress</SectionLabel>
       <h1 className="mt-2 font-display text-3xl text-foreground">Your transformation</h1>
+
+      {/* Detailed analytics live here now — Home stays compact and actionable. */}
+      <XpLevelCard />
+      <DeluxeScoreBreakdown />
+      <DailyGoalsList />
+      <SleepLogger />
+      <DailyBriefingCard />
+      <MissionHistory />
+      <WeeklyNutritionSummary />
 
       {user && (
         <div className="mt-6">
