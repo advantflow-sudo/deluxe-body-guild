@@ -9,6 +9,7 @@ import { haptic } from "@/hooks/useHaptics";
 import { useConfirm } from "@/components/deluxe/ConfirmDialog";
 import { StreakBadges } from "@/components/deluxe/StreakBadges";
 import { proteinTargetG, waterTargetMl as waterTargetFor } from "@/lib/targets";
+import { enqueueOrApply } from "@/lib/offlineQueue";
 
 type Reason = "mission_workout" | "mission_water" | "mission_protein" | "mission_mindset";
 
