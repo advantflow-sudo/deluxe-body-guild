@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { TransformationLevel } from "@/components/deluxe/TransformationLevel";
 import { PushPrompt } from "@/components/deluxe/PushPrompt";
+import { ConnectedDevices } from "@/components/deluxe/ConnectedDevices";
 import { useBiometric } from "@/hooks/useBiometric";
 import { haptic } from "@/hooks/useHaptics";
 import { useServerFn } from "@tanstack/react-start";
@@ -235,6 +236,7 @@ function ProfileTab() {
       <div className="mt-4 border border-gold/15 bg-deluxe-forest/20 p-5 space-y-3">
         <SectionLabel>Re-engagement</SectionLabel>
         <PushPrompt />
+        <ConnectedDevices />
         {ext && (
           <div className="grid grid-cols-2 gap-3">
             <Field label="Morning reminder (h, 0-23)" type="number" value={String(ext.reminder_morning_hour ?? 8)}
