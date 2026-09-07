@@ -364,7 +364,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
   };
 
 
-  const askAbout = (meal: Meal) => {
+  const askAbout = (meal: { name: string }) => {
     haptic("selection");
     setQuestion(`About "${meal.name}": `);
     document.getElementById("ask-nutritionist")?.scrollIntoView({ behavior: "smooth", block: "center" });
