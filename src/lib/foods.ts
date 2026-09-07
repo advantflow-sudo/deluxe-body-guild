@@ -125,16 +125,17 @@ export function amountToGrams(amount: string, food?: FoodEntry): number | null {
   }
   if (qty === null || Number.isNaN(qty)) return null;
 
-  if (/\bkg\b/.test(raw)) return qty * 1000;
-  if (/\b(g|gram|grams|gr)\b/.test(raw)) return qty;
-  if (/\b(l|litre|liter)\b/.test(raw)) return qty * 1000;
-  if (/\b(ml|millilitre)\b/.test(raw)) return qty; // 1 ml ≈ 1 g for kitchen accuracy
-  if (/\btbsp|tablespoon\b/.test(raw)) return qty * (food?.gramsPerTbsp ?? 15);
-  if (/\btsp|teaspoon\b/.test(raw)) return qty * ((food?.gramsPerTbsp ?? 15) / 3);
-  if (/\bcup\b/.test(raw)) return qty * 150;
-  if (/\bhandful\b/.test(raw)) return qty * 30;
-  if (/\bscoop\b/.test(raw)) return qty * (food?.gramsPerUnit ?? 30);
-  if (/\bslice\b/.test(raw)) return qty * (food?.gramsPerUnit ?? 40);
+  if (/kg\b/.test(raw)) return qty * 1000;
+  if (/\d\s*(g|gram|grams|gr)\b/.test(raw)) return qty;
+  if (/\d\s*(l|litre|liter)\b/.test(raw)) return qty * 1000;
+  if (/ml\b/.test(raw)) return qty; // 1 ml ≈ 1 g for kitchen accuracy
+  if (/tbsp|tablespoon/.test(raw)) return qty * (food?.gramsPerTbsp ?? 15);
+  if (/tsp|teaspoon/.test(raw)) return qty * ((food?.gramsPerTbsp ?? 15) / 3);
+  if (/cup/.test(raw)) return qty * 150;
+  if (/handful/.test(raw)) return qty * 30;
+  if (/scoop/.test(raw)) return qty * (food?.gramsPerUnit ?? 30);
+  if (/slice/.test(raw)) return qty * (food?.gramsPerUnit ?? 40);
+
 
   // Bare count ("2 eggs", "1 apple").
   if (food?.gramsPerUnit) return qty * food.gramsPerUnit;
