@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Apple, Beef, Wheat, Droplets, Sparkles, ChefHat, Repeat, MessageCircle,
-  Check, Clock, Loader2, BookmarkPlus, Bookmark, Trash2, Flame, Star, Truck,
+  Check, Clock, Loader2, BookmarkPlus, Bookmark, Trash2, Flame, Star, Truck, ImageOff, RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,8 @@ import { usePremium } from "@/hooks/usePremium";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSummary";
 import { NutritionQuickLog } from "@/components/deluxe/NutritionQuickLog";
-import { mealImage } from "@/config/meal-images";
+import { canonicalMeal, validateDay, type CanonicalMeal } from "@/lib/mealPlan";
+import { matchingMealPhotos } from "@/config/meal-photos";
 import { haptic } from "@/hooks/useHaptics";
 import { NutritionistErrorBanner } from "@/components/deluxe/NutritionistErrorBanner";
 import { TodayNutritionRings } from "@/components/deluxe/TodayNutritionRings";
@@ -101,6 +102,8 @@ function NutritionTab() {
   const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
   const [retrying, setRetrying] = useState(false);
   const [fallbackAnswer, setFallbackAnswer] = useState("");
+  // Cycles through the alternative photos that honestly match each recipe.
+  const [photoOffsets, setPhotoOffsets] = useState<Record<number, number>>({});
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -128,6 +131,17 @@ function NutritionTab() {
 
   const targets = ext ? computeTargets(ext) : null;
 
+  // Canonical records: macros derived from ingredient weights, photo validated
+  // against those same ingredients. Everything below reads from these.
+  const canonicalMeals: CanonicalMeal[] = useMemo(
+    () => (plan?.meals ?? []).map((m, i) => canonicalMeal(m as any, photoOffsets[i] ?? 0)),
+    [plan?.meals, photoOffsets],
+  );
+  const dayCheck = useMemo(
+    () => (canonicalMeals.length ? validateDay(canonicalMeals, plan?.kcal_target ?? targets?.kcal ?? 2200) : null),
+    [canonicalMeals, plan?.kcal_target, targets?.kcal],
+  );
+
   const handleFailure = (e: unknown, retry: () => void) => {
     const kind: NutritionistFailure = e instanceof NutritionistError ? e.kind : "unavailable";
     const detail =
@@ -151,7 +165,7 @@ function NutritionTab() {
 Targets: ${targets.kcal} kcal, ${targets.protein}g protein, ${targets.carbs}g carbs, ${targets.fat}g fat, ${targets.waterMl}ml water.
 Return ONLY minified JSON, no markdown, matching:
 {"weight_basis":"raw","notes":"short coaching note","meals":[{"name":"","slot":"Breakfast","kcal":0,"protein_g":0,"carbs_g":0,"fat_g":0,"prep_minutes":0,"ingredients":[{"item":"","amount":"120g","basis":"raw"}],"steps":["numbered instruction"]}]}
-Rules: exactly 4 meals; every ingredient amount MUST state a unit and whether the weight is raw or cooked; meal macros must sum within 5% of the targets; steps must be timed and numbered; simple UK supermarket ingredients.`,
+Rules: exactly 4 meals of realistic, DIFFERENT sizes (breakfast and snacks are smaller than lunch and dinner — never four identical calorie counts); every ingredient amount MUST state a unit in grams/ml and whether the weight is raw or cooked; macros must follow from the ingredient weights, not be back-filled to match the target; steps must be timed and numbered; simple UK supermarket ingredients.`,
         onRetryNotice,
       );
       const parsed = extractJson<{ weight_basis: string; notes: string; meals: Meal[] }>(raw);
@@ -215,7 +229,7 @@ Return ONLY minified JSON for the single replacement meal in the identical shape
 
   const logMeal = async (index: number) => {
     if (!plan || !user) return;
-    const meal = plan.meals[index];
+    const meal = canonicalMeals[index] ?? plan.meals[index];
     if (meal.logged) return;
     const { error } = await supabase.from("nutrition_logs").insert({
       user_id: user.id,
@@ -357,7 +371,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
   };
 
 
-  const eaten = (plan?.meals ?? []).filter((m) => m.logged);
+  const eaten = canonicalMeals.filter((m) => m.logged);
   const loggedCount = eaten.length;
   const proteinSoFar = eaten.reduce((s, m) => s + Number(m.protein_g ?? 0), 0);
 
@@ -426,6 +440,13 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
             Weights are <span className="text-gold">{plan.weight_basis}</span> unless a meal says otherwise ·
             hydration target {plan.water_target_ml}ml
           </div>
+          {dayCheck && (
+            <div
+              className={`mt-2 border-l-2 pl-2 text-[10px] ${dayCheck.withinTolerance ? "border-gold/50 text-muted-foreground" : "border-destructive text-destructive"}`}
+            >
+              {dayCheck.totals.kcal} kcal · {dayCheck.totals.protein_g}g protein from today's listed ingredients. {dayCheck.message}
+            </div>
+          )}
         </div>
       )}
 
@@ -456,7 +477,8 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
       )}
 
       <div className="mt-5 space-y-6">
-        {(plan?.meals ?? []).map((m, i) => {
+        {canonicalMeals.map((m, i) => {
+          const photoOptions = matchingMealPhotos(m.foodIds);
           const waterPerMeal = plan
             ? Math.round(plan.water_target_ml / Math.max(1, plan.meals.length) / 50) * 50
             : 0;
@@ -466,14 +488,23 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
           return (
             <article key={`${m.name}-${i}`} className="overflow-hidden border border-gold/20 bg-deluxe-forest/15">
               <div className="relative aspect-[4/3] w-full overflow-hidden">
-                <img
-                  src={mealImage(m.name, m.slot, m.ingredients)}
-                  alt={m.name}
-                  loading="lazy"
-                  width={1024}
-                  height={768}
-                  className="h-full w-full object-cover"
-                />
+                {m.photo ? (
+                  <img
+                    src={m.photo.url}
+                    alt={`${m.name} — ${m.photo.alt}`}
+                    loading="lazy"
+                    width={1024}
+                    height={768}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-deluxe-forest/25 px-6 text-center">
+                    <ImageOff className="h-5 w-5 text-gold/70" />
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                      No photo matches these exact ingredients yet
+                    </p>
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-deluxe-black via-deluxe-black/20 to-transparent" />
                 <div className="absolute bottom-3 left-4 right-4">
                   <div className="text-[9px] uppercase tracking-[0.24em] text-gold">{m.slot}</div>
@@ -494,6 +525,13 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
                   <Chip icon={<Droplets className="h-3 w-3" />} label={`${m.fat_g}g fat`} />
                   <Chip icon={<Clock className="h-3 w-3" />} label={`${m.prep_minutes} min`} />
                 </div>
+
+                <p className="mt-2 text-[10px] text-muted-foreground">
+                  {m.derived
+                    ? "Calculated from the ingredient weights below."
+                    : "Estimated — some ingredient weights could not be measured."}
+                  {m.unresolved.length > 0 && ` Not counted: ${m.unresolved.join(", ")}.`}
+                </p>
 
                 <div className="mt-4 border border-gold/15 bg-deluxe-black/50">
                   <div className="border-b border-gold/10 px-3 py-2 text-[9px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -552,7 +590,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
                     className="inline-flex min-h-11 items-center justify-center gap-1.5 border border-gold/30 px-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold/10 disabled:opacity-50"
                   >
                     {swapping === i ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Repeat className="h-3.5 w-3.5" />}
-                    Swap meal
+                    Replace meal
                   </button>
                   <button
                     onClick={() => askAbout(m)}
@@ -561,6 +599,20 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
                     <MessageCircle className="h-3.5 w-3.5" /> Ask nutritionist
                   </button>
                 </div>
+
+                <button
+                  onClick={() => {
+                    haptic("selection");
+                    if (photoOptions.length < 2) {
+                      toast.message("No other photo matches these ingredients — replace the meal for a new look.");
+                      return;
+                    }
+                    setPhotoOffsets((o) => ({ ...o, [i]: (o[i] ?? 0) + 1 }));
+                  }}
+                  className="mt-2 inline-flex min-h-11 w-full items-center justify-center gap-1.5 border border-gold/20 px-3 text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-foreground hover:border-gold/50 hover:text-gold"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" /> Regenerate image
+                </button>
 
                 <button
                   onClick={() => logMeal(i)}
@@ -579,7 +631,7 @@ Answer in under 120 words. Always state whether weights are raw or cooked. Never
                     meal={m}
                     waterMl={waterPerMeal}
                     weightBasis={plan?.weight_basis}
-                    allMeals={plan?.meals ?? [m]}
+                    allMeals={canonicalMeals.length ? canonicalMeals : [m]}
                   />
                 )}
               </div>
