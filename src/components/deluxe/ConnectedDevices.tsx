@@ -280,7 +280,11 @@ export function ConnectedDevices() {
                   </div>
                 </div>
               </div>
-              {connected ? (
+              {!usable && !connected ? (
+                <span className="shrink-0 border border-gold/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {p.live === "ios-only" ? "iPhone app" : "Soon"}
+                </span>
+              ) : connected ? (
                 <button
                   onClick={() => connect(p.id, p.name)}
                   disabled={syncing === p.id}
