@@ -18,6 +18,9 @@ import beefMinceRiceBroccoli from "@/assets/meals/beef-mince-rice-broccoli.jpg";
 import salmonPotatoAsparagus from "@/assets/meals/salmon-potato-asparagus.jpg";
 import pastaMince from "@/assets/meals/pasta-mince.jpg";
 import almondsApple from "@/assets/meals/almonds-apple.jpg";
+import tunaAvocadoWrap from "@/assets/meals/tuna-avocado-wrap.jpg";
+import chickenSweetPotatoBroccoli from "@/assets/meals/chicken-sweetpotato-broccoli.jpg";
+import cottageCheeseAppleWalnuts from "@/assets/meals/cottage-cheese-apple-walnuts.jpg";
 
 export interface MealPhoto {
   id: string;
