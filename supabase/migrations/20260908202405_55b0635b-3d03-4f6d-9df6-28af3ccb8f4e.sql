@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "tcm join self" ON public.team_challenge_members;
