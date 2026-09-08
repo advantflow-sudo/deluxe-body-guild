@@ -40,6 +40,9 @@ export const MEAL_PHOTOS: MealPhoto[] = [
   { id: "salmon-potato-asparagus", url: salmonPotatoAsparagus, visibleFoods: ["salmon", "potato", "asparagus"], alt: "Salmon with potatoes and asparagus" },
   { id: "pasta-mince", url: pastaMince, visibleFoods: ["pasta", "beef-mince"], alt: "Pasta with beef mince sauce" },
   { id: "almonds-apple", url: almondsApple, visibleFoods: ["almonds", "apple"], alt: "Almonds and a fresh apple" },
+  { id: "tuna-avocado-wrap", url: tunaAvocadoWrap, visibleFoods: ["tuna", "bread", "avocado", "spinach"], alt: "Tuna, avocado and spinach wholemeal wrap" },
+  { id: "chicken-sweetpotato-broccoli", url: chickenSweetPotatoBroccoli, visibleFoods: ["chicken", "potato", "broccoli"], alt: "Chicken breast with roasted sweet potato and broccoli" },
+  { id: "cottage-cheese-apple-walnuts", url: cottageCheeseAppleWalnuts, visibleFoods: ["cottage-cheese", "apple", "nuts"], alt: "Cottage cheese with sliced apple and walnuts" },
 ];
 
 /**
