@@ -5,7 +5,7 @@ import { SectionLabel } from "@/components/deluxe/ui";
 import { usePremium } from "@/hooks/usePremium";
 import { FEATURES } from "@/components/deluxe/AiFeaturePanels";
 
-export const Route = createFileRoute("/_authenticated/app/ai")({
+export const Route = createFileRoute("/_authenticated/app/ai/")({
   head: () => ({
     meta: [
       { title: "AI Studio | Deluxe Fitness" },

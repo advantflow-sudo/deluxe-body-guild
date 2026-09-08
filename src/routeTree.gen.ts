@@ -53,11 +53,11 @@ import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppBodyTrendsRouteImport } from './routes/_authenticated/app/body-trends'
 import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticated/app/body'
 import { Route as AuthenticatedAppBadgesRouteImport } from './routes/_authenticated/app/badges'
-import { Route as AuthenticatedAppAiRouteImport } from './routes/_authenticated/app/ai'
 import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin.webhooks'
 import { Route as AuthenticatedAdminErrorsRouteImport } from './routes/_authenticated/admin.errors'
 import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
 import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
+import { Route as AuthenticatedAppAiIndexRouteImport } from './routes/_authenticated/app/ai.index'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -307,11 +307,6 @@ const AuthenticatedAppBadgesRoute = AuthenticatedAppBadgesRouteImport.update({
   path: '/badges',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
-const AuthenticatedAppAiRoute = AuthenticatedAppAiRouteImport.update({
-  id: '/ai',
-  path: '/ai',
-  getParentRoute: () => AuthenticatedAppRoute,
-} as any)
 const AuthenticatedAdminWebhooksRoute =
   AuthenticatedAdminWebhooksRouteImport.update({
     id: '/webhooks',
@@ -336,6 +331,11 @@ const AuthenticatedAcceptInviteCodeRoute =
     path: '/accept-invite/$code',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAppAiIndexRoute = AuthenticatedAppAiIndexRouteImport.update({
+  id: '/ai/',
+  path: '/ai/',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -448,9 +448,9 @@ const AuthenticatedAppUUserIdRoute = AuthenticatedAppUUserIdRouteImport.update({
 } as any)
 const AuthenticatedAppAiFeatureRoute =
   AuthenticatedAppAiFeatureRouteImport.update({
-    id: '/$feature',
-    path: '/$feature',
-    getParentRoute: () => AuthenticatedAppAiRoute,
+    id: '/ai/$feature',
+    path: '/ai/$feature',
+    getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const ApiPublicOauthProviderCallbackRoute =
   ApiPublicOauthProviderCallbackRouteImport.update({
@@ -489,7 +489,6 @@ export interface FileRoutesByFullPath {
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
-  '/app/ai': typeof AuthenticatedAppAiRouteWithChildren
   '/app/badges': typeof AuthenticatedAppBadgesRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -528,6 +527,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/app/ai/': typeof AuthenticatedAppAiIndexRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -559,7 +559,6 @@ export interface FileRoutesByTo {
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
-  '/app/ai': typeof AuthenticatedAppAiRouteWithChildren
   '/app/badges': typeof AuthenticatedAppBadgesRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -598,6 +597,7 @@ export interface FileRoutesByTo {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/app/ai': typeof AuthenticatedAppAiIndexRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRoutesById {
@@ -632,7 +632,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/_authenticated/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
-  '/_authenticated/app/ai': typeof AuthenticatedAppAiRouteWithChildren
   '/_authenticated/app/badges': typeof AuthenticatedAppBadgesRoute
   '/_authenticated/app/body': typeof AuthenticatedAppBodyRoute
   '/_authenticated/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -671,6 +670,7 @@ export interface FileRoutesById {
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/_authenticated/app/ai/': typeof AuthenticatedAppAiIndexRoute
   '/api/public/oauth/$provider/callback': typeof ApiPublicOauthProviderCallbackRoute
 }
 export interface FileRouteTypes {
@@ -705,7 +705,6 @@ export interface FileRouteTypes {
     | '/admin/domain-health'
     | '/admin/errors'
     | '/admin/webhooks'
-    | '/app/ai'
     | '/app/badges'
     | '/app/body'
     | '/app/body-trends'
@@ -744,6 +743,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
+    | '/app/ai/'
     | '/api/public/oauth/$provider/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -775,7 +775,6 @@ export interface FileRouteTypes {
     | '/admin/domain-health'
     | '/admin/errors'
     | '/admin/webhooks'
-    | '/app/ai'
     | '/app/badges'
     | '/app/body'
     | '/app/body-trends'
@@ -814,6 +813,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
+    | '/app/ai'
     | '/api/public/oauth/$provider/callback'
   id:
     | '__root__'
@@ -847,7 +847,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/domain-health'
     | '/_authenticated/admin/errors'
     | '/_authenticated/admin/webhooks'
-    | '/_authenticated/app/ai'
     | '/_authenticated/app/badges'
     | '/_authenticated/app/body'
     | '/_authenticated/app/body-trends'
@@ -886,6 +885,7 @@ export interface FileRouteTypes {
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
+    | '/_authenticated/app/ai/'
     | '/api/public/oauth/$provider/callback'
   fileRoutesById: FileRoutesById
 }
@@ -1244,13 +1244,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppBadgesRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
-    '/_authenticated/app/ai': {
-      id: '/_authenticated/app/ai'
-      path: '/ai'
-      fullPath: '/app/ai'
-      preLoaderRoute: typeof AuthenticatedAppAiRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
     '/_authenticated/admin/webhooks': {
       id: '/_authenticated/admin/webhooks'
       path: '/webhooks'
@@ -1278,6 +1271,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/accept-invite/$code'
       preLoaderRoute: typeof AuthenticatedAcceptInviteCodeRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/app/ai/': {
+      id: '/_authenticated/app/ai/'
+      path: '/ai'
+      fullPath: '/app/ai/'
+      preLoaderRoute: typeof AuthenticatedAppAiIndexRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
     }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
@@ -1414,10 +1414,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/app/ai/$feature': {
       id: '/_authenticated/app/ai/$feature'
-      path: '/$feature'
+      path: '/ai/$feature'
       fullPath: '/app/ai/$feature'
       preLoaderRoute: typeof AuthenticatedAppAiFeatureRouteImport
-      parentRoute: typeof AuthenticatedAppAiRoute
+      parentRoute: typeof AuthenticatedAppRoute
     }
     '/api/public/oauth/$provider/callback': {
       id: '/api/public/oauth/$provider/callback'
@@ -1444,19 +1444,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
-interface AuthenticatedAppAiRouteChildren {
-  AuthenticatedAppAiFeatureRoute: typeof AuthenticatedAppAiFeatureRoute
-}
-
-const AuthenticatedAppAiRouteChildren: AuthenticatedAppAiRouteChildren = {
-  AuthenticatedAppAiFeatureRoute: AuthenticatedAppAiFeatureRoute,
-}
-
-const AuthenticatedAppAiRouteWithChildren =
-  AuthenticatedAppAiRoute._addFileChildren(AuthenticatedAppAiRouteChildren)
-
 interface AuthenticatedAppRouteChildren {
-  AuthenticatedAppAiRoute: typeof AuthenticatedAppAiRouteWithChildren
   AuthenticatedAppBadgesRoute: typeof AuthenticatedAppBadgesRoute
   AuthenticatedAppBodyRoute: typeof AuthenticatedAppBodyRoute
   AuthenticatedAppBodyTrendsRoute: typeof AuthenticatedAppBodyTrendsRoute
@@ -1474,11 +1462,12 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppScanVerifyRoute: typeof AuthenticatedAppScanVerifyRoute
   AuthenticatedAppWorkoutsRoute: typeof AuthenticatedAppWorkoutsRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedAppAiFeatureRoute: typeof AuthenticatedAppAiFeatureRoute
   AuthenticatedAppUUserIdRoute: typeof AuthenticatedAppUUserIdRoute
+  AuthenticatedAppAiIndexRoute: typeof AuthenticatedAppAiIndexRoute
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
-  AuthenticatedAppAiRoute: AuthenticatedAppAiRouteWithChildren,
   AuthenticatedAppBadgesRoute: AuthenticatedAppBadgesRoute,
   AuthenticatedAppBodyRoute: AuthenticatedAppBodyRoute,
   AuthenticatedAppBodyTrendsRoute: AuthenticatedAppBodyTrendsRoute,
@@ -1496,7 +1485,9 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppScanVerifyRoute: AuthenticatedAppScanVerifyRoute,
   AuthenticatedAppWorkoutsRoute: AuthenticatedAppWorkoutsRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedAppAiFeatureRoute: AuthenticatedAppAiFeatureRoute,
   AuthenticatedAppUUserIdRoute: AuthenticatedAppUUserIdRoute,
+  AuthenticatedAppAiIndexRoute: AuthenticatedAppAiIndexRoute,
 }
 
 const AuthenticatedAppRouteWithChildren =
