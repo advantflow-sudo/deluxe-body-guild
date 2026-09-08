@@ -172,11 +172,11 @@ function PhotosPanel() {
   return (
     <div>
       <div className="grid grid-cols-2 gap-2">
-        <button onClick={() => pick(setA)} className="border border-gold/30 bg-deluxe-black/40 p-2 text-xs text-foreground">
-          {a ? <img src={a} className="max-h-32 mx-auto" /> : "Upload BEFORE"}
+        <button type="button" aria-label="Upload before photo" onClick={() => pick(setA)} className="border border-gold/30 bg-deluxe-black/40 p-2 text-xs text-foreground">
+          {a ? <img src={a} alt="Before progress photo" className="max-h-32 mx-auto" /> : "Upload BEFORE"}
         </button>
-        <button onClick={() => pick(setB)} className="border border-gold/30 bg-deluxe-black/40 p-2 text-xs text-foreground">
-          {b ? <img src={b} className="max-h-32 mx-auto" /> : "Upload AFTER"}
+        <button type="button" aria-label="Upload after photo" onClick={() => pick(setB)} className="border border-gold/30 bg-deluxe-black/40 p-2 text-xs text-foreground">
+          {b ? <img src={b} alt="After progress photo" className="max-h-32 mx-auto" /> : "Upload AFTER"}
         </button>
       </div>
       <div className="mt-3"><Btn onClick={go} loading={loading}>Compare</Btn></div>

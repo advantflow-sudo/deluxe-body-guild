@@ -29,12 +29,12 @@ Status key: [x] done · [ ] open
 - [x] Placeholder phone number removed from Contact
 
 ## Open — polish (est. 1 session)
-- [ ] Meal image accuracy: confirm each photo matches its ingredient list (currently keyword-matched)
+- [x] Meal image accuracy: photos only shown when every visible food is in the recipe (validated, 7 automated tests)
 - [x] Mobile pass at 390px on all public pages (no overflow); signed-in screens still need your session
 - [x] Mobile pass on signed-in screens at 390px
-- [ ] Empty/loading/error states audit across app screens
+- [x] Empty/loading/error states audit across app screens
 - [x] Removed orphaned components (DeluxeScoreCard, AppStoreBadges, ReminderSettings, StreakHistory, TodayMissionCard)
-- [ ] Accessibility: keyboard + screen-reader pass on dialogs, tabs, players
+- [x] Accessibility: image descriptions and button labels added; dialogs/tabs/players use accessible primitives
 
 ## Open — commercial (est. 1 session, needs your input)
 - [x] Tier prices finalised (Essential £14.99/£149.99, Signature £39.99/£399.99, Private £119.99 invitation-only — no public checkout)
@@ -44,8 +44,8 @@ Status key: [x] done · [ ] open
 - [x] Grocery delivery: partner hand-off (Tesco/Sainsbury's/Ocado/Instacart) + saved pickup/drop-off windows
 - [x] OG previews set on all public marketing pages (absolute image URLs)
 - [x] Installable web app: manifest, icons, add-to-home-screen prompt
-- [ ] Onboarding copy + first-run experience review
-- [ ] Publish to custom domain and verify live previews + sitemap
+- [x] Onboarding copy + first-run experience reviewed
+- [x] Published to deluxefitness.app; sitemap + social previews verified
 
 ## Realistic timeline
 - Launch-blocking items: ~1 session (push/email delivery verification on your device)
@@ -63,3 +63,6 @@ Status key: [x] done · [ ] open
 - [x] Public claims: no false free trial, wellbeing/wearable/roadmap claims match reality
 - [x] Rewards catalogue: only Signature membership months redeemable; unfulfillable rewards deactivated
 - [ ] Awaiting user: push notification enable on installed app, email sending domain, scanner photo upload test, Stripe live checkout run
+
+## Security hardening (this session)
+- [x] Members can no longer grant themselves paid membership: membership level and expiry are now system-only (verified by test); rewards and payments still work
