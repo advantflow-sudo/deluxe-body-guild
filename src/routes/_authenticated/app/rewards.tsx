@@ -95,7 +95,9 @@ function RewardsTab() {
               {source === "points" && premiumUntil
                 ? `Signature access unlocked with points until ${new Date(premiumUntil).toLocaleDateString()} — no subscription is created.`
                 : isPremium
-                  ? "Every gated feature is unlocked on your plan."
+                  ? tier === "essential"
+                    ? "Essential features are unlocked. Signature-only tools stay locked until you upgrade."
+                    : "Every feature on your tier is unlocked."
                   : "Redeem a membership reward below, or upgrade any time."}
             </div>
           </div>
