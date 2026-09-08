@@ -260,6 +260,7 @@ export function ConnectedDevices() {
         {PROVIDERS.map((p) => {
           const linked = byProvider[p.id];
           const connected = linked?.status === "connected";
+          const usable = p.live === true || (p.live === "ios-only" && isIosNative());
           return (
             <div key={p.id} className="flex items-center justify-between border border-gold/15 bg-deluxe-forest/20 p-3">
               <div className="flex min-w-0 items-center gap-3">
@@ -271,6 +272,10 @@ export function ConnectedDevices() {
                       ? `Synced ${formatDistanceToNow(new Date(linked.last_synced_at), { addSuffix: true })}`
                       : linked?.status === "pending"
                       ? "Awaiting authorization"
+                      : p.live === false
+                      ? "Coming soon"
+                      : p.live === "ios-only" && !isIosNative()
+                      ? "Available in the iPhone app"
                       : p.blurb}
                   </div>
                 </div>
