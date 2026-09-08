@@ -19,15 +19,17 @@ interface ProviderMeta {
   name: string;
   icon: typeof Watch;
   blurb: string;
+  /** False when the connection is not live yet — shown as unavailable, never as a working button. */
+  live: boolean | "ios-only";
 }
 
 const PROVIDERS: ProviderMeta[] = [
-  { id: "apple_health", name: "Apple Health", icon: Watch, blurb: "iPhone & Apple Watch" },
-  { id: "fitbit", name: "Fitbit", icon: Activity, blurb: "Steps, sleep, heart rate" },
-  { id: "garmin", name: "Garmin", icon: Watch, blurb: "Watches & cycling" },
-  { id: "strava", name: "Strava", icon: Activity, blurb: "Runs & rides" },
-  { id: "oura", name: "Oura Ring", icon: Activity, blurb: "Sleep & recovery" },
-  { id: "google_fit", name: "Google Fit", icon: Smartphone, blurb: "Android devices" },
+  { id: "apple_health", name: "Apple Health", icon: Watch, blurb: "iPhone & Apple Watch", live: "ios-only" },
+  { id: "google_fit", name: "Google Fit", icon: Smartphone, blurb: "Android devices", live: true },
+  { id: "fitbit", name: "Fitbit", icon: Activity, blurb: "Steps, sleep, heart rate", live: false },
+  { id: "garmin", name: "Garmin", icon: Watch, blurb: "Watches & cycling", live: false },
+  { id: "strava", name: "Strava", icon: Activity, blurb: "Runs & rides", live: false },
+  { id: "oura", name: "Oura Ring", icon: Activity, blurb: "Sleep & recovery", live: false },
 ];
 
 interface Device {
@@ -258,6 +260,7 @@ export function ConnectedDevices() {
         {PROVIDERS.map((p) => {
           const linked = byProvider[p.id];
           const connected = linked?.status === "connected";
+          const usable = p.live === true || (p.live === "ios-only" && isIosNative());
           return (
             <div key={p.id} className="flex items-center justify-between border border-gold/15 bg-deluxe-forest/20 p-3">
               <div className="flex min-w-0 items-center gap-3">
@@ -269,11 +272,19 @@ export function ConnectedDevices() {
                       ? `Synced ${formatDistanceToNow(new Date(linked.last_synced_at), { addSuffix: true })}`
                       : linked?.status === "pending"
                       ? "Awaiting authorization"
+                      : p.live === false
+                      ? "Coming soon"
+                      : p.live === "ios-only" && !isIosNative()
+                      ? "Available in the iPhone app"
                       : p.blurb}
                   </div>
                 </div>
               </div>
-              {connected ? (
+              {!usable && !connected ? (
+                <span className="shrink-0 border border-gold/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {p.live === "ios-only" ? "iPhone app" : "Soon"}
+                </span>
+              ) : connected ? (
                 <button
                   onClick={() => connect(p.id, p.name)}
                   disabled={syncing === p.id}

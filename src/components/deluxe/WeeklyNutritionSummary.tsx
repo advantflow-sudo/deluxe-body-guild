@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { fallbackTargets } from "@/lib/targets";
+import { useTargets } from "@/hooks/useTargets";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 
@@ -18,42 +18,27 @@ function weekDates() {
 export function WeeklyNutritionSummary({ refreshKey = 0 }: { refreshKey?: number }) {
   const { user } = useAuth();
   const [logs, setLogs] = useState<Log[]>([]);
-  const [targets, setTargets] = useState<Totals>({ kcal: 2200, protein: 150, carbs: 220, fat: 70 });
+  // Single source of truth (audit M2): identical targets to the rings above.
+  const { targets: unified } = useTargets();
+  const targets: Totals = {
+    kcal: unified.kcal,
+    protein: unified.protein,
+    carbs: unified.carbs,
+    fat: unified.fat,
+  };
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
     void (async () => {
       const dates = weekDates();
-      const [logRes, planRes, extRes] = await Promise.all([
-        supabase
-          .from("nutrition_logs")
-          .select("log_date,calories,protein_g,carbs_g,fat_g")
-          .eq("user_id", user.id)
-          .gte("log_date", dates[0]!),
-        supabase
-          .from("meal_plans")
-          .select("kcal_target,protein_target_g,carbs_target_g,fat_target_g")
-          .eq("user_id", user.id)
-          .order("plan_date", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-        supabase.from("user_profiles_ext").select("weight_kg").eq("user_id", user.id).maybeSingle(),
-      ]);
+      const logRes = await supabase
+        .from("nutrition_logs")
+        .select("log_date,calories,protein_g,carbs_g,fat_g")
+        .eq("user_id", user.id)
+        .gte("log_date", dates[0]!);
 
       setLogs((logRes.data ?? []) as Log[]);
-      if (planRes.data) {
-        setTargets({
-          kcal: Number(planRes.data.kcal_target),
-          protein: Number(planRes.data.protein_target_g),
-          carbs: Number(planRes.data.carbs_target_g),
-          fat: Number(planRes.data.fat_target_g),
-        });
-      } else {
-        // Unified fallback targets (audit M2) — same engine as the nutrition plan.
-        const t = fallbackTargets(Number(extRes.data?.weight_kg ?? 75));
-        setTargets({ kcal: t.kcal, protein: t.protein, carbs: t.carbs, fat: t.fat });
-      }
       setLoading(false);
     })();
   }, [user, refreshKey]);
