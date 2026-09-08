@@ -98,10 +98,11 @@ export function MissionScheduleSettings() {
 
   const load = useCallback(async () => {
     if (!user) return;
-    // Placeholder zones stored by older signups (UTC / Etc-GMT aliases) make reminders
-    // fire at the wrong local hour — adopt the device zone instead.
-    const isPlaceholderZone = (tz: string | null | undefined) =>
-      !tz || /^(UTC|GMT|Etc\/(UTC|GMT|Greenwich)|Africa\/Abidjan)$/i.test(tz);
+    // Zones written by servers/older signups (UTC aliases, hosting region zones such as
+    // America/Los_Angeles) make reminders fire at the wrong local hour. Unless the member
+    // picked a zone themselves, always trust the device zone.
+    const manual =
+      typeof window !== "undefined" && window.localStorage.getItem(`tz_manual_${user.id}`) === "1";
     const { data } = await supabase
       .from("user_profiles_ext")
       .select(
@@ -110,10 +111,7 @@ export function MissionScheduleSettings() {
       .eq("user_id", user.id)
       .maybeSingle();
     if (data) {
-      const resolvedZone =
-        isPlaceholderZone(data.timezone) && !isPlaceholderZone(browserZone)
-          ? browserZone
-          : data.timezone || browserZone;
+      const resolvedZone = manual ? data.timezone || browserZone : browserZone || data.timezone;
       if (resolvedZone !== data.timezone) {
         void supabase.from("user_profiles_ext").update({ timezone: resolvedZone }).eq("user_id", user.id);
       }
