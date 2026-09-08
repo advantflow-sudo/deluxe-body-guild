@@ -212,7 +212,12 @@ export function MissionScheduleSettings() {
           <select
             value={sched.timezone}
             disabled={loading || !sched.mission_reminder_enabled}
-            onChange={(e) => void save({ timezone: e.target.value })}
+            onChange={(e) => {
+              if (typeof window !== "undefined" && user) {
+                window.localStorage.setItem(`tz_manual_${user.id}`, "1");
+              }
+              void save({ timezone: e.target.value });
+            }}
             className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none disabled:opacity-50"
           >
             {zoneList(browserZone).map((z) => (
