@@ -2,26 +2,20 @@ import { timingSafeEqual } from "node:crypto";
 
 /**
  * Verifies a request is from our own pg_cron scheduler.
- * Accepts EITHER:
- *  - `x-cron-secret` matching CRON_SECRET (legacy), OR
- *  - `apikey` matching the project's Supabase publishable/anon key (standard pg_cron pattern).
+ * The ONLY accepted credential is the server-only CRON_SECRET sent in the
+ * `x-cron-secret` header, compared in constant time. The Supabase
+ * publishable/anon key is public (it ships in the client bundle) and must
+ * never be accepted here.
  * Routes live under `/api/public/*` so this is the only gate.
  */
 export function verifyCronSecret(request: Request): boolean {
-  const cronSecret = request.headers.get("x-cron-secret");
-  const expectedCron = process.env.CRON_SECRET;
-  if (expectedCron && cronSecret && cronSecret.length === expectedCron.length) {
-    try {
-      if (timingSafeEqual(Buffer.from(cronSecret), Buffer.from(expectedCron))) return true;
-    } catch {}
+  const provided = request.headers.get("x-cron-secret");
+  const expected = process.env.CRON_SECRET;
+  if (!expected || !provided || provided.length !== expected.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
+  } catch {
+    return false;
   }
-
-  const apikey = request.headers.get("apikey");
-  const expectedAnon = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (expectedAnon && apikey && apikey.length === expectedAnon.length) {
-    try {
-      if (timingSafeEqual(Buffer.from(apikey), Buffer.from(expectedAnon))) return true;
-    } catch {}
-  }
-  return false;
 }
+
