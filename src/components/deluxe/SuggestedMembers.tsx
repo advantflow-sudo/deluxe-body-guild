@@ -43,10 +43,11 @@ export function SuggestedMembers() {
       const seenNames = new Set<string>();
       const list: Member[] = (profiles ?? [])
         .filter((p) => {
-          // Skip nameless profiles and collapse identical display names so the
-          // list never looks like the same member repeated.
+          // Skip nameless profiles, never expose raw email addresses as public
+          // names, and collapse duplicates so the list never repeats a member.
           const name = (p.display_name ?? "").trim().toLowerCase();
           if (!name) return false;
+          if (name.includes("@")) return false;
           if (seenNames.has(name)) return false;
           seenNames.add(name);
           return true;

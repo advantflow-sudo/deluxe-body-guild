@@ -310,11 +310,27 @@ const CORE: FormReference = {
   ],
 };
 
-/** Pick the form-check reference for an exercise / muscle group / block label. */
+/**
+ * Pick the form-check reference for an exercise / muscle group / block label.
+ * Hints are evaluated in the order given, so the exercise's own name always
+ * wins over a broader block label ("Push & Pull") — that mislabelled Barbell
+ * Bench Press as a pull pattern.
+ */
 export function formReference(...hints: (string | null | undefined)[]): FormReference {
-  const hay = hints.filter(Boolean).join(" ").toLowerCase();
-  if (/(core|abs|abdominal|plank|crunch|oblique|twist|carry)/.test(hay)) return CORE;
-  if (/(leg|quad|glute|hamstring|calf|squat|lunge|deadlift|hinge|thrust)/.test(hay)) return LEGS;
-  if (/(back|lat|row|pull|curl|bicep|trap|rear delt|forearm)/.test(hay)) return PULL;
+  const classify = (hint: string): FormReference | undefined => {
+    const hay = hint.toLowerCase();
+    if (/(core|abs|abdominal|plank|crunch|oblique|twist|carry)/.test(hay)) return CORE;
+    if (/(leg|quad|glute|hamstring|calf|squat|lunge|deadlift|hinge|thrust)/.test(hay)) return LEGS;
+    // Press movements are a push pattern even when the word "back" or "bench"
+    // appears elsewhere in the label.
+    if (/(press|push|bench|dip|fly|tricep|triceps|shoulder|chest|delt(?!.*rear))/.test(hay)) return PUSH;
+    if (/(back|lat|row|pull|curl|bicep|trap|rear delt|forearm|shrug)/.test(hay)) return PULL;
+    return undefined;
+  };
+  for (const hint of hints) {
+    if (!hint) continue;
+    const match = classify(hint);
+    if (match) return match;
+  }
   return PUSH;
 }
