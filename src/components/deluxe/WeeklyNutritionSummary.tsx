@@ -18,7 +18,14 @@ function weekDates() {
 export function WeeklyNutritionSummary({ refreshKey = 0 }: { refreshKey?: number }) {
   const { user } = useAuth();
   const [logs, setLogs] = useState<Log[]>([]);
-  const [targets, setTargets] = useState<Totals>({ kcal: 2200, protein: 150, carbs: 220, fat: 70 });
+  // Single source of truth (audit M2): identical targets to the rings above.
+  const { targets: unified } = useTargets();
+  const targets: Totals = {
+    kcal: unified.kcal,
+    protein: unified.protein,
+    carbs: unified.carbs,
+    fat: unified.fat,
+  };
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
