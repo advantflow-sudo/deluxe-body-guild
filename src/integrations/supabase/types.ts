@@ -2149,6 +2149,7 @@ export type Database = {
         Args: { _challenge_id: string }
         Returns: boolean
       }
+      can_join_challenge_team: { Args: { _team_id: string }; Returns: boolean }
       claim_reward: {
         Args: { _reward_id: string }
         Returns: {
