@@ -47,7 +47,7 @@ export function SuggestedMembers() {
           // names, and collapse duplicates so the list never repeats a member.
           const name = (p.display_name ?? "").trim().toLowerCase();
           if (!name) return false;
-          if (name.includes("@") || /\s/.test(name) === false && name.includes(".") && name.length > 24) return false;
+          if (name.includes("@")) return false;
           if (seenNames.has(name)) return false;
           seenNames.add(name);
           return true;
