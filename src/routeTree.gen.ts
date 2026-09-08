@@ -77,6 +77,7 @@ import { Route as ApiPublicHooksDailyMissionsGenerateRouteImport } from './route
 import { Route as ApiPublicHooksAutoMatchPartnersRouteImport } from './routes/api/public/hooks/auto-match-partners'
 import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
 import { Route as AuthenticatedAppUUserIdRouteImport } from './routes/_authenticated/app/u.$userId'
+import { Route as AuthenticatedAppAiFeatureRouteImport } from './routes/_authenticated/app/ai.$feature'
 import { Route as ApiPublicOauthProviderCallbackRouteImport } from './routes/api/public/oauth/$provider.callback'
 
 const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
@@ -445,6 +446,12 @@ const AuthenticatedAppUUserIdRoute = AuthenticatedAppUUserIdRouteImport.update({
   path: '/u/$userId',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppAiFeatureRoute =
+  AuthenticatedAppAiFeatureRouteImport.update({
+    id: '/$feature',
+    path: '/$feature',
+    getParentRoute: () => AuthenticatedAppAiRoute,
+  } as any)
 const ApiPublicOauthProviderCallbackRoute =
   ApiPublicOauthProviderCallbackRouteImport.update({
     id: '/api/public/oauth/$provider/callback',
@@ -482,7 +489,7 @@ export interface FileRoutesByFullPath {
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
-  '/app/ai': typeof AuthenticatedAppAiRoute
+  '/app/ai': typeof AuthenticatedAppAiRouteWithChildren
   '/app/badges': typeof AuthenticatedAppBadgesRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -501,6 +508,7 @@ export interface FileRoutesByFullPath {
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/app/ai/$feature': typeof AuthenticatedAppAiFeatureRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/auto-match-partners': typeof ApiPublicHooksAutoMatchPartnersRoute
@@ -551,7 +559,7 @@ export interface FileRoutesByTo {
   '/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
-  '/app/ai': typeof AuthenticatedAppAiRoute
+  '/app/ai': typeof AuthenticatedAppAiRouteWithChildren
   '/app/badges': typeof AuthenticatedAppBadgesRoute
   '/app/body': typeof AuthenticatedAppBodyRoute
   '/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -570,6 +578,7 @@ export interface FileRoutesByTo {
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/app/ai/$feature': typeof AuthenticatedAppAiFeatureRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/auto-match-partners': typeof ApiPublicHooksAutoMatchPartnersRoute
@@ -623,7 +632,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/domain-health': typeof AuthenticatedAdminDomainHealthRoute
   '/_authenticated/admin/errors': typeof AuthenticatedAdminErrorsRoute
   '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
-  '/_authenticated/app/ai': typeof AuthenticatedAppAiRoute
+  '/_authenticated/app/ai': typeof AuthenticatedAppAiRouteWithChildren
   '/_authenticated/app/badges': typeof AuthenticatedAppBadgesRoute
   '/_authenticated/app/body': typeof AuthenticatedAppBodyRoute
   '/_authenticated/app/body-trends': typeof AuthenticatedAppBodyTrendsRoute
@@ -642,6 +651,7 @@ export interface FileRoutesById {
   '/_authenticated/app/workouts': typeof AuthenticatedAppWorkoutsRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/app/ai/$feature': typeof AuthenticatedAppAiFeatureRoute
   '/_authenticated/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
   '/api/public/google-fit/callback': typeof ApiPublicGoogleFitCallbackRoute
   '/api/public/hooks/auto-match-partners': typeof ApiPublicHooksAutoMatchPartnersRoute
@@ -714,6 +724,7 @@ export interface FileRouteTypes {
     | '/app/workouts'
     | '/api/public/marketing-chat'
     | '/app/'
+    | '/app/ai/$feature'
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/auto-match-partners'
@@ -783,6 +794,7 @@ export interface FileRouteTypes {
     | '/app/workouts'
     | '/api/public/marketing-chat'
     | '/app'
+    | '/app/ai/$feature'
     | '/app/u/$userId'
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/auto-match-partners'
@@ -854,6 +866,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/workouts'
     | '/api/public/marketing-chat'
     | '/_authenticated/app/'
+    | '/_authenticated/app/ai/$feature'
     | '/_authenticated/app/u/$userId'
     | '/api/public/google-fit/callback'
     | '/api/public/hooks/auto-match-partners'
@@ -1399,6 +1412,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppUUserIdRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/ai/$feature': {
+      id: '/_authenticated/app/ai/$feature'
+      path: '/$feature'
+      fullPath: '/app/ai/$feature'
+      preLoaderRoute: typeof AuthenticatedAppAiFeatureRouteImport
+      parentRoute: typeof AuthenticatedAppAiRoute
+    }
     '/api/public/oauth/$provider/callback': {
       id: '/api/public/oauth/$provider/callback'
       path: '/api/public/oauth/$provider/callback'
@@ -1424,8 +1444,19 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
+interface AuthenticatedAppAiRouteChildren {
+  AuthenticatedAppAiFeatureRoute: typeof AuthenticatedAppAiFeatureRoute
+}
+
+const AuthenticatedAppAiRouteChildren: AuthenticatedAppAiRouteChildren = {
+  AuthenticatedAppAiFeatureRoute: AuthenticatedAppAiFeatureRoute,
+}
+
+const AuthenticatedAppAiRouteWithChildren =
+  AuthenticatedAppAiRoute._addFileChildren(AuthenticatedAppAiRouteChildren)
+
 interface AuthenticatedAppRouteChildren {
-  AuthenticatedAppAiRoute: typeof AuthenticatedAppAiRoute
+  AuthenticatedAppAiRoute: typeof AuthenticatedAppAiRouteWithChildren
   AuthenticatedAppBadgesRoute: typeof AuthenticatedAppBadgesRoute
   AuthenticatedAppBodyRoute: typeof AuthenticatedAppBodyRoute
   AuthenticatedAppBodyTrendsRoute: typeof AuthenticatedAppBodyTrendsRoute
@@ -1447,7 +1478,7 @@ interface AuthenticatedAppRouteChildren {
 }
 
 const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
-  AuthenticatedAppAiRoute: AuthenticatedAppAiRoute,
+  AuthenticatedAppAiRoute: AuthenticatedAppAiRouteWithChildren,
   AuthenticatedAppBadgesRoute: AuthenticatedAppBadgesRoute,
   AuthenticatedAppBodyRoute: AuthenticatedAppBodyRoute,
   AuthenticatedAppBodyTrendsRoute: AuthenticatedAppBodyTrendsRoute,
