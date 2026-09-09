@@ -39,7 +39,7 @@ function ProfileView() {
       { data: claims },
       { data: postList },
     ] = await Promise.all([
-      supabase.from("profiles").select("display_name,avatar_url,bio,fitness_goal").eq("id", userId).maybeSingle(),
+      supabase.from("public_profiles").select("display_name,avatar_url").eq("id", userId).maybeSingle(),
       supabase.from("user_profiles_ext").select("subscription_tier,training_level,fitness_goal").eq("user_id", userId).maybeSingle(),
       supabase.from("user_followers").select("*", { count: "exact", head: true }).eq("followed_id", userId),
       supabase.from("user_followers").select("*", { count: "exact", head: true }).eq("follower_id", userId),

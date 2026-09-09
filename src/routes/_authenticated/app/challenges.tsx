@@ -71,7 +71,7 @@ function ChallengesPage() {
     ]);
     const userIds = Array.from(new Set((members ?? []).map((m) => m.user_id)));
     const { data: profs } = userIds.length
-      ? await supabase.from("profiles").select("id,display_name,avatar_url").in("id", userIds)
+      ? await supabase.from("public_profiles").select("id,display_name,avatar_url").in("id", userIds)
       : { data: [] as { id: string; display_name: string | null; avatar_url: string | null }[] };
     const profMap = new Map((profs ?? []).map((p) => [p.id, p]));
 

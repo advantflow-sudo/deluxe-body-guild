@@ -60,12 +60,12 @@ function PartnerPage() {
     if (p) {
       const otherId = p.user_a === user.id ? p.user_b : p.user_a;
       const [prof, scoreRes, streakRes, nudgeRes] = await Promise.all([
-        supabase.from("profiles").select("id,display_name,avatar_url").eq("id", otherId).maybeSingle(),
+        supabase.from("public_profiles").select("id,display_name,avatar_url").eq("id", otherId).maybeSingle(),
         supabase.from("daily_scores").select("total").eq("user_id", otherId).eq("score_date", new Date().toISOString().slice(0, 10)).maybeSingle(),
         supabase.from("streaks").select("current_len").eq("user_id", otherId).maybeSingle(),
         supabase.from("partner_nudges").select("*").eq("partnership_id", p.id).order("created_at", { ascending: false }).limit(20),
       ]);
-      setPartnerProfile(prof.data ?? null);
+      setPartnerProfile((prof.data as { id: string; display_name: string | null; avatar_url: string | null } | null) ?? null);
       setPartnerScore(scoreRes.data?.total ?? 0);
       setPartnerStreak(streakRes.data?.current_len ?? 0);
       setNudges((nudgeRes.data ?? []) as Nudge[]);

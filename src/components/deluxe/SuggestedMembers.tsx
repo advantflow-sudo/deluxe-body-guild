@@ -23,11 +23,11 @@ export function SuggestedMembers() {
     if (!user) return;
     (async () => {
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("id,display_name,avatar_url")
         .neq("id", user.id)
         .limit(12);
-      const ids = (profiles ?? []).map((p) => p.id);
+      const ids = (profiles ?? []).map((p) => p.id as string);
       if (!ids.length) {
         setMembers([]);
         setLoading(false);
@@ -53,11 +53,11 @@ export function SuggestedMembers() {
           return true;
         })
         .map((p) => ({
-          id: p.id,
+          id: p.id as string,
           display_name: p.display_name,
           avatar_url: p.avatar_url,
-          followers: counts.get(p.id) ?? 0,
-          following: mine.has(p.id),
+          followers: counts.get(p.id as string) ?? 0,
+          following: mine.has(p.id as string),
         }))
         .sort((a, b) => b.followers - a.followers)
         .slice(0, 8);
