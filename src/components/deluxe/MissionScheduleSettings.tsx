@@ -101,16 +101,17 @@ export function MissionScheduleSettings() {
     // Zones written by servers/older signups (UTC aliases, hosting region zones such as
     // America/Los_Angeles) make reminders fire at the wrong local hour. Unless the member
     // picked a zone themselves, always trust the device zone.
-    const manual =
+    const localManual =
       typeof window !== "undefined" && window.localStorage.getItem(`tz_manual_${user.id}`) === "1";
     const { data } = await supabase
       .from("user_profiles_ext")
       .select(
-        "mission_reminder_enabled,mission_reminder_hour,mission_reminder_days,mission_reminder_push,mission_reminder_email,timezone,quiet_hours_enabled,quiet_start_hour,quiet_end_hour",
+        "mission_reminder_enabled,mission_reminder_hour,mission_reminder_days,mission_reminder_push,mission_reminder_email,timezone,timezone_manual,quiet_hours_enabled,quiet_start_hour,quiet_end_hour",
       )
       .eq("user_id", user.id)
       .maybeSingle();
     if (data) {
+      const manual = data.timezone_manual === true || localManual;
       const resolvedZone = manual ? data.timezone || browserZone : browserZone || data.timezone;
       if (resolvedZone !== data.timezone) {
         void supabase.from("user_profiles_ext").update({ timezone: resolvedZone }).eq("user_id", user.id);
@@ -215,6 +216,12 @@ export function MissionScheduleSettings() {
             onChange={(e) => {
               if (typeof window !== "undefined" && user) {
                 window.localStorage.setItem(`tz_manual_${user.id}`, "1");
+              }
+              if (user) {
+                void supabase
+                  .from("user_profiles_ext")
+                  .update({ timezone_manual: true })
+                  .eq("user_id", user.id);
               }
               void save({ timezone: e.target.value });
             }}
