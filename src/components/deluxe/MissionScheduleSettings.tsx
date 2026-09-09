@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { BellRing, CalendarClock, Loader2, Mail, MoonStar, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { getEmailDeliveryStatus } from "@/lib/email-status.functions";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { Switch } from "@/components/ui/switch";
