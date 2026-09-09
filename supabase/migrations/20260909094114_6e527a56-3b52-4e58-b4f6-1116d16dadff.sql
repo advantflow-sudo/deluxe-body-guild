@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "tcm read all authed" ON public.team_challenge_members;
