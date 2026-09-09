@@ -65,7 +65,7 @@ function PartnerPage() {
         supabase.from("streaks").select("current_len").eq("user_id", otherId).maybeSingle(),
         supabase.from("partner_nudges").select("*").eq("partnership_id", p.id).order("created_at", { ascending: false }).limit(20),
       ]);
-      setPartnerProfile(prof.data ?? null);
+      setPartnerProfile((prof.data as { id: string; display_name: string | null; avatar_url: string | null } | null) ?? null);
       setPartnerScore(scoreRes.data?.total ?? 0);
       setPartnerStreak(streakRes.data?.current_len ?? 0);
       setNudges((nudgeRes.data ?? []) as Nudge[]);

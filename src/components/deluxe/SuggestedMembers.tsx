@@ -27,7 +27,7 @@ export function SuggestedMembers() {
         .select("id,display_name,avatar_url")
         .neq("id", user.id)
         .limit(12);
-      const ids = (profiles ?? []).map((p) => p.id);
+      const ids = (profiles ?? []).map((p) => p.id as string);
       if (!ids.length) {
         setMembers([]);
         setLoading(false);

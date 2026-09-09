@@ -67,7 +67,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     const missing = Array.from(new Set(rows.map((r) => r.actor_id).filter((id) => id && !nameCache.current.has(id))));
     if (missing.length) {
       const { data } = await supabase.from("public_profiles").select("id,display_name").in("id", missing);
-      (data ?? []).forEach((p) => nameCache.current.set(p.id, p.display_name ?? "A member"));
+      (data ?? []).forEach((p) => nameCache.current.set(p.id as string, p.display_name ?? "A member"));
     }
     return rows.map((r) => ({ ...r, actor_name: nameCache.current.get(r.actor_id) ?? "A member" }));
   }, []);
