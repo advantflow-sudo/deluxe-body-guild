@@ -79,7 +79,7 @@ export const syncOAuthProvider = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!tok) return { ok: false, written: 0, reason: `${data.provider} not connected` };
 
-    let accessToken = tok.access_token;
+    let accessToken = tok.access_token!;
     const expiresAt = tok.token_expires_at ? new Date(tok.token_expires_at) : null;
     const needsRefresh = !expiresAt || expiresAt.getTime() - Date.now() < 60_000;
 

@@ -53,7 +53,7 @@ export const Route = createFileRoute("/api/public/hooks/sync-oauth-devices")({
               failed += 1;
               continue;
             }
-            let accessToken = tok.access_token;
+            let accessToken = tok.access_token!;
             const expiresAt = tok.token_expires_at ? new Date(tok.token_expires_at) : null;
             const needsRefresh = !expiresAt || expiresAt.getTime() - Date.now() < 60_000;
             if (needsRefresh && tok.refresh_token) {
