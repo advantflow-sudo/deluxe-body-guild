@@ -1673,6 +1673,7 @@ export type Database = {
           reminder_water_hour: number | null
           subscription_tier: string
           timezone: string
+          timezone_manual: boolean
           training_level: string | null
           units: string
           updated_at: string
@@ -1709,6 +1710,7 @@ export type Database = {
           reminder_water_hour?: number | null
           subscription_tier?: string
           timezone?: string
+          timezone_manual?: boolean
           training_level?: string | null
           units?: string
           updated_at?: string
@@ -1745,6 +1747,7 @@ export type Database = {
           reminder_water_hour?: number | null
           subscription_tier?: string
           timezone?: string
+          timezone_manual?: boolean
           training_level?: string | null
           units?: string
           updated_at?: string
