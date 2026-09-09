@@ -30,7 +30,12 @@ const ACTIONS: {
   { reason: "mission_mindset", label: "Mindset check-in", short: "Mindset", xp: 10, icon: Sparkles, to: "/app/coach", cta: "Check in" },
 ];
 
-const today = () => new Date().toISOString().slice(0, 10);
+// The member's own calendar date — the server's XP/streak functions use the
+// profile timezone, so a UTC date here would disagree late in the evening.
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
 
 interface Summary { total_xp: number; rank: string; next_rank_at: number; progress_pct: number }
 
