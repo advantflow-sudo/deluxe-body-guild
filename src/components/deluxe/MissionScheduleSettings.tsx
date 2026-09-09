@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { BellRing, CalendarClock, Loader2, Mail, MoonStar, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { getEmailDeliveryStatus } from "@/lib/email-status.functions";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
 import { Switch } from "@/components/ui/switch";
@@ -95,6 +96,8 @@ export function MissionScheduleSettings() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [emailReady, setEmailReady] = useState<boolean | null>(null);
+  const [emailBlockedMessage, setEmailBlockedMessage] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -134,6 +137,28 @@ export function MissionScheduleSettings() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Email reminders are only offered when the backend can actually deliver
+  // them (API key present, sending domain verified, sending enabled).
+  useEffect(() => {
+    if (!user) return;
+    let alive = true;
+    void (async () => {
+      try {
+        const status = await getEmailDeliveryStatus({ data: undefined });
+        if (!alive) return;
+        setEmailReady(status.ready);
+        setEmailBlockedMessage(status.ready ? null : status.message);
+      } catch {
+        if (!alive) return;
+        setEmailReady(false);
+        setEmailBlockedMessage("Email delivery is unavailable right now.");
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [user]);
 
   const save = async (patch: Partial<Schedule>) => {
     if (!user) return;
@@ -276,9 +301,13 @@ export function MissionScheduleSettings() {
           {
             key: "email" as const,
             icon: Mail,
-            label: "Email",
-            desc: "Sent to your account address.",
-            value: sched.mission_reminder_email,
+            label: emailReady === false ? "Email unavailable" : "Email",
+            desc:
+              emailReady === false
+                ? (emailBlockedMessage ?? "Email delivery is not ready yet.")
+                : "Sent to your account address.",
+            value: emailReady === false ? false : sched.mission_reminder_email,
+            blocked: emailReady !== true,
             onChange: (v: boolean) => save({ mission_reminder_email: v }),
           },
         ].map((c) => (
@@ -290,7 +319,7 @@ export function MissionScheduleSettings() {
             </div>
             <Switch
               checked={c.value}
-              disabled={loading || !sched.mission_reminder_enabled}
+              disabled={loading || !sched.mission_reminder_enabled || ("blocked" in c && c.blocked === true)}
               onCheckedChange={(v) => {
                 haptic("selection");
                 void c.onChange(v);
@@ -372,12 +401,12 @@ export function MissionScheduleSettings() {
                     Push
                   </span>
                 )}
-                {sched.mission_reminder_email && (
+                {sched.mission_reminder_email && emailReady === true && (
                   <span className="border border-gold/25 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.16em] text-gold">
                     Email
                   </span>
                 )}
-                {!sched.mission_reminder_push && !sched.mission_reminder_email && (
+                {!sched.mission_reminder_push && !(sched.mission_reminder_email && emailReady === true) && (
                   <span className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">In-app only</span>
                 )}
               </li>

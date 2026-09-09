@@ -259,7 +259,8 @@ function ProfileTab() {
               if (r.inApp) parts.push("in-app notification sent");
               if (r.pushed) parts.push(`${r.pushed} push delivered`);
               if (r.pushPending) parts.push(`${r.pushPending} device needs push re-enable`);
-              if (r.emailRequested) parts.push(r.emailed ? "email sent" : "email not sent (delivery not configured)");
+              if (r.emailRequested)
+                parts.push(r.emailed ? "email sent" : `email unavailable — ${r.emailMessage ?? "delivery not ready"}`);
               toast.success(parts.length ? parts.join(" · ") : "Test reminder queued");
               setReminderKey((k) => k + 1);
             } catch {

@@ -53,12 +53,19 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
     }
 
     let emailed = false;
+    let emailReason: string | null = null;
+    let emailMessage: string | null = null;
     if (ext?.mission_reminder_email) {
       const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
       const email = authUser?.user?.email;
-      if (email) {
+      if (!email) {
+        emailReason = "no_address";
+        emailMessage = "Your account has no email address.";
+      } else {
+        const { sendTemplateEmail, emailDeliveryReason, emailDeliveryMessage } = await import(
+          "@/lib/email-templates/send-email"
+        );
         try {
-          const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
           const res = await sendTemplateEmail("mission-reminder", email, {
             templateData: {
               remainingXp: 100,
@@ -68,12 +75,20 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
             idempotencyKey: `mission-reminder-test-${userId}-${Date.now()}`,
           });
           emailed = res.sent;
+          if (!res.sent) {
+            emailReason = res.reason;
+            emailMessage = emailDeliveryMessage("recipient_suppressed");
+          }
         } catch (err) {
           console.error("[reminders] test email failed", err);
+          const reason = emailDeliveryReason(err);
+          emailReason = reason;
+          emailMessage = emailDeliveryMessage(reason);
           emailed = false;
         }
       }
     }
+
 
 
     const logs: { user_id: string; channel: string; is_test: boolean }[] = [];
@@ -89,6 +104,8 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
       emailed,
       pushConfigured: pushConfigured(),
       emailRequested: Boolean(ext?.mission_reminder_email),
-      emailConfigured: true,
+      emailConfigured: emailReason === null,
+      emailReason,
+      emailMessage,
     };
   });
