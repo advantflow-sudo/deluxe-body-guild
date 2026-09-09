@@ -104,6 +104,8 @@ export const sendTestMissionReminder = createServerFn({ method: "POST" })
       emailed,
       pushConfigured: pushConfigured(),
       emailRequested: Boolean(ext?.mission_reminder_email),
-      emailConfigured: true,
+      emailConfigured: emailReason === null,
+      emailReason,
+      emailMessage,
     };
   });
