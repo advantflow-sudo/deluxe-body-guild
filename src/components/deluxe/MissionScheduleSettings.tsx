@@ -96,6 +96,8 @@ export function MissionScheduleSettings() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [emailReady, setEmailReady] = useState<boolean | null>(null);
+  const [emailBlockedMessage, setEmailBlockedMessage] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -135,6 +137,28 @@ export function MissionScheduleSettings() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Email reminders are only offered when the backend can actually deliver
+  // them (API key present, sending domain verified, sending enabled).
+  useEffect(() => {
+    if (!user) return;
+    let alive = true;
+    void (async () => {
+      try {
+        const status = await getEmailDeliveryStatus({ data: undefined });
+        if (!alive) return;
+        setEmailReady(status.ready);
+        setEmailBlockedMessage(status.ready ? null : status.message);
+      } catch {
+        if (!alive) return;
+        setEmailReady(false);
+        setEmailBlockedMessage("Email delivery is unavailable right now.");
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [user]);
 
   const save = async (patch: Partial<Schedule>) => {
     if (!user) return;
