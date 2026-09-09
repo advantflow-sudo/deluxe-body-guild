@@ -20,6 +20,7 @@ import pastaMince from "@/assets/meals/pasta-mince.jpg";
 import almondsApple from "@/assets/meals/almonds-apple.jpg";
 import tunaAvocadoWrap from "@/assets/meals/tuna-avocado-wrap.jpg";
 import chickenSweetPotatoBroccoli from "@/assets/meals/chicken-sweetpotato-broccoli.jpg";
+import chickenSweetPotatoAvocadoPeppers from "@/assets/meals/chicken-sweetpotato-avocado-peppers.jpg";
 import cottageCheeseAppleWalnuts from "@/assets/meals/cottage-cheese-apple-walnuts.jpg";
 import beefMinceRiceTeriyaki from "@/assets/meals/beef-mince-rice-teriyaki.jpg";
 import chickenPastaTomato from "@/assets/meals/chicken-pasta-tomato.jpg";
@@ -52,6 +53,7 @@ export const MEAL_PHOTOS: MealPhoto[] = [
   { id: "almonds-apple", url: almondsApple, visibleFoods: ["almonds", "apple"], alt: "Almonds and a fresh apple" },
   { id: "tuna-avocado-wrap", url: tunaAvocadoWrap, visibleFoods: ["tuna", "bread", "avocado", "spinach"], alt: "Tuna, avocado and spinach wholemeal wrap" },
   { id: "chicken-sweetpotato-broccoli", url: chickenSweetPotatoBroccoli, visibleFoods: ["chicken", "potato", "broccoli"], alt: "Chicken breast with roasted sweet potato and broccoli" },
+  { id: "chicken-sweetpotato-avocado-peppers", url: chickenSweetPotatoAvocadoPeppers, visibleFoods: ["chicken", "potato", "avocado", "pepper"], alt: "Sliced chicken breast with roasted sweet potato, avocado and sautéed peppers" },
   { id: "cottage-cheese-apple-walnuts", url: cottageCheeseAppleWalnuts, visibleFoods: ["cottage-cheese", "apple", "nuts"], alt: "Cottage cheese with sliced apple and walnuts" },
   { id: "beef-mince-rice-teriyaki", url: beefMinceRiceTeriyaki, visibleFoods: ["beef-mince", "rice", "teriyaki-sauce"], alt: "Beef mince and rice bowl with teriyaki glaze" },
   { id: "beef-mince-rice", url: beefMinceRiceTeriyaki, visibleFoods: ["beef-mince", "rice"], alt: "Beef mince served over rice" },
