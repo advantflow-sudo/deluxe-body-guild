@@ -216,6 +216,12 @@ export function MissionScheduleSettings() {
               if (typeof window !== "undefined" && user) {
                 window.localStorage.setItem(`tz_manual_${user.id}`, "1");
               }
+              if (user) {
+                void supabase
+                  .from("user_profiles_ext")
+                  .update({ timezone_manual: true })
+                  .eq("user_id", user.id);
+              }
               void save({ timezone: e.target.value });
             }}
             className="mt-1 w-full border border-gold/20 bg-deluxe-black px-3 py-2 text-sm text-foreground focus:border-gold focus:outline-none disabled:opacity-50"

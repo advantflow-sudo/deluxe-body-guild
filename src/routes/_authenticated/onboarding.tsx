@@ -62,6 +62,8 @@ function Onboarding() {
       training_level: level,
       preferred_type: type,
       country,
+      // Start every member on the time zone of the place they signed up from.
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
       onboarded_at: new Date().toISOString(),
     });
     void plan;
