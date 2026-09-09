@@ -53,11 +53,11 @@ export function SuggestedMembers() {
           return true;
         })
         .map((p) => ({
-          id: p.id,
+          id: p.id as string,
           display_name: p.display_name,
           avatar_url: p.avatar_url,
-          followers: counts.get(p.id) ?? 0,
-          following: mine.has(p.id),
+          followers: counts.get(p.id as string) ?? 0,
+          following: mine.has(p.id as string),
         }))
         .sort((a, b) => b.followers - a.followers)
         .slice(0, 8);
