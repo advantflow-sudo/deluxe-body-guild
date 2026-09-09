@@ -301,9 +301,13 @@ export function MissionScheduleSettings() {
           {
             key: "email" as const,
             icon: Mail,
-            label: "Email",
-            desc: "Sent to your account address.",
-            value: sched.mission_reminder_email,
+            label: emailReady === false ? "Email unavailable" : "Email",
+            desc:
+              emailReady === false
+                ? (emailBlockedMessage ?? "Email delivery is not ready yet.")
+                : "Sent to your account address.",
+            value: emailReady === false ? false : sched.mission_reminder_email,
+            blocked: emailReady !== true,
             onChange: (v: boolean) => save({ mission_reminder_email: v }),
           },
         ].map((c) => (
@@ -315,7 +319,7 @@ export function MissionScheduleSettings() {
             </div>
             <Switch
               checked={c.value}
-              disabled={loading || !sched.mission_reminder_enabled}
+              disabled={loading || !sched.mission_reminder_enabled || ("blocked" in c && c.blocked === true)}
               onCheckedChange={(v) => {
                 haptic("selection");
                 void c.onChange(v);
