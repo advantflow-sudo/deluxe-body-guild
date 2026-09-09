@@ -17,17 +17,18 @@ function AppShell() {
   useEffect(() => {
     if (!user) return;
     const deviceZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-    const manual =
+    const localManual =
       typeof window !== "undefined" && window.localStorage.getItem(`tz_manual_${user.id}`) === "1";
     supabase
       .from("user_profiles_ext")
-      .select("onboarded_at,timezone")
+      .select("onboarded_at,timezone,timezone_manual")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
         setState(data?.onboarded_at ? "ok" : "needs-onboarding");
-        // Unless the member chose a zone themselves, keep the stored timezone in
-        // step with the device so reminders and daily resets use their real day.
+        // Unless the member chose a zone themselves, follow wherever they are now:
+        // reminders, daily resets and streaks all run on this zone.
+        const manual = data?.timezone_manual === true || localManual;
         if (data && !manual && deviceZone && data.timezone !== deviceZone) {
           void supabase.from("user_profiles_ext").update({ timezone: deviceZone }).eq("user_id", user.id);
         }
