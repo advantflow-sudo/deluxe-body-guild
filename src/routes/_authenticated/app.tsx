@@ -16,13 +16,21 @@ function AppShell() {
 
   useEffect(() => {
     if (!user) return;
+    const deviceZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+    const manual =
+      typeof window !== "undefined" && window.localStorage.getItem(`tz_manual_${user.id}`) === "1";
     supabase
       .from("user_profiles_ext")
-      .select("onboarded_at")
+      .select("onboarded_at,timezone")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
         setState(data?.onboarded_at ? "ok" : "needs-onboarding");
+        // Unless the member chose a zone themselves, keep the stored timezone in
+        // step with the device so reminders and daily resets use their real day.
+        if (data && !manual && deviceZone && data.timezone !== deviceZone) {
+          void supabase.from("user_profiles_ext").update({ timezone: deviceZone }).eq("user_id", user.id);
+        }
       });
   }, [user]);
 
