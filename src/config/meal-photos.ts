@@ -20,6 +20,7 @@ import pastaMince from "@/assets/meals/pasta-mince.jpg";
 import almondsApple from "@/assets/meals/almonds-apple.jpg";
 import tunaAvocadoWrap from "@/assets/meals/tuna-avocado-wrap.jpg";
 import chickenSweetPotatoBroccoli from "@/assets/meals/chicken-sweetpotato-broccoli.jpg";
+import chickenSweetPotatoAvocadoPeppers from "@/assets/meals/chicken-sweetpotato-avocado-peppers.jpg";
 import cottageCheeseAppleWalnuts from "@/assets/meals/cottage-cheese-apple-walnuts.jpg";
 import beefMinceRiceTeriyaki from "@/assets/meals/beef-mince-rice-teriyaki.jpg";
 import chickenPastaTomato from "@/assets/meals/chicken-pasta-tomato.jpg";
