@@ -21,6 +21,16 @@ import almondsApple from "@/assets/meals/almonds-apple.jpg";
 import tunaAvocadoWrap from "@/assets/meals/tuna-avocado-wrap.jpg";
 import chickenSweetPotatoBroccoli from "@/assets/meals/chicken-sweetpotato-broccoli.jpg";
 import cottageCheeseAppleWalnuts from "@/assets/meals/cottage-cheese-apple-walnuts.jpg";
+import beefMinceRiceTeriyaki from "@/assets/meals/beef-mince-rice-teriyaki.jpg";
+import chickenPastaTomato from "@/assets/meals/chicken-pasta-tomato.jpg";
+import oatsBananaPeanut from "@/assets/meals/oats-banana-peanut.jpg";
+import shakeBanana from "@/assets/meals/shake-banana.jpg";
+import chickenRice from "@/assets/meals/chicken-rice.jpg";
+import fishPlate from "@/assets/meals/fish.jpg";
+import saladPlate from "@/assets/meals/salad.jpg";
+import breakfastPlate from "@/assets/meals/breakfast.jpg";
+import beefPlate from "@/assets/meals/beef.jpg";
+import pastaPlate from "@/assets/meals/pasta.jpg";
 
 export interface MealPhoto {
   id: string;
@@ -43,6 +53,27 @@ export const MEAL_PHOTOS: MealPhoto[] = [
   { id: "tuna-avocado-wrap", url: tunaAvocadoWrap, visibleFoods: ["tuna", "bread", "avocado", "spinach"], alt: "Tuna, avocado and spinach wholemeal wrap" },
   { id: "chicken-sweetpotato-broccoli", url: chickenSweetPotatoBroccoli, visibleFoods: ["chicken", "potato", "broccoli"], alt: "Chicken breast with roasted sweet potato and broccoli" },
   { id: "cottage-cheese-apple-walnuts", url: cottageCheeseAppleWalnuts, visibleFoods: ["cottage-cheese", "apple", "nuts"], alt: "Cottage cheese with sliced apple and walnuts" },
+  { id: "beef-mince-rice-teriyaki", url: beefMinceRiceTeriyaki, visibleFoods: ["beef-mince", "rice", "teriyaki-sauce"], alt: "Beef mince and rice bowl with teriyaki glaze" },
+  { id: "beef-mince-rice", url: beefMinceRiceTeriyaki, visibleFoods: ["beef-mince", "rice"], alt: "Beef mince served over rice" },
+  { id: "chicken-pasta-tomato", url: chickenPastaTomato, visibleFoods: ["chicken", "pasta", "tomato"], alt: "Grilled chicken over penne pasta with tomato sauce" },
+  { id: "chicken-pasta", url: chickenPastaTomato, visibleFoods: ["chicken", "pasta"], alt: "Grilled chicken with penne pasta" },
+  { id: "oats-banana-peanut", url: oatsBananaPeanut, visibleFoods: ["oats", "banana", "peanut-butter"], alt: "Porridge oats with banana and peanut butter" },
+  { id: "oats-banana", url: oatsBananaPeanut, visibleFoods: ["oats", "banana"], alt: "Porridge oats topped with banana" },
+  { id: "shake-banana-whey", url: shakeBanana, visibleFoods: ["whey", "banana", "milk"], alt: "Protein shake with banana and milk" },
+  { id: "shake-banana", url: shakeBanana, visibleFoods: ["whey", "banana"], alt: "Protein shake with a banana" },
+  { id: "shake-whey", url: shakeBanana, visibleFoods: ["whey"], alt: "Protein shake" },
+  { id: "chicken-rice", url: chickenRice, visibleFoods: ["chicken", "rice"], alt: "Chicken breast with rice" },
+  { id: "salmon-plate", url: fishPlate, visibleFoods: ["salmon"], alt: "Cooked salmon fillet" },
+  { id: "white-fish-plate", url: fishPlate, visibleFoods: ["white-fish"], alt: "Cooked white fish fillet" },
+  { id: "yogurt-plain", url: yogurtBerries, visibleFoods: ["greek-yogurt"], alt: "Bowl of Greek yogurt" },
+  { id: "salad-leaves", url: saladPlate, visibleFoods: ["spinach", "tomato"], alt: "Leafy salad with tomatoes" },
+  { id: "eggs-plate", url: breakfastPlate, visibleFoods: ["egg"], alt: "Cooked eggs" },
+  { id: "almonds-only", url: almondsApple, visibleFoods: ["almonds"], alt: "Bowl of almonds" },
+  { id: "apple-only", url: almondsApple, visibleFoods: ["apple"], alt: "Fresh apple" },
+  { id: "oats-only", url: porridgeOats, visibleFoods: ["oats"], alt: "Bowl of porridge oats" },
+  { id: "rice-plate", url: chickenRice, visibleFoods: ["rice"], alt: "Bowl of cooked rice" },
+  { id: "beef-plate", url: beefPlate, visibleFoods: ["steak"], alt: "Cooked beef steak" },
+  { id: "pasta-plate", url: pastaPlate, visibleFoods: ["pasta"], alt: "Bowl of cooked pasta" },
 ];
 
 /**
