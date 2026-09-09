@@ -44,20 +44,29 @@ export const Route = createFileRoute("/api/public/hooks/sync-oauth-devices")({
           const cfg = getProvider(device.provider);
           if (!cfg) continue;
           try {
-            let accessToken = device.access_token!;
-            const expiresAt = device.token_expires_at ? new Date(device.token_expires_at) : null;
+            const { data: tok } = await admin
+              .from("device_oauth_tokens")
+              .select("access_token, refresh_token, token_expires_at")
+              .eq("device_id", device.id)
+              .maybeSingle();
+            if (!tok) {
+              failed += 1;
+              continue;
+            }
+            let accessToken = tok.access_token;
+            const expiresAt = tok.token_expires_at ? new Date(tok.token_expires_at) : null;
             const needsRefresh = !expiresAt || expiresAt.getTime() - Date.now() < 60_000;
-            if (needsRefresh && device.refresh_token) {
-              const r = await refreshToken(cfg, device.refresh_token);
+            if (needsRefresh && tok.refresh_token) {
+              const r = await refreshToken(cfg, tok.refresh_token);
               accessToken = r.access_token;
               await admin
-                .from("connected_devices")
+                .from("device_oauth_tokens")
                 .update({
                   access_token: r.access_token,
-                  refresh_token: r.refresh_token ?? device.refresh_token,
+                  refresh_token: r.refresh_token ?? tok.refresh_token,
                   token_expires_at: new Date(Date.now() + r.expires_in * 1000).toISOString(),
                 })
-                .eq("id", device.id);
+                .eq("device_id", device.id);
             }
 
             const snapshot = await cfg.fetchToday(accessToken);

@@ -65,7 +65,7 @@ export const Route = createFileRoute("/api/public/oauth/$provider/callback")({
         }
 
         const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
-        const { error: upsertError } = await admin
+        const { data: deviceRow, error: upsertError } = await admin
           .from("connected_devices")
           .upsert(
             {
@@ -73,17 +73,31 @@ export const Route = createFileRoute("/api/public/oauth/$provider/callback")({
               provider: providerId,
               display_name: cfg.displayName,
               status: "connected",
-              access_token: tokens.access_token,
-              refresh_token: tokens.refresh_token ?? null,
-              token_expires_at: expiresAt,
               scopes: tokens.scope ? tokens.scope.split(/[,\s]+/).filter(Boolean) : null,
               last_synced_at: null,
             },
             { onConflict: "user_id,provider" },
-          );
+          )
+          .select("id")
+          .single();
 
-        if (upsertError) {
+        if (upsertError || !deviceRow) {
           console.error(`[oauth/${providerId}/callback] upsert failed`, upsertError);
+          return back("error", "persist_failed");
+        }
+
+        const { error: tokenError } = await admin.from("device_oauth_tokens").upsert(
+          {
+            device_id: deviceRow.id,
+            user_id: stateRow.user_id,
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token ?? null,
+            token_expires_at: expiresAt,
+          },
+          { onConflict: "device_id" },
+        );
+        if (tokenError) {
+          console.error(`[oauth/${providerId}/callback] token persist failed`, tokenError);
           return back("error", "persist_failed");
         }
         return back("ok");
