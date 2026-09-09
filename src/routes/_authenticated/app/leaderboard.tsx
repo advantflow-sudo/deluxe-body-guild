@@ -59,7 +59,7 @@ function LeaderboardPage() {
 
       const ids = (lb ?? []).map((r) => r.user_id).filter((v): v is string => !!v);
       const { data: profs } = ids.length
-        ? await supabase.from("profiles").select("id,display_name,avatar_url").in("id", ids)
+        ? await supabase.from("public_profiles").select("id,display_name,avatar_url").in("id", ids)
         : { data: [] };
       const profMap = new Map((profs ?? []).map((p) => [p.id, p]));
 

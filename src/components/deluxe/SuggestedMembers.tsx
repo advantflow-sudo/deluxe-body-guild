@@ -23,7 +23,7 @@ export function SuggestedMembers() {
     if (!user) return;
     (async () => {
       const { data: profiles } = await supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("id,display_name,avatar_url")
         .neq("id", user.id)
         .limit(12);

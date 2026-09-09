@@ -101,7 +101,7 @@ function CommunityTab() {
 
     const [profilesRes, sessionsRes, likesRes, myLikesRes, commentsRes] = await Promise.all([
       userIds.length
-        ? supabase.from("profiles").select("id,display_name,avatar_url").in("id", userIds)
+        ? supabase.from("public_profiles").select("id,display_name,avatar_url").in("id", userIds)
         : Promise.resolve({ data: [] as Profile[] }),
       sessionIds.length
         ? supabase.from("workout_sessions").select("id,workout_id,workouts(title)").in("id", sessionIds)
@@ -618,7 +618,7 @@ function Comments({
       .order("created_at", { ascending: true });
     const ids = Array.from(new Set((data ?? []).map((c) => c.user_id)));
     const { data: profs } = ids.length
-      ? await supabase.from("profiles").select("id,display_name").in("id", ids)
+      ? await supabase.from("public_profiles").select("id,display_name").in("id", ids)
       : { data: [] };
     const pm = new Map((profs ?? []).map((p: any) => [p.id, p.display_name]));
     setItems((data ?? []).map((c) => ({ ...c, name: pm.get(c.user_id) ?? "Member" })));

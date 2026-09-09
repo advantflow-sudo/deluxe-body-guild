@@ -434,7 +434,7 @@ export const matchBuddy = createServerFn({ method: "POST" })
       return { user_id: p.user_id, score, goal: p.fitness_goal, level: p.training_level };
     }).filter((m) => m.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
     const ids = scored.map((s) => s.user_id);
-    const { data: profs } = await supabase.from("profiles").select("id,display_name,avatar_url,bio").in("id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
+    const { data: profs } = await supabase.from("public_profiles").select("id,display_name,avatar_url").in("id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
     return {
       matches: scored.map((s) => ({
         ...s,
