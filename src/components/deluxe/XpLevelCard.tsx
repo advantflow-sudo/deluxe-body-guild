@@ -74,7 +74,7 @@ export function XpLevelCard() {
             <div className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               <Zap className="h-3 w-3 text-gold" /> Today
             </div>
-            <div className="font-display text-lg text-foreground">{summary?.today_xp ?? 0}<span className="text-xs text-muted-foreground">/100</span></div>
+            <div className="font-display text-lg text-foreground">{todayXp}<span className="text-xs text-muted-foreground">/100</span></div>
           </div>
         </div>
 
