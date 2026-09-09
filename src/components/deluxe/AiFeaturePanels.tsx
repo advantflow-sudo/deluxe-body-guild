@@ -245,9 +245,22 @@ function InjuryPanel() {
   }
   return (
     <div>
+      <div className="mb-3 border border-gold/30 bg-deluxe-forest/25 p-3">
+        <div className="text-[10px] uppercase tracking-[0.22em] text-gold">Important safety note</div>
+        <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+          This is general fitness guidance, not medical advice, diagnosis or treatment. It cannot examine you. If pain is
+          severe, worsening, or lasts more than a few days, see a doctor or physiotherapist.
+        </p>
+        <p className="mt-2 text-[11px] leading-relaxed text-foreground">
+          Seek urgent care now — call 999 (UK) or 112/911, or go to A&amp;E — if you have chest pain or tightness,
+          breathlessness, fainting, a head injury, sudden severe swelling or deformity, inability to bear weight or move
+          a joint, numbness, loss of bladder or bowel control, or heavy bleeding. Stop exercising immediately.
+        </p>
+      </div>
       <textarea value={c} onChange={(e) => setC(e.target.value)} rows={3} placeholder="e.g. left knee aches on lunges, started Monday…"
         className="w-full border border-gold/20 bg-deluxe-black/60 p-2 text-sm text-foreground" />
       <div className="mt-2"><Btn onClick={run} loading={loading}>Triage</Btn></div>
+
       {r && (
         <Card>
           <div className="font-display text-base text-gold">Severity: {r.severity}</div>

@@ -26,26 +26,28 @@ export function XpLevelCard() {
   const { user } = useAuth();
   const [summary, setSummary] = useState<Summary | null>(null);
   const [earned, setEarned] = useState<string[]>([]);
+  const [todayXp, setTodayXp] = useState(0);
   const [streak, setStreak] = useState({ current_streak: 0, longest_streak: 0 });
 
   useEffect(() => {
     if (!user) return;
     const load = async () => {
+      // Today's total comes from the same canonical source Home uses (the
+      // member's own timezone), so Stats and Home can never disagree.
       const [{ data: s }, { data: st }, { data: today }] = await Promise.all([
         supabase.rpc("get_xp_summary"),
         supabase.rpc("get_xp_streak"),
-        supabase
-          .from("xp_events")
-          .select("reason")
-          .eq("user_id", user.id)
-          .eq("event_date", new Date().toISOString().slice(0, 10)),
+        supabase.rpc("get_mission_xp_today"),
       ]);
-      if (today) setEarned(today.map((r) => r.reason));
+      const map = (today as Record<string, number> | null) ?? {};
+      setEarned(Object.keys(map));
+      setTodayXp(Object.values(map).reduce((a, b) => a + Number(b || 0), 0));
       if (s) setSummary(s as unknown as Summary);
       if (st) setStreak(st as unknown as typeof streak);
     };
     load();
   }, [user]);
+
 
   const pct = summary ? Math.min(100, Number(summary.progress_pct) || 0) : 0;
   const rankIndex = summary ? Math.max(0, RANKS.indexOf(summary.rank)) : 0;
@@ -72,7 +74,7 @@ export function XpLevelCard() {
             <div className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
               <Zap className="h-3 w-3 text-gold" /> Today
             </div>
-            <div className="font-display text-lg text-foreground">{summary?.today_xp ?? 0}<span className="text-xs text-muted-foreground">/100</span></div>
+            <div className="font-display text-lg text-foreground">{todayXp}<span className="text-xs text-muted-foreground">/100</span></div>
           </div>
         </div>
 

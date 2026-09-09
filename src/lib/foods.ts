@@ -36,7 +36,7 @@ export const FOODS: FoodEntry[] = [
   // Poultry / meat / fish (raw weights)
   { id: "chicken", keys: ["chicken breast", "chicken thigh", "chicken"], per100g: { kcal: 120, protein: 23, carbs: 0, fat: 2.6 } },
   { id: "turkey", keys: ["turkey mince", "turkey breast", "turkey"], per100g: { kcal: 110, protein: 24, carbs: 0, fat: 1.5 } },
-  { id: "beef-mince", keys: ["beef mince", "minced beef", "lean mince", "mince"], per100g: { kcal: 176, protein: 20, carbs: 0, fat: 10 } },
+  { id: "beef-mince", keys: ["5% fat ground beef", "lean ground beef", "ground beef", "beef mince", "minced beef", "lean mince", "mince"], per100g: { kcal: 176, protein: 20, carbs: 0, fat: 10 } },
   { id: "steak", keys: ["sirloin steak", "rump steak", "steak", "beef fillet"], per100g: { kcal: 190, protein: 22, carbs: 0, fat: 11 } },
   { id: "lamb", keys: ["lamb"], per100g: { kcal: 235, protein: 20, carbs: 0, fat: 17 } },
   { id: "pork", keys: ["pork loin", "pork"], per100g: { kcal: 165, protein: 22, carbs: 0, fat: 8 } },
@@ -95,6 +95,24 @@ export const FOODS: FoodEntry[] = [
   { id: "dark-chocolate", keys: ["dark chocolate", "cacao", "cocoa"], per100g: { kcal: 546, protein: 8, carbs: 46, fat: 31 } },
   { id: "hummus", keys: ["hummus"], per100g: { kcal: 166, protein: 8, carbs: 14, fat: 10 } },
   { id: "protein-bar", keys: ["protein bar"], per100g: { kcal: 350, protein: 32, carbs: 33, fat: 10 }, gramsPerUnit: 60 },
+
+  // Sauces, condiments & store-cupboard extras (so every listed ingredient is measurable)
+  { id: "teriyaki-sauce", keys: ["teriyaki sauce", "teriyaki"], per100g: { kcal: 89, protein: 5.9, carbs: 15.5, fat: 0 }, gramsPerTbsp: 18 },
+  { id: "bbq-sauce", keys: ["barbecue sauce", "bbq sauce"], per100g: { kcal: 172, protein: 0.8, carbs: 41, fat: 0.6 }, gramsPerTbsp: 17 },
+  { id: "sweet-chilli-sauce", keys: ["sweet chilli sauce", "sriracha", "chilli sauce", "hot sauce"], per100g: { kcal: 120, protein: 0.6, carbs: 29, fat: 0.2 }, gramsPerTbsp: 17 },
+  { id: "ketchup", keys: ["tomato ketchup", "ketchup", "tomato puree", "tomato paste"], per100g: { kcal: 102, protein: 1.3, carbs: 24, fat: 0.1 }, gramsPerTbsp: 17 },
+  { id: "pesto", keys: ["pesto"], per100g: { kcal: 430, protein: 5, carbs: 6, fat: 43 }, gramsPerTbsp: 16 },
+  { id: "mayonnaise", keys: ["light mayonnaise", "mayonnaise", "mayo"], per100g: { kcal: 300, protein: 1, carbs: 8, fat: 29 }, gramsPerTbsp: 14 },
+  { id: "sesame-oil", keys: ["sesame oil", "coconut oil"], per100g: { kcal: 884, protein: 0, carbs: 0, fat: 100 }, gramsPerTbsp: 14 },
+  { id: "cream-cheese", keys: ["light cream cheese", "cream cheese", "soft cheese"], per100g: { kcal: 180, protein: 7, carbs: 4, fat: 15 }, gramsPerTbsp: 15 },
+  { id: "granola", keys: ["granola", "muesli"], per100g: { kcal: 440, protein: 10, carbs: 65, fat: 14 } },
+  { id: "rice-cakes", keys: ["rice cake", "rice cakes"], per100g: { kcal: 387, protein: 8, carbs: 82, fat: 3 }, gramsPerUnit: 9 },
+  { id: "dried-fruit", keys: ["raisins", "sultanas", "dates", "dried apricots", "dried fruit"], per100g: { kcal: 299, protein: 3, carbs: 79, fat: 0.5 } },
+  { id: "mango", keys: ["mango", "pineapple", "melon", "grapes", "pear", "kiwi", "peach"], per100g: { kcal: 60, protein: 0.8, carbs: 15, fat: 0.2 }, gramsPerUnit: 120 },
+  { id: "sweetcorn", keys: ["sweetcorn", "edamame", "green peas", "butternut squash", "beetroot"], per100g: { kcal: 86, protein: 3.3, carbs: 19, fat: 1.2 } },
+  { id: "coconut-milk", keys: ["coconut milk", "almond milk", "oat milk", "soy milk"], per100g: { kcal: 40, protein: 1, carbs: 3, fat: 2.5 } },
+  { id: "flour", keys: ["oat flour", "plain flour", "flour", "cornflour", "baking powder"], per100g: { kcal: 364, protein: 10, carbs: 76, fat: 1 }, gramsPerTbsp: 8 },
+  { id: "jam", keys: ["jam", "marmalade", "agave"], per100g: { kcal: 250, protein: 0.4, carbs: 62, fat: 0 }, gramsPerTbsp: 20 },
 ];
 
 /** Zero-calorie seasonings that never need matching. */
