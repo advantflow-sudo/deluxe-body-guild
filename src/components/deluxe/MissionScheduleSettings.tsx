@@ -401,12 +401,12 @@ export function MissionScheduleSettings() {
                     Push
                   </span>
                 )}
-                {sched.mission_reminder_email && (
+                {sched.mission_reminder_email && emailReady === true && (
                   <span className="border border-gold/25 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.16em] text-gold">
                     Email
                   </span>
                 )}
-                {!sched.mission_reminder_push && !sched.mission_reminder_email && (
+                {!sched.mission_reminder_push && !(sched.mission_reminder_email && emailReady === true) && (
                   <span className="text-[9px] uppercase tracking-[0.16em] text-muted-foreground">In-app only</span>
                 )}
               </li>
