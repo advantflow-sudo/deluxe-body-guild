@@ -62,7 +62,15 @@ Status key: [x] done · [ ] open
 - [x] Unified targets no longer flash fallback values (water + nutrition rings wait for load)
 - [x] Public claims: no false free trial, wellbeing/wearable/roadmap claims match reality
 - [x] Rewards catalogue: only Signature membership months redeemable; unfulfillable rewards deactivated
-- [ ] Awaiting user: push notification enable on installed app, email sending domain, scanner photo upload test, Stripe live checkout run
+- [x] Push notification enable on installed app — user confirmed
+- [x] Scanner photo upload test — user confirmed
+- [x] Stripe live checkout run — user confirmed
+- [ ] Email sending domain DNS verification still pending per backend status (records may be propagating)
 
 ## Security hardening (this session)
 - [x] Members can no longer grant themselves paid membership: membership level and expiry are now system-only (verified by test); rewards and payments still work
+- [x] Fresh security scan shows zero open findings across agent, app_mcp, supabase, and supply-chain scanners
+
+## Domain & publishing status
+- [x] Project is published at https://deluxefitness.app
+- [x] Primary custom domains `deluxefitness.app` and `www.deluxefitness.app` are connected and active
