@@ -54,7 +54,9 @@ export function imagePromptFor(meal: RawMeal): string {
 /** Build the canonical record for a meal produced by the planner. */
 export function canonicalMeal(meal: RawMeal, photoOffset = 0): CanonicalMeal {
   const n = nutritionFromIngredients(meal.ingredients ?? []);
-  const derived = n.coverage >= MIN_COVERAGE && n.kcal > 0;
+  // Totals may only be presented as calculated when EVERY listed ingredient was
+  // measurable and counted. One unmeasured ingredient makes the total untrue.
+  const derived = n.unresolved.length === 0 && n.coverage >= MIN_COVERAGE && n.kcal > 0;
   return {
     ...meal,
     kcal: derived ? n.kcal : Math.round(Number(meal.kcal ?? 0)),
