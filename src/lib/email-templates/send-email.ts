@@ -90,3 +90,97 @@ export async function sendTemplateEmail(
 
   return { sent: true }
 }
+
+export type EmailDeliveryReason =
+  | 'not_configured'
+  | 'domain_not_verified'
+  | 'emails_disabled'
+  | 'rate_limited'
+  | 'recipient_suppressed'
+  | 'error'
+
+export type EmailDeliveryStatus =
+  | { ready: true; senderDomain: string; fromAddress: string }
+  | { ready: false; reason: EmailDeliveryReason; message: string; senderDomain: string; fromAddress: string }
+
+export const EMAIL_FROM_ADDRESS = `${SITE_NAME} <noreply@${FROM_DOMAIN}>`
+export const EMAIL_SENDER_DOMAIN = SENDER_DOMAIN
+
+export function emailDeliveryReason(error: unknown): EmailDeliveryReason {
+  if (error instanceof EmailAPIError) {
+    if (error.status === 429) return 'rate_limited'
+    const code = error.code
+    if (
+      code === 'domain_not_verified' ||
+      code === 'emails_disabled' ||
+      code === 'recipient_suppressed'
+    ) {
+      return code
+    }
+  }
+  return 'error'
+}
+
+const REASON_MESSAGES: Record<EmailDeliveryReason, string> = {
+  not_configured: 'Email delivery is not configured yet.',
+  domain_not_verified:
+    'The sending domain is still being verified, so emails cannot be delivered yet.',
+  emails_disabled: 'Email sending is currently switched off for this app.',
+  rate_limited: 'Too many emails were sent recently — try again shortly.',
+  recipient_suppressed: 'This address previously unsubscribed or bounced.',
+  error: 'Email delivery is unavailable right now.',
+}
+
+export function emailDeliveryMessage(reason: EmailDeliveryReason) {
+  return REASON_MESSAGES[reason]
+}
+
+/**
+ * Verifies the whole delivery path (API key, sender domain verification,
+ * emails-enabled state) without delivering anything: the send runs in test
+ * mode, so nothing reaches an inbox and no delivery event is written.
+ */
+export async function probeEmailDelivery(recipient: string): Promise<EmailDeliveryStatus> {
+  const apiKey = process.env['LOVABLE_API_KEY']
+  const base = { senderDomain: SENDER_DOMAIN, fromAddress: EMAIL_FROM_ADDRESS }
+  if (!apiKey) {
+    return {
+      ready: false,
+      reason: 'not_configured',
+      message: emailDeliveryMessage('not_configured'),
+      ...base,
+    }
+  }
+
+  try {
+    await sendLovableEmail(
+      {
+        to: recipient,
+        from: EMAIL_FROM_ADDRESS,
+        sender_domain: SENDER_DOMAIN,
+        subject: 'Delivery check',
+        html: '<p>Delivery check</p>',
+        text: 'Delivery check',
+        purpose: 'transactional',
+        label: 'delivery-probe',
+        test_mode: true,
+        idempotency_key: crypto.randomUUID(),
+      },
+      { apiKey, sendUrl: process.env['LOVABLE_SEND_URL'] }
+    )
+  } catch (error) {
+    const reason = emailDeliveryReason(error)
+    if (reason === 'recipient_suppressed') {
+      return {
+        ready: false,
+        reason,
+        message: emailDeliveryMessage(reason),
+        ...base,
+      }
+    }
+    console.error('[email] delivery probe failed', error)
+    return { ready: false, reason, message: emailDeliveryMessage(reason), ...base }
+  }
+
+  return { ready: true, ...base }
+}
