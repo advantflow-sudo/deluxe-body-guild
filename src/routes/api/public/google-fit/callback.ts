@@ -71,7 +71,7 @@ export const Route = createFileRoute("/api/public/google-fit/callback")({
 
         // 3. Persist on the user's connected_devices row
         const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
-        const { error: upsertError } = await admin
+        const { data: deviceRow, error: upsertError } = await admin
           .from("connected_devices")
           .upsert(
             {
@@ -79,17 +79,31 @@ export const Route = createFileRoute("/api/public/google-fit/callback")({
               provider: "google_fit",
               display_name: "Google Fit",
               status: "connected",
-              access_token: tokens.access_token,
-              refresh_token: tokens.refresh_token ?? null,
-              token_expires_at: expiresAt,
               scopes: tokens.scope.split(" "),
               last_synced_at: null,
             },
             { onConflict: "user_id,provider" },
-          );
+          )
+          .select("id")
+          .single();
 
-        if (upsertError) {
+        if (upsertError || !deviceRow) {
           console.error("[google-fit/callback] upsert failed", upsertError);
+          return back("error", "persist_failed");
+        }
+
+        const { error: tokenError } = await admin.from("device_oauth_tokens").upsert(
+          {
+            device_id: deviceRow.id,
+            user_id: stateRow.user_id,
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token ?? null,
+            token_expires_at: expiresAt,
+          },
+          { onConflict: "device_id" },
+        );
+        if (tokenError) {
+          console.error("[google-fit/callback] token persist failed", tokenError);
           return back("error", "persist_failed");
         }
 

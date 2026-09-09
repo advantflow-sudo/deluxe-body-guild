@@ -72,24 +72,31 @@ export const syncGoogleFit = createServerFn({ method: "POST" })
       return { ok: false, written: 0, reason: "Server missing Google credentials" };
     }
 
-    let accessToken = device.access_token!;
-    const expiresAt = device.token_expires_at ? new Date(device.token_expires_at) : null;
+    const { data: tok } = await tokenAdmin
+      .from("device_oauth_tokens")
+      .select("access_token, refresh_token, token_expires_at")
+      .eq("device_id", device.id)
+      .maybeSingle();
+    if (!tok) return { ok: false, written: 0, reason: "Google Fit not connected" };
+
+    let accessToken = tok.access_token!;
+    const expiresAt = tok.token_expires_at ? new Date(tok.token_expires_at) : null;
     const needsRefresh = !expiresAt || expiresAt.getTime() - Date.now() < 60_000;
 
-    if (needsRefresh && device.refresh_token) {
+    if (needsRefresh && tok.refresh_token) {
       const refreshed = await refreshAccessToken({
         clientId,
         clientSecret,
-        refreshToken: device.refresh_token,
+        refreshToken: tok.refresh_token,
       });
       accessToken = refreshed.access_token;
       await tokenAdmin
-        .from("connected_devices")
+        .from("device_oauth_tokens")
         .update({
           access_token: refreshed.access_token,
           token_expires_at: new Date(Date.now() + refreshed.expires_in * 1000).toISOString(),
         })
-        .eq("id", device.id);
+        .eq("device_id", device.id);
     }
 
 

@@ -340,47 +340,38 @@ export type Database = {
       }
       connected_devices: {
         Row: {
-          access_token: string | null
           created_at: string
           display_name: string | null
           external_user_id: string | null
           id: string
           last_synced_at: string | null
           provider: string
-          refresh_token: string | null
           scopes: string[] | null
           status: string
-          token_expires_at: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
-          access_token?: string | null
           created_at?: string
           display_name?: string | null
           external_user_id?: string | null
           id?: string
           last_synced_at?: string | null
           provider: string
-          refresh_token?: string | null
           scopes?: string[] | null
           status?: string
-          token_expires_at?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
-          access_token?: string | null
           created_at?: string
           display_name?: string | null
           external_user_id?: string | null
           id?: string
           last_synced_at?: string | null
           provider?: string
-          refresh_token?: string | null
           scopes?: string[] | null
           status?: string
-          token_expires_at?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -533,11 +524,42 @@ export type Database = {
             referencedRelation: "connected_devices"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      device_oauth_tokens: {
+        Row: {
+          access_token: string | null
+          created_at: string
+          device_id: string
+          refresh_token: string | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string
+          device_id: string
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string
+          device_id?: string
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "device_metrics_device_id_fkey"
+            foreignKeyName: "device_oauth_tokens_device_id_fkey"
             columns: ["device_id"]
-            isOneToOne: false
-            referencedRelation: "connected_devices_safe"
+            isOneToOne: true
+            referencedRelation: "connected_devices"
             referencedColumns: ["id"]
           },
         ]
@@ -2049,48 +2071,6 @@ export type Database = {
       }
     }
     Views: {
-      connected_devices_safe: {
-        Row: {
-          created_at: string | null
-          display_name: string | null
-          external_user_id: string | null
-          id: string | null
-          last_synced_at: string | null
-          provider: string | null
-          scopes: string[] | null
-          status: string | null
-          token_expires_at: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          display_name?: string | null
-          external_user_id?: string | null
-          id?: string | null
-          last_synced_at?: string | null
-          provider?: string | null
-          scopes?: string[] | null
-          status?: string | null
-          token_expires_at?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          display_name?: string | null
-          external_user_id?: string | null
-          id?: string | null
-          last_synced_at?: string | null
-          provider?: string | null
-          scopes?: string[] | null
-          status?: string | null
-          token_expires_at?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       leaderboard_weekly: {
         Row: {
           active_days: number | null

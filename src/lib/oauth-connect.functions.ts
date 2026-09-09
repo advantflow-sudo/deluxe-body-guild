@@ -72,22 +72,29 @@ export const syncOAuthProvider = createServerFn({ method: "POST" })
       return { ok: false, written: 0, reason: `${data.provider} not connected` };
     }
 
-    let accessToken = device.access_token!;
-    const expiresAt = device.token_expires_at ? new Date(device.token_expires_at) : null;
+    const { data: tok } = await tokenAdmin
+      .from("device_oauth_tokens")
+      .select("access_token, refresh_token, token_expires_at")
+      .eq("device_id", device.id)
+      .maybeSingle();
+    if (!tok) return { ok: false, written: 0, reason: `${data.provider} not connected` };
+
+    let accessToken = tok.access_token!;
+    const expiresAt = tok.token_expires_at ? new Date(tok.token_expires_at) : null;
     const needsRefresh = !expiresAt || expiresAt.getTime() - Date.now() < 60_000;
 
-    if (needsRefresh && device.refresh_token) {
+    if (needsRefresh && tok.refresh_token) {
       try {
-        const refreshed = await refreshToken(cfg, device.refresh_token);
+        const refreshed = await refreshToken(cfg, tok.refresh_token);
         accessToken = refreshed.access_token;
         await tokenAdmin
-          .from("connected_devices")
+          .from("device_oauth_tokens")
           .update({
             access_token: refreshed.access_token,
-            refresh_token: refreshed.refresh_token ?? device.refresh_token,
+            refresh_token: refreshed.refresh_token ?? tok.refresh_token,
             token_expires_at: new Date(Date.now() + refreshed.expires_in * 1000).toISOString(),
           })
-          .eq("id", device.id);
+          .eq("device_id", device.id);
       } catch (e) {
         return { ok: false, written: 0, reason: e instanceof Error ? e.message : "refresh_failed" };
       }
