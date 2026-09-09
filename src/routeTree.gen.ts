@@ -9,169 +9,80 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as ChallengesRouteImport } from './routes/challenges'
-import { Route as CoachRouteImport } from './routes/coach'
-import { Route as CompanyPolicyRouteImport } from './routes/company-policy'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as FitnessRouteImport } from './routes/fitness'
-import { Route as FounderRouteImport } from './routes/founder'
-import { Route as GalleryRouteImport } from './routes/gallery'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as RewardsBenefitsRouteImport } from './routes/rewards-benefits'
-import { Route as RoadmapRouteImport } from './routes/roadmap'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as TransformationsRouteImport } from './routes/transformations'
-import { Route as WellbeingRouteImport } from './routes/wellbeing'
 import { Route as WhatWeOfferRouteImport } from './routes/what-we-offer'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as WellbeingRouteImport } from './routes/wellbeing'
+import { Route as TransformationsRouteImport } from './routes/transformations'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RoadmapRouteImport } from './routes/roadmap'
+import { Route as RewardsBenefitsRouteImport } from './routes/rewards-benefits'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as FounderRouteImport } from './routes/founder'
+import { Route as FitnessRouteImport } from './routes/fitness'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CompanyPolicyRouteImport } from './routes/company-policy'
+import { Route as CoachRouteImport } from './routes/coach'
+import { Route as ChallengesRouteImport } from './routes/challenges'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
-import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
-import { Route as AuthenticatedAdminErrorsRouteImport } from './routes/_authenticated/admin.errors'
-import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin.webhooks'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
-import { Route as AuthenticatedAppBadgesRouteImport } from './routes/_authenticated/app/badges'
-import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticated/app/body'
-import { Route as AuthenticatedAppBodyTrendsRouteImport } from './routes/_authenticated/app/body-trends'
-import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authenticated/app/challenges'
-import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/app/coach'
-import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authenticated/app/community'
-import { Route as AuthenticatedAppGroceryRouteImport } from './routes/_authenticated/app/grocery'
-import { Route as AuthenticatedAppHabitsRouteImport } from './routes/_authenticated/app/habits'
-import { Route as AuthenticatedAppLeaderboardRouteImport } from './routes/_authenticated/app/leaderboard'
-import { Route as AuthenticatedAppNutritionRouteImport } from './routes/_authenticated/app/nutrition'
-import { Route as AuthenticatedAppPartnerRouteImport } from './routes/_authenticated/app/partner'
-import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authenticated/app/profile'
-import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/app/progress'
-import { Route as AuthenticatedAppRewardsRouteImport } from './routes/_authenticated/app/rewards'
-import { Route as AuthenticatedAppScanVerifyRouteImport } from './routes/_authenticated/app/scan-verify'
-import { Route as AuthenticatedAppWorkoutsRouteImport } from './routes/_authenticated/app/workouts'
 import { Route as ApiPublicMarketingChatRouteImport } from './routes/api/public/marketing-chat'
+import { Route as AuthenticatedAppWorkoutsRouteImport } from './routes/_authenticated/app/workouts'
+import { Route as AuthenticatedAppScanVerifyRouteImport } from './routes/_authenticated/app/scan-verify'
+import { Route as AuthenticatedAppRewardsRouteImport } from './routes/_authenticated/app/rewards'
+import { Route as AuthenticatedAppProgressRouteImport } from './routes/_authenticated/app/progress'
+import { Route as AuthenticatedAppProfileRouteImport } from './routes/_authenticated/app/profile'
+import { Route as AuthenticatedAppPartnerRouteImport } from './routes/_authenticated/app/partner'
+import { Route as AuthenticatedAppNutritionRouteImport } from './routes/_authenticated/app/nutrition'
+import { Route as AuthenticatedAppLeaderboardRouteImport } from './routes/_authenticated/app/leaderboard'
+import { Route as AuthenticatedAppHabitsRouteImport } from './routes/_authenticated/app/habits'
+import { Route as AuthenticatedAppGroceryRouteImport } from './routes/_authenticated/app/grocery'
+import { Route as AuthenticatedAppCommunityRouteImport } from './routes/_authenticated/app/community'
+import { Route as AuthenticatedAppCoachRouteImport } from './routes/_authenticated/app/coach'
+import { Route as AuthenticatedAppChallengesRouteImport } from './routes/_authenticated/app/challenges'
+import { Route as AuthenticatedAppBodyTrendsRouteImport } from './routes/_authenticated/app/body-trends'
+import { Route as AuthenticatedAppBodyRouteImport } from './routes/_authenticated/app/body'
+import { Route as AuthenticatedAppBadgesRouteImport } from './routes/_authenticated/app/badges'
+import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin.webhooks'
+import { Route as AuthenticatedAdminErrorsRouteImport } from './routes/_authenticated/admin.errors'
+import { Route as AuthenticatedAdminDomainHealthRouteImport } from './routes/_authenticated/admin.domain-health'
+import { Route as AuthenticatedAcceptInviteCodeRouteImport } from './routes/_authenticated/accept-invite.$code'
 import { Route as AuthenticatedAppAiIndexRouteImport } from './routes/_authenticated/app/ai.index'
-import { Route as AuthenticatedAppAiFeatureRouteImport } from './routes/_authenticated/app/ai.$feature'
-import { Route as AuthenticatedAppUUserIdRouteImport } from './routes/_authenticated/app/u.$userId'
-import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
-import { Route as ApiPublicHooksAutoMatchPartnersRouteImport } from './routes/api/public/hooks/auto-match-partners'
-import { Route as ApiPublicHooksDailyMissionsGenerateRouteImport } from './routes/api/public/hooks/daily-missions-generate'
-import { Route as ApiPublicHooksMissionReminderRouteImport } from './routes/api/public/hooks/mission-reminder'
-import { Route as ApiPublicHooksScoreRecomputeRouteImport } from './routes/api/public/hooks/score-recompute'
-import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
-import { Route as ApiPublicHooksStreakAtRiskAlertRouteImport } from './routes/api/public/hooks/streak-at-risk-alert'
-import { Route as ApiPublicHooksStripeWebhookTestRouteImport } from './routes/api/public/hooks/stripe-webhook-test'
-import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
-import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
-import { Route as ApiPublicHooksWeeklyChallengeRolloverRouteImport } from './routes/api/public/hooks/weekly-challenge-rollover'
-import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
-import { Route as ApiPublicMonitoringReportRouteImport } from './routes/api/public/monitoring/report'
-import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
-import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/public/webhooks/stripe-health'
-import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
-import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as ApiPublicWebhooksStripeHealthRouteImport } from './routes/api/public/webhooks/stripe-health'
+import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
+import { Route as ApiPublicMonitoringReportRouteImport } from './routes/api/public/monitoring/report'
+import { Route as ApiPublicHooksWeeklyRecapRouteImport } from './routes/api/public/hooks/weekly-recap'
+import { Route as ApiPublicHooksWeeklyChallengeRolloverRouteImport } from './routes/api/public/hooks/weekly-challenge-rollover'
+import { Route as ApiPublicHooksSyncOauthDevicesRouteImport } from './routes/api/public/hooks/sync-oauth-devices'
+import { Route as ApiPublicHooksSyncGoogleFitRouteImport } from './routes/api/public/hooks/sync-google-fit'
+import { Route as ApiPublicHooksStripeWebhookTestRouteImport } from './routes/api/public/hooks/stripe-webhook-test'
+import { Route as ApiPublicHooksStreakAtRiskAlertRouteImport } from './routes/api/public/hooks/streak-at-risk-alert'
+import { Route as ApiPublicHooksSendRemindersRouteImport } from './routes/api/public/hooks/send-reminders'
+import { Route as ApiPublicHooksScoreRecomputeRouteImport } from './routes/api/public/hooks/score-recompute'
+import { Route as ApiPublicHooksMissionReminderRouteImport } from './routes/api/public/hooks/mission-reminder'
+import { Route as ApiPublicHooksDailyMissionsGenerateRouteImport } from './routes/api/public/hooks/daily-missions-generate'
+import { Route as ApiPublicHooksAutoMatchPartnersRouteImport } from './routes/api/public/hooks/auto-match-partners'
+import { Route as ApiPublicGoogleFitCallbackRouteImport } from './routes/api/public/google-fit/callback'
+import { Route as AuthenticatedAppUUserIdRouteImport } from './routes/_authenticated/app/u.$userId'
+import { Route as AuthenticatedAppAiFeatureRouteImport } from './routes/_authenticated/app/ai.$feature'
 import { Route as ApiPublicOauthProviderCallbackRouteImport } from './routes/api/public/oauth/$provider.callback'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChallengesRoute = ChallengesRouteImport.update({
-  id: '/challenges',
-  path: '/challenges',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CoachRoute = CoachRouteImport.update({
-  id: '/coach',
-  path: '/coach',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CompanyPolicyRoute = CompanyPolicyRouteImport.update({
-  id: '/company-policy',
-  path: '/company-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FitnessRoute = FitnessRouteImport.update({
-  id: '/fitness',
-  path: '/fitness',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FounderRoute = FounderRouteImport.update({
-  id: '/founder',
-  path: '/founder',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GalleryRoute = GalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RewardsBenefitsRoute = RewardsBenefitsRouteImport.update({
-  id: '/rewards-benefits',
-  path: '/rewards-benefits',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RoadmapRoute = RoadmapRouteImport.update({
-  id: '/roadmap',
-  path: '/roadmap',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TransformationsRoute = TransformationsRouteImport.update({
-  id: '/transformations',
-  path: '/transformations',
+const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
+  id: '/what-we-offer',
+  path: '/what-we-offer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WellbeingRoute = WellbeingRouteImport.update({
@@ -179,19 +90,108 @@ const WellbeingRoute = WellbeingRouteImport.update({
   path: '/wellbeing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WhatWeOfferRoute = WhatWeOfferRouteImport.update({
-  id: '/what-we-offer',
-  path: '/what-we-offer',
+const TransformationsRoute = TransformationsRouteImport.update({
+  id: '/transformations',
+  path: '/transformations',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRoute,
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
-  id: '/app',
-  path: '/app',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoadmapRoute = RoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RewardsBenefitsRoute = RewardsBenefitsRouteImport.update({
+  id: '/rewards-benefits',
+  path: '/rewards-benefits',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FounderRoute = FounderRouteImport.update({
+  id: '/founder',
+  path: '/founder',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FitnessRoute = FitnessRouteImport.update({
+  id: '/fitness',
+  path: '/fitness',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompanyPolicyRoute = CompanyPolicyRouteImport.update({
+  id: '/company-policy',
+  path: '/company-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoachRoute = CoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChallengesRoute = ChallengesRouteImport.update({
+  id: '/challenges',
+  path: '/challenges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -199,108 +199,41 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
+const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAcceptInviteCodeRoute =
-  AuthenticatedAcceptInviteCodeRouteImport.update({
-    id: '/accept-invite/$code',
-    path: '/accept-invite/$code',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedAdminDomainHealthRoute =
-  AuthenticatedAdminDomainHealthRouteImport.update({
-    id: '/domain-health',
-    path: '/domain-health',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminErrorsRoute =
-  AuthenticatedAdminErrorsRouteImport.update({
-    id: '/errors',
-    path: '/errors',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminWebhooksRoute =
-  AuthenticatedAdminWebhooksRouteImport.update({
-    id: '/webhooks',
-    path: '/webhooks',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
-const AuthenticatedAppBadgesRoute = AuthenticatedAppBadgesRouteImport.update({
-  id: '/badges',
-  path: '/badges',
-  getParentRoute: () => AuthenticatedAppRoute,
+const ApiPublicMarketingChatRoute = ApiPublicMarketingChatRouteImport.update({
+  id: '/api/public/marketing-chat',
+  path: '/api/public/marketing-chat',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAppBodyRoute = AuthenticatedAppBodyRouteImport.update({
-  id: '/body',
-  path: '/body',
-  getParentRoute: () => AuthenticatedAppRoute,
-} as any)
-const AuthenticatedAppBodyTrendsRoute =
-  AuthenticatedAppBodyTrendsRouteImport.update({
-    id: '/body-trends',
-    path: '/body-trends',
+const AuthenticatedAppWorkoutsRoute =
+  AuthenticatedAppWorkoutsRouteImport.update({
+    id: '/workouts',
+    path: '/workouts',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
-const AuthenticatedAppChallengesRoute =
-  AuthenticatedAppChallengesRouteImport.update({
-    id: '/challenges',
-    path: '/challenges',
+const AuthenticatedAppScanVerifyRoute =
+  AuthenticatedAppScanVerifyRouteImport.update({
+    id: '/scan-verify',
+    path: '/scan-verify',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
-const AuthenticatedAppCoachRoute = AuthenticatedAppCoachRouteImport.update({
-  id: '/coach',
-  path: '/coach',
-  getParentRoute: () => AuthenticatedAppRoute,
-} as any)
-const AuthenticatedAppCommunityRoute =
-  AuthenticatedAppCommunityRouteImport.update({
-    id: '/community',
-    path: '/community',
-    getParentRoute: () => AuthenticatedAppRoute,
-  } as any)
-const AuthenticatedAppGroceryRoute = AuthenticatedAppGroceryRouteImport.update({
-  id: '/grocery',
-  path: '/grocery',
-  getParentRoute: () => AuthenticatedAppRoute,
-} as any)
-const AuthenticatedAppHabitsRoute = AuthenticatedAppHabitsRouteImport.update({
-  id: '/habits',
-  path: '/habits',
-  getParentRoute: () => AuthenticatedAppRoute,
-} as any)
-const AuthenticatedAppLeaderboardRoute =
-  AuthenticatedAppLeaderboardRouteImport.update({
-    id: '/leaderboard',
-    path: '/leaderboard',
-    getParentRoute: () => AuthenticatedAppRoute,
-  } as any)
-const AuthenticatedAppNutritionRoute =
-  AuthenticatedAppNutritionRouteImport.update({
-    id: '/nutrition',
-    path: '/nutrition',
-    getParentRoute: () => AuthenticatedAppRoute,
-  } as any)
-const AuthenticatedAppPartnerRoute = AuthenticatedAppPartnerRouteImport.update({
-  id: '/partner',
-  path: '/partner',
-  getParentRoute: () => AuthenticatedAppRoute,
-} as any)
-const AuthenticatedAppProfileRoute = AuthenticatedAppProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+const AuthenticatedAppRewardsRoute = AuthenticatedAppRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
 const AuthenticatedAppProgressRoute =
@@ -309,125 +242,114 @@ const AuthenticatedAppProgressRoute =
     path: '/progress',
     getParentRoute: () => AuthenticatedAppRoute,
   } as any)
-const AuthenticatedAppRewardsRoute = AuthenticatedAppRewardsRouteImport.update({
-  id: '/rewards',
-  path: '/rewards',
+const AuthenticatedAppProfileRoute = AuthenticatedAppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
-const AuthenticatedAppScanVerifyRoute =
-  AuthenticatedAppScanVerifyRouteImport.update({
-    id: '/scan-verify',
-    path: '/scan-verify',
-    getParentRoute: () => AuthenticatedAppRoute,
-  } as any)
-const AuthenticatedAppWorkoutsRoute =
-  AuthenticatedAppWorkoutsRouteImport.update({
-    id: '/workouts',
-    path: '/workouts',
-    getParentRoute: () => AuthenticatedAppRoute,
-  } as any)
-const ApiPublicMarketingChatRoute = ApiPublicMarketingChatRouteImport.update({
-  id: '/api/public/marketing-chat',
-  path: '/api/public/marketing-chat',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedAppPartnerRoute = AuthenticatedAppPartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
+  getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppNutritionRoute =
+  AuthenticatedAppNutritionRouteImport.update({
+    id: '/nutrition',
+    path: '/nutrition',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppLeaderboardRoute =
+  AuthenticatedAppLeaderboardRouteImport.update({
+    id: '/leaderboard',
+    path: '/leaderboard',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppHabitsRoute = AuthenticatedAppHabitsRouteImport.update({
+  id: '/habits',
+  path: '/habits',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppGroceryRoute = AuthenticatedAppGroceryRouteImport.update({
+  id: '/grocery',
+  path: '/grocery',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppCommunityRoute =
+  AuthenticatedAppCommunityRouteImport.update({
+    id: '/community',
+    path: '/community',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppCoachRoute = AuthenticatedAppCoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppChallengesRoute =
+  AuthenticatedAppChallengesRouteImport.update({
+    id: '/challenges',
+    path: '/challenges',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppBodyTrendsRoute =
+  AuthenticatedAppBodyTrendsRouteImport.update({
+    id: '/body-trends',
+    path: '/body-trends',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppBodyRoute = AuthenticatedAppBodyRouteImport.update({
+  id: '/body',
+  path: '/body',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppBadgesRoute = AuthenticatedAppBadgesRouteImport.update({
+  id: '/badges',
+  path: '/badges',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAdminWebhooksRoute =
+  AuthenticatedAdminWebhooksRouteImport.update({
+    id: '/webhooks',
+    path: '/webhooks',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminErrorsRoute =
+  AuthenticatedAdminErrorsRouteImport.update({
+    id: '/errors',
+    path: '/errors',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDomainHealthRoute =
+  AuthenticatedAdminDomainHealthRouteImport.update({
+    id: '/domain-health',
+    path: '/domain-health',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAcceptInviteCodeRoute =
+  AuthenticatedAcceptInviteCodeRouteImport.update({
+    id: '/accept-invite/$code',
+    path: '/accept-invite/$code',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAppAiIndexRoute = AuthenticatedAppAiIndexRouteImport.update({
   id: '/ai/',
   path: '/ai/',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
-const AuthenticatedAppAiFeatureRoute =
-  AuthenticatedAppAiFeatureRouteImport.update({
-    id: '/ai/$feature',
-    path: '/ai/$feature',
-    getParentRoute: () => AuthenticatedAppRoute,
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
   } as any)
-const AuthenticatedAppUUserIdRoute = AuthenticatedAppUUserIdRouteImport.update({
-  id: '/u/$userId',
-  path: '/u/$userId',
-  getParentRoute: () => AuthenticatedAppRoute,
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicGoogleFitCallbackRoute =
-  ApiPublicGoogleFitCallbackRouteImport.update({
-    id: '/api/public/google-fit/callback',
-    path: '/api/public/google-fit/callback',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksAutoMatchPartnersRoute =
-  ApiPublicHooksAutoMatchPartnersRouteImport.update({
-    id: '/api/public/hooks/auto-match-partners',
-    path: '/api/public/hooks/auto-match-partners',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksDailyMissionsGenerateRoute =
-  ApiPublicHooksDailyMissionsGenerateRouteImport.update({
-    id: '/api/public/hooks/daily-missions-generate',
-    path: '/api/public/hooks/daily-missions-generate',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMissionReminderRoute =
-  ApiPublicHooksMissionReminderRouteImport.update({
-    id: '/api/public/hooks/mission-reminder',
-    path: '/api/public/hooks/mission-reminder',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksScoreRecomputeRoute =
-  ApiPublicHooksScoreRecomputeRouteImport.update({
-    id: '/api/public/hooks/score-recompute',
-    path: '/api/public/hooks/score-recompute',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSendRemindersRoute =
-  ApiPublicHooksSendRemindersRouteImport.update({
-    id: '/api/public/hooks/send-reminders',
-    path: '/api/public/hooks/send-reminders',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksStreakAtRiskAlertRoute =
-  ApiPublicHooksStreakAtRiskAlertRouteImport.update({
-    id: '/api/public/hooks/streak-at-risk-alert',
-    path: '/api/public/hooks/streak-at-risk-alert',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksStripeWebhookTestRoute =
-  ApiPublicHooksStripeWebhookTestRouteImport.update({
-    id: '/api/public/hooks/stripe-webhook-test',
-    path: '/api/public/hooks/stripe-webhook-test',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSyncGoogleFitRoute =
-  ApiPublicHooksSyncGoogleFitRouteImport.update({
-    id: '/api/public/hooks/sync-google-fit',
-    path: '/api/public/hooks/sync-google-fit',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSyncOauthDevicesRoute =
-  ApiPublicHooksSyncOauthDevicesRouteImport.update({
-    id: '/api/public/hooks/sync-oauth-devices',
-    path: '/api/public/hooks/sync-oauth-devices',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksWeeklyChallengeRolloverRoute =
-  ApiPublicHooksWeeklyChallengeRolloverRouteImport.update({
-    id: '/api/public/hooks/weekly-challenge-rollover',
-    path: '/api/public/hooks/weekly-challenge-rollover',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksWeeklyRecapRoute =
-  ApiPublicHooksWeeklyRecapRouteImport.update({
-    id: '/api/public/hooks/weekly-recap',
-    path: '/api/public/hooks/weekly-recap',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicMonitoringReportRoute =
-  ApiPublicMonitoringReportRouteImport.update({
-    id: '/api/public/monitoring/report',
-    path: '/api/public/monitoring/report',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
-  id: '/api/public/webhooks/stripe',
-  path: '/api/public/webhooks/stripe',
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicWebhooksStripeHealthRoute =
@@ -436,21 +358,99 @@ const ApiPublicWebhooksStripeHealthRoute =
     path: '/api/public/webhooks/stripe-health',
     getParentRoute: () => rootRouteImport,
   } as any)
-const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
-  id: '/lovable/email/auth/preview',
-  path: '/lovable/email/auth/preview',
+const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
+  id: '/api/public/webhooks/stripe',
+  path: '/api/public/webhooks/stripe',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LovableEmailTransactionalPreviewRoute =
-  LovableEmailTransactionalPreviewRouteImport.update({
-    id: '/lovable/email/transactional/preview',
-    path: '/lovable/email/transactional/preview',
+const ApiPublicMonitoringReportRoute =
+  ApiPublicMonitoringReportRouteImport.update({
+    id: '/api/public/monitoring/report',
+    path: '/api/public/monitoring/report',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksWeeklyRecapRoute =
+  ApiPublicHooksWeeklyRecapRouteImport.update({
+    id: '/api/public/hooks/weekly-recap',
+    path: '/api/public/hooks/weekly-recap',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksWeeklyChallengeRolloverRoute =
+  ApiPublicHooksWeeklyChallengeRolloverRouteImport.update({
+    id: '/api/public/hooks/weekly-challenge-rollover',
+    path: '/api/public/hooks/weekly-challenge-rollover',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSyncOauthDevicesRoute =
+  ApiPublicHooksSyncOauthDevicesRouteImport.update({
+    id: '/api/public/hooks/sync-oauth-devices',
+    path: '/api/public/hooks/sync-oauth-devices',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSyncGoogleFitRoute =
+  ApiPublicHooksSyncGoogleFitRouteImport.update({
+    id: '/api/public/hooks/sync-google-fit',
+    path: '/api/public/hooks/sync-google-fit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksStripeWebhookTestRoute =
+  ApiPublicHooksStripeWebhookTestRouteImport.update({
+    id: '/api/public/hooks/stripe-webhook-test',
+    path: '/api/public/hooks/stripe-webhook-test',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksStreakAtRiskAlertRoute =
+  ApiPublicHooksStreakAtRiskAlertRouteImport.update({
+    id: '/api/public/hooks/streak-at-risk-alert',
+    path: '/api/public/hooks/streak-at-risk-alert',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSendRemindersRoute =
+  ApiPublicHooksSendRemindersRouteImport.update({
+    id: '/api/public/hooks/send-reminders',
+    path: '/api/public/hooks/send-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksScoreRecomputeRoute =
+  ApiPublicHooksScoreRecomputeRouteImport.update({
+    id: '/api/public/hooks/score-recompute',
+    path: '/api/public/hooks/score-recompute',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksMissionReminderRoute =
+  ApiPublicHooksMissionReminderRouteImport.update({
+    id: '/api/public/hooks/mission-reminder',
+    path: '/api/public/hooks/mission-reminder',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksDailyMissionsGenerateRoute =
+  ApiPublicHooksDailyMissionsGenerateRouteImport.update({
+    id: '/api/public/hooks/daily-missions-generate',
+    path: '/api/public/hooks/daily-missions-generate',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksAutoMatchPartnersRoute =
+  ApiPublicHooksAutoMatchPartnersRouteImport.update({
+    id: '/api/public/hooks/auto-match-partners',
+    path: '/api/public/hooks/auto-match-partners',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicGoogleFitCallbackRoute =
+  ApiPublicGoogleFitCallbackRouteImport.update({
+    id: '/api/public/google-fit/callback',
+    path: '/api/public/google-fit/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedAppUUserIdRoute = AuthenticatedAppUUserIdRouteImport.update({
+  id: '/u/$userId',
+  path: '/u/$userId',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppAiFeatureRoute =
+  AuthenticatedAppAiFeatureRouteImport.update({
+    id: '/ai/$feature',
+    path: '/ai/$feature',
+    getParentRoute: () => AuthenticatedAppRoute,
   } as any)
 const ApiPublicOauthProviderCallbackRoute =
   ApiPublicOauthProviderCallbackRouteImport.update({
@@ -936,137 +936,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/challenges': {
-      id: '/challenges'
-      path: '/challenges'
-      fullPath: '/challenges'
-      preLoaderRoute: typeof ChallengesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/coach': {
-      id: '/coach'
-      path: '/coach'
-      fullPath: '/coach'
-      preLoaderRoute: typeof CoachRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/company-policy': {
-      id: '/company-policy'
-      path: '/company-policy'
-      fullPath: '/company-policy'
-      preLoaderRoute: typeof CompanyPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/fitness': {
-      id: '/fitness'
-      path: '/fitness'
-      fullPath: '/fitness'
-      preLoaderRoute: typeof FitnessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/founder': {
-      id: '/founder'
-      path: '/founder'
-      fullPath: '/founder'
-      preLoaderRoute: typeof FounderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gallery': {
-      id: '/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof GalleryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rewards-benefits': {
-      id: '/rewards-benefits'
-      path: '/rewards-benefits'
-      fullPath: '/rewards-benefits'
-      preLoaderRoute: typeof RewardsBenefitsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/roadmap': {
-      id: '/roadmap'
-      path: '/roadmap'
-      fullPath: '/roadmap'
-      preLoaderRoute: typeof RoadmapRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/transformations': {
-      id: '/transformations'
-      path: '/transformations'
-      fullPath: '/transformations'
-      preLoaderRoute: typeof TransformationsRouteImport
+    '/what-we-offer': {
+      id: '/what-we-offer'
+      path: '/what-we-offer'
+      fullPath: '/what-we-offer'
+      preLoaderRoute: typeof WhatWeOfferRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/wellbeing': {
@@ -1076,25 +950,151 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WellbeingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/what-we-offer': {
-      id: '/what-we-offer'
-      path: '/what-we-offer'
-      fullPath: '/what-we-offer'
-      preLoaderRoute: typeof WhatWeOfferRouteImport
+    '/transformations': {
+      id: '/transformations'
+      path: '/transformations'
+      fullPath: '/transformations'
+      preLoaderRoute: typeof TransformationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRoute
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/app': {
-      id: '/_authenticated/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AuthenticatedAppRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roadmap': {
+      id: '/roadmap'
+      path: '/roadmap'
+      fullPath: '/roadmap'
+      preLoaderRoute: typeof RoadmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rewards-benefits': {
+      id: '/rewards-benefits'
+      path: '/rewards-benefits'
+      fullPath: '/rewards-benefits'
+      preLoaderRoute: typeof RewardsBenefitsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/founder': {
+      id: '/founder'
+      path: '/founder'
+      fullPath: '/founder'
+      preLoaderRoute: typeof FounderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fitness': {
+      id: '/fitness'
+      path: '/fitness'
+      fullPath: '/fitness'
+      preLoaderRoute: typeof FitnessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/company-policy': {
+      id: '/company-policy'
+      path: '/company-policy'
+      fullPath: '/company-policy'
+      preLoaderRoute: typeof CompanyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coach': {
+      id: '/coach'
+      path: '/coach'
+      fullPath: '/coach'
+      preLoaderRoute: typeof CoachRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/challenges': {
+      id: '/challenges'
+      path: '/challenges'
+      fullPath: '/challenges'
+      preLoaderRoute: typeof ChallengesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -1104,165 +1104,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/onboarding': {
-      id: '/_authenticated/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+    '/_authenticated/app': {
+      id: '/_authenticated/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/accept-invite/$code': {
-      id: '/_authenticated/accept-invite/$code'
-      path: '/accept-invite/$code'
-      fullPath: '/accept-invite/$code'
-      preLoaderRoute: typeof AuthenticatedAcceptInviteCodeRouteImport
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/admin/domain-health': {
-      id: '/_authenticated/admin/domain-health'
-      path: '/domain-health'
-      fullPath: '/admin/domain-health'
-      preLoaderRoute: typeof AuthenticatedAdminDomainHealthRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/errors': {
-      id: '/_authenticated/admin/errors'
-      path: '/errors'
-      fullPath: '/admin/errors'
-      preLoaderRoute: typeof AuthenticatedAdminErrorsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/webhooks': {
-      id: '/_authenticated/admin/webhooks'
-      path: '/webhooks'
-      fullPath: '/admin/webhooks'
-      preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/app/': {
       id: '/_authenticated/app/'
       path: '/'
       fullPath: '/app/'
       preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/badges': {
-      id: '/_authenticated/app/badges'
-      path: '/badges'
-      fullPath: '/app/badges'
-      preLoaderRoute: typeof AuthenticatedAppBadgesRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/body': {
-      id: '/_authenticated/app/body'
-      path: '/body'
-      fullPath: '/app/body'
-      preLoaderRoute: typeof AuthenticatedAppBodyRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/body-trends': {
-      id: '/_authenticated/app/body-trends'
-      path: '/body-trends'
-      fullPath: '/app/body-trends'
-      preLoaderRoute: typeof AuthenticatedAppBodyTrendsRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/challenges': {
-      id: '/_authenticated/app/challenges'
-      path: '/challenges'
-      fullPath: '/app/challenges'
-      preLoaderRoute: typeof AuthenticatedAppChallengesRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/coach': {
-      id: '/_authenticated/app/coach'
-      path: '/coach'
-      fullPath: '/app/coach'
-      preLoaderRoute: typeof AuthenticatedAppCoachRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/community': {
-      id: '/_authenticated/app/community'
-      path: '/community'
-      fullPath: '/app/community'
-      preLoaderRoute: typeof AuthenticatedAppCommunityRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/grocery': {
-      id: '/_authenticated/app/grocery'
-      path: '/grocery'
-      fullPath: '/app/grocery'
-      preLoaderRoute: typeof AuthenticatedAppGroceryRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/habits': {
-      id: '/_authenticated/app/habits'
-      path: '/habits'
-      fullPath: '/app/habits'
-      preLoaderRoute: typeof AuthenticatedAppHabitsRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/leaderboard': {
-      id: '/_authenticated/app/leaderboard'
-      path: '/leaderboard'
-      fullPath: '/app/leaderboard'
-      preLoaderRoute: typeof AuthenticatedAppLeaderboardRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/nutrition': {
-      id: '/_authenticated/app/nutrition'
-      path: '/nutrition'
-      fullPath: '/app/nutrition'
-      preLoaderRoute: typeof AuthenticatedAppNutritionRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/partner': {
-      id: '/_authenticated/app/partner'
-      path: '/partner'
-      fullPath: '/app/partner'
-      preLoaderRoute: typeof AuthenticatedAppPartnerRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/profile': {
-      id: '/_authenticated/app/profile'
-      path: '/profile'
-      fullPath: '/app/profile'
-      preLoaderRoute: typeof AuthenticatedAppProfileRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/progress': {
-      id: '/_authenticated/app/progress'
-      path: '/progress'
-      fullPath: '/app/progress'
-      preLoaderRoute: typeof AuthenticatedAppProgressRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/rewards': {
-      id: '/_authenticated/app/rewards'
-      path: '/rewards'
-      fullPath: '/app/rewards'
-      preLoaderRoute: typeof AuthenticatedAppRewardsRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/scan-verify': {
-      id: '/_authenticated/app/scan-verify'
-      path: '/scan-verify'
-      fullPath: '/app/scan-verify'
-      preLoaderRoute: typeof AuthenticatedAppScanVerifyRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/workouts': {
-      id: '/_authenticated/app/workouts'
-      path: '/workouts'
-      fullPath: '/app/workouts'
-      preLoaderRoute: typeof AuthenticatedAppWorkoutsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/api/public/marketing-chat': {
@@ -1272,6 +1132,146 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMarketingChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/app/workouts': {
+      id: '/_authenticated/app/workouts'
+      path: '/workouts'
+      fullPath: '/app/workouts'
+      preLoaderRoute: typeof AuthenticatedAppWorkoutsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/scan-verify': {
+      id: '/_authenticated/app/scan-verify'
+      path: '/scan-verify'
+      fullPath: '/app/scan-verify'
+      preLoaderRoute: typeof AuthenticatedAppScanVerifyRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/rewards': {
+      id: '/_authenticated/app/rewards'
+      path: '/rewards'
+      fullPath: '/app/rewards'
+      preLoaderRoute: typeof AuthenticatedAppRewardsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/progress': {
+      id: '/_authenticated/app/progress'
+      path: '/progress'
+      fullPath: '/app/progress'
+      preLoaderRoute: typeof AuthenticatedAppProgressRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/profile': {
+      id: '/_authenticated/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AuthenticatedAppProfileRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/partner': {
+      id: '/_authenticated/app/partner'
+      path: '/partner'
+      fullPath: '/app/partner'
+      preLoaderRoute: typeof AuthenticatedAppPartnerRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/nutrition': {
+      id: '/_authenticated/app/nutrition'
+      path: '/nutrition'
+      fullPath: '/app/nutrition'
+      preLoaderRoute: typeof AuthenticatedAppNutritionRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/leaderboard': {
+      id: '/_authenticated/app/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/app/leaderboard'
+      preLoaderRoute: typeof AuthenticatedAppLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/habits': {
+      id: '/_authenticated/app/habits'
+      path: '/habits'
+      fullPath: '/app/habits'
+      preLoaderRoute: typeof AuthenticatedAppHabitsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/grocery': {
+      id: '/_authenticated/app/grocery'
+      path: '/grocery'
+      fullPath: '/app/grocery'
+      preLoaderRoute: typeof AuthenticatedAppGroceryRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/community': {
+      id: '/_authenticated/app/community'
+      path: '/community'
+      fullPath: '/app/community'
+      preLoaderRoute: typeof AuthenticatedAppCommunityRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/coach': {
+      id: '/_authenticated/app/coach'
+      path: '/coach'
+      fullPath: '/app/coach'
+      preLoaderRoute: typeof AuthenticatedAppCoachRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/challenges': {
+      id: '/_authenticated/app/challenges'
+      path: '/challenges'
+      fullPath: '/app/challenges'
+      preLoaderRoute: typeof AuthenticatedAppChallengesRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/body-trends': {
+      id: '/_authenticated/app/body-trends'
+      path: '/body-trends'
+      fullPath: '/app/body-trends'
+      preLoaderRoute: typeof AuthenticatedAppBodyTrendsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/body': {
+      id: '/_authenticated/app/body'
+      path: '/body'
+      fullPath: '/app/body'
+      preLoaderRoute: typeof AuthenticatedAppBodyRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/badges': {
+      id: '/_authenticated/app/badges'
+      path: '/badges'
+      fullPath: '/app/badges'
+      preLoaderRoute: typeof AuthenticatedAppBadgesRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/admin/webhooks': {
+      id: '/_authenticated/admin/webhooks'
+      path: '/webhooks'
+      fullPath: '/admin/webhooks'
+      preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/errors': {
+      id: '/_authenticated/admin/errors'
+      path: '/errors'
+      fullPath: '/admin/errors'
+      preLoaderRoute: typeof AuthenticatedAdminErrorsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/domain-health': {
+      id: '/_authenticated/admin/domain-health'
+      path: '/domain-health'
+      fullPath: '/admin/domain-health'
+      preLoaderRoute: typeof AuthenticatedAdminDomainHealthRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/accept-invite/$code': {
+      id: '/_authenticated/accept-invite/$code'
+      path: '/accept-invite/$code'
+      fullPath: '/accept-invite/$code'
+      preLoaderRoute: typeof AuthenticatedAcceptInviteCodeRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/app/ai/': {
       id: '/_authenticated/app/ai/'
       path: '/ai'
@@ -1279,130 +1279,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAiIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
-    '/_authenticated/app/ai/$feature': {
-      id: '/_authenticated/app/ai/$feature'
-      path: '/ai/$feature'
-      fullPath: '/app/ai/$feature'
-      preLoaderRoute: typeof AuthenticatedAppAiFeatureRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/u/$userId': {
-      id: '/_authenticated/app/u/$userId'
-      path: '/u/$userId'
-      fullPath: '/app/u/$userId'
-      preLoaderRoute: typeof AuthenticatedAppUUserIdRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/api/public/google-fit/callback': {
-      id: '/api/public/google-fit/callback'
-      path: '/api/public/google-fit/callback'
-      fullPath: '/api/public/google-fit/callback'
-      preLoaderRoute: typeof ApiPublicGoogleFitCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/auto-match-partners': {
-      id: '/api/public/hooks/auto-match-partners'
-      path: '/api/public/hooks/auto-match-partners'
-      fullPath: '/api/public/hooks/auto-match-partners'
-      preLoaderRoute: typeof ApiPublicHooksAutoMatchPartnersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/daily-missions-generate': {
-      id: '/api/public/hooks/daily-missions-generate'
-      path: '/api/public/hooks/daily-missions-generate'
-      fullPath: '/api/public/hooks/daily-missions-generate'
-      preLoaderRoute: typeof ApiPublicHooksDailyMissionsGenerateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/mission-reminder': {
-      id: '/api/public/hooks/mission-reminder'
-      path: '/api/public/hooks/mission-reminder'
-      fullPath: '/api/public/hooks/mission-reminder'
-      preLoaderRoute: typeof ApiPublicHooksMissionReminderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/score-recompute': {
-      id: '/api/public/hooks/score-recompute'
-      path: '/api/public/hooks/score-recompute'
-      fullPath: '/api/public/hooks/score-recompute'
-      preLoaderRoute: typeof ApiPublicHooksScoreRecomputeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/send-reminders': {
-      id: '/api/public/hooks/send-reminders'
-      path: '/api/public/hooks/send-reminders'
-      fullPath: '/api/public/hooks/send-reminders'
-      preLoaderRoute: typeof ApiPublicHooksSendRemindersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/streak-at-risk-alert': {
-      id: '/api/public/hooks/streak-at-risk-alert'
-      path: '/api/public/hooks/streak-at-risk-alert'
-      fullPath: '/api/public/hooks/streak-at-risk-alert'
-      preLoaderRoute: typeof ApiPublicHooksStreakAtRiskAlertRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/stripe-webhook-test': {
-      id: '/api/public/hooks/stripe-webhook-test'
-      path: '/api/public/hooks/stripe-webhook-test'
-      fullPath: '/api/public/hooks/stripe-webhook-test'
-      preLoaderRoute: typeof ApiPublicHooksStripeWebhookTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/sync-google-fit': {
-      id: '/api/public/hooks/sync-google-fit'
-      path: '/api/public/hooks/sync-google-fit'
-      fullPath: '/api/public/hooks/sync-google-fit'
-      preLoaderRoute: typeof ApiPublicHooksSyncGoogleFitRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/sync-oauth-devices': {
-      id: '/api/public/hooks/sync-oauth-devices'
-      path: '/api/public/hooks/sync-oauth-devices'
-      fullPath: '/api/public/hooks/sync-oauth-devices'
-      preLoaderRoute: typeof ApiPublicHooksSyncOauthDevicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/weekly-challenge-rollover': {
-      id: '/api/public/hooks/weekly-challenge-rollover'
-      path: '/api/public/hooks/weekly-challenge-rollover'
-      fullPath: '/api/public/hooks/weekly-challenge-rollover'
-      preLoaderRoute: typeof ApiPublicHooksWeeklyChallengeRolloverRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/weekly-recap': {
-      id: '/api/public/hooks/weekly-recap'
-      path: '/api/public/hooks/weekly-recap'
-      fullPath: '/api/public/hooks/weekly-recap'
-      preLoaderRoute: typeof ApiPublicHooksWeeklyRecapRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/monitoring/report': {
-      id: '/api/public/monitoring/report'
-      path: '/api/public/monitoring/report'
-      fullPath: '/api/public/monitoring/report'
-      preLoaderRoute: typeof ApiPublicMonitoringReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/webhooks/stripe': {
-      id: '/api/public/webhooks/stripe'
-      path: '/api/public/webhooks/stripe'
-      fullPath: '/api/public/webhooks/stripe'
-      preLoaderRoute: typeof ApiPublicWebhooksStripeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/webhooks/stripe-health': {
-      id: '/api/public/webhooks/stripe-health'
-      path: '/api/public/webhooks/stripe-health'
-      fullPath: '/api/public/webhooks/stripe-health'
-      preLoaderRoute: typeof ApiPublicWebhooksStripeHealthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/auth/webhook': {
@@ -1412,12 +1293,131 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/transactional/preview': {
-      id: '/lovable/email/transactional/preview'
-      path: '/lovable/email/transactional/preview'
-      fullPath: '/lovable/email/transactional/preview'
-      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/stripe-health': {
+      id: '/api/public/webhooks/stripe-health'
+      path: '/api/public/webhooks/stripe-health'
+      fullPath: '/api/public/webhooks/stripe-health'
+      preLoaderRoute: typeof ApiPublicWebhooksStripeHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/stripe': {
+      id: '/api/public/webhooks/stripe'
+      path: '/api/public/webhooks/stripe'
+      fullPath: '/api/public/webhooks/stripe'
+      preLoaderRoute: typeof ApiPublicWebhooksStripeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/monitoring/report': {
+      id: '/api/public/monitoring/report'
+      path: '/api/public/monitoring/report'
+      fullPath: '/api/public/monitoring/report'
+      preLoaderRoute: typeof ApiPublicMonitoringReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/weekly-recap': {
+      id: '/api/public/hooks/weekly-recap'
+      path: '/api/public/hooks/weekly-recap'
+      fullPath: '/api/public/hooks/weekly-recap'
+      preLoaderRoute: typeof ApiPublicHooksWeeklyRecapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/weekly-challenge-rollover': {
+      id: '/api/public/hooks/weekly-challenge-rollover'
+      path: '/api/public/hooks/weekly-challenge-rollover'
+      fullPath: '/api/public/hooks/weekly-challenge-rollover'
+      preLoaderRoute: typeof ApiPublicHooksWeeklyChallengeRolloverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/sync-oauth-devices': {
+      id: '/api/public/hooks/sync-oauth-devices'
+      path: '/api/public/hooks/sync-oauth-devices'
+      fullPath: '/api/public/hooks/sync-oauth-devices'
+      preLoaderRoute: typeof ApiPublicHooksSyncOauthDevicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/sync-google-fit': {
+      id: '/api/public/hooks/sync-google-fit'
+      path: '/api/public/hooks/sync-google-fit'
+      fullPath: '/api/public/hooks/sync-google-fit'
+      preLoaderRoute: typeof ApiPublicHooksSyncGoogleFitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/stripe-webhook-test': {
+      id: '/api/public/hooks/stripe-webhook-test'
+      path: '/api/public/hooks/stripe-webhook-test'
+      fullPath: '/api/public/hooks/stripe-webhook-test'
+      preLoaderRoute: typeof ApiPublicHooksStripeWebhookTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/streak-at-risk-alert': {
+      id: '/api/public/hooks/streak-at-risk-alert'
+      path: '/api/public/hooks/streak-at-risk-alert'
+      fullPath: '/api/public/hooks/streak-at-risk-alert'
+      preLoaderRoute: typeof ApiPublicHooksStreakAtRiskAlertRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/send-reminders': {
+      id: '/api/public/hooks/send-reminders'
+      path: '/api/public/hooks/send-reminders'
+      fullPath: '/api/public/hooks/send-reminders'
+      preLoaderRoute: typeof ApiPublicHooksSendRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/score-recompute': {
+      id: '/api/public/hooks/score-recompute'
+      path: '/api/public/hooks/score-recompute'
+      fullPath: '/api/public/hooks/score-recompute'
+      preLoaderRoute: typeof ApiPublicHooksScoreRecomputeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/mission-reminder': {
+      id: '/api/public/hooks/mission-reminder'
+      path: '/api/public/hooks/mission-reminder'
+      fullPath: '/api/public/hooks/mission-reminder'
+      preLoaderRoute: typeof ApiPublicHooksMissionReminderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/daily-missions-generate': {
+      id: '/api/public/hooks/daily-missions-generate'
+      path: '/api/public/hooks/daily-missions-generate'
+      fullPath: '/api/public/hooks/daily-missions-generate'
+      preLoaderRoute: typeof ApiPublicHooksDailyMissionsGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/auto-match-partners': {
+      id: '/api/public/hooks/auto-match-partners'
+      path: '/api/public/hooks/auto-match-partners'
+      fullPath: '/api/public/hooks/auto-match-partners'
+      preLoaderRoute: typeof ApiPublicHooksAutoMatchPartnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/google-fit/callback': {
+      id: '/api/public/google-fit/callback'
+      path: '/api/public/google-fit/callback'
+      fullPath: '/api/public/google-fit/callback'
+      preLoaderRoute: typeof ApiPublicGoogleFitCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/u/$userId': {
+      id: '/_authenticated/app/u/$userId'
+      path: '/u/$userId'
+      fullPath: '/app/u/$userId'
+      preLoaderRoute: typeof AuthenticatedAppUUserIdRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/ai/$feature': {
+      id: '/_authenticated/app/ai/$feature'
+      path: '/ai/$feature'
+      fullPath: '/app/ai/$feature'
+      preLoaderRoute: typeof AuthenticatedAppAiFeatureRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
     }
     '/api/public/oauth/$provider/callback': {
       id: '/api/public/oauth/$provider/callback'
