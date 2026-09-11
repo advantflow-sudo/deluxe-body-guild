@@ -128,10 +128,11 @@ export function MarketingChatBot() {
         <button
           onClick={() => setOpen(true)}
           aria-label="Open chat with Deluxe Fitness concierge"
-          className="fixed bottom-4 right-4 z-50 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-deluxe-black/95 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-xl transition hover:bg-gold hover:text-deluxe-black sm:bottom-6 sm:right-6"
+          title="Ask the Concierge"
+          className="fixed bottom-4 right-4 z-40 inline-flex h-12 w-12 items-center justify-center gap-2 rounded-full border border-gold/40 bg-deluxe-black/95 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-xl transition hover:bg-gold hover:text-deluxe-black sm:bottom-6 sm:right-6 sm:h-auto sm:w-auto sm:px-4 sm:py-3"
         >
-          <MessageCircle className="h-4 w-4" />
-          Ask the Concierge
+          <MessageCircle className="h-5 w-5 sm:h-4 sm:w-4" />
+          <span className="hidden sm:inline">Ask the Concierge</span>
         </button>
       )}
 
