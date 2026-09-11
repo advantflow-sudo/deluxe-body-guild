@@ -2320,6 +2320,7 @@ export type Database = {
         }
       }
       revoke_mission_xp: { Args: { _reason: string }; Returns: Json }
+      shares_challenge_team: { Args: { _team_id: string }; Returns: boolean }
       touch_streak: {
         Args: never
         Returns: {
