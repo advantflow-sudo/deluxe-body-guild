@@ -13,6 +13,7 @@ type Plan = {
 };
 
 export function AdaptiveWeekCard() {
+  const { hasTier, loading: tierLoading } = usePremium();
   const run = useServerFn(adaptiveWeek);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loading, setLoading] = useState(false);
