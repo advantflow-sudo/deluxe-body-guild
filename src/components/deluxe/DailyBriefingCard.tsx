@@ -12,6 +12,8 @@ const KEY = "deluxe.dailyBriefing";
 const today = () => new Date().toISOString().slice(0, 10);
 
 export function DailyBriefingCard() {
+  const { hasTier, loading: tierLoading } = usePremium();
+  const allowed = hasTier("essential");
   const fn = useServerFn(dailyBriefing);
   const [text, setText] = useState<string>("");
   const [loading, setLoading] = useState(false);
