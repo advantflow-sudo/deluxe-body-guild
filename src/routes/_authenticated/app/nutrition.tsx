@@ -81,11 +81,12 @@ function extractJson<T>(raw: string): T {
 }
 
 // Unified daily targets — single source of truth lives in src/lib/targets.ts (audit M2).
-import { computeTargets } from "@/lib/targets";
+import { useTargets } from "@/hooks/useTargets";
 
 function NutritionTab() {
   const { user } = useAuth();
   const { isPremium } = usePremium();
+  const { targets: unifiedTargets, loading: unifiedLoading } = useTargets();
   const [ext, setExt] = useState<any>(null);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loading, setLoading] = useState(true);
@@ -129,7 +130,19 @@ function NutritionTab() {
 
   useEffect(() => { void load(); }, [load]);
 
-  const targets = ext ? computeTargets(ext) : null;
+  // One personalised target set for the whole app: today's plan wins, then the
+  // latest saved plan (unifiedTargets), then the profile-computed numbers.
+  const targets = plan
+    ? {
+        kcal: Number(plan.kcal_target),
+        protein: Number(plan.protein_target_g),
+        carbs: Number(plan.carbs_target_g),
+        fat: Number(plan.fat_target_g),
+        waterMl: Number(plan.water_target_ml),
+      }
+    : unifiedLoading
+      ? null
+      : unifiedTargets;
 
   // Canonical records: macros derived from ingredient weights, photo validated
   // against those same ingredients. Everything below reads from these.

@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { adaptiveWeek } from "@/lib/coach-memory.functions";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { TierLock } from "@/components/deluxe/TierLock";
+import { usePremium } from "@/hooks/usePremium";
 
 type Plan = {
   rationale: string;
@@ -13,6 +15,7 @@ type Plan = {
 };
 
 export function AdaptiveWeekCard() {
+  const { hasTier, loading: tierLoading } = usePremium();
   const run = useServerFn(adaptiveWeek);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [loading, setLoading] = useState(false);
@@ -30,6 +33,20 @@ export function AdaptiveWeekCard() {
       setLoading(false);
     }
   };
+
+  // Adaptive programming is a Signature benefit ("Personalized 12-week programming").
+  if (!tierLoading && !hasTier("signature")) {
+    return (
+      <div className="mt-5">
+        <SectionLabel>Adaptive Week</SectionLabel>
+        <TierLock
+          minTier="signature"
+          title="Adaptive 7-day programming"
+          description="Signature members get a week rebuilt from their recent training, strength trend and readiness."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mt-5">

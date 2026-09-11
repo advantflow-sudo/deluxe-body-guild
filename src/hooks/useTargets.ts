@@ -1,12 +1,12 @@
 /**
- * Loads the user's unified daily targets (audit M2 single source of truth):
- * the latest saved meal plan wins; otherwise targets are computed from the
- * profile via src/lib/targets.ts.
+ * Loads the user's unified daily targets (audit M2 single source of truth).
+ * All resolution logic lives in src/lib/loadTargets.ts so every screen —
+ * Home rings, Plan, Deluxe Score, Water, Weekly summary — shows one number.
  */
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { computeTargets, type DailyTargets, type ProfileExtLike } from "@/lib/targets";
+import { loadTargets } from "@/lib/loadTargets";
 
 export function useTargets(): { targets: DailyTargets; loading: boolean; ext: ProfileExtLike | null } {
   const { user } = useAuth();
@@ -18,34 +18,10 @@ export function useTargets(): { targets: DailyTargets; loading: boolean; ext: Pr
     if (!user) return;
     let cancelled = false;
     void (async () => {
-      const [extRes, planRes] = await Promise.all([
-        supabase
-          .from("user_profiles_ext")
-          .select("weight_kg,height_cm,age,fitness_goal")
-          .eq("user_id", user.id)
-          .maybeSingle(),
-        supabase
-          .from("meal_plans")
-          .select("kcal_target,protein_target_g,carbs_target_g,fat_target_g,water_target_ml")
-          .eq("user_id", user.id)
-          .order("plan_date", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-      ]);
+      const resolved = await loadTargets(user.id);
       if (cancelled) return;
-      const profile = (extRes.data as ProfileExtLike | null) ?? null;
-      setExt(profile);
-      if (planRes.data) {
-        setTargets({
-          kcal: Number(planRes.data.kcal_target),
-          protein: Number(planRes.data.protein_target_g),
-          carbs: Number(planRes.data.carbs_target_g),
-          fat: Number(planRes.data.fat_target_g),
-          waterMl: Number(planRes.data.water_target_ml) || computeTargets(profile).waterMl,
-        });
-      } else {
-        setTargets(computeTargets(profile));
-      }
+      setExt(resolved.ext);
+      setTargets(resolved.targets);
       setLoading(false);
     })();
     return () => {

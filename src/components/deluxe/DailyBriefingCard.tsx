@@ -5,11 +5,15 @@ import { Sunrise, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { dailyBriefing } from "@/lib/ai.functions";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { TierLock } from "@/components/deluxe/TierLock";
+import { usePremium } from "@/hooks/usePremium";
 
 const KEY = "deluxe.dailyBriefing";
 const today = () => new Date().toISOString().slice(0, 10);
 
 export function DailyBriefingCard() {
+  const { hasTier, loading: tierLoading } = usePremium();
+  const allowed = hasTier("essential");
   const fn = useServerFn(dailyBriefing);
   const [text, setText] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -37,7 +41,21 @@ export function DailyBriefingCard() {
     }
   }
 
-  useEffect(() => { run(false); /* eslint-disable-next-line */ }, []);
+  useEffect(() => {
+    if (allowed) run(false);
+    /* eslint-disable-next-line */
+  }, [allowed]);
+
+  // The AI briefing is part of the AI Coach benefit, which starts at Essential.
+  if (!tierLoading && !allowed) {
+    return (
+      <TierLock
+        minTier="essential"
+        title="Today's AI Briefing"
+        description="A daily read on your training, recovery and nutrition, written for you each morning."
+      />
+    );
+  }
 
   return (
     <div className="mt-5 border border-gold/25 bg-deluxe-forest/20 p-4 sm:p-5">

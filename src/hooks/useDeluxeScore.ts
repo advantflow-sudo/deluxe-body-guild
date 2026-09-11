@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { computeTargets } from "@/lib/targets";
+import { loadTargets } from "@/lib/loadTargets";
 
 export interface ScoreDetails {
   workoutCount: number;
@@ -71,8 +72,10 @@ export function useDeluxeScore(): DeluxeScoreBreakdown {
       supabase.from("user_profiles_ext").select("weight_kg,height_cm,age,fitness_goal").eq("user_id", user.id).maybeSingle(),
     ]);
 
-    // Unified per-user targets (audit M2).
-    const t = computeTargets(extRes.data ?? null);
+    // Unified per-user targets (audit M2) — same resolver as every other screen:
+    // the saved meal plan wins, otherwise the profile-computed numbers.
+    void extRes;
+    const { targets: t } = await loadTargets(user.id);
     const calorieMin = Math.round(t.kcal * 0.85);
     const calorieMax = Math.round(t.kcal * 1.15);
 
