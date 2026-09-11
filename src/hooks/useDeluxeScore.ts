@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { computeTargets } from "@/lib/targets";
+import { loadTargets } from "@/lib/loadTargets";
 
 export interface ScoreDetails {
   workoutCount: number;
