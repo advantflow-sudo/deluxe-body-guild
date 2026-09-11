@@ -5,6 +5,8 @@ import { Sunrise, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { dailyBriefing } from "@/lib/ai.functions";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { TierLock } from "@/components/deluxe/TierLock";
+import { usePremium } from "@/hooks/usePremium";
 
 const KEY = "deluxe.dailyBriefing";
 const today = () => new Date().toISOString().slice(0, 10);
