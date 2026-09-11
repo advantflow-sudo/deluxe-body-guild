@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { adaptiveWeek } from "@/lib/coach-memory.functions";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { TierLock } from "@/components/deluxe/TierLock";
+import { usePremium } from "@/hooks/usePremium";
 
 type Plan = {
   rationale: string;
