@@ -81,7 +81,7 @@ function extractJson<T>(raw: string): T {
 }
 
 // Unified daily targets — single source of truth lives in src/lib/targets.ts (audit M2).
-import { computeTargets } from "@/lib/targets";
+import { useTargets } from "@/hooks/useTargets";
 
 function NutritionTab() {
   const { user } = useAuth();
