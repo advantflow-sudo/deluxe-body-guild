@@ -129,7 +129,19 @@ function NutritionTab() {
 
   useEffect(() => { void load(); }, [load]);
 
-  const targets = ext ? computeTargets(ext) : null;
+  // One personalised target set for the whole app: today's plan wins, then the
+  // latest saved plan (unifiedTargets), then the profile-computed numbers.
+  const targets = plan
+    ? {
+        kcal: Number(plan.kcal_target),
+        protein: Number(plan.protein_target_g),
+        carbs: Number(plan.carbs_target_g),
+        fat: Number(plan.fat_target_g),
+        waterMl: Number(plan.water_target_ml),
+      }
+    : unifiedLoading
+      ? null
+      : unifiedTargets;
 
   // Canonical records: macros derived from ingredient weights, photo validated
   // against those same ingredients. Everything below reads from these.
