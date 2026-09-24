@@ -11,6 +11,8 @@ import { recapPostText, type Recap } from "@/lib/workoutRecap";
 export function WorkoutRecap({ recap, sessionId, userId, onClose }: { recap: Recap; sessionId: string; userId: string; onClose: () => void }) {
   const [posted, setPosted] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [storied, setStoried] = useState(false);
+  const [storying, setStorying] = useState(false);
   const diff = recap.prevVolumeKg && recap.volumeKg ? Math.round(((recap.volumeKg - recap.prevVolumeKg) / recap.prevVolumeKg) * 100) : null;
 
   const share = async () => {
@@ -20,6 +22,25 @@ export function WorkoutRecap({ recap, sessionId, userId, onClose }: { recap: Rec
     if (error) return toast.error(error.message);
     setPosted(true);
     toast.success("Shared to Community");
+  };
+
+  const addToStory = async () => {
+    setStorying(true);
+    try {
+      const blob = await renderStoryCard(recap);
+      const path = `${userId}/posts/${Date.now()}-story.jpg`;
+      const { error: upErr } = await supabase.storage.from("progress-photos").upload(path, blob, { contentType: "image/jpeg" });
+      if (upErr) throw upErr;
+      const { error } = await supabase.from("community_posts").insert({ user_id: userId, body: recapPostText(recap), image_url: path, workout_session_id: sessionId, visibility: "public" });
+      if (error) throw error;
+      setStoried(true);
+      setPosted(true);
+      toast.success("Added to your Story");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not add to Story");
+    } finally {
+      setStorying(false);
+    }
   };
 
   const stat = (label: string, value: string) => (
