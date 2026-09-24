@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { CoachNudges } from "@/components/deluxe/CoachNudges";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Check, Dumbbell, Droplet, Beef, Sparkles, Flame, Trophy, Moon, Undo2, ChevronRight, Wand2,
