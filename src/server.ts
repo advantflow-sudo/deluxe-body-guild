@@ -87,7 +87,7 @@ const CSP = [
 
 const PERMISSIONS_POLICY = [
   "camera=(self)",
-  "microphone=()",
+  "microphone=(self)",
   "geolocation=(self)",
   "payment=(self)",
   "usb=()",
