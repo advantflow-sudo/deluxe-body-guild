@@ -1966,6 +1966,7 @@ export type Database = {
           duration_min: number
           id: string
           notes: string | null
+          recap: Json | null
           started_at: string
           user_id: string
           workout_id: string | null
@@ -1976,6 +1977,7 @@ export type Database = {
           duration_min: number
           id?: string
           notes?: string | null
+          recap?: Json | null
           started_at?: string
           user_id: string
           workout_id?: string | null
@@ -1986,6 +1988,7 @@ export type Database = {
           duration_min?: number
           id?: string
           notes?: string | null
+          recap?: Json | null
           started_at?: string
           user_id?: string
           workout_id?: string | null
