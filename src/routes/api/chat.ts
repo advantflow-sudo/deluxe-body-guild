@@ -33,7 +33,7 @@ You are building a standard, not just an app. Every interaction should leave the
 
 If asked about medical conditions or injuries, recommend consulting a qualified professional.`;
 
-async function buildMemberProfile(authHeader: string | null): Promise<string> {
+async function buildMemberProfile(authHeader: string | null, query?: string): Promise<string> {
   if (!authHeader?.startsWith("Bearer ")) return "";
   const token = authHeader.slice(7);
   const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -167,9 +167,16 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
     }
 
     let block = lines.join("\n");
-    if ((memory ?? []).length) {
+    const words = new Set((query ?? "").toLowerCase().match(/[a-z0-9]{3,}/g) ?? []);
+    const score = (m: { category: string; key: string; value: string }) => {
+      let s = m.category === "limitation" ? 100 : m.category === "goal" ? 90 : 0;
+      for (const w of `${m.key.replace(/_/g, " ")} ${m.value}`.toLowerCase().match(/[a-z0-9]{3,}/g) ?? []) if (words.has(w)) s += 10;
+      return s;
+    };
+    const relevant = [...(memory ?? [])].sort((a, b) => score(b) - score(a)).slice(0, 12);
+    if (relevant.length) {
       const byCat = new Map<string, string[]>();
-      for (const m of memory ?? []) {
+      for (const m of relevant) {
         const list = byCat.get(m.category) ?? [];
         list.push(`${m.key.replace(/_/g, " ")}: ${m.value}`);
         byCat.set(m.category, list);
@@ -248,7 +255,8 @@ export const Route = createFileRoute("/api/chat")({
             return jsonError(500, "LOVABLE_API_KEY is not configured", "server_misconfigured");
           }
 
-          const memberProfile = await buildMemberProfile(authHeader);
+          const lastUser = [...messages].reverse().find((m) => m.role === "user");
+          const memberProfile = await buildMemberProfile(authHeader, typeof lastUser?.content === "string" ? lastUser.content : "");
           const systemPrompt = BASE_SYSTEM_PROMPT + memberProfile;
 
           const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
