@@ -2000,6 +2000,57 @@ export type Database = {
           },
         ]
       }
+      workout_set_logs: {
+        Row: {
+          block_id: string | null
+          created_at: string
+          exercise_id: string
+          id: string
+          reps: number
+          session_id: string
+          set_number: number
+          user_id: string
+          weight_kg: number
+        }
+        Insert: {
+          block_id?: string | null
+          created_at?: string
+          exercise_id: string
+          id?: string
+          reps?: number
+          session_id: string
+          set_number: number
+          user_id?: string
+          weight_kg?: number
+        }
+        Update: {
+          block_id?: string | null
+          created_at?: string
+          exercise_id?: string
+          id?: string
+          reps?: number
+          session_id?: string
+          set_number?: number
+          user_id?: string
+          weight_kg?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_set_logs_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_set_logs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workouts: {
         Row: {
           calories: number | null
