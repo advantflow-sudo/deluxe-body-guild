@@ -8,6 +8,8 @@ import { ShareButton } from "@/components/deluxe/ShareButton";
 import { exerciseMedia, formReference } from "@/config/exercise-media";
 import type { Workout } from "@/components/deluxe/WorkoutDetail";
 import { SetLogger } from "@/components/deluxe/SetLogger";
+import { WorkoutRecap } from "@/components/deluxe/WorkoutRecap";
+import { buildRecap, type Recap } from "@/lib/workoutRecap";
 
 interface Exercise {
   id: string;
@@ -54,6 +56,7 @@ export function WorkoutSessionPlayer({
   const [seconds, setSeconds] = useState(0);
   const [running, setRunning] = useState(true);
   const [done, setDone] = useState(false);
+  const [recap, setRecap] = useState<Recap | null>(null);
   const [finishing, setFinishing] = useState(false);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [rest, setRest] = useState<{ sec: number; label: string } | null>(null);
@@ -147,15 +150,23 @@ export function WorkoutSessionPlayer({
       .eq("id", sessionId);
     if (uErr) { setFinishing(false); return toast.error(uErr.message); }
 
+    const { data: before } = await supabase.rpc("get_xp_summary");
     const { data: xp } = await supabase.rpc("award_xp", { _reason: "workout" });
-    await supabase.rpc("touch_streak");
+    const { data: streakRow } = await supabase.rpc("touch_streak");
+    const earned = Math.max(0, Number(xp ?? 0) - Number((before as { total_xp?: number } | null)?.total_xp ?? 0));
+    const checked = blocks.flatMap((b) => b.workout_block_exercises.filter((be) => completed.has(be.id)).map((be) => ({ exerciseId: be.exercise_id, name: be.exercises?.name ?? "Exercise", muscle: be.exercises?.muscle_group ?? "", sets: b.sets })));
+    try {
+      const r = await buildRecap({ sessionId, userId, workoutId: workout.id, workoutTitle: workout.title, workoutType: workout.category, durationMin, calories, xp: earned, streak: Number((streakRow as { current_len?: number } | null)?.current_len ?? 0), checked });
+      setRecap(r);
+      await supabase.from("workout_sessions").update({ recap: r as never }).eq("id", sessionId);
+    } catch (e) { console.error("recap failed", e); }
     // Reward points are what the rewards catalogue spends — earn them here too.
     await supabase.rpc("award_points", { _reason: "Workout completed", _delta: 50 });
 
     setFinishing(false);
     setDone(true);
     haptic("success");
-    toast.success(xp ? `+${xp} XP · +50 points earned` : "Session logged");
+    toast.success(earned ? `+${earned} XP · +50 points earned` : "Session logged · +50 points");
   };
 
   return (
@@ -340,6 +351,8 @@ export function WorkoutSessionPlayer({
               {finishing ? "Saving…" : "Finish Session"}
             </GoldButton>
           </>
+        ) : recap ? (
+          <WorkoutRecap recap={recap} sessionId={sessionId} userId={userId} onClose={onClose} />
         ) : (
           <div className="text-center">
             <CheckCircle2 className="mx-auto h-16 w-16 text-gold" />
