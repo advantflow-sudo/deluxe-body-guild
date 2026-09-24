@@ -109,6 +109,24 @@ async function buildMemberProfile(authHeader: string | null): Promise<string> {
       lines.push(`- NOTE: Member missed ${daysSinceLast} day${daysSinceLast === 1 ? "" : "s"}. Acknowledge it directly and pull them back in.`);
     }
 
+    const { data: setLogs } = await supabase
+      .from("workout_set_logs")
+      .select("reps,weight_kg,created_at,exercises(name)")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(60);
+    if (setLogs?.length) {
+      const best = new Map<string, { kg: number; reps: number; date: string }>();
+      for (const s of setLogs) {
+        const n = (s.exercises as { name?: string } | null)?.name;
+        if (!n) continue;
+        const kg = Number(s.weight_kg);
+        const cur = best.get(n);
+        if (!cur || kg > cur.kg || (kg === cur.kg && s.reps > cur.reps)) best.set(n, { kg, reps: s.reps, date: s.created_at.slice(0, 10) });
+      }
+      lines.push(`- Recent logged lifts (best set, use for progression targets): ${[...best.entries()].slice(0, 10).map(([n, b]) => `${n} ${b.kg}kg×${b.reps} (${b.date})`).join("; ")}`);
+    }
+
     const xpSummary = xp as { total_xp?: number; today_xp?: number; rank?: string } | null;
     if (xpSummary?.rank) {
       lines.push(`- Rank: ${xpSummary.rank} (${xpSummary.total_xp ?? 0} XP total, ${xpSummary.today_xp ?? 0}/100 today)`);
