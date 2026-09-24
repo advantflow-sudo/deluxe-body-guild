@@ -15,6 +15,13 @@
       "when": 1790268415216,
       "tag": "0001_session_recap",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790268781435,
+      "tag": "0002_deluxe_leagues",
+      "breakpoints": true
     }
   ]
 }
