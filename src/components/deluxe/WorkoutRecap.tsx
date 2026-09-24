@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { ShareButton } from "@/components/deluxe/ShareButton";
 import { MuscleMap, toIntensity } from "@/components/deluxe/MuscleMap";
+import { renderStoryCard } from "@/lib/storyCard";
 import { recapPostText, type Recap } from "@/lib/workoutRecap";
 
 export function WorkoutRecap({ recap, sessionId, userId, onClose }: { recap: Recap; sessionId: string; userId: string; onClose: () => void }) {
@@ -115,6 +116,9 @@ export function WorkoutRecap({ recap, sessionId, userId, onClose }: { recap: Rec
           View progress
         </Link>
       </div>
+      <GoldButton onClick={addToStory} disabled={storied || storying} className="mt-2 w-full">
+        {storied ? "Added to Story" : storying ? "Creating story…" : "Add to Story"}
+      </GoldButton>
       <div className="mt-3 flex justify-center">
         <ShareButton title={`Deluxe Fitness — ${recap.workout}`} text={recapPostText(recap)} url="/app/progress" label="Share outside the app" />
       </div>
