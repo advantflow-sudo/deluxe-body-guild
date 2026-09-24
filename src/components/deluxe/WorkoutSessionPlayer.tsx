@@ -7,6 +7,7 @@ import { haptic } from "@/hooks/useHaptics";
 import { ShareButton } from "@/components/deluxe/ShareButton";
 import { exerciseMedia, formReference } from "@/config/exercise-media";
 import type { Workout } from "@/components/deluxe/WorkoutDetail";
+import { SetLogger } from "@/components/deluxe/SetLogger";
 
 interface Exercise {
   id: string;
@@ -204,6 +205,15 @@ export function WorkoutSessionPlayer({
                                 <PlayCircle className="h-4 w-4" /> {open ? "Hide" : "Demo"}
                               </button>
                             </div>
+
+                            <SetLogger
+                              sessionId={sessionId}
+                              userId={userId}
+                              blockId={b.id}
+                              exerciseId={be.exercise_id}
+                              sets={b.sets}
+                              targetReps={b.reps}
+                            />
 
                             {open && (
                               <div className="border border-t-0 border-gold/15 bg-deluxe-black/50 p-3">
