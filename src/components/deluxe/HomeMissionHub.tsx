@@ -262,6 +262,8 @@ export function HomeMissionHub() {
           </Link>
         </div>
       </div>
+      <CoachNudges />
+
 
       {/* Dominant Next Mission action */}
       <div className="mt-4">
