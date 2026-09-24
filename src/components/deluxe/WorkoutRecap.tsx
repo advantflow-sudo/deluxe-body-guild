@@ -6,11 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { GoldButton, OutlineButton, SectionLabel } from "@/components/deluxe/ui";
 import { ShareButton } from "@/components/deluxe/ShareButton";
 import { MuscleMap, toIntensity } from "@/components/deluxe/MuscleMap";
+import { renderStoryCard } from "@/lib/storyCard";
 import { recapPostText, type Recap } from "@/lib/workoutRecap";
 
 export function WorkoutRecap({ recap, sessionId, userId, onClose }: { recap: Recap; sessionId: string; userId: string; onClose: () => void }) {
   const [posted, setPosted] = useState(false);
   const [posting, setPosting] = useState(false);
+  const [storied, setStoried] = useState(false);
+  const [storying, setStorying] = useState(false);
   const diff = recap.prevVolumeKg && recap.volumeKg ? Math.round(((recap.volumeKg - recap.prevVolumeKg) / recap.prevVolumeKg) * 100) : null;
 
   const share = async () => {
@@ -20,6 +23,25 @@ export function WorkoutRecap({ recap, sessionId, userId, onClose }: { recap: Rec
     if (error) return toast.error(error.message);
     setPosted(true);
     toast.success("Shared to Community");
+  };
+
+  const addToStory = async () => {
+    setStorying(true);
+    try {
+      const blob = await renderStoryCard(recap);
+      const path = `${userId}/posts/${Date.now()}-story.jpg`;
+      const { error: upErr } = await supabase.storage.from("progress-photos").upload(path, blob, { contentType: "image/jpeg" });
+      if (upErr) throw upErr;
+      const { error } = await supabase.from("community_posts").insert({ user_id: userId, body: recapPostText(recap), image_url: path, workout_session_id: sessionId, visibility: "public" });
+      if (error) throw error;
+      setStoried(true);
+      setPosted(true);
+      toast.success("Added to your Story");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not add to Story");
+    } finally {
+      setStorying(false);
+    }
   };
 
   const stat = (label: string, value: string) => (
@@ -94,6 +116,9 @@ export function WorkoutRecap({ recap, sessionId, userId, onClose }: { recap: Rec
           View progress
         </Link>
       </div>
+      <GoldButton onClick={addToStory} disabled={storied || storying} className="mt-2 w-full">
+        {storied ? "Added to Story" : storying ? "Creating story…" : "Add to Story"}
+      </GoldButton>
       <div className="mt-3 flex justify-center">
         <ShareButton title={`Deluxe Fitness — ${recap.workout}`} text={recapPostText(recap)} url="/app/progress" label="Share outside the app" />
       </div>

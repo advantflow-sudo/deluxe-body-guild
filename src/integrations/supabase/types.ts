@@ -758,6 +758,59 @@ export type Database = {
         }
         Relationships: []
       }
+      league_members: {
+        Row: {
+          id: string
+          joined_at: string
+          league_id: string
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          league_id: string
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          league_id?: string
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "league_members_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leagues: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
       meal_plans: {
         Row: {
           carbs_target_g: number
@@ -2323,6 +2376,19 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_league_standings: {
+        Args: never
+        Returns: {
+          active_days: number
+          avatar_url: string
+          display_name: string
+          league_id: string
+          league_name: string
+          points: number
+          user_id: string
+          week_start: string
+        }[]
+      }
       get_mission_xp_today: { Args: never; Returns: Json }
       get_reminder_history: {
         Args: { _limit?: number }
@@ -2344,7 +2410,9 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_league_member: { Args: { _league_id: string }; Returns: boolean }
       is_premium_member: { Args: { _user_id: string }; Returns: boolean }
+      join_weekly_league: { Args: never; Returns: string }
       log_recovery: {
         Args: {
           _energy: number
