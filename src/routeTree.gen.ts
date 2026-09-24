@@ -39,6 +39,7 @@ import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticat
 import { Route as ApiVoiceTranscribeRouteImport } from './routes/api/voice.transcribe'
 import { Route as ApiVoiceSpeakRouteImport } from './routes/api/voice.speak'
 import { Route as ApiPublicMarketingChatRouteImport } from './routes/api/public/marketing-chat'
+import { Route as ApiPublicHealthSyncRouteImport } from './routes/api/public/health-sync'
 import { Route as AuthenticatedAppWorkoutsRouteImport } from './routes/_authenticated/app/workouts'
 import { Route as AuthenticatedAppScanVerifyRouteImport } from './routes/_authenticated/app/scan-verify'
 import { Route as AuthenticatedAppRewardsRouteImport } from './routes/_authenticated/app/rewards'
@@ -230,6 +231,11 @@ const ApiVoiceSpeakRoute = ApiVoiceSpeakRouteImport.update({
 const ApiPublicMarketingChatRoute = ApiPublicMarketingChatRouteImport.update({
   id: '/api/public/marketing-chat',
   path: '/api/public/marketing-chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHealthSyncRoute = ApiPublicHealthSyncRouteImport.update({
+  id: '/api/public/health-sync',
+  path: '/api/public/health-sync',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppWorkoutsRoute =
@@ -524,6 +530,7 @@ export interface FileRoutesByFullPath {
   '/app/rewards': typeof AuthenticatedAppRewardsRoute
   '/app/scan-verify': typeof AuthenticatedAppScanVerifyRoute
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
+  '/api/public/health-sync': typeof ApiPublicHealthSyncRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/api/voice/speak': typeof ApiVoiceSpeakRoute
   '/api/voice/transcribe': typeof ApiVoiceTranscribeRoute
@@ -597,6 +604,7 @@ export interface FileRoutesByTo {
   '/app/rewards': typeof AuthenticatedAppRewardsRoute
   '/app/scan-verify': typeof AuthenticatedAppScanVerifyRoute
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
+  '/api/public/health-sync': typeof ApiPublicHealthSyncRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/api/voice/speak': typeof ApiVoiceSpeakRoute
   '/api/voice/transcribe': typeof ApiVoiceTranscribeRoute
@@ -673,6 +681,7 @@ export interface FileRoutesById {
   '/_authenticated/app/rewards': typeof AuthenticatedAppRewardsRoute
   '/_authenticated/app/scan-verify': typeof AuthenticatedAppScanVerifyRoute
   '/_authenticated/app/workouts': typeof AuthenticatedAppWorkoutsRoute
+  '/api/public/health-sync': typeof ApiPublicHealthSyncRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
   '/api/voice/speak': typeof ApiVoiceSpeakRoute
   '/api/voice/transcribe': typeof ApiVoiceTranscribeRoute
@@ -749,6 +758,7 @@ export interface FileRouteTypes {
     | '/app/rewards'
     | '/app/scan-verify'
     | '/app/workouts'
+    | '/api/public/health-sync'
     | '/api/public/marketing-chat'
     | '/api/voice/speak'
     | '/api/voice/transcribe'
@@ -822,6 +832,7 @@ export interface FileRouteTypes {
     | '/app/rewards'
     | '/app/scan-verify'
     | '/app/workouts'
+    | '/api/public/health-sync'
     | '/api/public/marketing-chat'
     | '/api/voice/speak'
     | '/api/voice/transcribe'
@@ -897,6 +908,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/rewards'
     | '/_authenticated/app/scan-verify'
     | '/_authenticated/app/workouts'
+    | '/api/public/health-sync'
     | '/api/public/marketing-chat'
     | '/api/voice/speak'
     | '/api/voice/transcribe'
@@ -948,6 +960,7 @@ export interface RootRouteChildren {
   WellbeingRoute: typeof WellbeingRoute
   WhatWeOfferRoute: typeof WhatWeOfferRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiPublicHealthSyncRoute: typeof ApiPublicHealthSyncRoute
   ApiPublicMarketingChatRoute: typeof ApiPublicMarketingChatRoute
   ApiVoiceSpeakRoute: typeof ApiVoiceSpeakRoute
   ApiVoiceTranscribeRoute: typeof ApiVoiceTranscribeRoute
@@ -1182,6 +1195,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/marketing-chat'
       fullPath: '/api/public/marketing-chat'
       preLoaderRoute: typeof ApiPublicMarketingChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/health-sync': {
+      id: '/api/public/health-sync'
+      path: '/api/public/health-sync'
+      fullPath: '/api/public/health-sync'
+      preLoaderRoute: typeof ApiPublicHealthSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/app/workouts': {
@@ -1597,6 +1617,7 @@ const rootRouteChildren: RootRouteChildren = {
   WellbeingRoute: WellbeingRoute,
   WhatWeOfferRoute: WhatWeOfferRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiPublicHealthSyncRoute: ApiPublicHealthSyncRoute,
   ApiPublicMarketingChatRoute: ApiPublicMarketingChatRoute,
   ApiVoiceSpeakRoute: ApiVoiceSpeakRoute,
   ApiVoiceTranscribeRoute: ApiVoiceTranscribeRoute,

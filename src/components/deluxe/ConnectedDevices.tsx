@@ -337,8 +337,10 @@ export function ConnectedDevices() {
         </button>
       </div>
 
+      <HealthShortcutSetup />
+
       <p className="mt-2 text-[10px] italic text-muted-foreground">
-        Google Fit syncs live via OAuth. Apple Health requires the iOS app build. Fitbit, Strava, Garmin & Oura wire in next.
+        Google Fit syncs live. On iPhone, use the Apple Health Shortcut above. Direct Apple Health and Health Connect arrive with the phone apps.
       </p>
     </div>
   );

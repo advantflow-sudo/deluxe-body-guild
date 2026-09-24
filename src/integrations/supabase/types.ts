@@ -758,6 +758,27 @@ export type Database = {
         }
         Relationships: []
       }
+      health_sync_tokens: {
+        Row: {
+          created_at: string
+          last_used_at: string | null
+          token_hash: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          last_used_at?: string | null
+          token_hash: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          last_used_at?: string | null
+          token_hash?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       league_members: {
         Row: {
           id: string
@@ -2314,6 +2335,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_health_sync_token: { Args: never; Returns: string }
       create_partner_invite: {
         Args: never
         Returns: {
@@ -2441,6 +2463,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      revoke_health_sync_token: { Args: never; Returns: undefined }
       revoke_mission_xp: { Args: { _reason: string }; Returns: Json }
       shares_challenge_team: { Args: { _team_id: string }; Returns: boolean }
       touch_streak: {

@@ -127,6 +127,33 @@ async function buildMemberProfile(authHeader: string | null, query?: string): Pr
       lines.push(`- Recent logged lifts (best set, use for progression targets): ${[...best.entries()].slice(0, 10).map(([n, b]) => `${n} ${b.kg}kg×${b.reps} (${b.date})`).join("; ")}`);
     }
 
+    const { data: health } = await supabase
+      .from("device_metrics")
+      .select("provider,metric_type,value,unit,recorded_at")
+      .eq("user_id", userId)
+      .in("metric_type", ["weight_kg", "sleep_hours", "steps", "resting_hr"])
+      .gte("recorded_at", new Date(Date.now() - 14 * 864e5).toISOString())
+      .order("recorded_at", { ascending: false })
+      .limit(60);
+    if (health?.length) {
+      const byType = new Map<string, { v: number; d: string }[]>();
+      for (const h of health) {
+        const arr = byType.get(h.metric_type) ?? [];
+        arr.push({ v: Number(h.value), d: h.recorded_at.slice(0, 10) });
+        byType.set(h.metric_type, arr);
+      }
+      const fmt = (t: string, label: string, unit: string) => {
+        const a = byType.get(t);
+        if (!a?.length) return null;
+        const avg = a.reduce((s, x) => s + x.v, 0) / a.length;
+        return `${label} latest ${Math.round(a[0].v * 10) / 10}${unit} (${a[0].d}), 14-day avg ${Math.round(avg * 10) / 10}${unit}`;
+      };
+      const parts = [fmt("weight_kg", "weight", "kg"), fmt("sleep_hours", "sleep", "h"), fmt("steps", "steps", ""), fmt("resting_hr", "resting HR", "bpm")].filter(Boolean);
+      if (parts.length) lines.push(`- Health app data (real readings from the member's phone): ${parts.join("; ")}`);
+    }
+
+
+
     const xpSummary = xp as { total_xp?: number; today_xp?: number; rank?: string } | null;
     if (xpSummary?.rank) {
       lines.push(`- Rank: ${xpSummary.rank} (${xpSummary.total_xp ?? 0} XP total, ${xpSummary.today_xp ?? 0}/100 today)`);
