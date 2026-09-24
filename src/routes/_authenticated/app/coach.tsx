@@ -12,6 +12,7 @@ import { rememberFromChat } from "@/lib/coach-memory.functions";
 import { CoachMemoryPanel } from "@/components/deluxe/CoachMemoryPanel";
 import { AdaptiveWeekCard } from "@/components/deluxe/AdaptiveWeekCard";
 import { CoachConversations } from "@/components/deluxe/CoachConversations";
+import { VoiceCoachButton } from "@/components/deluxe/VoiceCoachButton";
 import { COACH_FAILURE_COPY, useCoachChat } from "@/hooks/useCoachChat";
 
 export const Route = createFileRoute("/_authenticated/app/coach")({
@@ -61,6 +62,11 @@ function CoachTab() {
     }
     const reply = await chat.send(text);
     if (!reply) return;
+    void distil(text, reply);
+    return reply;
+  };
+
+  const distil = async (text: string, reply: string) => {
     try {
       const { saved } = await remember({
         data: { transcript: `Member: ${text}\n\nCoach: ${reply}`.slice(0, 20000) },
@@ -206,6 +212,7 @@ function CoachTab() {
           <Send className="h-3 w-3" /> Send
         </button>
       </form>
+      <VoiceCoachButton disabled={loading || locked} ask={ask} />
       <AdaptiveWeekCard />
 
       <p className="mt-4 pb-4 text-center text-[10px] text-muted-foreground">
