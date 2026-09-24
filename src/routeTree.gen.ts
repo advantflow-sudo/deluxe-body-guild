@@ -36,6 +36,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app/index'
+import { Route as ApiVoiceTranscribeRouteImport } from './routes/api/voice.transcribe'
+import { Route as ApiVoiceSpeakRouteImport } from './routes/api/voice.speak'
 import { Route as ApiPublicMarketingChatRouteImport } from './routes/api/public/marketing-chat'
 import { Route as AuthenticatedAppWorkoutsRouteImport } from './routes/_authenticated/app/workouts'
 import { Route as AuthenticatedAppScanVerifyRouteImport } from './routes/_authenticated/app/scan-verify'
@@ -214,6 +216,16 @@ const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const ApiVoiceTranscribeRoute = ApiVoiceTranscribeRouteImport.update({
+  id: '/api/voice/transcribe',
+  path: '/api/voice/transcribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVoiceSpeakRoute = ApiVoiceSpeakRouteImport.update({
+  id: '/api/voice/speak',
+  path: '/api/voice/speak',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicMarketingChatRoute = ApiPublicMarketingChatRouteImport.update({
   id: '/api/public/marketing-chat',
@@ -513,6 +525,8 @@ export interface FileRoutesByFullPath {
   '/app/scan-verify': typeof AuthenticatedAppScanVerifyRoute
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
+  '/api/voice/speak': typeof ApiVoiceSpeakRoute
+  '/api/voice/transcribe': typeof ApiVoiceTranscribeRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/ai/$feature': typeof AuthenticatedAppAiFeatureRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
@@ -584,6 +598,8 @@ export interface FileRoutesByTo {
   '/app/scan-verify': typeof AuthenticatedAppScanVerifyRoute
   '/app/workouts': typeof AuthenticatedAppWorkoutsRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
+  '/api/voice/speak': typeof ApiVoiceSpeakRoute
+  '/api/voice/transcribe': typeof ApiVoiceTranscribeRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/ai/$feature': typeof AuthenticatedAppAiFeatureRoute
   '/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
@@ -658,6 +674,8 @@ export interface FileRoutesById {
   '/_authenticated/app/scan-verify': typeof AuthenticatedAppScanVerifyRoute
   '/_authenticated/app/workouts': typeof AuthenticatedAppWorkoutsRoute
   '/api/public/marketing-chat': typeof ApiPublicMarketingChatRoute
+  '/api/voice/speak': typeof ApiVoiceSpeakRoute
+  '/api/voice/transcribe': typeof ApiVoiceTranscribeRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/ai/$feature': typeof AuthenticatedAppAiFeatureRoute
   '/_authenticated/app/u/$userId': typeof AuthenticatedAppUUserIdRoute
@@ -732,6 +750,8 @@ export interface FileRouteTypes {
     | '/app/scan-verify'
     | '/app/workouts'
     | '/api/public/marketing-chat'
+    | '/api/voice/speak'
+    | '/api/voice/transcribe'
     | '/app/'
     | '/app/ai/$feature'
     | '/app/u/$userId'
@@ -803,6 +823,8 @@ export interface FileRouteTypes {
     | '/app/scan-verify'
     | '/app/workouts'
     | '/api/public/marketing-chat'
+    | '/api/voice/speak'
+    | '/api/voice/transcribe'
     | '/app'
     | '/app/ai/$feature'
     | '/app/u/$userId'
@@ -876,6 +898,8 @@ export interface FileRouteTypes {
     | '/_authenticated/app/scan-verify'
     | '/_authenticated/app/workouts'
     | '/api/public/marketing-chat'
+    | '/api/voice/speak'
+    | '/api/voice/transcribe'
     | '/_authenticated/app/'
     | '/_authenticated/app/ai/$feature'
     | '/_authenticated/app/u/$userId'
@@ -925,6 +949,8 @@ export interface RootRouteChildren {
   WhatWeOfferRoute: typeof WhatWeOfferRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiPublicMarketingChatRoute: typeof ApiPublicMarketingChatRoute
+  ApiVoiceSpeakRoute: typeof ApiVoiceSpeakRoute
+  ApiVoiceTranscribeRoute: typeof ApiVoiceTranscribeRoute
   ApiPublicGoogleFitCallbackRoute: typeof ApiPublicGoogleFitCallbackRoute
   ApiPublicHooksAutoMatchPartnersRoute: typeof ApiPublicHooksAutoMatchPartnersRoute
   ApiPublicHooksDailyMissionsGenerateRoute: typeof ApiPublicHooksDailyMissionsGenerateRoute
@@ -1136,6 +1162,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
       parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/api/voice/transcribe': {
+      id: '/api/voice/transcribe'
+      path: '/api/voice/transcribe'
+      fullPath: '/api/voice/transcribe'
+      preLoaderRoute: typeof ApiVoiceTranscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/voice/speak': {
+      id: '/api/voice/speak'
+      path: '/api/voice/speak'
+      fullPath: '/api/voice/speak'
+      preLoaderRoute: typeof ApiVoiceSpeakRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/marketing-chat': {
       id: '/api/public/marketing-chat'
@@ -1558,6 +1598,8 @@ const rootRouteChildren: RootRouteChildren = {
   WhatWeOfferRoute: WhatWeOfferRoute,
   ApiChatRoute: ApiChatRoute,
   ApiPublicMarketingChatRoute: ApiPublicMarketingChatRoute,
+  ApiVoiceSpeakRoute: ApiVoiceSpeakRoute,
+  ApiVoiceTranscribeRoute: ApiVoiceTranscribeRoute,
   ApiPublicGoogleFitCallbackRoute: ApiPublicGoogleFitCallbackRoute,
   ApiPublicHooksAutoMatchPartnersRoute: ApiPublicHooksAutoMatchPartnersRoute,
   ApiPublicHooksDailyMissionsGenerateRoute:
