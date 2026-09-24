@@ -15,8 +15,7 @@ type Nudge = {
   text: string;
   cta: string;
   to: "/app/workouts" | "/app/nutrition" | "/app/coach";
-  search?: Record<string, string>;
-};
+ };
 
 const localDate = () => new Date().toLocaleDateString("en-CA");
 const DISMISS_KEY = () => `df_nudges_dismissed_${localDate()}`;
@@ -48,12 +47,12 @@ export function CoachNudges() {
       // Missed days → comeback session
       const daysSince = last?.completed_at ? Math.floor((Date.now() - new Date(last.completed_at).getTime()) / 864e5) : null;
       if (daysSince !== null && daysSince >= 3) {
-        out.push({ id: "comeback", icon: RotateCcw, text: `You've missed ${daysSince} days. I've prepared a shorter comeback session — same movements, fewer sets.`, cta: "Start comeback", to: "/app/workouts", search: { mode: "short" } });
+        out.push({ id: "comeback", icon: RotateCcw, text: `You've missed ${daysSince} days. Start any session and tap “Short on time” — I'll cut the sets but keep the same movements.`, cta: "Start comeback", to: "/app/workouts" });
       }
 
       // Low readiness → lighter day
       if (rec && (rec.readiness < 50 || rec.soreness >= 4) && !trainedToday) {
-        out.push({ id: "recovery", icon: BatteryLow, text: `Readiness is ${rec.readiness}/100 today. I'd keep it light — shorter session, same objective.`, cta: "Light session", to: "/app/workouts", search: { mode: "short" } });
+        out.push({ id: "recovery", icon: BatteryLow, text: `Readiness is ${rec.readiness}/100 today. Keep it light: use “Short on time” in your session to trim volume while keeping the objective.`, cta: "Light session", to: "/app/workouts" });
       }
 
       // Progression target from the last logged session
@@ -95,7 +94,7 @@ export function CoachNudges() {
           <div className="min-w-0 flex-1">
             <div className="text-[9px] uppercase tracking-[0.2em] text-gold">Coach</div>
             <p className="mt-0.5 text-xs leading-relaxed text-foreground">{n.text}</p>
-            <Link to={n.to} search={n.search as never} className="mt-2 inline-block border border-gold/40 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold hover:text-deluxe-black">
+            <Link to={n.to} className="mt-2 inline-block border border-gold/40 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-gold hover:bg-gold hover:text-deluxe-black">
               {n.cta}
             </Link>
           </div>

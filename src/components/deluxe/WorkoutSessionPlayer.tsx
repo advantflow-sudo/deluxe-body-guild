@@ -45,8 +45,12 @@ function fmt(total: number) {
 }
 
 export function WorkoutSessionPlayer({
-  workout, blocks, sessionId, userId, onClose,
+  workout, blocks: initialBlocks, sessionId, userId, onClose,
 }: { workout: Workout; blocks: Block[]; sessionId: string; userId: string; onClose: () => void }) {
+  const [blocks, setBlocks] = useState<Block[]>(initialBlocks);
+  const [shortMode, setShortMode] = useState(false);
+  const [swapping, setSwapping] = useState<string | null>(null);
+  const coachNotes = useRef<string[]>([]);
   const [seconds, setSeconds] = useState(0);
   const [running, setRunning] = useState(true);
   const [done, setDone] = useState(false);
@@ -100,6 +104,35 @@ export function WorkoutSessionPlayer({
     if (block.rest_sec > 0) setRest({ sec: block.rest_sec, label: block.label });
   };
 
+  const toggleShort = () => {
+    const next = !shortMode;
+    setShortMode(next);
+    setBlocks(initialBlocks.map((b) => ({ ...b, sets: next ? Math.max(1, Math.ceil(b.sets * 0.6)) : b.sets, rest_sec: next ? Math.round(b.rest_sec * 0.7) : b.rest_sec, workout_block_exercises: blocks.find((x) => x.id === b.id)?.workout_block_exercises ?? b.workout_block_exercises })));
+    const msg = next
+      ? "Short on time: I've cut each block to about 60% of the sets and shortened rests. Same exercises, so the training objective stays the same."
+      : "Back to the full session.";
+    coachNotes.current.push(msg);
+    toast.message("Coach", { description: msg });
+  };
+
+  const swapExercise = async (block: Block, be: BlockExercise) => {
+    const cur = be.exercises;
+    if (!cur) return;
+    setSwapping(be.id);
+    const inWorkout = new Set(blocks.flatMap((b) => b.workout_block_exercises.map((x) => x.exercise_id)));
+    const { data } = await supabase.from("exercises").select("id,name,slug,muscle_group,equipment,cues,is_premium").eq("muscle_group", cur.muscle_group).neq("id", cur.id).limit(20);
+    setSwapping(null);
+    const options = (data ?? []).filter((e) => !inWorkout.has(e.id));
+    const pick = options.find((e) => e.equipment !== cur.equipment) ?? options[0];
+    if (!pick) return toast.message("Coach", { description: `No other ${cur.muscle_group} exercise available — keep ${cur.name} and lower the weight if needed.` });
+    if (completed.has(be.id)) await supabase.from("workout_session_blocks").delete().eq("session_id", sessionId).eq("block_id", block.id).eq("exercise_id", be.exercise_id);
+    setCompleted((prev) => { const n = new Set(prev); n.delete(be.id); return n; });
+    setBlocks((all) => all.map((b) => b.id !== block.id ? b : { ...b, workout_block_exercises: b.workout_block_exercises.map((x) => x.id === be.id ? { ...x, exercise_id: pick.id, exercises: pick as Exercise } : x) }));
+    const msg = `Swapped ${cur.name} for ${pick.name} (${pick.equipment}). Same ${cur.muscle_group} work, same ${block.sets}×${block.reps} volume.`;
+    coachNotes.current.push(msg);
+    toast.message("Coach", { description: msg });
+  };
+
   const finish = async () => {
     setRunning(false);
     setFinishing(true);
@@ -110,7 +143,7 @@ export function WorkoutSessionPlayer({
 
     const { error: uErr } = await supabase
       .from("workout_sessions")
-      .update({ duration_min: durationMin, calories, completed_at: new Date().toISOString() })
+      .update({ duration_min: durationMin, calories, completed_at: new Date().toISOString(), ...(coachNotes.current.length ? { notes: `Coach changes: ${coachNotes.current.join(" ")}`.slice(0, 1000) } : {}) })
       .eq("id", sessionId);
     if (uErr) { setFinishing(false); return toast.error(uErr.message); }
 
@@ -167,7 +200,12 @@ export function WorkoutSessionPlayer({
 
             {totalExercises > 0 ? (
               <div className="space-y-4">
-                <SectionLabel>Track your sets</SectionLabel>
+                <div className="flex items-center justify-between">
+                  <SectionLabel>Track your sets</SectionLabel>
+                  <button onClick={toggleShort} aria-pressed={shortMode} className={`border px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] ${shortMode ? "border-gold bg-gold text-deluxe-black" : "border-gold/40 text-gold"}`}>
+                    <Clock className="mr-1 inline h-3 w-3" />Short on time
+                  </button>
+                </div>
                 {blocks.map((b) => (
                   <div key={b.id} className="border border-gold/15 bg-deluxe-forest/10 p-4">
                     <div className="flex items-center justify-between">
@@ -204,9 +242,18 @@ export function WorkoutSessionPlayer({
                               >
                                 <PlayCircle className="h-4 w-4" /> {open ? "Hide" : "Demo"}
                               </button>
+                              <button
+                                onClick={() => swapExercise(b, be)}
+                                disabled={swapping === be.id}
+                                aria-label={`Swap ${ex?.name ?? "exercise"} for an alternative`}
+                                className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-muted-foreground hover:text-gold disabled:opacity-40"
+                              >
+                                {swapping === be.id ? "…" : "Swap"}
+                              </button>
                             </div>
 
                             <SetLogger
+                              key={`${be.exercise_id}-${b.sets}`}
                               sessionId={sessionId}
                               userId={userId}
                               blockId={b.id}
