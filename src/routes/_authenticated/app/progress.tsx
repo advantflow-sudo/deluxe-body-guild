@@ -14,6 +14,7 @@ import { DailyBriefingCard } from "@/components/deluxe/DailyBriefingCard";
 import { MissionHistory } from "@/components/deluxe/MissionHistory";
 import { DeluxeScoreBreakdown } from "@/components/deluxe/DeluxeScoreBreakdown";
 import { WeeklyNutritionSummary } from "@/components/deluxe/WeeklyNutritionSummary";
+import { MuscleActivity } from "@/components/deluxe/MuscleActivity";
 
 export const Route = createFileRoute("/_authenticated/app/progress")({
   head: () => ({
@@ -96,6 +97,7 @@ function ProgressTab() {
       <DailyGoalsList />
       <SleepLogger />
       <DailyBriefingCard />
+      <MuscleActivity />
       <MissionHistory />
       <WeeklyNutritionSummary />
 
