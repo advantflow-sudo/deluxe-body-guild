@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { SectionLabel } from "@/components/deluxe/ui";
+import { HealthShortcutSetup } from "@/components/deluxe/HealthShortcutSetup";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import { isIosNative, syncAppleHealthNow } from "@/lib/healthkit-sync";
