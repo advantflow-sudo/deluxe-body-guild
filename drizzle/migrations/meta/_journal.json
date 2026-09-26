@@ -29,6 +29,13 @@
       "when": 1790269123571,
       "tag": "0003_health_sync_tokens",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790386137508,
+      "tag": "0004_restrict_profile_reads",
+      "breakpoints": true
     }
   ]
 }
