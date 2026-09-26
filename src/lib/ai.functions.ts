@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireTier } from "./tier-guard.server";
 
 const GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
@@ -68,6 +69,7 @@ export const dailyBriefing = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
+    await requireTier(supabase, userId, "essential");
     const since = new Date(Date.now() - 7 * 864e5).toISOString();
     const today = new Date().toISOString().slice(0, 10);
     const [{ data: ext }, { data: stats }, { data: sessions }, { data: metrics }] = await Promise.all([
@@ -98,6 +100,7 @@ export const analyzeMeal = createServerFn({ method: "POST" })
     z.object({ imageDataUrl: z.string().min(20).max(4_000_000), note: z.string().max(500).optional() }).parse(d),
   )
   .handler(async ({ data, context }) => {
+    await requireTier(context.supabase, context.userId, "essential");
     const attempt = () =>
       callAI({
         model: "google/gemini-2.5-flash",
@@ -181,7 +184,8 @@ export const analyzeForm = createServerFn({ method: "POST" })
   .inputValidator((d: { imageDataUrl: string; exercise: string }) =>
     z.object({ imageDataUrl: z.string().min(20).max(8_000_000), exercise: z.string().min(1).max(100) }).parse(d),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await requireTier(context.supabase, context.userId, "signature");
     const result = await callAI({
       model: "google/gemini-2.5-pro",
       messages: [
@@ -221,6 +225,7 @@ export const adaptProgram = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
+    await requireTier(supabase, userId, "signature");
     const since = new Date(Date.now() - 14 * 864e5).toISOString();
     const [{ data: ext }, { data: sessions }] = await Promise.all([
       supabase.from("user_profiles_ext").select("fitness_goal,training_level,preferred_type").eq("user_id", userId).maybeSingle(),
@@ -269,7 +274,8 @@ export const comparePhotos = createServerFn({ method: "POST" })
   .inputValidator((d: { beforeUrl: string; afterUrl: string }) =>
     z.object({ beforeUrl: z.string().min(20).max(8_000_000), afterUrl: z.string().min(20).max(8_000_000) }).parse(d),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await requireTier(context.supabase, context.userId, "signature");
     const result = await callAI({
       model: "google/gemini-2.5-pro",
       messages: [

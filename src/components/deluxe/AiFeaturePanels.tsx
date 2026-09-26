@@ -21,7 +21,7 @@ export const FEATURES: { key: FeatureKey; title: string; sub: string; icon: type
   { key: "briefing", title: "Daily Briefing", sub: "Morning read on energy, training & nutrition", icon: Sunrise },
   { key: "meal", title: "Meal Scan", sub: "Snap your plate — get macros in seconds", icon: Apple, premium: true, tier: "essential" },
   { key: "form", title: "Form Check", sub: "Upload a lift photo for AI form analysis", icon: Camera, premium: true, tier: "signature" },
-  { key: "program", title: "Adaptive Plan", sub: "Next week, rewritten to match your recovery", icon: Calendar },
+  { key: "program", title: "Adaptive Plan", sub: "Next week, rewritten to match your recovery", icon: Calendar, premium: true, tier: "signature" },
   { key: "photos", title: "Progress Compare", sub: "Side-by-side AI body composition read", icon: Images, premium: true, tier: "signature" },
   { key: "plateau", title: "Plateau Detector", sub: "Spot stagnation before it kills momentum", icon: TrendingDown },
   { key: "recap", title: "Weekly Recap", sub: "Shareable highlight reel of your week", icon: Trophy },

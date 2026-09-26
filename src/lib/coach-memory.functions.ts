@@ -19,6 +19,8 @@ export const rememberFromChat = createServerFn({ method: "POST" })
 export const adaptiveWeek = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { requireTier } = await import("./tier-guard.server");
+    await requireTier(context.supabase, context.userId, "signature");
     const { buildAdaptivePlan } = await import("./adaptive-plan.server");
     return buildAdaptivePlan(context.supabase, context.userId);
   });
